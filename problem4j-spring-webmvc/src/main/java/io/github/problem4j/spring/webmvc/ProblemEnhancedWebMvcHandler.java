@@ -93,6 +93,7 @@ public class ProblemEnhancedWebMvcHandler extends ResponseEntityExceptionHandler
    * retained to ensure compatibility across those versions.
    */
   @Override
+  @SuppressWarnings("removal")
   protected ResponseEntity<Object> handleExceptionInternal(
       Exception ex, Object body, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
     ProblemContext context =

@@ -94,6 +94,7 @@ public class ProblemEnhancedWebFluxHandler extends ResponseEntityExceptionHandle
    * retained to ensure compatibility across those versions.
    */
   @Override
+  @SuppressWarnings("removal")
   protected Mono<ResponseEntity<Object>> handleExceptionInternal(
       Exception ex,
       Object body,
