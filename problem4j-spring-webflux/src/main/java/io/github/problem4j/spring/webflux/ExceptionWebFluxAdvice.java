@@ -96,7 +96,8 @@ public class ExceptionWebFluxAdvice {
 
   /**
    * Generic fallback handler converting any uncaught exception into a {@link Problem} response.
-   * Chooses a resolver, @ProblemMapping, @ResponseStatus, or defaults to INTERNAL_SERVER_ERROR.
+   * Chooses a resolver, {@code @ProblemMapping}, {@code @ResponseStatus}, or defaults to {@code
+   * INTERNAL_SERVER_ERROR}.
    *
    * @param ex the exception to handle
    * @param exchange the current server web exchange
