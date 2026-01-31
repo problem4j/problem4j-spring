@@ -165,7 +165,7 @@ public class ProblemAutoConfiguration {
   /** Configuration for XML support in Problem serialization. */
   @ConditionalOnClass({XmlMapperBuilderCustomizer.class, XmlMapper.class})
   @Configuration(proxyBeanMethods = false)
-  public static class ProblemXmlMapperConfiguration {
+  static class ProblemXmlMapperConfiguration {
 
     /**
      * Creates a {@link ProblemXmlMapperBuilderCustomizer} to add the {@code ProblemJacksonMixIn} to
@@ -176,7 +176,7 @@ public class ProblemAutoConfiguration {
      */
     @ConditionalOnMissingBean(ProblemXmlMapperBuilderCustomizer.class)
     @Bean
-    public ProblemXmlMapperBuilderCustomizer problemXmlMapperBuilderCustomizer() {
+    ProblemXmlMapperBuilderCustomizer problemXmlMapperBuilderCustomizer() {
       return new ProblemXmlMapperBuilderCustomizer();
     }
   }
