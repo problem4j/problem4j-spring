@@ -96,8 +96,9 @@ public class ExceptionWebMvcAdvice {
   }
 
   /**
-   * Generic fallback handler that converts any uncaught exception into a {@code Problem} response.
-   * Chooses a resolver, @ProblemMapping, @ResponseStatus, or defaults to INTERNAL_SERVER_ERROR.
+   * Generic fallback handler converting any uncaught exception into a {@link Problem} response.
+   * Chooses a resolver, {@code @ProblemMapping}, {@code @ResponseStatus}, or defaults to {@code
+   * INTERNAL_SERVER_ERROR}.
    *
    * @param ex the uncaught exception
    * @param request the web request
