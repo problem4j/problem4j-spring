@@ -60,7 +60,7 @@ import reactor.core.publisher.Mono;
  *   <li>Content type: {@code application/problem+json}
  * </ul>
  *
- * <p>Intended as a **generic fallback**, it ensures that unexpected exceptions still produce a
+ * <p>Intended as a <b>generic fallback</b>, it ensures that unexpected exceptions still produce a
  * consistent {@link Problem} response. For more specific exception handling, use {@link
  * ProblemEnhancedWebFluxHandler}, {@link ProblemExceptionWebFluxAdvice}.
  */
