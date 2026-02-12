@@ -13,19 +13,17 @@ java {
 
 tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.add("-parameters")
+    options.encoding = "UTF-8"
 }
 
 tasks.withType<Jar>().configureEach {
-    dependsOn("cleanLibs")
     manifest {
-        manifest {
-            attributes["Implementation-Title"] = project.name
-            attributes["Implementation-Version"] = project.version
-            attributes["Build-Jdk-Spec"] = java.toolchain.languageVersion.get().toString()
-            attributes["Created-By"] = "Gradle ${gradle.gradleVersion}"
-        }
+        attributes["Implementation-Title"] = project.name
+        attributes["Implementation-Version"] = project.version
+        attributes["Build-Jdk-Spec"] = java.toolchain.languageVersion.get().toString()
+        attributes["Created-By"] = "Gradle ${gradle.gradleVersion}"
     }
-    from("../LICENSE") {
+    from("${rootProject.rootDir}/LICENSE") {
         into("META-INF/")
         rename { "LICENSE.txt" }
     }
