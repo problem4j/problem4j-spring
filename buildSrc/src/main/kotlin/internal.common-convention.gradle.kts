@@ -8,16 +8,6 @@ repositories {
     mavenCentral()
 }
 
-// Utility to clean up old jars as they can clutter.
-// Usage:
-//   ./gradlew cleanLibs
-tasks.register<Delete>("cleanLibs") {
-    description = "Deletes build/libs directory."
-    group = "build"
-
-    delete(layout.buildDirectory.dir("libs"))
-}
-
 // Usage:
 //   ./gradlew printVersion
 tasks.register<DefaultTask>("printVersion") {
