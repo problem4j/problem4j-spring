@@ -24,7 +24,6 @@ package io.github.problem4j.spring.webmvc.integration;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +54,7 @@ class ResponseStatusAnnotatedExceptionWebMvcTest {
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem).isEqualTo(Problem.builder().status(ProblemStatus.FORBIDDEN).build());
+    assertThat(problem).isEqualTo(Problem.of(HttpStatus.FORBIDDEN.value()));
   }
 
   @Test
@@ -68,8 +67,6 @@ class ResponseStatusAnnotatedExceptionWebMvcTest {
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem)
-        .isEqualTo(
-            Problem.builder().status(ProblemStatus.FORBIDDEN).detail("this is reason").build());
+    assertThat(problem).isEqualTo(Problem.of(HttpStatus.FORBIDDEN.value(), "this is reason"));
   }
 }

@@ -24,6 +24,7 @@ package io.github.problem4j.spring.webflux.app.rest;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemException;
 import io.github.problem4j.core.ProblemStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +35,7 @@ public class ProblemOverrideController {
 
   @PostMapping(path = "/instance-override")
   public String instanceOverride() {
-    throw new ProblemException(Problem.builder().status(ProblemStatus.BAD_REQUEST).build());
+    throw new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value()));
   }
 
   @PostMapping(path = "/type-not-blank")

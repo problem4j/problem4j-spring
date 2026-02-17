@@ -122,7 +122,7 @@ public class ExceptionWebMvcAdvice {
       problem = problemPostProcessor.process(context, problem);
     } catch (Exception e) {
       logAdviceException(log, ex, request, e);
-      problem = Problem.builder().status(ProblemStatus.INTERNAL_SERVER_ERROR).build();
+      problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
     HttpStatus status = ProblemSupport.resolveStatus(problem);

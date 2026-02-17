@@ -24,7 +24,6 @@ package io.github.problem4j.spring.webflux.integration;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +52,6 @@ class ErrorResponseWebFluxTest {
         .contentType(Problem.CONTENT_TYPE)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
-        .isEqualTo(
-            Problem.builder().status(ProblemStatus.CONFLICT).detail("this is detail").build());
+        .isEqualTo(Problem.of(HttpStatus.CONFLICT.value(), "this is detail"));
   }
 }

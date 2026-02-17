@@ -80,7 +80,7 @@ public class ProblemErrorController extends AbstractErrorController {
       context = ProblemContext.create();
     }
 
-    Problem problem = Problem.builder().status(status.value()).build();
+    Problem problem = Problem.of(status.value());
     problem = problemPostProcessor.process(context, problem);
 
     HttpHeaders headers = new HttpHeaders();

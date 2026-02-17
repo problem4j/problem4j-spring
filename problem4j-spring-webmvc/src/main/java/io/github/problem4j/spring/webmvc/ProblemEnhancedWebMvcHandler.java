@@ -37,6 +37,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -108,7 +109,7 @@ public class ProblemEnhancedWebMvcHandler extends ResponseEntityExceptionHandler
       problem = problemPostProcessor.process(context, problem);
     } catch (Exception e) {
       logAdviceException(log, ex, request, e);
-      problem = Problem.builder().status(ProblemStatus.INTERNAL_SERVER_ERROR).build();
+      problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
     status = resolveStatus(problem);

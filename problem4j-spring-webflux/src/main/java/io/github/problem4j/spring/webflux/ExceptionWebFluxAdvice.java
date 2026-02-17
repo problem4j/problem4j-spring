@@ -118,7 +118,7 @@ public class ExceptionWebFluxAdvice {
       problem = problemPostProcessor.process(context, problem);
     } catch (Exception e) {
       logAdviceException(log, ex, exchange, e);
-      problem = Problem.builder().status(ProblemStatus.INTERNAL_SERVER_ERROR).build();
+      problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
     HttpStatus status = resolveStatus(problem);

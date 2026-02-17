@@ -21,7 +21,6 @@
 
 package io.github.problem4j.spring.web.resolver;
 
-import static io.github.problem4j.spring.web.ProblemSupport.resolveStatus;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
@@ -110,8 +109,7 @@ class ServerWebInputProblemResolverTest {
             new HttpHeaders(),
             ex.getStatusCode());
 
-    assertThat(problem)
-        .isEqualTo(Problem.builder().status(resolveStatus(ex.getStatusCode())).build());
+    assertThat(problem).isEqualTo(Problem.of(ex.getStatusCode().value()));
   }
 
   static class DummyController {
