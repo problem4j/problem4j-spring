@@ -142,7 +142,10 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    */
   protected void assignContextAttributes(ServerWebExchange exchange, ProblemContext context) {
     exchange.getAttributes().put(PROBLEM_CONTEXT_ATTRIBUTE, context);
-    exchange.getAttributes().put(TRACE_ID_ATTRIBUTE, context.get("traceId"));
+    String traceId = context.get("traceId");
+    if (StringUtils.hasLength(traceId)) {
+      exchange.getAttributes().put(TRACE_ID_ATTRIBUTE, traceId);
+    }
   }
 
   /**
