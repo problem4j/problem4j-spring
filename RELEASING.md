@@ -1,18 +1,23 @@
 # Releasing
 
-A release is created by pushing an annotated git tag named `v1.2.3` with the message "Release 1.2.3". Preferably, use
-the [`./tools/tagrelease`](./tools/tagrelease) script, which ensures the tag is correctly formatted and prevents
-mistakes. Proper tag format is required to trigger build automation.
-
-See `./tools/tagrelease --help` for reference.
+1. Update `CHANGELOG.md` - change `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and add a new `[Unreleased]` section on top.
+2. Update `version` property in `gradle.properties` to the new version.
+3. Commit the changes from (1) and (2) with a message `"Release X.Y.Z"` and push to GitHub.
+4. Create an annotated git tag named `vX.Y.Z` with the message `"Release X.Y.Z"` and push it to GitHub. This will
+   trigger the release workflow, which will build and publish the artifacts to Sonatype repository. You can use the
+   [`./tools/tagrelease`](./tools/tagrelease) script to ensure the tag is correctly formatted and prevent mistakes.
+5. Update `version` property in `gradle.properties` to the next snapshot version, for example `1.3.1-SNAPSHOT`.
+6. Commit the change from (5) with a message `"Update snapshot version"` and push to GitHub.
+7. If the release was made on a maintenance branch, make sure to `merge` or `cherry-pick` the `CHANGELOG.md` entry to
+   the `main` branch as well.
 
 ## Branching and Release Workflow
 
 This repository maintains two major versions, supporting Spring Boot 3 and 4. The goal is to maintain both versions at
 least until Spring Boot 3 reaches its end of life or becomes irrelevant.
 
-| branch           | info                                       | latest                                                                                                                            |
-|------------------|--------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| branch           | info                                       | latest                                                                                                                   |
+|------------------|--------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
 | `main`           | version `2.x` supporting Spring Boot `4.x` | [![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=2.*)][maven-central] |
 | `release-v1.*.x` | version `1.x` supporting Spring Boot `3.x` | [![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=1.*)][maven-central] |
 

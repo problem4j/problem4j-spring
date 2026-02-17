@@ -44,3 +44,8 @@ tasks.withType<Test>().configureEach {
     systemProperty("user.language", "en")
     systemProperty("user.country", "US")
 }
+
+// buildSrc/src/main/kotlin/internal.common-convention.gradle.kts - "printVersion" task definition
+tasks.withType<PublishToMavenLocal>().configureEach {
+    finalizedBy("printVersion")
+}

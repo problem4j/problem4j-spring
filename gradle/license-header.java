@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright (c) 2025-$YEAR The Problem4J Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,10 +19,3 @@
  * SOFTWARE.
  */
 
-package io.github.problem4j.spring.webflux.app.problem;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-@ResponseStatus(HttpStatus.FORBIDDEN)
-public class ForbiddenAnnotatedException extends RuntimeException {}

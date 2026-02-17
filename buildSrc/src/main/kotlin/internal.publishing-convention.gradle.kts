@@ -1,6 +1,7 @@
 import internal.InternalPublishingExtension
 import internal.findDevelopers
 import internal.findLicenses
+import internal.getBooleanProperty
 
 plugins {
     id("internal.common-convention")
@@ -70,7 +71,7 @@ publishing {
 }
 
 signing {
-    if (project.hasProperty("sign")) {
+    if (project.getBooleanProperty("sign")) {
         useInMemoryPgpKeys(System.getenv("SIGNING_KEY"), System.getenv("SIGNING_PASSWORD"))
         sign(publishing.publications["maven"])
     }
