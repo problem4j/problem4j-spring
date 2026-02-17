@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+### Added
+
+- Add support for JSpecify annotations for nullability and Kotlin interop.
+
+### Changed
+
+- Bump `problem4j-core` to `1.4.0`.
+- Bump `problem4j-jackson2` to `1.4.0`.
+- Bump `problem4j-jackson3` to `1.4.0`.
+
 ## [2.1.3] - 2026-02-12
 
 ### Changed
