@@ -7,17 +7,6 @@ updates:
     target-branch: main
     open-pull-requests-limit: 10
     labels:
-      - "target: latest"
-      - "dependencies"
-
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-    target-branch: release-v1.2.x
-    open-pull-requests-limit: 10
-    labels:
-      - "target: maintenance"
       - "dependencies"
 
   - package-ecosystem: "gradle"
@@ -33,21 +22,4 @@ updates:
         update-types:
           - "version-update:semver-major"
     labels:
-      - "target: latest"
-      - "dependencies"
-
-  - package-ecosystem: "gradle"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-    target-branch: release-v1.2.x
-    open-pull-requests-limit: 10
-    allow:
-      - dependency-type: "direct"
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          - "version-update:semver-major"
-    labels:
-      - "target: maintenance"
       - "dependencies"
