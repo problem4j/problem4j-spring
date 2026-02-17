@@ -27,7 +27,6 @@ import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.logAdviceE
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemException;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemSupport;
 import java.util.List;
@@ -95,7 +94,7 @@ public class ProblemExceptionWebFluxAdvice {
       problem = problemPostProcessor.process(context, problem);
     } catch (Exception e) {
       logAdviceException(log, ex, exchange, e);
-      problem = Problem.builder().status(ProblemStatus.INTERNAL_SERVER_ERROR).build();
+      problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
     HttpStatus status = ProblemSupport.resolveStatus(problem);

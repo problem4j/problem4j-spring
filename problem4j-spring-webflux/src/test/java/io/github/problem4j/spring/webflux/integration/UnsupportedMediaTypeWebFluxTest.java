@@ -24,7 +24,6 @@ package io.github.problem4j.spring.webflux.integration;
 import static org.hamcrest.Matchers.notNullValue;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +55,6 @@ class UnsupportedMediaTypeWebFluxTest {
         .contentType(Problem.CONTENT_TYPE)
         .expectBody(Problem.class)
         .value(notNullValue())
-        .isEqualTo(Problem.builder().status(ProblemStatus.UNSUPPORTED_MEDIA_TYPE).build());
+        .isEqualTo(Problem.of(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value()));
   }
 }

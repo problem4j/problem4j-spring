@@ -22,7 +22,6 @@
 package io.github.problem4j.spring.webflux;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
-import static io.github.problem4j.spring.web.ProblemSupport.resolveStatus;
 import static org.springframework.web.reactive.function.server.RequestPredicates.all;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -104,7 +103,7 @@ public class ProblemErrorWebExceptionHandler extends DefaultErrorWebExceptionHan
    * @return a {@link Mono} emitting the updated response
    */
   private Mono<ServerResponse> override(ServerRequest request, ServerResponse response) {
-    Problem problem = Problem.builder().status(resolveStatus(response.statusCode())).build();
+    Problem problem = Problem.of(response.statusCode().value());
 
     Optional<ProblemContext> optionalContext =
         request.attribute(PROBLEM_CONTEXT_ATTRIBUTE).map(context -> (ProblemContext) context);

@@ -25,12 +25,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemException;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemPostProcessor;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -56,7 +56,7 @@ class ProblemExceptionWebMvcAdviceTest {
     MockHttpServletResponse response = new MockHttpServletResponse();
 
     advice.handleProblemException(
-        new ProblemException(Problem.builder().status(ProblemStatus.BAD_REQUEST).build()),
+        new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())),
         new ServletWebRequest(request, response));
 
     assertThat(hits.get()).isEqualTo(1);

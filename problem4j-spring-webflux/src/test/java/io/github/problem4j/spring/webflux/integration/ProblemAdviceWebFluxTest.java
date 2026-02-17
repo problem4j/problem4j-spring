@@ -24,7 +24,6 @@ package io.github.problem4j.spring.webflux.integration;
 import static org.hamcrest.Matchers.notNullValue;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
 import io.github.problem4j.spring.webflux.app.problem.ResolvableException;
 import org.junit.jupiter.api.Test;
@@ -117,7 +116,7 @@ class ProblemAdviceWebFluxTest {
         .contentType(Problem.CONTENT_TYPE)
         .expectBody(Problem.class)
         .value(notNullValue())
-        .isEqualTo(Problem.builder().status(0).build());
+        .isEqualTo(Problem.of(0));
   }
 
   @Test
@@ -153,6 +152,6 @@ class ProblemAdviceWebFluxTest {
         .contentType(Problem.CONTENT_TYPE)
         .expectBody(Problem.class)
         .value(notNullValue())
-        .isEqualTo(Problem.builder().status(ProblemStatus.INTERNAL_SERVER_ERROR).build());
+        .isEqualTo(Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value()));
   }
 }

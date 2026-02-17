@@ -125,6 +125,6 @@ class ValidateRequestBodyWebFluxTest {
         .contentType(Problem.CONTENT_TYPE)
         .expectBody(Problem.class)
         .value(notNullValue())
-        .isEqualTo(Problem.builder().status(ProblemStatus.BAD_REQUEST).build());
+        .isEqualTo(Problem.of(HttpStatus.BAD_REQUEST.value()));
   }
 }

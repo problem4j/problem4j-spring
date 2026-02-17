@@ -25,7 +25,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +51,6 @@ class MethodNotAllowedWebMvcTest {
 
     Problem problem = objectMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem)
-        .isEqualTo(Problem.builder().status(ProblemStatus.METHOD_NOT_ALLOWED).build());
+    assertThat(problem).isEqualTo(Problem.of(HttpStatus.METHOD_NOT_ALLOWED.value()));
   }
 }
