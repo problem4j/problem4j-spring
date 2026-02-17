@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     // Main
+    api(libs.jspecify)
     api(libs.problem4j.core)
     api(libs.problem4j.jackson3)
 

@@ -1,4 +1,5 @@
 [versions]
+jspecify = "1.0.0"
 nmcp = "1.4.4"
 problem4j-core = "1.4.0"
 problem4j-jackson2 = "1.4.0"
@@ -16,6 +17,7 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
 
 # direct versions
+jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
 problem4j-core = { module = "io.github.problem4j:problem4j-core", version.ref = "problem4j-core" }
 problem4j-jackson2 = { module = "io.github.problem4j:problem4j-jackson2", version.ref = "problem4j-jackson2" }
 problem4j-jackson3 = { module = "io.github.problem4j:problem4j-jackson3", version.ref = "problem4j-jackson3" }
