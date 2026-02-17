@@ -6,7 +6,7 @@ plugins {
 }
 
 java {
-    toolchain.languageVersion = providers.gradleProperty("internal.java.version").map { JavaLanguageVersion.of(it) }
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
     withSourcesJar()
     withJavadocJar()
 }
