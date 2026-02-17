@@ -54,6 +54,13 @@ public release for Problem4J's integration with Spring Boot 4.
 - Enable backwards compatibility with Jackson 2.x using `@ConditionalOnClass` (so you need to add `spring-boot-jackson2`
   module manually).
 
+## [1.2.4] - 2026-02-17
+
+### Changed
+
+- Bump `problem4j-core` to `1.4.0`.
+- Bump `problem4j-jackson2` to `1.4.0`.
+
 ## [1.2.3] - 2026-02-12
 
 ### Changed
