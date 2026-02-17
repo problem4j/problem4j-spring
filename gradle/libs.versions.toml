@@ -1,7 +1,7 @@
 [versions]
 nmcp = "1.4.4"
-problem4j-core = "1.4.0"
-problem4j-jackson2 = "1.4.0"
+problem4j-core = "1.4.1"
+problem4j-jackson2 = "1.4.1"
 spotless = "8.2.1"
 spring-boot = "3.5.10"
 
