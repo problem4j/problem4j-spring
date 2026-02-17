@@ -21,6 +21,7 @@
 
 package io.github.problem4j.spring.webflux.autoconfigure;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -57,11 +58,11 @@ public class ProblemWebFluxProperties {
    */
   public ProblemWebFluxProperties(
       @DefaultValue("true") boolean enabled,
-      ExceptionAdvice exceptionAdvice,
-      ProblemExceptionAdvice problemExceptionAdvice,
-      ProblemContextFilter problemContextFilter,
-      ExceptionHandler exceptionHandler,
-      ErrorWebExceptionHandler errorWebExceptionHandler) {
+      @Nullable ExceptionAdvice exceptionAdvice,
+      @Nullable ProblemExceptionAdvice problemExceptionAdvice,
+      @Nullable ProblemContextFilter problemContextFilter,
+      @Nullable ExceptionHandler exceptionHandler,
+      @Nullable ErrorWebExceptionHandler errorWebExceptionHandler) {
     this.enabled = enabled;
     this.exceptionAdvice =
         exceptionAdvice != null ? exceptionAdvice : ExceptionAdvice.createDefault();

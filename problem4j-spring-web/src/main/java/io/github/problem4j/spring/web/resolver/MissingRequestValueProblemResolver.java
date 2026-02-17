@@ -98,10 +98,6 @@ public class MissingRequestValueProblemResolver extends AbstractProblemResolver 
 
     ProblemBuilder builder = Problem.builder().status(ProblemStatus.BAD_REQUEST);
 
-    if (e.getLabel() == null) {
-      return builder;
-    }
-
     switch (e.getLabel()) {
       case QUERY_PARAMETER_LABEL ->
           builder =

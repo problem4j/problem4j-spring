@@ -32,6 +32,7 @@ import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.parameter.DefaultMethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
@@ -113,7 +114,7 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
   }
 
   private ProblemBuilder tryAppendingPropertyFromMethodParameter(
-      MethodParameter parameter, ProblemBuilder builder) {
+      @Nullable MethodParameter parameter, ProblemBuilder builder) {
     Optional<String> optionalProperty = methodParameterSupport.findParameterName(parameter);
     if (optionalProperty.isPresent()) {
       builder = builder.extension(PROPERTY_EXTENSION, optionalProperty.get());

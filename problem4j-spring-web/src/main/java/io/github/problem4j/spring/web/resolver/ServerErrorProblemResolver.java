@@ -30,6 +30,7 @@ import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpHeaders;
@@ -137,7 +138,7 @@ public class ServerErrorProblemResolver extends AbstractProblemResolver {
    * @return explicit annotation name, falling back to the reflective parameter name (may be {@code
    *     null})
    */
-  private String findParameterName(MethodParameter methodParameter) {
+  private @Nullable String findParameterName(@Nullable MethodParameter methodParameter) {
     if (methodParameter == null) {
       return null;
     }

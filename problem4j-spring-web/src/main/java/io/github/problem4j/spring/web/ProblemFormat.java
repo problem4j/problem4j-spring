@@ -21,6 +21,8 @@
 
 package io.github.problem4j.spring.web;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Defines a contract for formatting problem detail field and property names (mostly before they are
  * included in a {@code Problem} response).
@@ -39,5 +41,5 @@ public interface ProblemFormat {
    * @return the formatted detail string
    * @see io.github.problem4j.core.Problem
    */
-  String formatDetail(String detail);
+  @Nullable String formatDetail(@Nullable String detail);
 }

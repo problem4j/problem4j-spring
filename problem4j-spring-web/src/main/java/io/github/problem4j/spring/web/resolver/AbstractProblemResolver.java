@@ -27,6 +27,7 @@ import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 
@@ -94,7 +95,7 @@ public abstract class AbstractProblemResolver implements ProblemResolver {
    * @param detail original detail (nullable)
    * @return formatted detail (never null if input not null)
    */
-  protected String formatDetail(String detail) {
+  protected @Nullable String formatDetail(@Nullable String detail) {
     return problemFormat.formatDetail(detail);
   }
 }

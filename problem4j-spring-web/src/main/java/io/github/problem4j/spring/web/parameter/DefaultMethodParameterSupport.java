@@ -23,6 +23,7 @@ package io.github.problem4j.spring.web.parameter;
 
 import java.lang.annotation.Annotation;
 import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.MethodParameter;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -47,7 +48,7 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @return optional parameter name; empty if the input is {@code null}
    */
   @Override
-  public Optional<String> findParameterName(MethodParameter parameter) {
+  public Optional<String> findParameterName(@Nullable MethodParameter parameter) {
     if (parameter == null) {
       return Optional.empty();
     }
@@ -56,21 +57,29 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
     String fieldName = parameter.getParameterName();
     for (Annotation annotation : annotations) {
       if (annotation instanceof PathVariable pathVariable) {
-        return Optional.ofNullable(findPathVariableName(pathVariable, fieldName));
+        fieldName = findPathVariableName(pathVariable, fieldName);
+        return Optional.ofNullable(fieldName);
       } else if (annotation instanceof RequestParam requestParam) {
-        return Optional.ofNullable(findRequestParamName(requestParam, fieldName));
+        fieldName = findRequestParamName(requestParam, fieldName);
+        return Optional.ofNullable(fieldName);
       } else if (annotation instanceof RequestPart requestPart) {
-        return Optional.ofNullable(findRequestPartName(requestPart, fieldName));
+        fieldName = findRequestPartName(requestPart, fieldName);
+        return Optional.ofNullable(fieldName);
       } else if (annotation instanceof RequestHeader requestHeader) {
-        return Optional.ofNullable(findRequestHeaderName(requestHeader, fieldName));
+        fieldName = findRequestHeaderName(requestHeader, fieldName);
+        return Optional.ofNullable(fieldName);
       } else if (annotation instanceof CookieValue cookieValue) {
-        return Optional.ofNullable(findCookieValueName(cookieValue, fieldName));
+        fieldName = findCookieValueName(cookieValue, fieldName);
+        return Optional.ofNullable(fieldName);
       } else if (annotation instanceof SessionAttribute sessionAttribute) {
-        return Optional.ofNullable(findSessionAttributeName(sessionAttribute, fieldName));
+        fieldName = findSessionAttributeName(sessionAttribute, fieldName);
+        return Optional.ofNullable(fieldName);
       } else if (annotation instanceof RequestAttribute requestAttribute) {
-        return Optional.ofNullable(findRequestAttributeName(requestAttribute, fieldName));
+        fieldName = findRequestAttributeName(requestAttribute, fieldName);
+        return Optional.ofNullable(fieldName);
       } else if (annotation instanceof MatrixVariable matrixVariable) {
-        return Optional.ofNullable(findMatrixVariableName(matrixVariable, fieldName));
+        fieldName = findMatrixVariableName(matrixVariable, fieldName);
+        return Optional.ofNullable(fieldName);
       }
     }
     return Optional.ofNullable(fieldName);
@@ -84,7 +93,8 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
    */
-  protected String findPathVariableName(PathVariable annotation, String defaultName) {
+  protected @Nullable String findPathVariableName(
+      PathVariable annotation, @Nullable String defaultName) {
     String name = annotation.name();
     if (!StringUtils.hasLength(name)) {
       name = annotation.value();
@@ -100,7 +110,8 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
    */
-  protected String findRequestParamName(RequestParam annotation, String defaultName) {
+  protected @Nullable String findRequestParamName(
+      RequestParam annotation, @Nullable String defaultName) {
     String name = annotation.name();
     if (!StringUtils.hasLength(name)) {
       name = annotation.value();
@@ -116,7 +127,8 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
    */
-  protected String findRequestPartName(RequestPart annotation, String defaultName) {
+  protected @Nullable String findRequestPartName(
+      RequestPart annotation, @Nullable String defaultName) {
     String name = annotation.name();
     if (!StringUtils.hasLength(name)) {
       name = annotation.value();
@@ -132,7 +144,8 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
    */
-  protected String findRequestHeaderName(RequestHeader annotation, String defaultName) {
+  protected @Nullable String findRequestHeaderName(
+      RequestHeader annotation, @Nullable String defaultName) {
     String name = annotation.name();
     if (!StringUtils.hasLength(name)) {
       name = annotation.value();
@@ -148,7 +161,8 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
    */
-  protected String findCookieValueName(CookieValue annotation, String defaultName) {
+  protected @Nullable String findCookieValueName(
+      CookieValue annotation, @Nullable String defaultName) {
     String name = annotation.name();
     if (!StringUtils.hasLength(name)) {
       name = annotation.value();
@@ -164,7 +178,8 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
    */
-  protected String findSessionAttributeName(SessionAttribute annotation, String defaultName) {
+  protected @Nullable String findSessionAttributeName(
+      SessionAttribute annotation, @Nullable String defaultName) {
     String name = annotation.name();
     if (!StringUtils.hasLength(name)) {
       name = annotation.value();
@@ -180,7 +195,8 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
    */
-  protected String findRequestAttributeName(RequestAttribute annotation, String defaultName) {
+  protected @Nullable String findRequestAttributeName(
+      RequestAttribute annotation, @Nullable String defaultName) {
     String name = annotation.name();
     if (!StringUtils.hasLength(name)) {
       name = annotation.value();
@@ -196,7 +212,8 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
    */
-  protected String findMatrixVariableName(MatrixVariable annotation, String defaultName) {
+  protected @Nullable String findMatrixVariableName(
+      MatrixVariable annotation, @Nullable String defaultName) {
     String name = annotation.name();
     if (!StringUtils.hasLength(name)) {
       name = annotation.value();

@@ -180,8 +180,9 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    */
   protected Context contextWrite(Context ctx, ServerWebExchange exchange, ProblemContext context) {
     ctx = ctx.put(PROBLEM_CONTEXT_ATTRIBUTE, context);
-    if (StringUtils.hasLength(context.get("traceId"))) {
-      ctx = ctx.put(TRACE_ID_ATTRIBUTE, context.get("traceId"));
+    String traceId = context.get("traceId");
+    if (StringUtils.hasLength(traceId)) {
+      ctx = ctx.put(TRACE_ID_ATTRIBUTE, traceId);
     }
     return ctx;
   }

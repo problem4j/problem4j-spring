@@ -21,6 +21,8 @@
 
 package io.github.problem4j.spring.web;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Defines configuration settings used by {@link ProblemPostProcessor} implementations to control
  * how problem responses are modified before being returned to the client.
@@ -42,7 +44,7 @@ public interface PostProcessorSettings {
    *
    * @return the configured type override template, or {@code null} if not set
    */
-  String getTypeOverride();
+  @Nullable String getTypeOverride();
 
   /**
    * Returns the configured override template for the {@code instance} field of a problem.
@@ -52,5 +54,5 @@ public interface PostProcessorSettings {
    *
    * @return the configured instance override template, or {@code null} if not set
    */
-  String getInstanceOverride();
+  @Nullable String getInstanceOverride();
 }

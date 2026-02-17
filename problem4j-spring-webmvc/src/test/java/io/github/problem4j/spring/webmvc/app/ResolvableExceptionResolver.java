@@ -26,11 +26,13 @@ import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import io.github.problem4j.spring.webmvc.app.problem.ResolvableException;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 
 @Component
+@NullMarked
 public class ResolvableExceptionResolver implements ProblemResolver {
 
   @Override

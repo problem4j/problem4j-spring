@@ -26,6 +26,7 @@ import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.StringUtils;
 
 /**
@@ -86,7 +87,7 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    * {@code about:blank} value is preserved instead of becoming empty.
    */
   @Override
-  public Problem process(ProblemContext context, Problem problem) {
+  public Problem process(@Nullable ProblemContext context, Problem problem) {
     if (context == null) {
       context = ProblemContext.create();
     }
@@ -109,8 +110,8 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    * @param builder the problem builder to update, or null to create a new one
    * @return the updated or original builder
    */
-  protected ProblemBuilder overrideProblemType(
-      ProblemContext context, Problem problem, ProblemBuilder builder) {
+  protected @Nullable ProblemBuilder overrideProblemType(
+      ProblemContext context, Problem problem, @Nullable ProblemBuilder builder) {
     if (!StringUtils.hasLength(settings.getTypeOverride())) {
       return builder;
     }
@@ -177,8 +178,8 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    * @param builder the problem builder to update, or null to create a new one
    * @return the updated or original builder
    */
-  protected ProblemBuilder overrideProblemInstance(
-      ProblemContext context, Problem problem, ProblemBuilder builder) {
+  protected @Nullable ProblemBuilder overrideProblemInstance(
+      ProblemContext context, Problem problem, @Nullable ProblemBuilder builder) {
     if (!StringUtils.hasLength(settings.getInstanceOverride())) {
       return builder;
     }
@@ -192,7 +193,8 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
 
     if (canOverride(needsProblemInstance, hasProblemInstance, needsTraceId, hasTraceId)) {
       String newInstance = overrideInstance(context, problem);
-      if (!newInstance.equals(stringOrEmpty(problem.getInstance()))) {
+      if (StringUtils.hasLength(newInstance)
+          && !newInstance.equals(stringOrEmpty(problem.getInstance()))) {
         if (builder == null) {
           builder = problem.toBuilder();
         }
@@ -246,7 +248,7 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
     template = template.replace("{context.traceId}", traceIdValue);
 
     if (hasRemainingUnknownPlaceholders(template)) {
-      return problem.getInstance().toString();
+      return instanceValue;
     }
 
     return template;
@@ -258,7 +260,7 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    * @param value the value to convert
    * @return the string representation or empty string
    */
-  protected String stringOrEmpty(Object value) {
+  protected String stringOrEmpty(@Nullable Object value) {
     return value != null ? value.toString() : "";
   }
 

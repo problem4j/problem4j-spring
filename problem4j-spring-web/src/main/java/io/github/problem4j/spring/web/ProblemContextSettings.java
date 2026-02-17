@@ -21,6 +21,8 @@
 
 package io.github.problem4j.spring.web;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Settings used when building a {@code ProblemContext} for incoming requests.
  *
@@ -41,5 +43,5 @@ public interface ProblemContextSettings {
    *
    * @return the tracing header name, or {@code null} if tracing is disabled / not configured
    */
-  String getTracingHeaderName();
+  @Nullable String getTracingHeaderName();
 }

@@ -33,6 +33,7 @@ import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import java.util.List;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -86,8 +87,12 @@ public class ProblemEnhancedWebMvcHandler extends ResponseEntityExceptionHandler
   }
 
   @Override
-  protected ResponseEntity<Object> handleExceptionInternal(
-      Exception ex, Object body, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+  protected @Nullable ResponseEntity<Object> handleExceptionInternal(
+      Exception ex,
+      @Nullable Object body,
+      @Nullable HttpHeaders headers,
+      HttpStatusCode status,
+      WebRequest request) {
     ProblemContext context =
         (ProblemContext) request.getAttribute(PROBLEM_CONTEXT_ATTRIBUTE, SCOPE_REQUEST);
     if (context == null) {

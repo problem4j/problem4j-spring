@@ -19,34 +19,8 @@
  * SOFTWARE.
  */
 
-package io.github.problem4j.spring.webflux.app;
-
-import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemBuilder;
-import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.resolver.ProblemResolver;
-import io.github.problem4j.spring.webflux.app.problem.ResolvableException;
-import org.jspecify.annotations.NullMarked;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.stereotype.Component;
-
-@Component
+/** TODO: add javadoc */
 @NullMarked
-public class ResolvableExceptionResolver implements ProblemResolver {
+package io.github.problem4j.spring.webmvc.resolver;
 
-  @Override
-  public Class<? extends Exception> getExceptionClass() {
-    return ResolvableException.class;
-  }
-
-  @Override
-  public ProblemBuilder resolveBuilder(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return Problem.builder()
-        .type("http://exception.example.org/resolvable")
-        .title(ex.getClass().getSimpleName())
-        .status(422)
-        .extension("package", ex.getClass().getPackageName());
-  }
-}
+import org.jspecify.annotations.NullMarked;

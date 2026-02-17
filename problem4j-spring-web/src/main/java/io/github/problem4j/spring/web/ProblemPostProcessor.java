@@ -23,6 +23,7 @@ package io.github.problem4j.spring.web;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Defines a contract for post-processing {@link Problem} instances before they are returned in an
@@ -51,5 +52,5 @@ public interface ProblemPostProcessor {
    * @return a new or modified {@link Problem} to be returned to the client; may be the same
    *     instance if no changes are applied
    */
-  Problem process(ProblemContext context, Problem problem);
+  Problem process(@Nullable ProblemContext context, Problem problem);
 }

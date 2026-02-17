@@ -23,6 +23,7 @@ package io.github.problem4j.spring.web;
 
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties;
 import java.util.Locale;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.StringUtils;
 
 /**
@@ -66,7 +67,7 @@ public class DefaultProblemFormat implements ProblemFormat {
    * @return the formatted text, or {@code null} if input was {@code null}
    */
   @Override
-  public String formatDetail(String detail) {
+  public @Nullable String formatDetail(@Nullable String detail) {
     if (!StringUtils.hasLength(detail)) {
       return detail;
     }

@@ -23,6 +23,7 @@ package io.github.problem4j.spring.web;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemStatus;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
@@ -173,7 +174,7 @@ public final class ProblemSupport {
    * @return the corresponding {@link ProblemStatus}, or {@link ProblemStatus#INTERNAL_SERVER_ERROR}
    *     if the status is {@code null} or invalid
    */
-  public static ProblemStatus resolveStatus(HttpStatusCode status) {
+  public static ProblemStatus resolveStatus(@Nullable HttpStatusCode status) {
     return status == null
         ? ProblemStatus.INTERNAL_SERVER_ERROR
         : ProblemStatus.findValue(status.value()).orElse(ProblemStatus.INTERNAL_SERVER_ERROR);

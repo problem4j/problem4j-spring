@@ -23,6 +23,7 @@ package io.github.problem4j.spring.web;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Convenience implementation for {@link ProblemPostProcessor} which doesn't transform input data.
@@ -37,7 +38,7 @@ public class IdentityProblemPostProcessor implements ProblemPostProcessor {
    * @return the same instance provided in {@code problem}
    */
   @Override
-  public Problem process(ProblemContext context, Problem problem) {
+  public Problem process(@Nullable ProblemContext context, Problem problem) {
     return problem;
   }
 }

@@ -22,6 +22,7 @@
 package io.github.problem4j.spring.web.parameter;
 
 import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.MethodParameter;
 
 /** Marker interface for method parameter support in problem4j-spring-web. */
@@ -36,5 +37,5 @@ public interface MethodParameterSupport {
    * @param parameter Spring {@link MethodParameter} (may be {@code null})
    * @return optional parameter name; empty if the input is {@code null}
    */
-  Optional<String> findParameterName(MethodParameter parameter);
+  Optional<String> findParameterName(@Nullable MethodParameter parameter);
 }
