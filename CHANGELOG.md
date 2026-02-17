@@ -6,6 +6,54 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+## [2.1.3] - 2026-02-12
+
+### Changed
+
+- Bump `problem4j-core` to `1.3.3`.
+- Bump `problem4j-jackson2` to `1.3.3`.
+- Bump `problem4j-jackson3` to `1.3.3`.
+
+## [2.1.2] - 2026-01-31
+
+### Changed
+
+- Bump `problem4j-core` to `1.3.2`.
+- Bump `problem4j-jackson2` to `1.3.2`.
+- Bump `problem4j-jackson3` to `1.3.2`.
+
+### Fixed
+
+- Hide nested configuration class (`ProblemXmlMapperConfiguration`) that was accidentally released as `public`.
+
+## [2.1.1] - 2026-01-16
+
+### Added
+
+- Finalize missing JavaDocs (and fix various existing) - all `public` classes and methods now have proper JavaDocs.
+
+### Changed
+
+- Bump `problem4j-core` to `1.3.1`.
+- Bump `problem4j-jackson2` to `1.3.1`.
+- Bump `problem4j-jackson3` to `1.3.1`.
+
+### Fixed
+
+- Hardcode value of `PROBLEM_CONTEXT_ATTRIBUTE` const to make it possible to use in annotation.
+
+## [2.1.0] - 2025-12-24
+
+Versions `2.0.x` were released in sandbox namespace and are ignored in this `CHANGELOG.md`. Version `2.1.0` is the first
+public release for Problem4J's integration with Spring Boot 4.
+
+### Changed
+
+- Integrate with **Spring Boot to `4.0.0`** (and by extension with Spring Framework to `7.0.1`).
+- Integrate with Jackson 3 via `problem4j-jackson3`.
+- Enable backwards compatibility with Jackson 2.x using `@ConditionalOnClass` (so you need to add `spring-boot-jackson2`
+  module manually).
+
 ## [1.2.3] - 2026-02-12
 
 ### Changed
