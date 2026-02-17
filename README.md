@@ -65,20 +65,13 @@ The primary ways to produce a `Problem` response are:
 ### 1. Throwing a `ProblemException`
 
 ```java
-throw new ProblemException(
-    Problem.builder()
-        .type("errors/invalid-request")
-        .title("Invalid Request")
-        .status(400)
-        .detail("not a valid json")
-        .build());
+throw new ProblemException(Problem.of("Invalid Request", 400, "not a valid json"));
 ```
 
 It would produce following response with `application/problem+json`.
 
 ```json
 {
-    "type": "errors/invalid-request",
     "title": "Invalid Request",
     "status": 400,
     "detail": "not a valid json"
@@ -245,11 +238,27 @@ task. **Note** that **building will fail** if code is not properly formatted.
 ./gradlew spotlessApply
 ```
 
-To publish the built artifacts to local Maven repository, run following command, replacing `XXXX` with the desired
-version. By default, the version is `unspecified` (Gradle's default).
+**Note** that if the year has changed, add `-Pspotless.license-year-enabled` flag to update the year in license headers.
+The [publishing GitHub Action](.github/workflows/gradle-publish-release.yml) will fail if the year is not updated, but
+for local development and builds you can choose to skip it and update the year later.
 
 ```bash
-./gradlew -Pversion=XXXX publishToMavenLocal
+./gradlew spotlessApply -Pspotless.license-year-enabled
+```
+
+To publish the built artifacts to local Maven repository, use `publishToMavenLocal` task.
+
+```bash
+./gradlew publishToMavenLocal
+```
+
+Note that for using Maven Local artifacts in target projects, you need to add `mavenLocal()` repository.
+
+```kotlin
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
 ```
 
 </details>
