@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
 
-/** TODO: add javadoc */
+/** Spring Boot auto-configuration for Spring Web integration with Problem4J. */
 @NullMarked
 package io.github.problem4j.spring.web.autoconfigure;
 

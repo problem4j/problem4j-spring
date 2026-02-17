@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
 
-/** TODO: add javadoc */
+/** Utilities for handling method parameters and validation violations. */
 @NullMarked
 package io.github.problem4j.spring.web.parameter;
 

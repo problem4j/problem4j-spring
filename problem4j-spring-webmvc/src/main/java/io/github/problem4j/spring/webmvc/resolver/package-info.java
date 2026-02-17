@@ -19,7 +19,11 @@
  * SOFTWARE.
  */
 
-/** TODO: add javadoc */
+/**
+ * WebMVC-specific exception resolvers.
+ *
+ * <p>Implements {@code ProblemResolver} for Spring WebMVC framework exceptions.
+ */
 @NullMarked
 package io.github.problem4j.spring.webmvc.resolver;
 

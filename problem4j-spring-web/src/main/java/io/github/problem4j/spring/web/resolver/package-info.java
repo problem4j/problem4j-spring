@@ -19,7 +19,23 @@
  * SOFTWARE.
  */
 
-/** TODO: add javadoc */
+/**
+ * Exception-to-problem resolution framework.
+ *
+ * <p>Provides the {@code ProblemResolver} interface and a comprehensive set of built-in
+ * implementations for mapping Spring framework exceptions and validation errors to RFC 7807 {@code
+ * Problem} responses. Resolvers handle:
+ *
+ * <ul>
+ *   <li>Validation errors (constraint violations, binding errors, method validation)
+ *   <li>Request errors (HTTP method not supported, media type issues, missing values)
+ *   <li>Parsing errors (HTTP message not readable, decoding problems)
+ *   <li>Server errors (error response mapping, exception handling)
+ * </ul>
+ *
+ * <p>Custom resolvers can be registered with {@code ProblemResolverStore} to extend the framework's
+ * default behavior.
+ */
 @NullMarked
 package io.github.problem4j.spring.web.resolver;
 
