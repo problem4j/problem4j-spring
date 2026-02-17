@@ -41,4 +41,4 @@ jobs:
         run: |
           VERSION="${GITHUB_REF_NAME#v}"  # removes leading 'v' from tag name
           echo "::notice::publishing version $VERSION"
-          ./gradlew -Pversion="$VERSION" -Psign publishAggregationToCentralPortal
+          ./gradlew -Pversion="$VERSION" -Psign -Pspotless.license-year-enabled publishAggregationToCentralPortal
