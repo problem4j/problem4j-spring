@@ -152,7 +152,10 @@ public class ProblemContextWebMvcFilter extends OncePerRequestFilter {
   protected void assignContextAttributes(
       HttpServletRequest request, HttpServletResponse response, ProblemContext context) {
     request.setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, context);
-    request.setAttribute(TRACE_ID_ATTRIBUTE, context.get("traceId"));
+    String traceId = context.get("traceId");
+    if (StringUtils.hasLength(traceId)) {
+      request.setAttribute(TRACE_ID_ATTRIBUTE, traceId);
+    }
   }
 
   /**
