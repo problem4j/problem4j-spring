@@ -4,7 +4,7 @@
 
 The following version lines are actively supported:
 
-- `v2.1.x` (`main` branch) - supported versions line for Spring Boot 4,
+- `v2.2.x` (`main` branch) - supported versions line for Spring Boot 4,
 - `v1.2.x` (`release-v1.2.x` branch) - supported versions line for Spring Boot 3.
 
 ## Dependencies
