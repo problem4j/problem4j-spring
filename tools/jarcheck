@@ -1,0 +1,41 @@
+#!/bin/bash
+
+###############################################################################
+#
+#   An utility script to checking which Java version compiled each submodule
+#   of this project.
+#
+###############################################################################
+
+echo "===================================================="
+echo "Verifying Java version for classes within JAR files."
+echo ""
+echo "  problem4j-spring-web     must be 61 (Java 17)"
+echo "  problem4j-spring-webflux must be 61 (Java 17)"
+echo "  problem4j-spring-webmvc  must be 61 (Java 17)"
+echo ""
+echo "Note that JAR files must exist (./gradlew build)."
+echo ""
+
+echo "===== problem4j-spring-web ====="
+javap \
+    -verbose \
+    -classpath problem4j-spring-web/build/libs/problem4j-spring-web-*-SNAPSHOT.jar \
+    io.github.problem4j.spring.web.autoconfigure.ProblemAutoConfiguration \
+    | grep "major version"
+
+echo ""
+echo "===== problem4j-spring-webflux ====="
+javap \
+    -verbose \
+    -classpath problem4j-spring-webflux/build/libs/problem4j-spring-webflux-*-SNAPSHOT.jar \
+    io.github.problem4j.spring.webflux.autoconfigure.ProblemWebFluxAutoConfiguration \
+    | grep "major version"
+
+echo ""
+echo "===== problem4j-spring-webmvc ====="
+javap \
+    -verbose \
+    -classpath problem4j-spring-webmvc/build/libs/problem4j-spring-webmvc-*-SNAPSHOT.jar \
+    io.github.problem4j.spring.webmvc.autoconfigure.ProblemWebMvcAutoConfiguration \
+    | grep "major version"
