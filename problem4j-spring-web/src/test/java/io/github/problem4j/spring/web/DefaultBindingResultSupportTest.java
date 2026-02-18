@@ -28,6 +28,7 @@ import io.github.problem4j.spring.web.parameter.BindingResultSupport;
 import io.github.problem4j.spring.web.parameter.DefaultBindingResultSupport;
 import io.github.problem4j.spring.web.parameter.Violation;
 import java.util.List;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
@@ -75,7 +76,7 @@ class DefaultBindingResultSupportTest {
   }
 
   static class TestObject {
-    private String name;
-    private Integer age;
+    private @Nullable String name;
+    private @Nullable Integer age;
   }
 }

@@ -38,8 +38,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.jspecify.annotations.NullUnmarked;
 import org.junit.jupiter.api.Test;
 
 class CachingProblemResolverStoreTest {
@@ -118,10 +118,9 @@ class CachingProblemResolverStoreTest {
             });
 
     int threadCount = 20;
-    ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 
     List<Future<Optional<ProblemResolver>>> futures;
-    try {
+    try (ExecutorService executor = Executors.newFixedThreadPool(threadCount)) {
       List<Callable<Optional<ProblemResolver>>> tasks = new ArrayList<>();
 
       for (int i = 0; i < threadCount; i++) {
@@ -129,11 +128,7 @@ class CachingProblemResolverStoreTest {
       }
 
       futures = executor.invokeAll(tasks);
-    } finally {
-      executor.shutdown();
     }
-
-    assertTrue(executor.awaitTermination(2, TimeUnit.SECONDS));
 
     for (Future<Optional<ProblemResolver>> f : futures) {
       assertTrue(f.get().isPresent());
@@ -149,6 +144,7 @@ class CachingProblemResolverStoreTest {
 
   private static class Ex3 extends Exception {}
 
+  @NullUnmarked
   @Test
   void givenLimitedCache_whenExceeded_thenEvictsLeastRecentlyUsed() {
     int maxCacheSize = 2;

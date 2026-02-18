@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -236,15 +237,16 @@ class DefaultProblemPostProcessorTest {
     assertThat(result).isSameAs(problem);
   }
 
-  private PostProcessorSettings getSettings(String typeOverride, String instanceOverride) {
+  private PostProcessorSettings getSettings(
+      @Nullable String typeOverride, @Nullable String instanceOverride) {
     return new PostProcessorSettings() {
       @Override
-      public String getTypeOverride() {
+      public @Nullable String getTypeOverride() {
         return typeOverride;
       }
 
       @Override
-      public String getInstanceOverride() {
+      public @Nullable String getInstanceOverride() {
         return instanceOverride;
       }
     };
