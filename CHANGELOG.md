@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-02-18
+
 ### Added
 
 - Add support for JSpecify annotations for nullability and Kotlin interop.
