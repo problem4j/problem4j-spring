@@ -71,7 +71,7 @@ public class DefaultProblemFormat implements ProblemFormat {
     if (!StringUtils.hasLength(detail)) {
       return detail;
     }
-    return switch (detailFormat.toLowerCase()) {
+    return switch (detailFormat.toLowerCase(Locale.ROOT)) {
       case ProblemProperties.DetailFormat.LOWERCASE -> detail.toLowerCase(Locale.ROOT);
       case ProblemProperties.DetailFormat.CAPITALIZED -> capitalize(detail);
       case ProblemProperties.DetailFormat.UPPERCASE -> detail.toUpperCase(Locale.ROOT);

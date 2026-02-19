@@ -1,3 +1,4 @@
+import internal.isTestTask
 import net.ltgt.gradle.errorprone.errorprone
 
 plugins {
@@ -7,7 +8,10 @@ plugins {
 
 tasks.withType<JavaCompile>().configureEach {
     options.errorprone {
-        disableAllChecks.set(true)
+        if (isTestTask()) {
+            disableAllChecks = true
+        }
+
         error("NullAway")
         option("NullAway:OnlyNullMarked", "true")
         option("NullAway:JSpecifyMode", "true")

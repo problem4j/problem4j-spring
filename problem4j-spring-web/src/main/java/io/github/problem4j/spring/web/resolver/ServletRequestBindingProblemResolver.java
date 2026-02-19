@@ -93,13 +93,13 @@ public class ServletRequestBindingProblemResolver extends AbstractProblemResolve
    *
    * <ul>
    *   <li>{@link MissingPathVariableException}: detail {@code MISSING_PATH_VARIABLE_DETAIL},
-   *       extension {@code name}
+   *       extension {@code "name"}
    *   <li>{@link MissingServletRequestParameterException}: detail {@code
-   *       MISSING_REQUEST_PARAM_DETAIL}, extensions {@code param}, {@code kind}
+   *       MISSING_REQUEST_PARAM_DETAIL}, extensions {@code "param"}, {@code "kind"}
    *   <li>{@link MissingRequestHeaderException}: detail {@code MISSING_HEADER_DETAIL}, extension
-   *       {@code header}
+   *       {@code "header"}
    *   <li>{@link MissingRequestCookieException}: detail {@code MISSING_COOKIE_DETAIL}, extension
-   *       {@code cookie}
+   *       {@code "cookie"}
    *   <li>Generic {@link ServletRequestBindingException} whose message matches {@code ^Missing
    *       (session|request) attribute '...'}: detail set to corresponding missing attribute message
    *       and extension {@code attribute}
