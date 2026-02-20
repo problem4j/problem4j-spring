@@ -45,7 +45,7 @@ spotless {
         // License headers in these files are not formatted with standard java group, so we need to use custom settings.
         // The regex is designed find out where the code starts in these files, so the license header can be placed
         // before it. The code starts with either "package", "import", "module" or "/**" in case of a global JavaDoc.
-        val delimiter = "^(package|import|module|/\\*\\*)"
+        val delimiter = "^(@|package|import|module|/\\*\\*)"
 
         licenseHeaderFile(licenseHeader, delimiter).updateYearWithLatest(updateLicenseYear)
     }
@@ -84,3 +84,5 @@ spotless {
         lineEndings = LineEnding.UNIX
     }
 }
+
+defaultTasks("spotlessApply", "build")
