@@ -51,7 +51,7 @@ spotless {
         // - any annotation (ex. @NullMarked before package declaration),
         // - package, module or import declaration,
         // - "/**" in case of a pre-package (or pre-module) JavaDoc.
-        val delimiter = "^(\\s*@|package|import|module|/\\*\\*)"
+        val delimiter = "^(@|package|import|module|/\\*\\*)"
 
         licenseHeaderFile(licenseHeader, delimiter).updateYearWithLatest(updateLicenseYear)
     }
