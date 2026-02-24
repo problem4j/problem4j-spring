@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
 
-/** Spring Boot auto-configuration for Spring WebFlux integration with Problem4J. */
+/** Spring Boot auto-configuration for Spring WebMVC integration with Problem4J. */
 @NullMarked
 package io.github.problem4j.spring.webmvc.autoconfigure;
 
