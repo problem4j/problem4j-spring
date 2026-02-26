@@ -67,12 +67,6 @@ public class ErrorResponseProblemResolver extends AbstractProblemResolver {
    * <p>The provided {@code status} parameter is ignored in favor of the status contained in the
    * exception. {@code headers} and {@code context} are currently not used but are part of the SPI.
    *
-   * <p>Deprecation of {@link ProblemBuilder#extension(java.util.Map)} is ignored, as this library
-   * is supposed to work with {@code problem4j-core:1.3.x} (any version from {@code 1.3.x}
-   * generation).
-   *
-   * <p>TODO: resolve deprecation while releasing {@code problem4j-spring:2.2.0}
-   *
    * @param context problem context (unused)
    * @param ex the {@link ErrorResponseException} to convert
    * @param headers HTTP response headers (unused)
@@ -81,7 +75,6 @@ public class ErrorResponseProblemResolver extends AbstractProblemResolver {
    * @see org.springframework.web.ErrorResponse
    */
   @Override
-  @SuppressWarnings("deprecation")
   public ProblemBuilder resolveBuilder(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ErrorResponseException e = (ErrorResponseException) ex;
@@ -94,7 +87,7 @@ public class ErrorResponseProblemResolver extends AbstractProblemResolver {
             .instance(e.getBody().getInstance());
 
     if (e.getBody().getProperties() != null) {
-      builder = builder.extension(e.getBody().getProperties());
+      builder = builder.extensions(e.getBody().getProperties());
     }
 
     return builder;
