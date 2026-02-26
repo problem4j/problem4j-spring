@@ -1,7 +1,7 @@
 package internal
 
 /**
- * Represents a single developer entry used in publishing metadata (e.g. POM developers section).
+ * Represents a single license entry used in publishing metadata (e.g. POM licenses section).
  *
  * All fields except [name] are optional to allow partial definitions in `gradle.properties`.
  * Missing optional values are simply omitted from the generated publication metadata.

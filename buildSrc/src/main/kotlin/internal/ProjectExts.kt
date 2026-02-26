@@ -29,12 +29,13 @@ fun Project.findDevelopers(): List<Developer> {
   while (true) {
     developers.add(
         Developer(
-            findProperty("internal.pom.developers.$index.id") as? String ?: break,
-            findProperty("internal.pom.developers.$index.name") as? String,
-            findProperty("internal.pom.developers.$index.url") as? String,
-            findProperty("internal.pom.developers.$index.email") as? String,
-            findProperty("internal.pom.developers.$index.organization") as? String,
-            findProperty("internal.pom.developers.$index.organization-url") as? String,
+            id = findProperty("internal.pom.developers.$index.id") as? String ?: break,
+            name = findProperty("internal.pom.developers.$index.name") as? String,
+            email = findProperty("internal.pom.developers.$index.email") as? String,
+            url = findProperty("internal.pom.developers.$index.url") as? String,
+            organization = findProperty("internal.pom.developers.$index.organization") as? String,
+            organizationUrl =
+                findProperty("internal.pom.developers.$index.organization-url") as? String,
         )
     )
     index++
@@ -60,20 +61,20 @@ fun Project.findDevelopers(): List<Developer> {
  * @receiver Gradle [Project] from which properties are read.
  */
 fun Project.findLicenses(): List<License> {
-  val developers = mutableListOf<License>()
+  val licenses = mutableListOf<License>()
   var index = 0
   while (true) {
-    developers.add(
+    licenses.add(
         License(
-            findProperty("internal.pom.licenses.$index.name") as? String ?: break,
-            findProperty("internal.pom.licenses.$index.url") as? String,
-            findProperty("internal.pom.licenses.$index.distribution") as? String,
-            findProperty("internal.pom.licenses.$index.comments") as? String,
+            name = findProperty("internal.pom.licenses.$index.name") as? String ?: break,
+            url = findProperty("internal.pom.licenses.$index.url") as? String,
+            distribution = findProperty("internal.pom.licenses.$index.distribution") as? String,
+            comments = findProperty("internal.pom.licenses.$index.comments") as? String,
         )
     )
     index++
   }
-  return developers
+  return licenses
 }
 
 /**
