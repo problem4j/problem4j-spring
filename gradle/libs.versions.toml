@@ -1,6 +1,6 @@
 [versions]
 jspecify = "1.0.0"
-errorprone = "2.47.0"
+errorprone = "2.48.0"
 errorprone-plugin = "5.0.0"
 nmcp = "1.4.4"
 nullaway = "0.13.1"
