@@ -25,7 +25,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +51,7 @@ class ResponseStatusExceptionWebMvcTest {
 
     Problem problem = objectMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem).isEqualTo(Problem.builder().status(ProblemStatus.GONE).build());
+    assertThat(problem).isEqualTo(Problem.builder().status(HttpStatus.GONE.value()).build());
   }
 
   @Test
@@ -66,6 +65,6 @@ class ResponseStatusExceptionWebMvcTest {
 
     Problem problem = objectMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem).isEqualTo(Problem.builder().status(ProblemStatus.GONE).build());
+    assertThat(problem).isEqualTo(Problem.builder().status(HttpStatus.GONE.value()).build());
   }
 }

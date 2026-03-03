@@ -24,10 +24,10 @@ package io.github.problem4j.spring.web.resolver;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 
@@ -59,7 +59,7 @@ public class HttpMediaTypeNotSupportedProblemResolver extends AbstractProblemRes
   }
 
   /**
-   * Returns a {@link ProblemBuilder} with status {@link ProblemStatus#UNSUPPORTED_MEDIA_TYPE} (HTTP
+   * Returns a {@link ProblemBuilder} with status {@link HttpStatus#UNSUPPORTED_MEDIA_TYPE} (HTTP
    * 415). Other parameters are ignored because the status is mandated by the semantics of {@link
    * HttpMediaTypeNotSupportedException}.
    *
@@ -72,6 +72,6 @@ public class HttpMediaTypeNotSupportedProblemResolver extends AbstractProblemRes
   @Override
   public ProblemBuilder resolveBuilder(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return Problem.builder().status(ProblemStatus.UNSUPPORTED_MEDIA_TYPE);
+    return Problem.builder().status(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value());
   }
 }

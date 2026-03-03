@@ -28,12 +28,12 @@ import static io.github.problem4j.spring.web.ProblemSupport.TYPE_MISMATCH_DETAIL
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import java.util.Locale;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
@@ -65,8 +65,8 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver {
 
   /**
    * Resolves a {@link TypeMismatchException} (also {@link MethodArgumentTypeMismatchException})
-   * into a {@link ProblemBuilder} with status {@link ProblemStatus#BAD_REQUEST}, a standardized
-   * detail ({@code ProblemSupport#TYPE_MISMATCH_DETAIL}), and optional extensions:
+   * into a {@link ProblemBuilder} with status {@link HttpStatus#BAD_REQUEST}, a standardized detail
+   * ({@code ProblemSupport#TYPE_MISMATCH_DETAIL}), and optional extensions:
    *
    * <ul>
    *   <li>{@code property} ({@code ProblemSupport#PROPERTY_EXTENSION}) - name of the parameter /
@@ -91,7 +91,7 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver {
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ProblemBuilder builder =
         Problem.builder()
-            .status(ProblemStatus.BAD_REQUEST)
+            .status(HttpStatus.BAD_REQUEST.value())
             .detail(formatDetail(TYPE_MISMATCH_DETAIL));
 
     TypeMismatchException ex1 = (TypeMismatchException) ex;

@@ -25,7 +25,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import io.github.problem4j.spring.webmvc.app.problem.ResolvableException;
 import org.junit.jupiter.api.Test;
@@ -155,6 +154,6 @@ class ProblemAdviceWebMvcTest {
     Problem problem = objectMapper.readValue(response.getBody(), Problem.class);
 
     assertThat(problem)
-        .isEqualTo(Problem.builder().status(ProblemStatus.INTERNAL_SERVER_ERROR).build());
+        .isEqualTo(Problem.builder().status(HttpStatus.INTERNAL_SERVER_ERROR.value()).build());
   }
 }

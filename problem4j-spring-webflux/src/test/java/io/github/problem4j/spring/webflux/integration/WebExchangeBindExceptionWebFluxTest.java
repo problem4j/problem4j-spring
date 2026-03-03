@@ -26,7 +26,6 @@ import static io.github.problem4j.spring.web.ProblemSupport.VALIDATION_FAILED_DE
 import static org.hamcrest.Matchers.notNullValue;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +59,7 @@ class WebExchangeBindExceptionWebFluxTest {
         .value(notNullValue())
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(VALIDATION_FAILED_DETAIL)
                 .extension(
                     ERRORS_EXTENSION, List.of(Map.of("field", "number", "error", "is not valid")))

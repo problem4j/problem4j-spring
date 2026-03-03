@@ -37,13 +37,13 @@ import static io.github.problem4j.spring.web.ProblemSupport.PARAM_EXTENSION;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingRequestCookieException;
@@ -86,8 +86,8 @@ public class ServletRequestBindingProblemResolver extends AbstractProblemResolve
 
   /**
    * Resolves a {@link ServletRequestBindingException} (or one of its common subclasses) into a
-   * {@link ProblemBuilder} with {@link ProblemStatus#BAD_REQUEST} status and appropriate detail
-   * plus metadata extensions.
+   * {@link ProblemBuilder} with {@link HttpStatus#BAD_REQUEST} status and appropriate detail plus
+   * metadata extensions.
    *
    * <p>Subtype handling:
    *
@@ -115,7 +115,7 @@ public class ServletRequestBindingProblemResolver extends AbstractProblemResolve
   @Override
   public ProblemBuilder resolveBuilder(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    ProblemBuilder builder = Problem.builder().status(ProblemStatus.BAD_REQUEST);
+    ProblemBuilder builder = Problem.builder().status(HttpStatus.BAD_REQUEST.value());
 
     if (ex instanceof MissingPathVariableException e) {
       builder =

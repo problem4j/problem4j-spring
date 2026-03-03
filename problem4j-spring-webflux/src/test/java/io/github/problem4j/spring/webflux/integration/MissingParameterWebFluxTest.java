@@ -38,13 +38,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -75,7 +75,7 @@ class MissingParameterWebFluxTest {
               assertThat(problem)
                   .isEqualTo(
                       Problem.builder()
-                          .status(ProblemStatus.BAD_REQUEST)
+                          .status(HttpStatus.BAD_REQUEST.value())
                           .detail(MISSING_PATH_VARIABLE_DETAIL)
                           .extension(NAME_EXTENSION, "var")
                           .build());
@@ -111,7 +111,7 @@ class MissingParameterWebFluxTest {
               assertThat(problem)
                   .isEqualTo(
                       Problem.builder()
-                          .status(ProblemStatus.BAD_REQUEST)
+                          .status(HttpStatus.BAD_REQUEST.value())
                           .detail(MISSING_REQUEST_PARAM_DETAIL)
                           .extension(PARAM_EXTENSION, "param")
                           .extension(KIND_EXTENSION, "string")
@@ -153,7 +153,7 @@ class MissingParameterWebFluxTest {
               assertThat(problem)
                   .isEqualTo(
                       Problem.builder()
-                          .status(ProblemStatus.BAD_REQUEST)
+                          .status(HttpStatus.BAD_REQUEST.value())
                           .detail(MISSING_REQUEST_PART_DETAIL)
                           .extension(PARAM_EXTENSION, "file")
                           .build());
@@ -201,7 +201,7 @@ class MissingParameterWebFluxTest {
               assertThat(problem)
                   .isEqualTo(
                       Problem.builder()
-                          .status(ProblemStatus.BAD_REQUEST)
+                          .status(HttpStatus.BAD_REQUEST.value())
                           .detail(MISSING_HEADER_DETAIL)
                           .extension(HEADER_EXTENSION, "X-Custom-Header")
                           .build());
@@ -238,7 +238,7 @@ class MissingParameterWebFluxTest {
               assertThat(problem)
                   .isEqualTo(
                       Problem.builder()
-                          .status(ProblemStatus.BAD_REQUEST)
+                          .status(HttpStatus.BAD_REQUEST.value())
                           .detail(MISSING_COOKIE_DETAIL)
                           .extension(COOKIE_EXTENSION, "x_session")
                           .build());
@@ -275,7 +275,7 @@ class MissingParameterWebFluxTest {
               assertThat(problem)
                   .isEqualTo(
                       Problem.builder()
-                          .status(ProblemStatus.BAD_REQUEST)
+                          .status(HttpStatus.BAD_REQUEST.value())
                           .detail(MISSING_REQUEST_ATTRIBUTE_DETAIL)
                           .extension(ATTRIBUTE_EXTENSION, "attr")
                           .build());
@@ -296,7 +296,7 @@ class MissingParameterWebFluxTest {
         .value(notNullValue())
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(MISSING_SESSION_ATTRIBUTE_DETAIL)
                 .extension(ATTRIBUTE_EXTENSION, "attr")
                 .build());

@@ -172,7 +172,12 @@ public final class ProblemSupport {
    * @param status the {@link HttpStatusCode} to resolve
    * @return the corresponding {@link ProblemStatus}, or {@link ProblemStatus#INTERNAL_SERVER_ERROR}
    *     if the status is {@code null} or invalid
+   * @deprecated Decided that {@link ProblemStatus} will be considered an internal utility of
+   *     Problem4J Core and will be made package-private in a future major release. The decision was
+   *     made to not confuse users of the library as each HTTP framework most likely has its own
+   *     enum for HTTP status codes.
    */
+  @Deprecated(since = "1.2.7", forRemoval = true)
   public static ProblemStatus resolveStatus(HttpStatusCode status) {
     return status == null
         ? ProblemStatus.INTERNAL_SERVER_ERROR

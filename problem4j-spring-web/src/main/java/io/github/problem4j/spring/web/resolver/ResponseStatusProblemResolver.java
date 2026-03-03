@@ -21,8 +21,6 @@
 
 package io.github.problem4j.spring.web.resolver;
 
-import static io.github.problem4j.spring.web.ProblemSupport.resolveStatus;
-
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
@@ -77,6 +75,6 @@ public class ResponseStatusProblemResolver extends AbstractProblemResolver {
   public ProblemBuilder resolveBuilder(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ResponseStatusException e = (ResponseStatusException) ex;
-    return Problem.builder().status(resolveStatus(e.getStatusCode()));
+    return Problem.builder().status(e.getStatusCode().value());
   }
 }

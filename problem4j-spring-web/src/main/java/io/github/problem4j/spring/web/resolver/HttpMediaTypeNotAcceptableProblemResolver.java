@@ -24,10 +24,10 @@ package io.github.problem4j.spring.web.resolver;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 
@@ -61,7 +61,7 @@ public class HttpMediaTypeNotAcceptableProblemResolver extends AbstractProblemRe
   }
 
   /**
-   * Returns a {@link ProblemBuilder} with {@link ProblemStatus#NOT_ACCEPTABLE} (HTTP 406). Other
+   * Returns a {@link ProblemBuilder} with {@link HttpStatus#NOT_ACCEPTABLE} (HTTP 406). Other
    * parameters ({@code context}, {@code headers}, {@code status}) are ignored because the status is
    * dictated by the semantics of {@link HttpMediaTypeNotAcceptableException}.
    *
@@ -74,6 +74,6 @@ public class HttpMediaTypeNotAcceptableProblemResolver extends AbstractProblemRe
   @Override
   public ProblemBuilder resolveBuilder(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return Problem.builder().status(ProblemStatus.NOT_ACCEPTABLE);
+    return Problem.builder().status(HttpStatus.NOT_ACCEPTABLE.value());
   }
 }

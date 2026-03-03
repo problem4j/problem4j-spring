@@ -22,7 +22,6 @@
 package io.github.problem4j.spring.web.resolver;
 
 import static io.github.problem4j.spring.web.ProblemSupport.PROPERTY_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.resolveStatus;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
@@ -109,7 +108,7 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
       return builder;
     }
 
-    return Problem.builder().status(resolveStatus(swie.getStatusCode()));
+    return Problem.builder().status(swie.getStatusCode().value());
   }
 
   private ProblemBuilder tryAppendingPropertyFromMethodParameter(

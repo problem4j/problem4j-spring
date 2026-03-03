@@ -38,7 +38,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +74,7 @@ class MissingParameterWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(MISSING_PATH_VARIABLE_DETAIL)
                 .extension(NAME_EXTENSION, "var")
                 .build());
@@ -103,7 +102,7 @@ class MissingParameterWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(MISSING_REQUEST_PARAM_DETAIL)
                 .extension(PARAM_EXTENSION, "param")
                 .extension(KIND_EXTENSION, "string")
@@ -138,7 +137,7 @@ class MissingParameterWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(MISSING_REQUEST_PART_DETAIL)
                 .extension(PARAM_EXTENSION, "file")
                 .build());
@@ -157,7 +156,7 @@ class MissingParameterWebMvcTest {
 
     Problem problem = objectMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem).isEqualTo(Problem.builder().status(ProblemStatus.BAD_REQUEST).build());
+    assertThat(problem).isEqualTo(Problem.builder().status(HttpStatus.BAD_REQUEST.value()).build());
   }
 
   @Test
@@ -193,7 +192,7 @@ class MissingParameterWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(MISSING_HEADER_DETAIL)
                 .extension(HEADER_EXTENSION, "X-Custom-Header")
                 .build());
@@ -221,7 +220,7 @@ class MissingParameterWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(MISSING_COOKIE_DETAIL)
                 .extension(COOKIE_EXTENSION, "x_session")
                 .build());
@@ -249,7 +248,7 @@ class MissingParameterWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(MISSING_REQUEST_ATTRIBUTE_DETAIL)
                 .extension(ATTRIBUTE_EXTENSION, "attr")
                 .build());
@@ -265,7 +264,7 @@ class MissingParameterWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(MISSING_SESSION_ATTRIBUTE_DETAIL)
                 .extension(ATTRIBUTE_EXTENSION, "attr")
                 .build());
