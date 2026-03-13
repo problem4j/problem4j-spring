@@ -19,27 +19,25 @@
  * SOFTWARE.
  */
 
-package io.github.problem4j.spring.webflux.app.rest;
+package io.github.problem4j.spring.webmvc.app.rest;
 
-import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemException;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/problem-override")
-public class ProblemOverrideController {
+@RequestMapping(path = "/send-error")
+public class SendErrorController {
 
-  @PostMapping(path = "/instance-override")
-  public String instanceOverride() {
-    throw new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value()));
+  @GetMapping("/internal-server-error")
+  public void internalServerError(HttpServletResponse response) throws IOException {
+    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
   }
 
-  @PostMapping(path = "/type-not-blank")
-  public String typeNotBlank() {
-    throw new ProblemException(
-        Problem.builder().type("not-blank").status(HttpStatus.BAD_REQUEST.value()).build());
+  @GetMapping("/no-content")
+  public void noContent(HttpServletResponse response) throws IOException {
+    response.sendError(HttpServletResponse.SC_NO_CONTENT);
   }
 }

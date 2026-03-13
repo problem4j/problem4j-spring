@@ -27,10 +27,10 @@ import static io.github.problem4j.spring.web.ProblemSupport.MAX_UPLOAD_SIZE_EXCE
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
@@ -61,10 +61,10 @@ public class MaxUploadSizeExceededProblemResolver extends AbstractProblemResolve
   }
 
   /**
-   * Builds a {@link ProblemBuilder} with status {@link ProblemStatus#CONTENT_TOO_LARGE}, a
-   * formatted standard detail message, and an extension entry providing the maximum allowed upload
-   * size. Other parameters ({@code context}, {@code headers}, {@code status}) are ignored because
-   * the semantics of {@link MaxUploadSizeExceededException} dictate the response.
+   * Builds a {@link ProblemBuilder} with status {@link HttpStatus#CONTENT_TOO_LARGE}, a formatted
+   * standard detail message, and an extension entry providing the maximum allowed upload size.
+   * Other parameters ({@code context}, {@code headers}, {@code status}) are ignored because the
+   * semantics of {@link MaxUploadSizeExceededException} dictate the response.
    *
    * @param context problem context (unused for this resolver)
    * @param ex the triggering {@link MaxUploadSizeExceededException}
@@ -78,7 +78,7 @@ public class MaxUploadSizeExceededProblemResolver extends AbstractProblemResolve
     MaxUploadSizeExceededException e = (MaxUploadSizeExceededException) ex;
     ProblemBuilder builder =
         Problem.builder()
-            .status(ProblemStatus.CONTENT_TOO_LARGE)
+            .status(HttpStatus.CONTENT_TOO_LARGE.value())
             .detail(formatDetail(MAX_UPLOAD_SIZE_EXCEEDED_DETAIL));
     if (e.getMaxUploadSize() > 0) {
       builder.extension(MAX_EXTENSION, e.getMaxUploadSize());

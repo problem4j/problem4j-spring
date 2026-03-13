@@ -237,6 +237,15 @@ class DefaultProblemPostProcessorTest {
     assertThat(result).isSameAs(problem);
   }
 
+  @Test
+  void givenProcessorWithSettings_whenGetSettings_thenReturnsSameInstance() {
+    PostProcessorSettings settings =
+        getSettings("/types/{problem.type}", "/instances/{context.traceId}");
+    DefaultProblemPostProcessor processor = new DefaultProblemPostProcessor(settings);
+
+    assertThat(processor.getSettings()).isSameAs(settings);
+  }
+
   private PostProcessorSettings getSettings(
       @Nullable String typeOverride, @Nullable String instanceOverride) {
     return new PostProcessorSettings() {

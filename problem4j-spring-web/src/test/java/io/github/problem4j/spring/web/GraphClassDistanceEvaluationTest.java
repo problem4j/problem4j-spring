@@ -68,6 +68,18 @@ class GraphClassDistanceEvaluationTest {
     }
 
     @Test
+    void givenTwoArgCalculate_whenDistance_thenUsesDefaultMaxDepth() {
+      ClassDistanceEvaluation evaluation = new GraphClassDistanceEvaluation();
+
+      int withDefault = evaluation.calculate(Level2Class.class, Object.class);
+      int withExplicit =
+          evaluation.calculate(
+              Level2Class.class, Object.class, ClassDistanceEvaluation.DEFAULT_MAX_DEPTH);
+
+      assertEquals(withExplicit, withDefault);
+    }
+
+    @Test
     void givenLowMaxDepth_whenDistance_thenShortCircuitValue() {
       ClassDistanceEvaluation evaluation = new GraphClassDistanceEvaluation();
       ClassDistanceEvaluation limitedEvaluation = new GraphClassDistanceEvaluation(2);

@@ -27,7 +27,6 @@ import static io.github.problem4j.spring.web.ProblemSupport.TYPE_MISMATCH_DETAIL
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +62,7 @@ class TypeMismatchWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(TYPE_MISMATCH_DETAIL)
                 .extension(PROPERTY_EXTENSION, "id")
                 .extension(KIND_EXTENSION, "integer")
@@ -92,7 +91,7 @@ class TypeMismatchWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(TYPE_MISMATCH_DETAIL)
                 .extension(PROPERTY_EXTENSION, "id")
                 .extension(KIND_EXTENSION, "integer")
@@ -127,7 +126,7 @@ class TypeMismatchWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(TYPE_MISMATCH_DETAIL)
                 .extension(PROPERTY_EXTENSION, "X-Id")
                 .extension(KIND_EXTENSION, "integer")
@@ -167,7 +166,7 @@ class TypeMismatchWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(TYPE_MISMATCH_DETAIL)
                 .extension(PROPERTY_EXTENSION, "id")
                 .extension(KIND_EXTENSION, "integer")

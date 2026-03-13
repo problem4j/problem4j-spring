@@ -27,7 +27,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
 import io.github.problem4j.spring.webflux.app.rest.ValidateMethodArgumentController;
 import java.util.List;
@@ -38,6 +37,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(
@@ -70,7 +70,7 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
                 assertThat(problem)
                     .isEqualTo(
                         Problem.builder()
-                            .status(ProblemStatus.BAD_REQUEST)
+                            .status(HttpStatus.BAD_REQUEST.value())
                             .detail(VALIDATION_FAILED_DETAIL)
                             .extension(
                                 ERRORS_EXTENSION,
@@ -102,7 +102,7 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
                 assertThat(problem)
                     .isEqualTo(
                         Problem.builder()
-                            .status(ProblemStatus.BAD_REQUEST)
+                            .status(HttpStatus.BAD_REQUEST.value())
                             .detail(VALIDATION_FAILED_DETAIL)
                             .extension(
                                 ERRORS_EXTENSION,
@@ -130,7 +130,7 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
                 assertThat(problem)
                     .isEqualTo(
                         Problem.builder()
-                            .status(ProblemStatus.BAD_REQUEST)
+                            .status(HttpStatus.BAD_REQUEST.value())
                             .detail(VALIDATION_FAILED_DETAIL)
                             .extension(
                                 ERRORS_EXTENSION,
@@ -159,7 +159,7 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
                 assertThat(problem)
                     .isEqualTo(
                         Problem.builder()
-                            .status(ProblemStatus.BAD_REQUEST)
+                            .status(HttpStatus.BAD_REQUEST.value())
                             .detail(VALIDATION_FAILED_DETAIL)
                             .extension(
                                 ERRORS_EXTENSION,

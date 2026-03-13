@@ -23,7 +23,6 @@ package io.github.problem4j.spring.webmvc.app.rest;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemException;
-import io.github.problem4j.core.ProblemStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +40,6 @@ public class ProblemOverrideController {
   @PostMapping(path = "/type-not-blank")
   public String typeNotBlank() {
     throw new ProblemException(
-        Problem.builder().type("not-blank").status(ProblemStatus.BAD_REQUEST).build());
+        Problem.builder().type("not-blank").status(HttpStatus.BAD_REQUEST.value()).build());
   }
 }

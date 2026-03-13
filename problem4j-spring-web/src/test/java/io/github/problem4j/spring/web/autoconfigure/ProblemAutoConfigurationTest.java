@@ -56,6 +56,8 @@ class ProblemAutoConfigurationTest {
 
       assertThat(properties).isNotNull();
       assertThat(properties.isEnabled()).isTrue();
+      assertThat(properties.getResolverCaching().getMaxCacheSize())
+          .isEqualTo(ProblemProperties.ResolverCaching.DEFAULT_MAX_CACHE_SIZE);
     }
   }
 

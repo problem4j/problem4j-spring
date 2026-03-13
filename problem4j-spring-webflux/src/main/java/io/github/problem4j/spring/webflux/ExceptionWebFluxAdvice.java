@@ -29,7 +29,6 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemMapper;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
@@ -146,12 +145,12 @@ public class ExceptionWebFluxAdvice {
         ResponseStatus responseStatus =
             AnnotatedElementUtils.findMergedAnnotation(ex.getClass(), ResponseStatus.class);
         if (responseStatus != null) {
-          builder = Problem.builder().status(resolveStatus(responseStatus.code()));
+          builder = Problem.builder().status(responseStatus.code().value());
           if (StringUtils.hasLength(responseStatus.reason())) {
             builder = builder.detail(responseStatus.reason());
           }
         } else {
-          builder = Problem.builder().status(ProblemStatus.INTERNAL_SERVER_ERROR);
+          builder = Problem.builder().status(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
       }
     }

@@ -24,7 +24,6 @@ package io.github.problem4j.spring.webmvc.integration;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +54,6 @@ class ErrorResponseWebMvcTest {
 
     assertThat(problem)
         .isEqualTo(
-            Problem.builder().status(ProblemStatus.CONFLICT).detail("this is detail").build());
+            Problem.builder().status(HttpStatus.CONFLICT.value()).detail("this is detail").build());
   }
 }

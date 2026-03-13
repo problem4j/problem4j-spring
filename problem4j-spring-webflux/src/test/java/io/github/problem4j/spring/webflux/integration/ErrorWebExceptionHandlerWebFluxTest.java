@@ -21,14 +21,10 @@
 
 package io.github.problem4j.spring.webflux.integration;
 
-import static io.github.problem4j.spring.web.ProblemSupport.ERRORS_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.VALIDATION_FAILED_DETAIL;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
-import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,29 +36,37 @@ import org.springframework.test.web.reactive.server.WebTestClient;
     classes = {WebFluxTestApp.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
-class WebExchangeBindExceptionWebFluxTest {
+class ErrorWebExceptionHandlerWebFluxTest {
 
   @Autowired private WebTestClient webTestClient;
 
   @Test
-  void givenModelAttributeTypeMismatch_shouldReturnBadRequestProblem() {
+  void givenFilterErrorNoContext_whenError_thenReturnsProblem() {
     webTestClient
         .get()
-        .uri(
-            uriBuilder -> uriBuilder.path("/web-exchange-bind").queryParam("number", "asd").build())
+        .uri("/error-handler/no-context")
         .exchange()
         .expectStatus()
-        .isEqualTo(HttpStatus.BAD_REQUEST)
+        .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
-        .isEqualTo(
-            Problem.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL)
-                .extension(
-                    ERRORS_EXTENSION, List.of(Map.of("field", "number", "error", "is not valid")))
-                .build());
+        .isEqualTo(Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+  }
+
+  @Test
+  void givenFilterErrorWithContext_whenError_thenReturnsProblem() {
+    webTestClient
+        .get()
+        .uri("/error-handler/with-context")
+        .exchange()
+        .expectStatus()
+        .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
+        .expectHeader()
+        .contentType(Problem.CONTENT_TYPE)
+        .expectBody(Problem.class)
+        .value(v -> assertThat(v).isNotNull())
+        .isEqualTo(Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value()));
   }
 }

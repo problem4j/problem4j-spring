@@ -27,7 +27,6 @@ import static io.github.problem4j.spring.web.ProblemSupport.VALIDATION_FAILED_DE
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +61,7 @@ class MethodArgumentNotValidWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(VALIDATION_FAILED_DETAIL)
                 .extension(
                     ERRORS_EXTENSION,

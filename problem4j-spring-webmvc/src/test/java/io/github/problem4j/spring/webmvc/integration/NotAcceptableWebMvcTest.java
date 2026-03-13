@@ -24,7 +24,6 @@ package io.github.problem4j.spring.webmvc.integration;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -64,6 +63,7 @@ class NotAcceptableWebMvcTest {
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem).isEqualTo(Problem.builder().status(ProblemStatus.NOT_ACCEPTABLE).build());
+    assertThat(problem)
+        .isEqualTo(Problem.builder().status(HttpStatus.NOT_ACCEPTABLE.value()).build());
   }
 }

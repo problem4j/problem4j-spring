@@ -27,7 +27,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
 import io.github.problem4j.spring.webflux.app.rest.ValidateMethodArgumentController;
 import java.util.List;
@@ -40,6 +39,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(
@@ -69,7 +69,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(VALIDATION_FAILED_DETAIL)
                 .extension(
                     ERRORS_EXTENSION, List.of(Map.of("field", "idVar", "error", VIOLATION_ERROR)))
@@ -98,7 +98,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .value(v -> Assertions.assertThat(v).isNotNull())
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(VALIDATION_FAILED_DETAIL)
                 .extension(
                     ERRORS_EXTENSION,
@@ -124,7 +124,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(VALIDATION_FAILED_DETAIL)
                 .extension(
                     ERRORS_EXTENSION,
@@ -151,7 +151,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(VALIDATION_FAILED_DETAIL)
                 .extension(
                     ERRORS_EXTENSION,
@@ -303,8 +303,8 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .value(
             problem -> {
               assertThat(problem.getType()).isEqualTo(Problem.BLANK_TYPE);
-              assertThat(problem.getTitle()).isEqualTo(ProblemStatus.BAD_REQUEST.getTitle());
-              assertThat(problem.getStatus()).isEqualTo(ProblemStatus.BAD_REQUEST.getStatus());
+              assertThat(problem.getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
+              assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 
               assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
                   .asInstanceOf(LIST)
@@ -338,8 +338,8 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .value(
             problem -> {
               assertThat(problem.getType()).isEqualTo(Problem.BLANK_TYPE);
-              assertThat(problem.getTitle()).isEqualTo(ProblemStatus.BAD_REQUEST.getTitle());
-              assertThat(problem.getStatus()).isEqualTo(ProblemStatus.BAD_REQUEST.getStatus());
+              assertThat(problem.getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
+              assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 
               assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
                   .asInstanceOf(LIST)
@@ -375,8 +375,8 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .value(
             problem -> {
               assertThat(problem.getType()).isEqualTo(Problem.BLANK_TYPE);
-              assertThat(problem.getTitle()).isEqualTo(ProblemStatus.BAD_REQUEST.getTitle());
-              assertThat(problem.getStatus()).isEqualTo(ProblemStatus.BAD_REQUEST.getStatus());
+              assertThat(problem.getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
+              assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 
               assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
                   .asInstanceOf(LIST)

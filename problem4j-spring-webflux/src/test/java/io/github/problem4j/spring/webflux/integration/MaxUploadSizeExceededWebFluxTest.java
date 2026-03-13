@@ -26,7 +26,6 @@ import static io.github.problem4j.spring.web.ProblemSupport.MAX_UPLOAD_SIZE_EXCE
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +56,7 @@ class MaxUploadSizeExceededWebFluxTest {
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.CONTENT_TOO_LARGE)
+                .status(HttpStatus.CONTENT_TOO_LARGE.value())
                 .detail(MAX_UPLOAD_SIZE_EXCEEDED_DETAIL)
                 .extension(MAX_EXTENSION, 1)
                 .build());

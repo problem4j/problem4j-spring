@@ -27,12 +27,12 @@ import static io.github.problem4j.spring.web.ProblemSupport.VALIDATION_FAILED_DE
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.parameter.DefaultMethodValidationResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.validation.method.MethodValidationException;
 
@@ -50,9 +50,9 @@ import org.springframework.validation.method.MethodValidationException;
  * <p>This allows framework components and exception handlers to deal with a consistent,
  * Spring-specific exception type instead of the raw Jakarta exception.
  *
- * <p>Always resolves to a problem with status {@link ProblemStatus#BAD_REQUEST} and an {@code
- * errors} extension populated via {@link MethodValidationResultSupport} (one entry per violated
- * parameter / return value).
+ * <p>Always resolves to a problem with status {@link HttpStatus#BAD_REQUEST} and an {@code errors}
+ * extension populated via {@link MethodValidationResultSupport} (one entry per violated parameter /
+ * return value).
  *
  * @see jakarta.validation.ConstraintViolationException
  */
@@ -89,7 +89,7 @@ public class MethodValidationProblemResolver extends AbstractProblemResolver {
 
   /**
    * Converts the {@link MethodValidationException} into a {@link ProblemBuilder} with status {@link
-   * ProblemStatus#BAD_REQUEST} and an {@code errors} extension describing each parameter or return
+   * HttpStatus#BAD_REQUEST} and an {@code errors} extension describing each parameter or return
    * value violation. Other parameters ({@code context}, {@code headers}, {@code status}) are
    * ignored for status selection; 400 is enforced.
    *
@@ -104,7 +104,7 @@ public class MethodValidationProblemResolver extends AbstractProblemResolver {
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     MethodValidationException e = (MethodValidationException) ex;
     return Problem.builder()
-        .status(ProblemStatus.BAD_REQUEST)
+        .status(HttpStatus.BAD_REQUEST.value())
         .detail(formatDetail(VALIDATION_FAILED_DETAIL))
         .extension(ERRORS_EXTENSION, methodValidationResultSupport.fetchViolations(e));
   }

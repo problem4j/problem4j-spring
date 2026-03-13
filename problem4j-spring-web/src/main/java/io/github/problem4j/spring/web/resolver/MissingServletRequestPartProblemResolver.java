@@ -27,10 +27,10 @@ import static io.github.problem4j.spring.web.ProblemSupport.PARAM_EXTENSION;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
@@ -72,9 +72,9 @@ public class MissingServletRequestPartProblemResolver extends AbstractProblemRes
   /**
    * Builds a {@link ProblemBuilder} representing a missing multipart request part.
    *
-   * <p>Always returns a builder with status {@link ProblemStatus#BAD_REQUEST}, a standardized
-   * detail message ({@code ProblemSupport#MISSING_REQUEST_PART_DETAIL}) and an extension named
-   * {@code ProblemSupport#PARAM_EXTENSION} containing the missing part's name.
+   * <p>Always returns a builder with status {@link HttpStatus#BAD_REQUEST}, a standardized detail
+   * message ({@code ProblemSupport#MISSING_REQUEST_PART_DETAIL}) and an extension named {@code
+   * ProblemSupport#PARAM_EXTENSION} containing the missing part's name.
    *
    * @param context problem context (unused)
    * @param ex the triggering {@link MissingServletRequestPartException}
@@ -89,7 +89,7 @@ public class MissingServletRequestPartProblemResolver extends AbstractProblemRes
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     MissingServletRequestPartException e = (MissingServletRequestPartException) ex;
     return Problem.builder()
-        .status(ProblemStatus.BAD_REQUEST)
+        .status(HttpStatus.BAD_REQUEST.value())
         .detail(formatDetail(MISSING_REQUEST_PART_DETAIL))
         .extension(PARAM_EXTENSION, e.getRequestPartName());
   }

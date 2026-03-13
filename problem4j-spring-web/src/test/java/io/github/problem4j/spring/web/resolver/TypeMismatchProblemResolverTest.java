@@ -25,12 +25,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.ProblemSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 class TypeMismatchProblemResolverTest {
@@ -54,7 +54,7 @@ class TypeMismatchProblemResolverTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(ProblemSupport.TYPE_MISMATCH_DETAIL)
                 .extension(ProblemSupport.PROPERTY_EXTENSION, "age")
                 .extension(ProblemSupport.KIND_EXTENSION, "integer")
@@ -72,7 +72,7 @@ class TypeMismatchProblemResolverTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(ProblemSupport.TYPE_MISMATCH_DETAIL)
                 .extension(ProblemSupport.KIND_EXTENSION, "integer")
                 .build());
@@ -90,7 +90,7 @@ class TypeMismatchProblemResolverTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(ProblemSupport.TYPE_MISMATCH_DETAIL)
                 .extension(ProblemSupport.PROPERTY_EXTENSION, "field")
                 .build());

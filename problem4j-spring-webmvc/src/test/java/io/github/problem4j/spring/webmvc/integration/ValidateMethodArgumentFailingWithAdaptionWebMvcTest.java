@@ -27,7 +27,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +68,7 @@ class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(VALIDATION_FAILED_DETAIL)
                 .extension(
                     ERRORS_EXTENSION, List.of(Map.of("field", "id", "error", VIOLATION_ERROR)))
@@ -89,7 +88,7 @@ class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(VALIDATION_FAILED_DETAIL)
                 .extension(
                     ERRORS_EXTENSION, List.of(Map.of("field", "query", "error", VIOLATION_ERROR)))
@@ -116,7 +115,7 @@ class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(VALIDATION_FAILED_DETAIL)
                 .extension(
                     ERRORS_EXTENSION,
@@ -144,7 +143,7 @@ class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(VALIDATION_FAILED_DETAIL)
                 .extension(
                     ERRORS_EXTENSION,

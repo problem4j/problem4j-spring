@@ -23,7 +23,6 @@ package io.github.problem4j.spring.web.resolver;
 
 import static io.github.problem4j.spring.web.ProblemSupport.ERRORS_EXTENSION;
 import static io.github.problem4j.spring.web.ProblemSupport.VALIDATION_FAILED_DETAIL;
-import static io.github.problem4j.spring.web.ProblemSupport.resolveStatus;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
@@ -97,10 +96,10 @@ public class HandlerMethodValidationProblemResolver extends AbstractProblemResol
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     HandlerMethodValidationException e = (HandlerMethodValidationException) ex;
     if (status.is5xxServerError()) {
-      return Problem.builder().status(resolveStatus(status));
+      return Problem.builder().status(status.value());
     }
     return Problem.builder()
-        .status(resolveStatus(status))
+        .status(status.value())
         .detail(formatDetail(VALIDATION_FAILED_DETAIL))
         .extension(ERRORS_EXTENSION, methodValidationResultSupport.fetchViolations(e));
   }
