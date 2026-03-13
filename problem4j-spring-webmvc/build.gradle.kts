@@ -26,6 +26,7 @@ dependencies {
     testImplementation(libs.spring.boot.starter.webmvc.test)
     testImplementation(libs.spring.boot.starter.webmvc)
     testImplementation(libs.spring.boot.validation)
+    testImplementation(libs.jackson3.dataformat.xml)
 
     // Included because TestRestTemplate requires it if used with actual web environment in tests. Not migrating to
     // WebTestClient either for easier merges with 1.x versions.
