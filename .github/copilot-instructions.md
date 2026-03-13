@@ -46,3 +46,6 @@ Always validate changes with a full build and test run before considering the ta
 - Use AssertJ for assertions.
 - Integration tests in `problem4j-spring-webflux` and `problem4j-spring-webmvc` (`...integration` package) should be
   similar - both modules must resolve the same exceptions to the same response bodies.
+- If executing, run tests once, save output to `build/test-run.log` inside the repo (`> build/test-run.log 2>&1`), then
+  read from that file to extract errors. Never run the same test command multiple times, without changes in sources. You
+  can store test output in multiple files if you want to compare before/after changes (ex. `build/test-run-{i}.log`).

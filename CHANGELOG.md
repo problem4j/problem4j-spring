@@ -64,7 +64,7 @@ This release of `problem4j-spring` is considered a first "public" release, so th
 ### Added
 
 - Add resolving `ProblemExceptions`-s into `application/problem+json` objects.
-- Add resolving `@ProblemStatus`-annotated exceptions into `application/problem+json` objects.
+- Add resolving `@ProblemMapping`-annotated exceptions into `application/problem+json` objects.
 - Add `ProblemResolver` interface for integration of exceptions that cannot be annotated or inherited from
   `ProblemException`.
 - Add basic support for Spring's build-in `@ResponseStatus` annotation.

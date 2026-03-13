@@ -24,11 +24,11 @@ package io.github.problem4j.spring.web.resolver;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.springframework.core.codec.DecodingException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 /**
@@ -56,11 +56,11 @@ public class DecodingProblemResolver extends AbstractProblemResolver {
 
   /**
    * Builds a {@link ProblemBuilder} for {@link DecodingException} with {@link
-   * ProblemStatus#BAD_REQUEST} status.
+   * HttpStatus#BAD_REQUEST} status.
    */
   @Override
   public ProblemBuilder resolveBuilder(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return Problem.builder().status(ProblemStatus.BAD_REQUEST);
+    return Problem.builder().status(HttpStatus.BAD_REQUEST.value());
   }
 }

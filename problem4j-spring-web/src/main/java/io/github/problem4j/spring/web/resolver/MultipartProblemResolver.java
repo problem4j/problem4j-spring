@@ -24,10 +24,10 @@ package io.github.problem4j.spring.web.resolver;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.multipart.MultipartException;
 
@@ -57,7 +57,7 @@ public class MultipartProblemResolver extends AbstractProblemResolver {
   /**
    * Resolves the given {@link MultipartException} into a {@link ProblemBuilder}.
    *
-   * <p>The resulting {@link Problem} will have a {@link ProblemStatus#BAD_REQUEST} status.
+   * <p>The resulting {@link Problem} will have a {@link HttpStatus#BAD_REQUEST} status.
    *
    * @param context the {@link ProblemContext} providing information about the current request
    * @param ex the {@link MultipartException} to be resolved
@@ -68,6 +68,6 @@ public class MultipartProblemResolver extends AbstractProblemResolver {
   @Override
   public ProblemBuilder resolveBuilder(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return Problem.builder().status(ProblemStatus.BAD_REQUEST);
+    return Problem.builder().status(HttpStatus.BAD_REQUEST.value());
   }
 }

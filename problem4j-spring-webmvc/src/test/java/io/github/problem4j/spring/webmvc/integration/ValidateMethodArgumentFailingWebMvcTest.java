@@ -28,7 +28,6 @@ import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +67,7 @@ class ValidateMethodArgumentFailingWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(VALIDATION_FAILED_DETAIL)
                 .extension(
                     ERRORS_EXTENSION, List.of(Map.of("field", "idVar", "error", VIOLATION_ERROR)))
@@ -88,7 +87,7 @@ class ValidateMethodArgumentFailingWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(VALIDATION_FAILED_DETAIL)
                 .extension(
                     ERRORS_EXTENSION,
@@ -116,7 +115,7 @@ class ValidateMethodArgumentFailingWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(VALIDATION_FAILED_DETAIL)
                 .extension(
                     ERRORS_EXTENSION,
@@ -144,7 +143,7 @@ class ValidateMethodArgumentFailingWebMvcTest {
     assertThat(problem)
         .isEqualTo(
             Problem.builder()
-                .status(ProblemStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .detail(VALIDATION_FAILED_DETAIL)
                 .extension(
                     ERRORS_EXTENSION,
@@ -232,8 +231,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
     Problem problem = objectMapper.readValue(response.getBody(), Problem.class);
 
     assertThat(problem.getType()).isEqualTo(Problem.BLANK_TYPE);
-    assertThat(problem.getTitle()).isEqualTo(ProblemStatus.BAD_REQUEST.getTitle());
-    assertThat(problem.getStatus()).isEqualTo(ProblemStatus.BAD_REQUEST.getStatus());
+    assertThat(problem.getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
+    assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getExtensionMembers()).containsKey(ERRORS_EXTENSION);
     assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
         .asInstanceOf(LIST)
@@ -260,8 +259,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
     Problem problem = objectMapper.readValue(response.getBody(), Problem.class);
 
     assertThat(problem.getType()).isEqualTo(Problem.BLANK_TYPE);
-    assertThat(problem.getTitle()).isEqualTo(ProblemStatus.BAD_REQUEST.getTitle());
-    assertThat(problem.getStatus()).isEqualTo(ProblemStatus.BAD_REQUEST.getStatus());
+    assertThat(problem.getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
+    assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getExtensionMembers()).containsKey(ERRORS_EXTENSION);
     assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
         .asInstanceOf(LIST)
@@ -289,8 +288,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
     Problem problem = objectMapper.readValue(response.getBody(), Problem.class);
 
     assertThat(problem.getType()).isEqualTo(Problem.BLANK_TYPE);
-    assertThat(problem.getTitle()).isEqualTo(ProblemStatus.BAD_REQUEST.getTitle());
-    assertThat(problem.getStatus()).isEqualTo(ProblemStatus.BAD_REQUEST.getStatus());
+    assertThat(problem.getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
+    assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getExtensionMembers()).containsKey(ERRORS_EXTENSION);
     assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
         .asInstanceOf(LIST)

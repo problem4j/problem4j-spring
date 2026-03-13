@@ -27,12 +27,12 @@ import static io.github.problem4j.spring.web.ProblemSupport.NAME_EXTENSION;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -94,12 +94,12 @@ public class ServerErrorProblemResolver extends AbstractProblemResolver {
     if (isMissingPathVariableError(e)) {
       String name = findParameterName(e.getMethodParameter());
       return Problem.builder()
-          .status(ProblemStatus.BAD_REQUEST)
+          .status(HttpStatus.BAD_REQUEST.value())
           .detail(formatDetail(MISSING_PATH_VARIABLE_DETAIL))
           .extension(NAME_EXTENSION, name);
     }
 
-    return Problem.builder().status(ProblemStatus.INTERNAL_SERVER_ERROR);
+    return Problem.builder().status(HttpStatus.INTERNAL_SERVER_ERROR.value());
   }
 
   /**

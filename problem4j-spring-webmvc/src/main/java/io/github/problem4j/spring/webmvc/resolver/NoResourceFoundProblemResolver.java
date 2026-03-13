@@ -24,11 +24,11 @@ package io.github.problem4j.spring.webmvc.resolver;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.resolver.AbstractProblemResolver;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -59,7 +59,7 @@ public class NoResourceFoundProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Returns a {@link ProblemBuilder} with {@link ProblemStatus#NOT_FOUND} (HTTP 404) indicating the
+   * Returns a {@link ProblemBuilder} with {@link HttpStatus#NOT_FOUND} (HTTP 404) indicating the
    * requested static resource could not be located. Other parameters ({@code context}, {@code
    * headers}, {@code status}) are ignored because the exception semantics unambiguously map to 404.
    *
@@ -72,6 +72,6 @@ public class NoResourceFoundProblemResolver extends AbstractProblemResolver {
   @Override
   public ProblemBuilder resolveBuilder(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return Problem.builder().status(ProblemStatus.NOT_FOUND);
+    return Problem.builder().status(HttpStatus.NOT_FOUND.value());
   }
 }

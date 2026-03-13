@@ -23,10 +23,16 @@ package io.github.problem4j.spring.web.resolver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.github.problem4j.core.Problem;
+import io.github.problem4j.core.ProblemContext;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 class AbstractProblemResolverTest {
 
@@ -42,5 +48,19 @@ class AbstractProblemResolverTest {
     Class<? extends Exception> exceptionClass = resolver.getExceptionClass();
 
     assertThat(exceptionClass).isEqualTo(clazz);
+  }
+
+  @Test
+  void givenNoResolveBuilderOverride_whenResolveBuilder_thenReturnsInternalServerError() {
+    AbstractProblemResolver resolver = new AbstractProblemResolver(RuntimeException.class) {};
+
+    Problem problem =
+        resolver.resolveProblem(
+            ProblemContext.create(),
+            new RuntimeException("boom"),
+            new HttpHeaders(),
+            HttpStatusCode.valueOf(500));
+
+    assertThat(problem.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
   }
 }

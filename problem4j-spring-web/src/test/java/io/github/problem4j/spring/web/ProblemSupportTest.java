@@ -19,27 +19,31 @@
  * SOFTWARE.
  */
 
-package io.github.problem4j.spring.webflux.app.rest;
+package io.github.problem4j.spring.web;
 
-import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemException;
+import static io.github.problem4j.spring.web.ProblemSupport.resolveStatus;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatusCode;
 
-@RestController
-@RequestMapping(path = "/problem-override")
-public class ProblemOverrideController {
+/**
+ * Test class for {@link ProblemSupport}. Warnings are suppressed since deprecated features also
+ * deserve testing.
+ */
+@SuppressWarnings("removal")
+class ProblemSupportTest {
 
-  @PostMapping(path = "/instance-override")
-  public String instanceOverride() {
-    throw new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value()));
+  @Test
+  void givenNullStatus_whenResolveStatus_thenReturnsInternalServerError() {
+    assertThat(resolveStatus((HttpStatusCode) null).getStatus())
+        .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
   }
 
-  @PostMapping(path = "/type-not-blank")
-  public String typeNotBlank() {
-    throw new ProblemException(
-        Problem.builder().type("not-blank").status(HttpStatus.BAD_REQUEST.value()).build());
+  @Test
+  void givenKnownStatus_whenResolveStatus_thenReturnsMatchingProblemStatus() {
+    assertThat(resolveStatus(HttpStatusCode.valueOf(404)).getStatus())
+        .isEqualTo(HttpStatus.NOT_FOUND.value());
   }
 }

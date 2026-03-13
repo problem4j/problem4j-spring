@@ -29,7 +29,6 @@ import static org.springframework.web.context.request.RequestAttributes.SCOPE_RE
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import java.util.List;
@@ -55,7 +54,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  * <ul>
  *   <li>Delegates exception-to-problem mapping to {@link ProblemResolverStore}.
  *   <li>Sets content type to {@code application/problem+json}.
- *   <li>Falls back to {@link ProblemStatus#INTERNAL_SERVER_ERROR} if mapping fails.
+ *   <li>Falls back to {@link HttpStatus#INTERNAL_SERVER_ERROR} if mapping fails.
  * </ul>
  *
  * @see io.github.problem4j.spring.web.resolver.ProblemResolver
@@ -150,6 +149,6 @@ public class ProblemEnhancedWebMvcHandler extends ResponseEntityExceptionHandler
    * @return a fallback {@link ProblemBuilder}
    */
   protected ProblemBuilder fallbackProblem(HttpStatusCode status) {
-    return Problem.builder().status(resolveStatus(status));
+    return Problem.builder().status(status.value());
   }
 }

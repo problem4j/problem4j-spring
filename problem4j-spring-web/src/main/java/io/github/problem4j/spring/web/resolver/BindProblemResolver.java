@@ -26,13 +26,13 @@ import static io.github.problem4j.spring.web.ProblemSupport.VALIDATION_FAILED_DE
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.ProblemSupport;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
 import io.github.problem4j.spring.web.parameter.DefaultBindingResultSupport;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.validation.BindException;
 
@@ -94,7 +94,7 @@ public class BindProblemResolver extends AbstractProblemResolver {
 
   /**
    * Resolves a {@link BindException} (or subclass) to a {@link ProblemBuilder} with {@link
-   * ProblemStatus#BAD_REQUEST} and an {@code errors} extension listing field/global validation
+   * HttpStatus#BAD_REQUEST} and an {@code errors} extension listing field/global validation
    * violations produced by the underlying {@link BindException#getBindingResult()}.
    *
    * @param context problem context (ignored for binding violations)
@@ -108,7 +108,7 @@ public class BindProblemResolver extends AbstractProblemResolver {
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     BindException e = (BindException) ex;
     return Problem.builder()
-        .status(ProblemStatus.BAD_REQUEST)
+        .status(HttpStatus.BAD_REQUEST.value())
         .detail(formatDetail(VALIDATION_FAILED_DETAIL))
         .extension(
             ProblemSupport.ERRORS_EXTENSION,

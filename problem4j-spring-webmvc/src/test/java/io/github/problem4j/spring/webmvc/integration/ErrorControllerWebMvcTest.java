@@ -21,9 +21,9 @@
 
 package io.github.problem4j.spring.webmvc.integration;
 
-import static io.github.problem4j.spring.web.ProblemSupport.MAX_UPLOAD_SIZE_EXCEEDED_DETAIL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
@@ -31,63 +31,36 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 @SpringBootTest(
     classes = {WebMvcTestApp.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = {
-      "spring.servlet.multipart.max-file-size=1KB",
-      "spring.servlet.multipart.max-request-size=1KB"
-    })
-class MaxUploadSizeExceededWebMvcTest {
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class ErrorControllerWebMvcTest {
 
   @Autowired private TestRestTemplate restTemplate;
   @Autowired private ObjectMapper objectMapper;
 
   @Test
-  void givenMaxUploadSizeExceeded_shouldReturnProblem() throws Exception {
-    MultiValueMap<String, Object> body = prepareMultipartBody();
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-    HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-
+  void givenSendError500_whenError_thenReturnsProblem() throws JsonProcessingException {
     ResponseEntity<String> response =
-        restTemplate.postForEntity("/max-upload-size-exceeded", requestEntity, String.class);
+        restTemplate.getForEntity("/send-error/internal-server-error", String.class);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.PAYLOAD_TOO_LARGE);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
 
     Problem problem = objectMapper.readValue(response.getBody(), Problem.class);
-    assertThat(problem)
-        .isEqualTo(
-            Problem.builder()
-                .status(HttpStatus.PAYLOAD_TOO_LARGE.value())
-                .detail(MAX_UPLOAD_SIZE_EXCEEDED_DETAIL)
-                .build());
+
+    assertThat(problem).isEqualTo(Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value()));
   }
 
-  private MultiValueMap<String, Object> prepareMultipartBody() {
-    byte[] largeFile = new byte[1024 * 2];
-    ByteArrayResource resource =
-        new ByteArrayResource(largeFile) {
-          @Override
-          public String getFilename() {
-            return "large-file.txt";
-          }
-        };
+  @Test
+  void givenSendError204_whenError_thenReturnsNoContent() {
+    ResponseEntity<String> response =
+        restTemplate.getForEntity("/send-error/no-content", String.class);
 
-    MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-    body.add("file", resource);
-    return body;
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    assertThat(response.getBody()).isNull();
   }
 }

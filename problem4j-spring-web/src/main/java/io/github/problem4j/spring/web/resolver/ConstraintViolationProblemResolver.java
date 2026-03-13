@@ -27,7 +27,6 @@ import static io.github.problem4j.spring.web.ProblemSupport.VALIDATION_FAILED_DE
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.parameter.Violation;
@@ -36,6 +35,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
 import java.util.List;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 /**
@@ -68,7 +68,7 @@ public class ConstraintViolationProblemResolver extends AbstractProblemResolver 
   }
 
   /**
-   * Builds a {@link ProblemBuilder} with {@link ProblemStatus#BAD_REQUEST}, a formatted {@code
+   * Builds a {@link ProblemBuilder} with {@link HttpStatus#BAD_REQUEST}, a formatted {@code
    * detail}, and an {@code errors} extension listing each constraint violation (property and
    * message) extracted from the exception.
    *
@@ -85,7 +85,7 @@ public class ConstraintViolationProblemResolver extends AbstractProblemResolver 
     List<Violation> errors = extractViolations(e);
 
     return Problem.builder()
-        .status(ProblemStatus.BAD_REQUEST)
+        .status(HttpStatus.BAD_REQUEST.value())
         .detail(formatDetail(VALIDATION_FAILED_DETAIL))
         .extension(ERRORS_EXTENSION, errors);
   }

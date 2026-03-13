@@ -19,49 +19,54 @@
  * SOFTWARE.
  */
 
-package io.github.problem4j.spring.webmvc.integration;
+package io.github.problem4j.spring.webflux.integration;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
-import java.util.List;
+import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(
-    classes = {WebMvcTestApp.class},
+    classes = {WebFluxTestApp.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class NotAcceptableWebMvcTest {
+@AutoConfigureWebTestClient
+class ErrorWebExceptionHandlerWebFluxTest {
 
-  @Autowired private TestRestTemplate restTemplate;
-  @Autowired private ObjectMapper objectMapper;
+  @Autowired private WebTestClient webTestClient;
 
   @Test
-  void givenUnsupportedAcceptHeader_shouldReturnProblem() throws Exception {
-    HttpHeaders headers = new HttpHeaders();
-    headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+  void givenFilterErrorNoContext_whenError_thenReturnsProblem() {
+    webTestClient
+        .get()
+        .uri("/error-handler/no-context")
+        .exchange()
+        .expectStatus()
+        .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
+        .expectHeader()
+        .contentType(Problem.CONTENT_TYPE)
+        .expectBody(Problem.class)
+        .value(v -> assertThat(v).isNotNull())
+        .isEqualTo(Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+  }
 
-    HttpEntity<Void> request = new HttpEntity<>(headers);
-
-    ResponseEntity<String> response =
-        restTemplate.exchange("/not-acceptable", HttpMethod.GET, request, String.class);
-
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
-
-    Problem problem = objectMapper.readValue(response.getBody(), Problem.class);
-
-    assertThat(problem)
-        .isEqualTo(Problem.builder().status(HttpStatus.NOT_ACCEPTABLE.value()).build());
+  @Test
+  void givenFilterErrorWithContext_whenError_thenReturnsProblem() {
+    webTestClient
+        .get()
+        .uri("/error-handler/with-context")
+        .exchange()
+        .expectStatus()
+        .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
+        .expectHeader()
+        .contentType(Problem.CONTENT_TYPE)
+        .expectBody(Problem.class)
+        .value(v -> assertThat(v).isNotNull())
+        .isEqualTo(Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value()));
   }
 }

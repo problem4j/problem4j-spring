@@ -28,7 +28,6 @@ import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.logAdviceE
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import java.util.List;
@@ -55,7 +54,7 @@ import reactor.core.publisher.Mono;
  * <ul>
  *   <li>Delegates exception-to-problem mapping to {@link ProblemResolverStore}.
  *   <li>Sets content type to {@code application/problem+json}.
- *   <li>Falls back to {@link ProblemStatus#INTERNAL_SERVER_ERROR} if mapping fails.
+ *   <li>Falls back to {@link HttpStatus#INTERNAL_SERVER_ERROR} if mapping fails.
  * </ul>
  *
  * @see #handleExceptionInternal
@@ -152,6 +151,6 @@ public class ProblemEnhancedWebFluxHandler extends ResponseEntityExceptionHandle
    * @return a fallback {@link ProblemBuilder}
    */
   protected ProblemBuilder fallbackProblem(HttpStatusCode status) {
-    return Problem.builder().status(resolveStatus(status));
+    return Problem.builder().status(status.value());
   }
 }

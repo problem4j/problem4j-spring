@@ -24,10 +24,10 @@ package io.github.problem4j.spring.web.resolver;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.core.ProblemStatus;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 /** Convenience base class for {@link ProblemResolver}-s. */
@@ -67,13 +67,13 @@ public abstract class AbstractProblemResolver implements ProblemResolver {
 
   /**
    * Default implementation that returns a builder with status {@link
-   * ProblemStatus#INTERNAL_SERVER_ERROR}. Subclasses should override to populate fields like {@code
+   * HttpStatus#INTERNAL_SERVER_ERROR}. Subclasses should override to populate fields like {@code
    * type}, {@code title}, {@code detail}, and extensions.
    */
   @Override
   public ProblemBuilder resolveBuilder(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return Problem.builder().status(ProblemStatus.INTERNAL_SERVER_ERROR);
+    return Problem.builder().status(HttpStatus.INTERNAL_SERVER_ERROR.value());
   }
 
   /**
