@@ -37,7 +37,7 @@ import org.springframework.context.annotation.Configuration;
  * Configures MVC error handling to return {@code application/problem+json} responses according to
  * RFC 7807.
  *
- * <p>This setup replaces Spring Boot’s default error controller {@code ErrorMvcAutoConfiguration}
+ * <p>This setup replaces Spring Boot's default error controller {@code ErrorMvcAutoConfiguration}
  * with {@link ProblemErrorController}, which renders {@code Problem} objects instead of HTML or
  * plain JSON errors.
  *

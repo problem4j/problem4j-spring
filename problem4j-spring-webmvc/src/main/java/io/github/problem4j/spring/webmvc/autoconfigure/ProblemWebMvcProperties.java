@@ -32,12 +32,22 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConfigurationProperties(prefix = "problem4j.webmvc")
 public class ProblemWebMvcProperties {
 
+  /** Whether Problem4J integration with WebMVC is enabled. */
   private final boolean enabled;
 
+  /** Configuration for {@code ExceptionWebMvcAdvice}. */
   private final ExceptionAdvice exceptionAdvice;
+
+  /** Configuration for {@code ProblemExceptionWebMvcAdvice}. */
   private final ProblemExceptionAdvice problemExceptionAdvice;
+
+  /** Configuration for {@code ProblemContextWebMvcFilter}. */
   private final ProblemContextFilter problemContextFilter;
+
+  /** Configuration for {@code ProblemEnhancedWebMvcHandler} replacement. */
   private final ExceptionHandler exceptionHandler;
+
+  /** Configuration for {@code ProblemErrorController} replacement. */
   private final ErrorController errorController;
 
   /**
@@ -46,7 +56,7 @@ public class ProblemWebMvcProperties {
    * @param enabled whether Problem4J integration with WebMVC is enabled
    * @param exceptionAdvice configuration for {@code ExceptionWebMvcAdvice}
    * @param problemExceptionAdvice configuration for {@code ProblemExceptionWebMvcAdvice}
-   * @param problemContextFilter configuration for {@code ProblemContextMvcFilter}
+   * @param problemContextFilter configuration for {@code ProblemContextWebMvcFilter}
    * @param exceptionHandler configuration for {@code ProblemEnhancedWebMvcHandler}
    * @param errorController configuration for {@code ProblemErrorController}
    * @see io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice
@@ -80,7 +90,7 @@ public class ProblemWebMvcProperties {
   /**
    * Indicates whether Problem4J integration with WebMVC is currently enabled.
    *
-   * @return {@code true} if problem WebFlux is enabled; {@code false} otherwise
+   * @return {@code true} if problem WebMVC is enabled; {@code false} otherwise
    */
   public boolean isEnabled() {
     return enabled;
@@ -109,10 +119,10 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemContextMvcFilter}, which enriches request handling with
-   * {@code ProblemContext}.
+   * Returns configuration for {@code ProblemContextWebMvcFilter}, which enriches request handling
+   * with {@code ProblemContext}.
    *
-   * @return the configuration for the {@code ProblemContextMvcFilter}
+   * @return the configuration for the {@code ProblemContextWebMvcFilter}
    * @see io.github.problem4j.core.ProblemContext
    * @see io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter
    */
@@ -122,7 +132,7 @@ public class ProblemWebMvcProperties {
 
   /**
    * Returns configuration for {@code ProblemEnhancedWebMvcHandler} replacement, which allows
-   * Problem4J to take control of exception handling normally performed by Spring’s {@code
+   * Problem4J to take control of exception handling normally performed by Spring's {@code
    * ResponseEntityExceptionHandler}.
    *
    * @return the configuration for the overwritten exception handler
@@ -135,7 +145,7 @@ public class ProblemWebMvcProperties {
 
   /**
    * Returns configuration for {@code ProblemErrorController} replacement, which allows Problem4J to
-   * take control of exception handling normally performed by Spring’s {@code ErrorController}.
+   * take control of exception handling normally performed by Spring's {@code ErrorController}.
    *
    * @return the configuration for the overwritten error handler
    * @see org.springframework.boot.web.servlet.error.ErrorController
@@ -164,12 +174,13 @@ public class ProblemWebMvcProperties {
       return new ExceptionAdvice(DEFAULT_ENABLED);
     }
 
+    /** Whether the {@code ExceptionWebMvcAdvice} bean should be registered. */
     private final boolean enabled;
 
     /**
      * Creates a new configuration group for {@code ExceptionWebMvcAdvice}.
      *
-     * @param enabled whether the {@code ExceptionWebMvcAdvice} bean should be created
+     * @param enabled whether the {@code ExceptionWebMvcAdvice} bean should be registered
      * @see io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice
      */
     public ExceptionAdvice(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
@@ -206,12 +217,13 @@ public class ProblemWebMvcProperties {
       return new ProblemExceptionAdvice(DEFAULT_ENABLED);
     }
 
+    /** Whether the {@code ProblemExceptionWebMvcAdvice} bean should be registered. */
     private final boolean enabled;
 
     /**
      * Creates a new configuration group for {@code ProblemExceptionWebMvcAdvice}.
      *
-     * @param enabled whether the {@code ProblemExceptionWebMvcAdvice} bean should be created
+     * @param enabled whether the {@code ProblemExceptionWebMvcAdvice} bean should be registered
      * @see io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice
      */
     public ProblemExceptionAdvice(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
@@ -230,7 +242,7 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Configuration group for {@code ProblemContextMvcFilter}.
+   * Configuration group for {@code ProblemContextWebMvcFilter}.
    *
    * <p>Controlled by the property {@code problem4j.webmvc.problem-context-filter.enabled}.
    *
@@ -238,22 +250,23 @@ public class ProblemWebMvcProperties {
    */
   public static class ProblemContextFilter {
 
-    /** Default enabled flag for {@code ProblemContextMvcFilter}. */
+    /** Default enabled flag for {@code ProblemContextWebMvcFilter}. */
     public static final boolean DEFAULT_ENABLED = true;
 
-    /** Default enabled value string for {@code ProblemContextMvcFilter}. */
+    /** Default enabled value string for {@code ProblemContextWebMvcFilter}. */
     public static final String DEFAULT_ENABLED_VALUE = "true";
 
     private static ProblemContextFilter createDefault() {
       return new ProblemContextFilter(DEFAULT_ENABLED);
     }
 
+    /** Whether the {@code ProblemContextWebMvcFilter} bean should be registered. */
     private final boolean enabled;
 
     /**
-     * Creates a new configuration group for {@code ProblemContextMvcFilter}.
+     * Creates a new configuration group for {@code ProblemContextWebMvcFilter}.
      *
-     * @param enabled whether the {@code ProblemContextMvcFilter} bean should be created
+     * @param enabled whether the {@code ProblemContextWebMvcFilter} bean should be registered
      * @see io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter
      */
     public ProblemContextFilter(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
@@ -261,7 +274,7 @@ public class ProblemWebMvcProperties {
     }
 
     /**
-     * Returns whether {@code ProblemContextMvcFilter} should be registered.
+     * Returns whether {@code ProblemContextWebMvcFilter} should be registered.
      *
      * @return {@code true} if the context filter is enabled, otherwise {@code false}
      * @see io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter
@@ -290,6 +303,7 @@ public class ProblemWebMvcProperties {
       return new ExceptionHandler(DEFAULT_ENABLED);
     }
 
+    /** Whether the {@code ProblemEnhancedWebMvcHandler} should be registered. */
     private final boolean enabled;
 
     /**
@@ -336,6 +350,7 @@ public class ProblemWebMvcProperties {
       return new ErrorController(DEFAULT_ENABLED);
     }
 
+    /** Whether the {@code ProblemErrorController} should be registered. */
     private final boolean enabled;
 
     /**

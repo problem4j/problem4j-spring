@@ -41,12 +41,12 @@ import org.springframework.util.StringUtils;
  * <ul>
  *   <li><b>For {@code type} override:</b>
  *       <ul>
- *         <li>{@code {problem.type}} - replaced with the original problem’s {@code type}
+ *         <li>{@code {problem.type}} - replaced with the original problem's {@code type}
  *       </ul>
  *   <li><b>For {@code instance} override:</b>
  *       <ul>
- *         <li>{@code {problem.instance}} - replaced with the original problem’s {@code instance}
- *         <li>{@code {context.traceId}} - replaced with the current request’s trace identifier, if
+ *         <li>{@code {problem.instance}} - replaced with the original problem's {@code instance}
+ *         <li>{@code {context.traceId}} - replaced with the current request's trace identifier, if
  *             available
  *       </ul>
  * </ul>
