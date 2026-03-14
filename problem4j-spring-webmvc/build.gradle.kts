@@ -2,6 +2,7 @@ plugins {
     id("internal.errorprone-convention")
     id("internal.jacoco-convention")
     id("internal.java-library-convention")
+    id("internal.kotlin-interop-convention")
     id("internal.publishing-convention")
     alias(libs.plugins.nmcp)
 }
@@ -27,6 +28,8 @@ dependencies {
     testImplementation(libs.spring.boot.starter.webmvc)
     testImplementation(libs.spring.boot.validation)
     testImplementation(libs.jackson3.dataformat.xml)
+    testImplementation(libs.jackson3.module.kotlin)
+    testImplementation(libs.kotlin.reflect)
 
     // Included because TestRestTemplate requires it if used with actual web environment in tests. Not migrating to
     // WebTestClient either for easier merges with 1.x versions.

@@ -2,6 +2,7 @@
 jspecify = "1.0.0"
 errorprone = "2.48.0"
 errorprone-plugin = "5.1.0"
+kotlin = "2.3.10"
 nmcp = "1.4.4"
 nullaway = "0.13.1"
 problem4j-core = "1.4.3"
@@ -12,6 +13,7 @@ spring-boot = "4.0.3"
 
 [plugins]
 errorprone = { id = "net.ltgt.errorprone", version.ref = "errorprone-plugin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 nmcp = { id = "com.gradleup.nmcp", version.ref = "nmcp" }
 nmcp-aggregation = { id = "com.gradleup.nmcp.aggregation", version.ref = "nmcp" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
@@ -23,6 +25,7 @@ spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-depe
 # direct versions
 errorprone-core = { module = "com.google.errorprone:error_prone_core", version.ref = "errorprone" }
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 nullaway = { module = "com.uber.nullaway:nullaway", version.ref = "nullaway" }
 problem4j-core = { module = "io.github.problem4j:problem4j-core", version.ref = "problem4j-core" }
 problem4j-jackson2 = { module = "io.github.problem4j:problem4j-jackson2", version.ref = "problem4j-jackson2" }
@@ -45,6 +48,7 @@ spring-boot-starter-webmvc-test = { module = "org.springframework.boot:spring-bo
 spring-web = { module = "org.springframework:spring-web" }
 jackson2-databind = { module = "com.fasterxml.jackson.core:jackson-databind" }
 jackson3-dataformat-xml = { module = "tools.jackson.dataformat:jackson-dataformat-xml" }
+jackson3-module-kotlin = { module = "tools.jackson.module:jackson-module-kotlin" }
 jakarta-servlet-api = { module = "jakarta.servlet:jakarta.servlet-api" }
 jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
