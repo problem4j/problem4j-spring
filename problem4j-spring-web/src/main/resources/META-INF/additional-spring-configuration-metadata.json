@@ -1,0 +1,12 @@
+{
+  "hints": [
+    {
+      "name": "problem4j.detail-format",
+      "values": [
+        { "value": "lowercase", "description": "Detail field for predefined Problem responses is in lowercase." },
+        { "value": "capitalized", "description": "Detail field for predefined Problem responses is in capitalized." },
+        { "value": "uppercase", "description": "Detail field for predefined Problem responses is in uppercase." }
+      ]
+    }
+  ]
+}

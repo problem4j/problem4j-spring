@@ -35,12 +35,34 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConfigurationProperties(prefix = "problem4j")
 public class ProblemProperties implements ProblemContextSettings, PostProcessorSettings {
 
+  /** Decides if Problem4J integration is enabled. */
   private final boolean enabled;
+
+  /**
+   * Defines the format for the {@code detail} field in Problem responses. Supported values are
+   * {@code "lowercase"}, {@code "capitalized"}, and {@code "uppercase"}.
+   */
   private final String detailFormat;
+
+  /**
+   * Name of the HTTP header that carries a trace ID for simple tracing provided by this library. If
+   * unset, the feature is disabled.
+   */
   private final @Nullable String tracingHeaderName;
+
+  /**
+   * Template for overriding the {@code type} field of a Problem response. May contain placeholders
+   * like {@code {problem.type}}.
+   */
   private final @Nullable String typeOverride;
+
+  /**
+   * Template for overriding the {@code instance} field of a Problem response. May contain
+   * placeholders like {@code {problem.instance}} and {@code {context.traceId}} for dynamic values.
+   */
   private final @Nullable String instanceOverride;
 
+  /** Caching configuration for resolver lookups in {@code CachingProblemResolverStore}. */
   private final ResolverCaching resolverCaching;
 
   /**
@@ -117,7 +139,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    * include special placeholders that will be dynamically replaced at runtime:
    *
    * <ul>
-   *   <li>{@code {problem.type}} - replaced with the original problem’s type URI
+   *   <li>{@code {problem.type}} - replaced with the original problem's type URI
    *   <li>{@code {context.traceId}} - replaced with the current trace identifier from the {@code
    *       ProblemContext}
    * </ul>
@@ -141,7 +163,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    * or problem-specific data:
    *
    * <ul>
-   *   <li>{@code {problem.instance}} - replaced with the original problem’s instance URI
+   *   <li>{@code {problem.instance}} - replaced with the original problem's instance URI
    *   <li>{@code {context.traceId}} - replaced with the current trace identifier from the {@code
    *       ProblemContext}
    * </ul>
@@ -193,7 +215,13 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
       return new ResolverCaching(DEFAULT_ENABLED, DEFAULT_MAX_CACHE_SIZE);
     }
 
+    /** Indicates whether resolver lookup caching is enabled. */
     private final boolean enabled;
+
+    /**
+     * Maximum number of cached entries for resolver lookups. A value of -1 means unbounded cache
+     * size.
+     */
     private final int maxCacheSize;
 
     /**

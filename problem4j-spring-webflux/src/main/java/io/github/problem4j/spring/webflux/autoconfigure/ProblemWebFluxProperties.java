@@ -33,12 +33,22 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConfigurationProperties(prefix = "problem4j.webflux")
 public class ProblemWebFluxProperties {
 
+  /** Whether Problem4J integration with WebFlux is enabled. */
   private final boolean enabled;
 
+  /** Configuration for {@code ExceptionWebFluxAdvice}. */
   private final ExceptionAdvice exceptionAdvice;
+
+  /** Configuration for {@code ProblemExceptionWebFluxAdvice}. */
   private final ProblemExceptionAdvice problemExceptionAdvice;
+
+  /** Configuration for {@code ProblemContextWebFluxFilter}. */
   private final ProblemContextFilter problemContextFilter;
+
+  /** Configuration for {@code ProblemEnhancedWebFluxHandler} replacement. */
   private final ExceptionHandler exceptionHandler;
+
+  /** Configuration for {@code ProblemErrorWebExceptionHandler} replacement. */
   private final ErrorWebExceptionHandler errorWebExceptionHandler;
 
   /**
@@ -125,7 +135,7 @@ public class ProblemWebFluxProperties {
 
   /**
    * Returns configuration for {@code ProblemEnhancedWebFluxHandler} replacement, which allows
-   * Problem4J to take control of exception handling normally performed by Spring’s {@code
+   * Problem4J to take control of exception handling normally performed by Spring's {@code
    * ResponseEntityExceptionHandler}.
    *
    * @return the configuration for the overwritten exception handler
@@ -138,7 +148,7 @@ public class ProblemWebFluxProperties {
 
   /**
    * Returns configuration for {@code ProblemErrorWebExceptionHandler} replacement, which allows
-   * Problem4J to take control of exception handling normally performed by Spring’s {@code
+   * Problem4J to take control of exception handling normally performed by Spring's {@code
    * ErrorWebExceptionHandler}.
    *
    * @return the configuration for the overwritten error handler
@@ -168,12 +178,13 @@ public class ProblemWebFluxProperties {
       return new ExceptionAdvice(DEFAULT_ENABLED);
     }
 
+    /** Whether the {@code ExceptionWebFluxAdvice} bean should be registered. */
     private final boolean enabled;
 
     /**
      * Creates a new configuration group.
      *
-     * @param enabled whether the {@code ExceptionWebFluxAdvice} bean should be created
+     * @param enabled whether the {@code ExceptionWebFluxAdvice} bean should be registered
      * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
      */
     public ExceptionAdvice(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
@@ -210,12 +221,13 @@ public class ProblemWebFluxProperties {
       return new ProblemExceptionAdvice(DEFAULT_ENABLED);
     }
 
+    /** Whether the {@code ProblemExceptionWebFluxAdvice} bean should be registered. */
     private final boolean enabled;
 
     /**
      * Creates a new configuration group.
      *
-     * @param enabled whether the {@code ProblemExceptionWebFluxAdvice} bean should be created
+     * @param enabled whether the {@code ProblemExceptionWebFluxAdvice} bean should be registered
      * @see io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice
      */
     public ProblemExceptionAdvice(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
@@ -252,12 +264,13 @@ public class ProblemWebFluxProperties {
       return new ProblemContextFilter(DEFAULT_ENABLED);
     }
 
+    /** Whether the {@code ProblemContextWebFluxFilter} bean should be registered. */
     private final boolean enabled;
 
     /**
      * Creates a new configuration group.
      *
-     * @param enabled whether the {@code ProblemContextWebFluxFilter} bean should be created
+     * @param enabled whether the {@code ProblemContextWebFluxFilter} bean should be registered
      * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
      */
     public ProblemContextFilter(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
@@ -294,6 +307,7 @@ public class ProblemWebFluxProperties {
       return new ExceptionHandler(DEFAULT_ENABLED);
     }
 
+    /** Whether the {@code ProblemEnhancedWebFluxHandler} should be registered. */
     private final boolean enabled;
 
     /**
@@ -342,6 +356,7 @@ public class ProblemWebFluxProperties {
       return new ErrorWebExceptionHandler(DEFAULT_ENABLED);
     }
 
+    /** Whether the {@code ProblemErrorWebExceptionHandler} should be registered. */
     private final boolean enabled;
 
     /**

@@ -105,8 +105,8 @@ public class ProblemAutoConfiguration {
    * defined in {@link ProblemProperties}. These overrides may include runtime placeholders such as:
    *
    * <ul>
-   *   <li>{@code {problem.type}} - replaced with the original problem’s type URI
-   *   <li>{@code {problem.instance}} - replaced with the original problem’s instance URI
+   *   <li>{@code {problem.type}} - replaced with the original problem's type URI
+   *   <li>{@code {problem.instance}} - replaced with the original problem's instance URI
    *   <li>{@code {context.traceId}} - replaced with the current trace identifier, if available
    * </ul>
    *
