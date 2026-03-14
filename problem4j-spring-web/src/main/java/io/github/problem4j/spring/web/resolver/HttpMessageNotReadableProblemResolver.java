@@ -21,11 +21,14 @@
 
 package io.github.problem4j.spring.web.resolver;
 
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.SimpleTypeNameMapper;
+import io.github.problem4j.spring.web.TypeNameMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -45,6 +48,8 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
  */
 public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolver {
 
+  private final TypeNameMapper typeNameMapper;
+
   /** Creates a new {@link HttpMessageNotReadableProblemResolver} with default problem format. */
   public HttpMessageNotReadableProblemResolver() {
     this(new IdentityProblemFormat());
@@ -56,7 +61,20 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
    * @param problemFormat the problem format to use
    */
   public HttpMessageNotReadableProblemResolver(ProblemFormat problemFormat) {
+    this(problemFormat, new SimpleTypeNameMapper());
+  }
+
+  /**
+   * Creates a new {@link HttpMessageNotReadableProblemResolver} with the specified problem format
+   * and type name mapper.
+   *
+   * @param problemFormat the problem format to use
+   * @param typeNameMapper the type mapper to use
+   */
+  public HttpMessageNotReadableProblemResolver(
+      ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
     super(HttpMessageNotReadableException.class, problemFormat);
+    this.typeNameMapper = typeNameMapper;
   }
 
   /**
@@ -73,6 +91,9 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
   @Override
   public ProblemBuilder resolveBuilder(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+    if (ex.getCause() instanceof MismatchedInputException e) {
+      return JacksonErrorHelper.resolveMismatchedInput(e, typeNameMapper);
+    }
     return Problem.builder().status(HttpStatus.BAD_REQUEST.value());
   }
 }
