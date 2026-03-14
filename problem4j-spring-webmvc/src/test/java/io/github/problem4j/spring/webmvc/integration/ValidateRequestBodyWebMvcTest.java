@@ -103,7 +103,7 @@ class ValidateRequestBodyWebMvcTest {
 
   @ParameterizedTest
   @ValueSource(
-      strings = {"{ \"name\": \"Alice\"", "{ \"name\": \"Alice\", \"age\": \"too young\"}", ""})
+      strings = {"{ \"name\": \"Alice\"", "not a json", "123", "[1, 2, 3]", "\"just a string\""})
   @NullSource
   void givenMalformedRequestBody_shouldReturnProblem(String json) throws JsonProcessingException {
     HttpHeaders headers = new HttpHeaders();

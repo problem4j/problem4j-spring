@@ -22,6 +22,7 @@
 package io.github.problem4j.spring.web.autoconfigure;
 
 import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.TypeNameMapper;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
@@ -47,6 +48,7 @@ import io.github.problem4j.spring.web.resolver.TypeMismatchProblemResolver;
 import io.github.problem4j.spring.web.resolver.WebExchangeBindProblemResolver;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -169,8 +171,8 @@ class ProblemResolverConfiguration {
     @ConditionalOnMissingBean(HttpMessageNotReadableProblemResolver.class)
     @Bean
     HttpMessageNotReadableProblemResolver httpMessageNotReadableProblemResolver(
-        ProblemFormat problemFormat) {
-      return new HttpMessageNotReadableProblemResolver(problemFormat);
+        ProblemFormat problemFormat, TypeNameMapper problemTypeNameMapper) {
+      return new HttpMessageNotReadableProblemResolver(problemFormat, problemTypeNameMapper);
     }
   }
 
@@ -262,11 +264,19 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(ServerWebInputException.class)
   @Configuration(proxyBeanMethods = false)
   static class ServerWebInputProblemConfiguration {
+    @ConditionalOnBean(TypeMismatchProblemResolver.class)
     @ConditionalOnMissingBean(ServerWebInputProblemResolver.class)
     @Bean
     ServerWebInputProblemResolver serverWebInputProblemResolver(
-        ProblemFormat problemFormat, MethodParameterSupport methodParameterSupport) {
-      return new ServerWebInputProblemResolver(problemFormat, methodParameterSupport);
+        ProblemFormat problemFormat,
+        TypeMismatchProblemResolver typeMismatchProblemResolver,
+        MethodParameterSupport methodParameterSupport,
+        TypeNameMapper problemTypeNameMapper) {
+      return new ServerWebInputProblemResolver(
+          problemFormat,
+          typeMismatchProblemResolver,
+          methodParameterSupport,
+          problemTypeNameMapper);
     }
   }
 

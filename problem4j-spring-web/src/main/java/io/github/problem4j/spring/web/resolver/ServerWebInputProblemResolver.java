@@ -23,17 +23,22 @@ package io.github.problem4j.spring.web.resolver;
 
 import static io.github.problem4j.spring.web.ProblemSupport.PROPERTY_EXTENSION;
 
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.SimpleTypeNameMapper;
+import io.github.problem4j.spring.web.TypeNameMapper;
 import io.github.problem4j.spring.web.parameter.DefaultMethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import java.util.Optional;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.codec.DecodingException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ServerWebInputException;
 
@@ -51,6 +56,7 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
 
   private final TypeMismatchProblemResolver typeMismatchProblemResolver;
   private final MethodParameterSupport methodParameterSupport;
+  private final TypeNameMapper typeNameMapper;
 
   /** Creates a new {@link ServerWebInputProblemResolver} with default problem format. */
   public ServerWebInputProblemResolver() {
@@ -75,9 +81,31 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
    */
   public ServerWebInputProblemResolver(
       ProblemFormat problemFormat, MethodParameterSupport methodParameterSupport) {
+    this(
+        problemFormat,
+        new TypeMismatchProblemResolver(problemFormat),
+        methodParameterSupport,
+        new SimpleTypeNameMapper());
+  }
+
+  /**
+   * Creates a new {@link ServerWebInputProblemResolver} with the specified problem format, type
+   * mismatch resolver, and method parameter support.
+   *
+   * @param problemFormat the problem format to use
+   * @param typeMismatchProblemResolver the resolver to use
+   * @param methodParameterSupport the support for extracting parameter names
+   * @param typeNameMapper the type name mapper to use for decoding exceptions
+   */
+  public ServerWebInputProblemResolver(
+      ProblemFormat problemFormat,
+      TypeMismatchProblemResolver typeMismatchProblemResolver,
+      MethodParameterSupport methodParameterSupport,
+      TypeNameMapper typeNameMapper) {
     super(ServerWebInputException.class, problemFormat);
+    this.typeMismatchProblemResolver = typeMismatchProblemResolver;
     this.methodParameterSupport = methodParameterSupport;
-    typeMismatchProblemResolver = new TypeMismatchProblemResolver(problemFormat);
+    this.typeNameMapper = typeNameMapper;
   }
 
   /**
@@ -99,16 +127,27 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ServerWebInputException swie = (ServerWebInputException) ex;
 
-    if (ex.getCause() instanceof TypeMismatchException tme) {
-      ProblemBuilder builder =
-          typeMismatchProblemResolver.resolveBuilder(context, tme, headers, status);
-      if (!builder.build().hasExtension(PROPERTY_EXTENSION)) {
-        return tryAppendingPropertyFromMethodParameter(swie.getMethodParameter(), builder);
-      }
-      return builder;
+    if (swie.getCause() instanceof TypeMismatchException tme) {
+      return resolveTypeMismatchException(context, headers, status, swie, tme);
+    } else if (swie.getCause() instanceof DecodingException de) {
+      return resolveDecodingException(de);
     }
 
     return Problem.builder().status(swie.getStatusCode().value());
+  }
+
+  private ProblemBuilder resolveTypeMismatchException(
+      ProblemContext context,
+      HttpHeaders headers,
+      HttpStatusCode status,
+      ServerWebInputException swie,
+      TypeMismatchException tme) {
+    ProblemBuilder builder =
+        typeMismatchProblemResolver.resolveBuilder(context, tme, headers, status);
+    if (!builder.build().hasExtension(PROPERTY_EXTENSION)) {
+      return tryAppendingPropertyFromMethodParameter(swie.getMethodParameter(), builder);
+    }
+    return builder;
   }
 
   private ProblemBuilder tryAppendingPropertyFromMethodParameter(
@@ -118,5 +157,12 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
       builder = builder.extension(PROPERTY_EXTENSION, optionalProperty.get());
     }
     return builder;
+  }
+
+  private ProblemBuilder resolveDecodingException(DecodingException ex) {
+    if (ex.getCause() instanceof MismatchedInputException e) {
+      return JacksonErrorHelper.resolveMismatchedInput(e, typeNameMapper);
+    }
+    return Problem.builder().status(HttpStatus.BAD_REQUEST.value());
   }
 }

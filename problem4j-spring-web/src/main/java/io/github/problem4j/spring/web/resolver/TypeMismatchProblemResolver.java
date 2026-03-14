@@ -30,7 +30,8 @@ import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
-import java.util.Locale;
+import io.github.problem4j.spring.web.SimpleTypeNameMapper;
+import io.github.problem4j.spring.web.TypeNameMapper;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -49,6 +50,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  */
 public class TypeMismatchProblemResolver extends AbstractProblemResolver {
 
+  private final TypeNameMapper typeNameMapper;
+
   /** Creates a new {@link TypeMismatchProblemResolver} with default problem format. */
   public TypeMismatchProblemResolver() {
     this(new IdentityProblemFormat());
@@ -60,7 +63,19 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver {
    * @param problemFormat the problem format to use
    */
   public TypeMismatchProblemResolver(ProblemFormat problemFormat) {
+    this(problemFormat, new SimpleTypeNameMapper());
+  }
+
+  /**
+   * Creates a new {@link TypeMismatchProblemResolver} with the specified problem format and type
+   * name mapper.
+   *
+   * @param problemFormat the problem format to use
+   * @param typeNameMapper the type name mapper to use
+   */
+  public TypeMismatchProblemResolver(ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
     super(TypeMismatchException.class, problemFormat);
+    this.typeNameMapper = typeNameMapper;
   }
 
   /**
@@ -97,10 +112,7 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver {
     TypeMismatchException ex1 = (TypeMismatchException) ex;
 
     String property = ex1.getPropertyName();
-    String kind =
-        ex1.getRequiredType() != null
-            ? ex1.getRequiredType().getSimpleName().toLowerCase(Locale.ROOT)
-            : null;
+    String kind = typeNameMapper.map(ex1.getRequiredType()).orElse(null);
 
     // could happen in some early 3.0.x versions of Spring Boot, cannot add tests for it as newer
     // versions assign it to propertyName in constructor

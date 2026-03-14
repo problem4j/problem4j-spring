@@ -1,0 +1,273 @@
+/*
+ * Copyright (c) 2025-2026 The Problem4J Authors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package io.github.problem4j.spring.webflux.integration;
+
+import static io.github.problem4j.spring.web.ProblemSupport.KIND_EXTENSION;
+import static io.github.problem4j.spring.web.ProblemSupport.PROPERTY_EXTENSION;
+import static io.github.problem4j.spring.web.ProblemSupport.TYPE_MISMATCH_DETAIL;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import io.github.problem4j.core.Problem;
+import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.reactive.server.WebTestClient;
+
+@SpringBootTest(
+    classes = {WebFluxTestApp.class},
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class BindingPrimitiveWebFluxTest {
+
+  @Autowired private WebTestClient webTestClient;
+
+  @ParameterizedTest
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "/binding-primitive/int     | { \"value\": 42 }",
+        "/binding-primitive/long    | { \"value\": 9223372036854775807 }",
+        "/binding-primitive/short   | { \"value\": 123 }",
+        "/binding-primitive/byte    | { \"value\": 12 }",
+        "/binding-primitive/float   | { \"value\": 3.14 }",
+        "/binding-primitive/double  | { \"value\": 2.71828 }",
+        "/binding-primitive/boolean | { \"value\": true }"
+      })
+  void givenValidPrimitive_whenPost_thenReturnOk(String path, String json) {
+    webTestClient
+        .post()
+        .uri(path)
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(json)
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody(String.class)
+        .isEqualTo("OK");
+  }
+
+  @ParameterizedTest
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "/binding-primitive/int     | { \"value\": \"notInt\" }",
+        "/binding-primitive/int     | { \"value\": [\"notInt\"] }",
+        "/binding-primitive/int     | { \"value\": { \"notInt\": true } }",
+        "/binding-primitive/long    | { \"value\": \"notLong\" }",
+        "/binding-primitive/long    | { \"value\": [\"notLong\"] }",
+        "/binding-primitive/long    | { \"value\": { \"notLong\": true } }",
+        "/binding-primitive/short   | { \"value\": \"notShort\" }",
+        "/binding-primitive/short   | { \"value\": [\"notShort\"] }",
+        "/binding-primitive/short   | { \"value\": { \"notShort\":true } }",
+        "/binding-primitive/byte    | { \"value\": \"notByte\" }",
+        "/binding-primitive/byte    | { \"value\": [\"notByte\"] }",
+        "/binding-primitive/byte    | { \"value\": { \"notByte\": true } }",
+        "/binding-primitive/float   | { \"value\": \"notFloat\" }",
+        "/binding-primitive/float   | { \"value\": [\"notFloat\"] }",
+        "/binding-primitive/float   | { \"value\": { \"notFloat\": true } }",
+        "/binding-primitive/double  | { \"value\": \"notDouble\" }",
+        "/binding-primitive/double  | { \"value\": [\"notDouble\"] }",
+        "/binding-primitive/double  | { \"value\": { \"notDouble\": true } }",
+        "/binding-primitive/boolean | { \"value\": \"notBool\" }",
+        "/binding-primitive/boolean | { \"value\": [\"notBool\"] }",
+        "/binding-primitive/boolean | { \"value\": { \"notBool\": true } }",
+      })
+  void givenMalformedPrimitive_whenPost_thenReturnProblem(String path, String json) {
+    webTestClient
+        .post()
+        .uri(path)
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(json)
+        .exchange()
+        .expectStatus()
+        .isEqualTo(HttpStatus.BAD_REQUEST)
+        .expectHeader()
+        .contentType(Problem.CONTENT_TYPE)
+        .expectBody(Problem.class)
+        .value(
+            problem -> {
+              String expectedKind;
+              if (path.endsWith("/boolean")) {
+                expectedKind = "boolean";
+              } else if (path.endsWith("/float") || path.endsWith("/double")) {
+                expectedKind = "number";
+              } else {
+                expectedKind = "integer";
+              }
+
+              assertThat(problem)
+                  .isEqualTo(
+                      Problem.builder()
+                          .status(HttpStatus.BAD_REQUEST.value())
+                          .detail(TYPE_MISMATCH_DETAIL)
+                          .extension(PROPERTY_EXTENSION, "value")
+                          .extension(KIND_EXTENSION, expectedKind)
+                          .build());
+            });
+  }
+
+  @ParameterizedTest
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "/binding-primitive/nested/int     | { \"value\": { \"value\": 42 } }",
+        "/binding-primitive/nested/long    | { \"value\": { \"value\": 9223372036854775807 } }",
+        "/binding-primitive/nested/short   | { \"value\": { \"value\": 123 } }",
+        "/binding-primitive/nested/byte    | { \"value\": { \"value\": 12 } }",
+        "/binding-primitive/nested/float   | { \"value\": { \"value\": 3.14 } }",
+        "/binding-primitive/nested/double  | { \"value\": { \"value\": 2.71828 } }",
+        "/binding-primitive/nested/boolean | { \"value\": { \"value\": true } }"
+      })
+  void givenValidNested_whenPost_thenReturnOk(String path, String json) {
+    webTestClient
+        .post()
+        .uri(path)
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(json)
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody(String.class)
+        .isEqualTo("OK");
+  }
+
+  @ParameterizedTest
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "/binding-primitive/nested/int     | { \"nested\": { \"value\": \"notInt\" } }",
+        "/binding-primitive/nested/int     | { \"nested\": { \"value\": [\"notInt\"] } }",
+        "/binding-primitive/nested/int     | { \"nested\": { \"value\": { \"notInt\": true } } }",
+        "/binding-primitive/nested/long    | { \"nested\": { \"value\": \"notLong\" } }",
+        "/binding-primitive/nested/long    | { \"nested\": { \"value\": [\"notLong\"] } }",
+        "/binding-primitive/nested/long    | { \"nested\": { \"value\": { \"notLong\": true } } }",
+        "/binding-primitive/nested/short   | { \"nested\": { \"value\": \"notShort\" } }",
+        "/binding-primitive/nested/short   | { \"nested\": { \"value\": [\"notShort\"] } }",
+        "/binding-primitive/nested/short   | { \"nested\": { \"value\": { \"notShort\":true } } }",
+        "/binding-primitive/nested/byte    | { \"nested\": { \"value\": \"notByte\" } }",
+        "/binding-primitive/nested/byte    | { \"nested\": { \"value\": [\"notByte\"] } }",
+        "/binding-primitive/nested/byte    | { \"nested\": { \"value\": { \"notByte\": true } } }",
+        "/binding-primitive/nested/float   | { \"nested\": { \"value\": \"notFloat\" } }",
+        "/binding-primitive/nested/float   | { \"nested\": { \"value\": [\"notFloat\"] } }",
+        "/binding-primitive/nested/float   | { \"nested\": { \"value\": { \"notFloat\": true } } }",
+        "/binding-primitive/nested/double  | { \"nested\": { \"value\": \"notDouble\" } }",
+        "/binding-primitive/nested/double  | { \"nested\": { \"value\": [\"notDouble\"] } }",
+        "/binding-primitive/nested/double  | { \"nested\": { \"value\": { \"notDouble\": true } } }",
+        "/binding-primitive/nested/boolean | { \"nested\": { \"value\": \"notBool\" } }",
+        "/binding-primitive/nested/boolean | { \"nested\": { \"value\": [\"notBool\"] } }",
+        "/binding-primitive/nested/boolean | { \"nested\": { \"value\": { \"notBool\": true } } }",
+      })
+  void givenMalformedNested_whenPost_thenReturnProblem(String path, String json) {
+    webTestClient
+        .post()
+        .uri(path)
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(json)
+        .exchange()
+        .expectStatus()
+        .isEqualTo(HttpStatus.BAD_REQUEST)
+        .expectHeader()
+        .contentType(Problem.CONTENT_TYPE)
+        .expectBody(Problem.class)
+        .value(
+            problem -> {
+              String expectedKind;
+              if (path.endsWith("/boolean")) {
+                expectedKind = "boolean";
+              } else if (path.endsWith("/float") || path.endsWith("/double")) {
+                expectedKind = "number";
+              } else {
+                expectedKind = "integer";
+              }
+
+              assertThat(problem)
+                  .isEqualTo(
+                      Problem.builder()
+                          .status(HttpStatus.BAD_REQUEST.value())
+                          .detail(TYPE_MISMATCH_DETAIL)
+                          .extension(PROPERTY_EXTENSION, "nested.value")
+                          .extension(KIND_EXTENSION, expectedKind)
+                          .build());
+            });
+  }
+
+  @Test
+  void givenValidComplexRoot_whenPost_thenReturnOk() {
+    String json =
+        "{\n"
+            + "  \"flag\": true,\n"
+            + "  \"timestamp\": 1672531200000,\n"
+            + "  \"amount\": 12.34,\n"
+            + "  \"shortNested\": { \"value\": 3 }\n"
+            + "}";
+
+    webTestClient
+        .post()
+        .uri("/binding-primitive/complex")
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(json)
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody(String.class)
+        .isEqualTo("OK");
+  }
+
+  @ParameterizedTest
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "{ \"flag\": \"notBool\", \"timestamp\": \"notLong\", \"amount\": \"notFloat\", \"shortNested\": { \"value\": \"notShort\" } } | flag              | boolean",
+        "{ \"timestamp\": \"notLong\", \"flag\": \"notBool\", \"amount\": \"notFloat\", \"shortNested\": { \"value\": \"notShort\" } } | timestamp         | integer",
+        "{ \"amount\": \"notFloat\", \"flag\": \"notBool\", \"timestamp\": \"notLong\", \"shortNested\": { \"value\": \"notShort\" } } | amount            | number",
+        "{ \"shortNested\": { \"value\": \"notShort\" }, \"flag\": \"notBool\", \"timestamp\": \"notLong\", \"amount\": \"notFloat\" } | shortNested.value | integer"
+      })
+  void givenMalformedComplexObject_whenPost_thenReturnProblemWithFirstInvalidFieldAsProperty(
+      String json, String expectedProperty, String expectedKind) {
+
+    webTestClient
+        .post()
+        .uri("/binding-primitive/complex")
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(json)
+        .exchange()
+        .expectStatus()
+        .isEqualTo(HttpStatus.BAD_REQUEST)
+        .expectHeader()
+        .contentType(Problem.CONTENT_TYPE)
+        .expectBody(Problem.class)
+        .value(
+            problem ->
+                assertThat(problem)
+                    .isEqualTo(
+                        Problem.builder()
+                            .status(HttpStatus.BAD_REQUEST.value())
+                            .detail(TYPE_MISMATCH_DETAIL)
+                            .extension(PROPERTY_EXTENSION, expectedProperty)
+                            .extension(KIND_EXTENSION, expectedKind)
+                            .build()));
+  }
+}
