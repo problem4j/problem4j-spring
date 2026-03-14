@@ -2,6 +2,7 @@ plugins {
     id("internal.errorprone-convention")
     id("internal.jacoco-convention")
     id("internal.java-library-convention")
+    id("internal.kotlin-interop-convention")
     id("internal.publishing-convention")
     alias(libs.plugins.nmcp)
 }
@@ -25,6 +26,8 @@ dependencies {
     testImplementation(libs.spring.boot.starter.webflux)
     testImplementation(libs.spring.boot.starter.webflux.test)
     testImplementation(libs.spring.boot.validation)
+    testImplementation(libs.jackson3.module.kotlin)
+    testImplementation(libs.kotlin.reflect)
 
     testRuntimeOnly(libs.junit.platform.launcher)
 
