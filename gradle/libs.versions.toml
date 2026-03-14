@@ -6,7 +6,7 @@ nmcp = "1.4.4"
 nullaway = "0.13.1"
 problem4j-core = "1.4.3"
 problem4j-jackson2 = "1.4.3"
-problem4j-jackson3 = "1.4.2"
+problem4j-jackson3 = "1.4.3"
 spotless = "8.3.0"
 spring-boot = "4.0.3"
 
