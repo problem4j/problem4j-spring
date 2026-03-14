@@ -33,6 +33,8 @@ import io.github.problem4j.spring.web.ProblemJsonMapperBuilderCustomizer;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.ProblemXmlMapperBuilderCustomizer;
+import io.github.problem4j.spring.web.SimpleTypeNameMapper;
+import io.github.problem4j.spring.web.TypeNameMapper;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.util.List;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -142,6 +144,19 @@ public class ProblemAutoConfiguration {
     }
 
     return problemResolverStore;
+  }
+
+  /**
+   * Provides a {@link TypeNameMapper} that maps Java types to string names for inclusion in problem
+   * responses. The default implementation, {@link SimpleTypeNameMapper} supports simple Java types,
+   * such as primitives, numbers, strings, arrays and lists.
+   *
+   * @return a new {@link SimpleTypeNameMapper}
+   */
+  @ConditionalOnMissingBean(TypeNameMapper.class)
+  @Bean
+  TypeNameMapper problemTypeNameMapper() {
+    return new SimpleTypeNameMapper();
   }
 
   /** Configuration for JSON support in Problem serialization. */
