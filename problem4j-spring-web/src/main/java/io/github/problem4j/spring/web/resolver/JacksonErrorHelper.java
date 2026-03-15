@@ -39,16 +39,17 @@ final class JacksonErrorHelper {
 
   static ProblemBuilder resolveMismatchedInput(
       MismatchedInputException e, TypeNameMapper typeNameMapper) {
-    Optional<String> property = resolvePropertyPath(e);
-    Optional<String> kind = typeNameMapper.map(e.getTargetType());
+    Optional<String> optionalProperty = resolvePropertyPath(e);
 
     ProblemBuilder builder = Problem.builder().status(HttpStatus.BAD_REQUEST.value());
 
-    property.ifPresent(
-        it -> {
+    optionalProperty.ifPresent(
+        property -> {
+          String kind = typeNameMapper.map(e.getTargetType()).orElse(null);
+
           builder.detail(TYPE_MISMATCH_DETAIL);
-          builder.extension(PROPERTY_EXTENSION, it);
-          builder.extension(KIND_EXTENSION, kind.orElse(null));
+          builder.extension(PROPERTY_EXTENSION, property);
+          builder.extension(KIND_EXTENSION, kind);
         });
 
     return builder;

@@ -78,6 +78,21 @@ public release for Problem4J's integration with Spring Boot 4.
 - Enable backwards compatibility with Jackson 2.x using `@ConditionalOnClass` (so you need to add `spring-boot-jackson2`
   module manually).
 
+## [1.2.7] - 2026-03-16
+
+## Changed
+
+- Deprecate `ProblemSupport.resolveProblem`.
+- Bump `problem4j-core` to `1.4.3`.
+- Bump `problem4j-jackson2` to `1.4.3`.
+
+## Fixed
+
+- Fix missing details about primitive types deserialization errors. It will include `"detail": "Type mismatch"` with
+  `"property"` and `"kind"` extensions containing type property and its expected type.
+- Document configuration properties via JavaDocs and hints in `additional-spring-configuration-metadata.json` for
+  annotation processor to generate an improved.
+
 ## [1.2.6] - 2026-02-26
 
 ### Changed
