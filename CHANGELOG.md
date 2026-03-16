@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+## [2.2.2] - 2026-03-16
+
+## Changed
+
+- Deprecate `ProblemSupport.resolveProblem`.
+- Bump `problem4j-core` to `1.4.3`.
+- Bump `problem4j-jackson2` to `1.4.3`.
+- Bump `problem4j-jackson3` to `1.4.3`.
+
+## Fixed
+
+- Fix missing details about primitive types deserialization errors. It will include `"detail": "Type mismatch"` with
+  `"property"` and `"kind"` extensions containing type property and its expected type.
+- Document configuration properties via JavaDocs and hints in `additional-spring-configuration-metadata.json` for
+  annotation processor to generate an improved.
+
 ## [2.2.1] - 2026-02-26
 
 ### Changed
