@@ -2,7 +2,7 @@
 jspecify = "1.0.0"
 errorprone = "2.48.0"
 errorprone-plugin = "5.1.0"
-kotlin = "2.3.10"
+kotlin = "2.3.20"
 nmcp = "1.4.4"
 nullaway = "0.13.1"
 problem4j-core = "1.4.3"
