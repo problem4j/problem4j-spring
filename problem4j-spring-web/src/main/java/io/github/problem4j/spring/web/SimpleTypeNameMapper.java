@@ -43,8 +43,11 @@ public class SimpleTypeNameMapper implements TypeNameMapper {
   /** Common type name for all boolean types. */
   protected static final String BOOLEAN_TYPE = "boolean";
 
-  /** Common type name for string types, including {@code String} and {@code Enum} types. */
+  /** Common type name for string types. */
   protected static final String STRING_TYPE = "string";
+
+  /** Common type name for enum types. */
+  protected static final String ENUM_TYPE = "enum";
 
   /** Common type name for array and collection types. */
   protected static final String ARRAY_TYPE = "array";
@@ -59,7 +62,8 @@ public class SimpleTypeNameMapper implements TypeNameMapper {
    *   <li>Decimal types ({@code double}, {@code float}, their wrapper classes and {@code
    *       BigDecimal} ) to {@code "number"}
    *   <li>Boolean types ({@code boolean} and {@code Boolean}) to {@code "boolean"}
-   *   <li>String type ({@code String}) and {@code Enum} types to {@code "string"}
+   *   <li>String type ({@code String}) to {@code "string"}
+   *   <li>Enum types to {@code "enum"}
    *   <li>{@code Array} and {@code Collection} types to {@code "array"}
    * </ul>
    *
@@ -78,6 +82,8 @@ public class SimpleTypeNameMapper implements TypeNameMapper {
       return Optional.of(NUMBER_TYPE);
     } else if (isBoolean(type)) {
       return Optional.of(BOOLEAN_TYPE);
+    } else if (isEnum(type)) {
+      return Optional.of(ENUM_TYPE);
     } else if (isString(type)) {
       return Optional.of(STRING_TYPE);
     } else if (isArray(type)) {
@@ -131,14 +137,23 @@ public class SimpleTypeNameMapper implements TypeNameMapper {
   }
 
   /**
-   * Determines if the given class represents a string type, which includes {@code String} and
-   * {@code Enum} types.
+   * Determines if the given class represents an enum type.
    *
    * @param type the class to check
-   * @return {@code true} if the class is a string
+   * @return {@code true} if the class is an enum type, {@code false} otherwise
+   */
+  protected boolean isEnum(Class<?> type) {
+    return type.isEnum();
+  }
+
+  /**
+   * Determines if the given class represents a string type.
+   *
+   * @param type the class to check
+   * @return {@code true} if the class is a string type, {@code false} otherwise
    */
   protected boolean isString(Class<?> type) {
-    return type == String.class || type.isEnum();
+    return type == String.class;
   }
 
   /**

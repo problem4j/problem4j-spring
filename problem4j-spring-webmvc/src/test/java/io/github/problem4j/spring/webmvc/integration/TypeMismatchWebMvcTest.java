@@ -26,6 +26,7 @@ import static io.github.problem4j.spring.web.ProblemSupport.PROPERTY_EXTENSION;
 import static io.github.problem4j.spring.web.ProblemSupport.TYPE_MISMATCH_DETAIL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
@@ -37,6 +38,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(
@@ -183,5 +185,46 @@ class TypeMismatchWebMvcTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
+  }
+
+  @Test
+  void givenRequestWithInvalidEnumInRequestBody_shouldReturnProblem()
+      throws JsonProcessingException {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+
+    String json = "{\"name\": \"Test\", \"status\": \"INVALID\"}";
+    HttpEntity<String> request = new HttpEntity<>(json, headers);
+
+    ResponseEntity<String> response =
+        restTemplate.postForEntity("/type-mismatch/request-body", request, String.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+
+    Problem problem = objectMapper.readValue(response.getBody(), Problem.class);
+
+    assertThat(problem)
+        .isEqualTo(
+            Problem.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .detail(TYPE_MISMATCH_DETAIL)
+                .extension(PROPERTY_EXTENSION, "status")
+                .extension(KIND_EXTENSION, "enum")
+                .build());
+  }
+
+  @Test
+  void givenRequestWithValidEnumInRequestBody_shouldReturnOk() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+
+    String json = "{\"name\": \"Test\", \"status\": \"ACTIVE\"}";
+    HttpEntity<String> request = new HttpEntity<>(json, headers);
+
+    ResponseEntity<String> response =
+        restTemplate.postForEntity("/type-mismatch/request-body", request, String.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 }
