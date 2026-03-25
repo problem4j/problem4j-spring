@@ -21,13 +21,19 @@
 
 package io.github.problem4j.spring.webflux.app.rest;
 
+import io.github.problem4j.spring.webflux.app.model.EnumRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping(path = "/type-mismatch")
@@ -51,5 +57,11 @@ public class TypeMismatchController {
   @GetMapping(path = "/cookie-value")
   public String cookieValue(@CookieValue("id") Integer id) {
     return "OK";
+  }
+
+  @PostMapping(path = "/request-body")
+  @ResponseStatus(HttpStatus.OK)
+  public Mono<Void> requestBody(@RequestBody Mono<EnumRequest> request) {
+    return request.then();
   }
 }

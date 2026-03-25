@@ -3,6 +3,7 @@ import internal.getBooleanProperty
 
 plugins {
     id("internal.common-convention")
+    id("internal.idea-convention")
     id("jacoco-report-aggregation")
     alias(libs.plugins.nmcp).apply(false)
     alias(libs.plugins.nmcp.aggregation)

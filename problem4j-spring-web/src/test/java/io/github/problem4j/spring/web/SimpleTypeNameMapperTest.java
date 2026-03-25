@@ -86,7 +86,7 @@ class SimpleTypeNameMapperTest {
         Arguments.of(boolean.class, "boolean"),
         Arguments.of(Boolean.class, "boolean"),
         Arguments.of(String.class, "string"),
-        Arguments.of(TestEnum.class, "string"),
+        Arguments.of(TestEnum.class, "enum"),
         Arguments.of(String[].class, "array"),
         Arguments.of(Collection.class, "array"),
         Arguments.of(List.class, "array"),

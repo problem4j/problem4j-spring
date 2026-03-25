@@ -186,4 +186,43 @@ class TypeMismatchWebFluxTest {
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo("OK");
   }
+
+  @Test
+  void givenRequestWithInvalidEnumInRequestBody_shouldReturnProblem() {
+    String json = "{\"name\": \"Test\", \"status\": \"INVALID\"}";
+
+    webTestClient
+        .post()
+        .uri(uriBuilder -> uriBuilder.path("/type-mismatch/request-body").build())
+        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+        .bodyValue(json)
+        .exchange()
+        .expectStatus()
+        .isEqualTo(HttpStatus.BAD_REQUEST)
+        .expectHeader()
+        .contentType(Problem.CONTENT_TYPE)
+        .expectBody(Problem.class)
+        .value(v -> assertThat(v).isNotNull())
+        .isEqualTo(
+            Problem.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .detail(TYPE_MISMATCH_DETAIL)
+                .extension(PROPERTY_EXTENSION, "status")
+                .extension(KIND_EXTENSION, "enum")
+                .build());
+  }
+
+  @Test
+  void givenRequestWithValidEnumInRequestBody_shouldReturnOk() {
+    String json = "{\"name\": \"Test\", \"status\": \"ACTIVE\"}";
+
+    webTestClient
+        .post()
+        .uri(uriBuilder -> uriBuilder.path("/type-mismatch/request-body").build())
+        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+        .bodyValue(json)
+        .exchange()
+        .expectStatus()
+        .isEqualTo(HttpStatus.OK);
+  }
 }
