@@ -4,7 +4,7 @@ nmcp = "1.4.4"
 problem4j-core = "1.4.3"
 problem4j-jackson2 = "1.4.3"
 spotless = "8.2.1"
-spring-boot = "3.5.12"
+spring-boot = "3.5.13"
 
 [plugins]
 idea-ext = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "idea-ext" }
