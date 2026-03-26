@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+## [2.2.3] - 2026-03-26
+
+- Fix detail about enum deserialization errors to correctly say `"enum"` instead of `"string"`.
+
 ## [2.2.2] - 2026-03-16
 
 ## Changed
