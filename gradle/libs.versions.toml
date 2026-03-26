@@ -10,7 +10,7 @@ problem4j-core = "1.4.3"
 problem4j-jackson2 = "1.4.3"
 problem4j-jackson3 = "1.4.3"
 spotless = "8.4.0"
-spring-boot = "4.0.4"
+spring-boot = "4.0.5"
 
 [plugins]
 errorprone = { id = "net.ltgt.errorprone", version.ref = "errorprone-plugin" }
