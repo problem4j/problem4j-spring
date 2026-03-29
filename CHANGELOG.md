@@ -8,21 +8,25 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [1.2.9] - 2026-03-29
 
+### Fixed
+
 - Fix formatting of `detailFormat` for resolving cause exceptions.
 
 ## [1.2.8] - 2026-03-26
+
+### Fixed
 
 - Fix detail about enum deserialization errors to correctly say `"enum"` instead of `"string"`.
 
 ## [1.2.7] - 2026-03-16
 
-## Changed
+### Changed
 
 - Deprecate `ProblemSupport.resolveProblem`.
 - Bump `problem4j-core` to `1.4.3`.
 - Bump `problem4j-jackson2` to `1.4.3`.
 
-## Fixed
+### Fixed
 
 - Fix missing details about primitive types deserialization errors. It will include `"detail": "Type mismatch"` with
   `"property"` and `"kind"` extensions containing type property and its expected type.
