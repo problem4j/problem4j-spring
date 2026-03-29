@@ -46,7 +46,8 @@ import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(
     classes = {WebMvcTestApp.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {"problem4j.detail-format=lowercase"})
 class ValidateMethodArgumentFailingWebMvcTest {
 
   private static final String VIOLATION_ERROR = "size must be between 5 and " + Integer.MAX_VALUE;
@@ -68,7 +69,7 @@ class ValidateMethodArgumentFailingWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL)
+                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                 .extension(
                     ERRORS_EXTENSION, List.of(Map.of("field", "idVar", "error", VIOLATION_ERROR)))
                 .build());
@@ -88,7 +89,7 @@ class ValidateMethodArgumentFailingWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL)
+                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                 .extension(
                     ERRORS_EXTENSION,
                     List.of(Map.of("field", "queryParam", "error", VIOLATION_ERROR)))
@@ -116,7 +117,7 @@ class ValidateMethodArgumentFailingWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL)
+                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                 .extension(
                     ERRORS_EXTENSION,
                     List.of(Map.of("field", "xCustomHeader", "error", VIOLATION_ERROR)))
@@ -144,7 +145,7 @@ class ValidateMethodArgumentFailingWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL)
+                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                 .extension(
                     ERRORS_EXTENSION,
                     List.of(Map.of("field", "xSession", "error", VIOLATION_ERROR)))

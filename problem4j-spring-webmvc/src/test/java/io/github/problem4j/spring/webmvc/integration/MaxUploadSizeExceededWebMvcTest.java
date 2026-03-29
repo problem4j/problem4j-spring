@@ -45,7 +45,8 @@ import org.springframework.util.MultiValueMap;
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
       "spring.servlet.multipart.max-file-size=1KB",
-      "spring.servlet.multipart.max-request-size=1KB"
+      "spring.servlet.multipart.max-request-size=1KB",
+      "problem4j.detail-format=lowercase"
     })
 class MaxUploadSizeExceededWebMvcTest {
 
@@ -72,7 +73,7 @@ class MaxUploadSizeExceededWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.PAYLOAD_TOO_LARGE.value())
-                .detail(MAX_UPLOAD_SIZE_EXCEEDED_DETAIL)
+                .detail(MAX_UPLOAD_SIZE_EXCEEDED_DETAIL.toLowerCase())
                 .build());
   }
 

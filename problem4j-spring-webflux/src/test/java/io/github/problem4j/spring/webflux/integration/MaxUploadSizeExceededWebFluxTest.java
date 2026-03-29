@@ -36,7 +36,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(
     classes = {WebFluxTestApp.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {"problem4j.detail-format=lowercase"})
 @AutoConfigureWebTestClient
 class MaxUploadSizeExceededWebFluxTest {
 
@@ -57,7 +58,7 @@ class MaxUploadSizeExceededWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.PAYLOAD_TOO_LARGE.value())
-                .detail(MAX_UPLOAD_SIZE_EXCEEDED_DETAIL)
+                .detail(MAX_UPLOAD_SIZE_EXCEEDED_DETAIL.toLowerCase())
                 .extension(MAX_EXTENSION, 1)
                 .build());
   }

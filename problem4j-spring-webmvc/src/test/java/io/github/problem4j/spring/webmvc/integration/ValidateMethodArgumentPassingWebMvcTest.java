@@ -38,7 +38,8 @@ import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(
     classes = {WebMvcTestApp.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {"problem4j.detail-format=lowercase"})
 class ValidateMethodArgumentPassingWebMvcTest {
 
   @Autowired private TestRestTemplate restTemplate;

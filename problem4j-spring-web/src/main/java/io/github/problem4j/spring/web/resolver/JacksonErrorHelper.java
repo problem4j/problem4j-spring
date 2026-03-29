@@ -29,16 +29,28 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
+import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.TypeNameMapper;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 
+/**
+ * Utility for Jackson exceptions used in situations where these exceptions are the {@code cause} of
+ * the exception that is being resolved.
+ */
 final class JacksonErrorHelper {
 
-  static ProblemBuilder resolveMismatchedInput(
-      MismatchedInputException e, TypeNameMapper typeNameMapper) {
+  private final ProblemFormat problemFormat;
+  private final TypeNameMapper typeNameMapper;
+
+  JacksonErrorHelper(ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
+    this.problemFormat = problemFormat;
+    this.typeNameMapper = typeNameMapper;
+  }
+
+  ProblemBuilder resolveMismatchedInput(MismatchedInputException e) {
     Optional<String> optionalProperty = resolvePropertyPath(e);
 
     ProblemBuilder builder = Problem.builder().status(HttpStatus.BAD_REQUEST.value());
@@ -47,7 +59,7 @@ final class JacksonErrorHelper {
         property -> {
           String kind = typeNameMapper.map(e.getTargetType()).orElse(null);
 
-          builder.detail(TYPE_MISMATCH_DETAIL);
+          builder.detail(problemFormat.formatDetail(TYPE_MISMATCH_DETAIL));
           builder.extension(PROPERTY_EXTENSION, property);
           builder.extension(KIND_EXTENSION, kind);
         });
@@ -55,7 +67,7 @@ final class JacksonErrorHelper {
     return builder;
   }
 
-  private static Optional<String> resolvePropertyPath(MismatchedInputException e) {
+  private Optional<String> resolvePropertyPath(MismatchedInputException e) {
     String property =
         e.getPath().stream()
             .map(JsonMappingException.Reference::getFieldName)
@@ -64,6 +76,4 @@ final class JacksonErrorHelper {
 
     return StringUtils.hasLength(property) ? Optional.of(property) : Optional.empty();
   }
-
-  private JacksonErrorHelper() {}
 }

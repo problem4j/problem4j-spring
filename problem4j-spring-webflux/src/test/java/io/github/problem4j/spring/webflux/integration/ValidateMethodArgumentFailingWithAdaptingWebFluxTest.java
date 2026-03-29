@@ -42,7 +42,10 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(
     classes = {WebFluxTestApp.class},
-    properties = {"spring.validation.method.adapt-constraint-violations=true"},
+    properties = {
+      "spring.validation.method.adapt-constraint-violations=true",
+      "problem4j.detail-format=lowercase"
+    },
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
@@ -71,7 +74,7 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
                     .isEqualTo(
                         Problem.builder()
                             .status(HttpStatus.BAD_REQUEST.value())
-                            .detail(VALIDATION_FAILED_DETAIL)
+                            .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                             .extension(
                                 ERRORS_EXTENSION,
                                 List.of(Map.of("field", "id", "error", VIOLATION_ERROR)))
@@ -103,7 +106,7 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
                     .isEqualTo(
                         Problem.builder()
                             .status(HttpStatus.BAD_REQUEST.value())
-                            .detail(VALIDATION_FAILED_DETAIL)
+                            .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                             .extension(
                                 ERRORS_EXTENSION,
                                 List.of(Map.of("field", "query", "error", VIOLATION_ERROR)))
@@ -131,7 +134,7 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
                     .isEqualTo(
                         Problem.builder()
                             .status(HttpStatus.BAD_REQUEST.value())
-                            .detail(VALIDATION_FAILED_DETAIL)
+                            .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                             .extension(
                                 ERRORS_EXTENSION,
                                 List.of(
@@ -160,7 +163,7 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
                     .isEqualTo(
                         Problem.builder()
                             .status(HttpStatus.BAD_REQUEST.value())
-                            .detail(VALIDATION_FAILED_DETAIL)
+                            .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                             .extension(
                                 ERRORS_EXTENSION,
                                 List.of(Map.of("field", "x_session", "error", VIOLATION_ERROR)))
