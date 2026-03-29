@@ -43,7 +43,8 @@ import org.springframework.http.ResponseEntity;
     properties = {
       "problem4j.type-override=https://example.org/type/{problem.type}",
       "problem4j.instance-override=https://example.org/trace/{context.traceId}",
-      "problem4j.tracing-header-name=X-Trace-Id"
+      "problem4j.tracing-header-name=X-Trace-Id",
+      "problem4j.detail-format=lowercase"
     })
 class ProblemOverrideWebMvcTest {
 

@@ -46,7 +46,10 @@ import org.springframework.http.ResponseEntity;
 @SpringBootTest(
     classes = {WebMvcTestApp.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = {"spring.validation.method.adapt-constraint-violations=true"})
+    properties = {
+      "spring.validation.method.adapt-constraint-violations=true",
+      "problem4j.detail-format=lowercase"
+    })
 class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
 
   private static final String VIOLATION_ERROR = "size must be between 5 and " + Integer.MAX_VALUE;
@@ -67,7 +70,7 @@ class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL)
+                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                 .extension(
                     ERRORS_EXTENSION, List.of(Map.of("field", "id", "error", VIOLATION_ERROR)))
                 .build());
@@ -87,7 +90,7 @@ class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL)
+                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                 .extension(
                     ERRORS_EXTENSION, List.of(Map.of("field", "query", "error", VIOLATION_ERROR)))
                 .build());
@@ -114,7 +117,7 @@ class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL)
+                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                 .extension(
                     ERRORS_EXTENSION,
                     List.of(Map.of("field", "X-Custom-Header", "error", VIOLATION_ERROR)))
@@ -142,7 +145,7 @@ class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL)
+                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                 .extension(
                     ERRORS_EXTENSION,
                     List.of(Map.of("field", "x_session", "error", VIOLATION_ERROR)))

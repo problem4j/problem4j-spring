@@ -45,7 +45,10 @@ import org.springframework.http.ResponseEntity;
 @SpringBootTest(
     classes = {WebMvcTestApp.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = {"spring.jackson.deserialization.fail-on-null-for-primitives=true"})
+    properties = {
+      "spring.jackson.deserialization.fail-on-null-for-primitives=true",
+      "problem4j.detail-format=lowercase"
+    })
 class BindingPrimitiveWebMvcTest {
 
   @Autowired private TestRestTemplate restTemplate;
@@ -139,7 +142,7 @@ class BindingPrimitiveWebMvcTest {
     Problem expected =
         Problem.builder()
             .status(HttpStatus.BAD_REQUEST.value())
-            .detail(TYPE_MISMATCH_DETAIL)
+            .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
             .extension(PROPERTY_EXTENSION, "value")
             .extension(KIND_EXTENSION, expectedKind)
             .build();
@@ -238,7 +241,7 @@ class BindingPrimitiveWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL)
+                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                 .extension(PROPERTY_EXTENSION, "nested.value")
                 .extension(KIND_EXTENSION, expectedKind)
                 .build());
@@ -282,7 +285,7 @@ class BindingPrimitiveWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL)
+                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                 .extension(PROPERTY_EXTENSION, "value")
                 .extension(KIND_EXTENSION, expectedKind)
                 .build());
@@ -313,7 +316,7 @@ class BindingPrimitiveWebMvcTest {
     Problem expected =
         Problem.builder()
             .status(HttpStatus.BAD_REQUEST.value())
-            .detail(TYPE_MISMATCH_DETAIL)
+            .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
             .extension(PROPERTY_EXTENSION, "value")
             .extension(KIND_EXTENSION, "integer")
             .build();
@@ -342,7 +345,7 @@ class BindingPrimitiveWebMvcTest {
     Problem expected =
         Problem.builder()
             .status(HttpStatus.BAD_REQUEST.value())
-            .detail(TYPE_MISMATCH_DETAIL)
+            .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
             .extension(PROPERTY_EXTENSION, "value")
             .extension(KIND_EXTENSION, "integer")
             .build();
@@ -402,7 +405,7 @@ class BindingPrimitiveWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL)
+                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                 .extension(PROPERTY_EXTENSION, expectedProperty)
                 .extension(KIND_EXTENSION, expectedKind)
                 .build());

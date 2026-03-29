@@ -40,7 +40,8 @@ import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(
     classes = {WebMvcTestApp.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {"problem4j.detail-format=lowercase"})
 class MethodArgumentNotValidWebMvcTest {
 
   @Autowired private TestRestTemplate restTemplate;
@@ -60,7 +61,7 @@ class MethodArgumentNotValidWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL)
+                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                 .extension(
                     ERRORS_EXTENSION,
                     List.of(Map.of("field", "number", "error", IS_NOT_VALID_ERROR)))

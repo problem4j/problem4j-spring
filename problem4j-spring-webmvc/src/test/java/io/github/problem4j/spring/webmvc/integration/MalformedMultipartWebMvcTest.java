@@ -42,7 +42,8 @@ import org.springframework.util.MultiValueMap;
 
 @SpringBootTest(
     classes = {WebMvcTestApp.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {"problem4j.detail-format=lowercase"})
 class MalformedMultipartWebMvcTest {
 
   @Autowired private TestRestTemplate restTemplate;
@@ -68,7 +69,7 @@ class MalformedMultipartWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(MISSING_REQUEST_PART_DETAIL)
+                .detail(MISSING_REQUEST_PART_DETAIL.toLowerCase())
                 .extension(PARAM_EXTENSION, "file")
                 .build());
   }
