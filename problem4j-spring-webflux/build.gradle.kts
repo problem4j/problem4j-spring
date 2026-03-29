@@ -28,6 +28,7 @@ dependencies {
     testImplementation(libs.spring.boot.validation)
     testImplementation(libs.jackson3.module.kotlin)
     testImplementation(libs.kotlin.reflect)
+    testImplementation(libs.kotlin.stdlib)
 
     testRuntimeOnly(libs.junit.platform.launcher)
 

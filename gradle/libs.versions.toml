@@ -28,6 +28,7 @@ spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-depe
 errorprone-core = { module = "com.google.errorprone:error_prone_core", version.ref = "errorprone" }
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 nullaway = { module = "com.uber.nullaway:nullaway", version.ref = "nullaway" }
 problem4j-core = { module = "io.github.problem4j:problem4j-core", version.ref = "problem4j-core" }
 problem4j-jackson2 = { module = "io.github.problem4j:problem4j-jackson2", version.ref = "problem4j-jackson2" }

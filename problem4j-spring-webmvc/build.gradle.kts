@@ -30,6 +30,7 @@ dependencies {
     testImplementation(libs.jackson3.dataformat.xml)
     testImplementation(libs.jackson3.module.kotlin)
     testImplementation(libs.kotlin.reflect)
+    testImplementation(libs.kotlin.stdlib)
 
     // Included because TestRestTemplate requires it if used with actual web environment in tests. Not migrating to
     // WebTestClient either for easier merges with 1.x versions.
