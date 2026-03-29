@@ -98,6 +98,10 @@ public release for Problem4J's integration with Spring Boot 4.
 - Enable backwards compatibility with Jackson 2.x using `@ConditionalOnClass` (so you need to add `spring-boot-jackson2`
   module manually).
 
+## [1.2.9] - 2026-03-29
+
+- Fix formatting of `detailFormat` for resolving cause exceptions.
+
 ## [1.2.8] - 2026-03-26
 
 - Fix detail about enum deserialization errors to correctly say `"enum"` instead of `"string"`.

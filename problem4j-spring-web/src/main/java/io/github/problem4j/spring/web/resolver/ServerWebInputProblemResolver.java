@@ -57,7 +57,7 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
 
   private final TypeMismatchProblemResolver typeMismatchProblemResolver;
   private final MethodParameterSupport methodParameterSupport;
-  private final TypeNameMapper typeNameMapper;
+  private final JacksonErrorHelper jacksonErrorHelper;
 
   /** Creates a new {@link ServerWebInputProblemResolver} with default problem format. */
   public ServerWebInputProblemResolver() {
@@ -106,7 +106,7 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
     super(ServerWebInputException.class, problemFormat);
     this.typeMismatchProblemResolver = typeMismatchProblemResolver;
     this.methodParameterSupport = methodParameterSupport;
-    this.typeNameMapper = typeNameMapper;
+    jacksonErrorHelper = new JacksonErrorHelper(problemFormat, typeNameMapper);
   }
 
   /**
@@ -162,7 +162,7 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
 
   private ProblemBuilder resolveDecodingException(DecodingException ex) {
     if (ex.getCause() instanceof MismatchedInputException e) {
-      return JacksonErrorHelper.resolveMismatchedInput(e, typeNameMapper);
+      return jacksonErrorHelper.resolveMismatchedInput(e);
     }
     return Problem.builder().status(HttpStatus.BAD_REQUEST.value());
   }

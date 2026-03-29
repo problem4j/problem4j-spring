@@ -43,7 +43,8 @@ import tools.jackson.databind.json.JsonMapper;
 
 @SpringBootTest(
     classes = {WebMvcTestApp.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {"problem4j.detail-format=lowercase"})
 @AutoConfigureTestRestTemplate
 class TypeMismatchWebMvcTest {
 
@@ -64,7 +65,7 @@ class TypeMismatchWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL)
+                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                 .extension(PROPERTY_EXTENSION, "id")
                 .extension(KIND_EXTENSION, "integer")
                 .build());
@@ -93,7 +94,7 @@ class TypeMismatchWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL)
+                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                 .extension(PROPERTY_EXTENSION, "id")
                 .extension(KIND_EXTENSION, "integer")
                 .build());
@@ -128,7 +129,7 @@ class TypeMismatchWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL)
+                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                 .extension(PROPERTY_EXTENSION, "X-Id")
                 .extension(KIND_EXTENSION, "integer")
                 .build());
@@ -168,7 +169,7 @@ class TypeMismatchWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL)
+                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                 .extension(PROPERTY_EXTENSION, "id")
                 .extension(KIND_EXTENSION, "integer")
                 .build());
@@ -208,7 +209,7 @@ class TypeMismatchWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL)
+                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                 .extension(PROPERTY_EXTENSION, "status")
                 .extension(KIND_EXTENSION, "enum")
                 .build());

@@ -37,7 +37,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(
     classes = {WebFluxTestApp.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {"problem4j.detail-format=lowercase"})
 @AutoConfigureWebTestClient
 class TypeMismatchWebFluxTest {
 
@@ -58,7 +59,7 @@ class TypeMismatchWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL)
+                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                 .extension(PROPERTY_EXTENSION, "id")
                 .extension(KIND_EXTENSION, "integer")
                 .build());
@@ -94,7 +95,7 @@ class TypeMismatchWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL)
+                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                 .extension(PROPERTY_EXTENSION, "id")
                 .extension(KIND_EXTENSION, "integer")
                 .build());
@@ -131,7 +132,7 @@ class TypeMismatchWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL)
+                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                 .extension(PROPERTY_EXTENSION, "X-Id")
                 .extension(KIND_EXTENSION, "integer")
                 .build());
@@ -167,7 +168,7 @@ class TypeMismatchWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL)
+                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                 .extension(PROPERTY_EXTENSION, "id")
                 .extension(KIND_EXTENSION, "integer")
                 .build());
@@ -206,7 +207,7 @@ class TypeMismatchWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL)
+                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                 .extension(PROPERTY_EXTENSION, "status")
                 .extension(KIND_EXTENSION, "enum")
                 .build());

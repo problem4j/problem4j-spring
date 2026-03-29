@@ -45,7 +45,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(
     classes = {WebFluxTestApp.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {"problem4j.detail-format=lowercase"})
 @AutoConfigureWebTestClient
 class ValidateRequestBodyWebFluxTest {
 
@@ -70,7 +71,7 @@ class ValidateRequestBodyWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL)
+                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                 .extension(
                     ERRORS_EXTENSION,
                     List.of(Map.of("field", "name", "error", "must not be blank")))
@@ -99,7 +100,7 @@ class ValidateRequestBodyWebFluxTest {
                   .isEqualTo(
                       Problem.builder()
                           .status(HttpStatus.BAD_REQUEST.value())
-                          .detail(VALIDATION_FAILED_DETAIL)
+                          .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                           .extension(ERRORS_EXTENSION, List.of(error))
                           .build());
             });

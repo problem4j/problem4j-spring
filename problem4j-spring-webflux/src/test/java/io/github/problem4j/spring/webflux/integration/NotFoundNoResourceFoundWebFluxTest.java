@@ -36,7 +36,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
     classes = {WebFluxTestApp.class},
     properties = {
       "spring.webflux.static-path-pattern=/**",
-      "spring.web.resources.static-locations=classpath:/static/"
+      "spring.web.resources.static-locations=classpath:/static/",
+      "problem4j.detail-format=lowercase"
     },
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient

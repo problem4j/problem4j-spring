@@ -41,7 +41,8 @@ import tools.jackson.databind.json.JsonMapper;
 
 @SpringBootTest(
     classes = {WebMvcTestApp.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {"problem4j.detail-format=lowercase"})
 @AutoConfigureTestRestTemplate
 class NotAcceptableWebMvcTest {
 

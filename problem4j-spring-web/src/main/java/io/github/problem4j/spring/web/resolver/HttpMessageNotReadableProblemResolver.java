@@ -48,7 +48,7 @@ import tools.jackson.databind.exc.MismatchedInputException;
  */
 public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolver {
 
-  private final TypeNameMapper typeNameMapper;
+  private final JacksonErrorHelper jacksonErrorHelper;
 
   /** Creates a new {@link HttpMessageNotReadableProblemResolver} with default problem format. */
   public HttpMessageNotReadableProblemResolver() {
@@ -74,7 +74,7 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
   public HttpMessageNotReadableProblemResolver(
       ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
     super(HttpMessageNotReadableException.class, problemFormat);
-    this.typeNameMapper = typeNameMapper;
+    this.jacksonErrorHelper = new JacksonErrorHelper(problemFormat, typeNameMapper);
   }
 
   /**
@@ -92,7 +92,7 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
   public ProblemBuilder resolveBuilder(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     if (ex.getCause() instanceof MismatchedInputException e) {
-      return JacksonErrorHelper.resolveMismatchedInput(e, typeNameMapper);
+      return jacksonErrorHelper.resolveMismatchedInput(e);
     }
     return Problem.builder().status(HttpStatus.BAD_REQUEST.value());
   }

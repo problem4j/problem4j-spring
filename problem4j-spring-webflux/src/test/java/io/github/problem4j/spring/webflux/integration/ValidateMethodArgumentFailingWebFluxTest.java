@@ -44,7 +44,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(
     classes = {WebFluxTestApp.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {"problem4j.detail-format=lowercase"})
 @AutoConfigureWebTestClient
 class ValidateMethodArgumentFailingWebFluxTest {
 
@@ -70,7 +71,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL)
+                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                 .extension(
                     ERRORS_EXTENSION, List.of(Map.of("field", "idVar", "error", VIOLATION_ERROR)))
                 .build());
@@ -99,7 +100,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL)
+                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                 .extension(
                     ERRORS_EXTENSION,
                     List.of(Map.of("field", "queryParam", "error", VIOLATION_ERROR)))
@@ -125,7 +126,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL)
+                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                 .extension(
                     ERRORS_EXTENSION,
                     List.of(Map.of("field", "xCustomHeader", "error", VIOLATION_ERROR)))
@@ -152,7 +153,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL)
+                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
                 .extension(
                     ERRORS_EXTENSION,
                     List.of(Map.of("field", "xSession", "error", VIOLATION_ERROR)))

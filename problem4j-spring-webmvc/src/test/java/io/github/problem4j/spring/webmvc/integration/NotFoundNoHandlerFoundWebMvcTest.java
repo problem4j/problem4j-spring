@@ -39,7 +39,8 @@ import tools.jackson.databind.json.JsonMapper;
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
       "spring.mvc.throw-exception-if-no-handler-found=true",
-      "spring.web.resources.add-mappings=false"
+      "spring.web.resources.add-mappings=false",
+      "problem4j.detail-format=lowercase"
     })
 @AutoConfigureTestRestTemplate
 class NotFoundNoHandlerFoundWebMvcTest {

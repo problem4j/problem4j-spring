@@ -40,7 +40,11 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(
     classes = {WebFluxTestApp.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {
+      "problem4j.detail-format=lowercase",
+      "spring.jackson.deserialization.fail-on-null-for-primitives=true"
+    })
 @AutoConfigureWebTestClient
 class BindingPrimitiveWebFluxTest {
 
@@ -137,7 +141,7 @@ class BindingPrimitiveWebFluxTest {
               Problem expected =
                   Problem.builder()
                       .status(HttpStatus.BAD_REQUEST.value())
-                      .detail(TYPE_MISMATCH_DETAIL)
+                      .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                       .extension(PROPERTY_EXTENSION, "value")
                       .extension(KIND_EXTENSION, expectedKind)
                       .build();
@@ -240,7 +244,7 @@ class BindingPrimitiveWebFluxTest {
                   .isEqualTo(
                       Problem.builder()
                           .status(HttpStatus.BAD_REQUEST.value())
-                          .detail(TYPE_MISMATCH_DETAIL)
+                          .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                           .extension(PROPERTY_EXTENSION, "nested.value")
                           .extension(KIND_EXTENSION, expectedKind)
                           .build());
@@ -286,7 +290,7 @@ class BindingPrimitiveWebFluxTest {
                   .isEqualTo(
                       Problem.builder()
                           .status(HttpStatus.BAD_REQUEST.value())
-                          .detail(TYPE_MISMATCH_DETAIL)
+                          .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                           .extension(PROPERTY_EXTENSION, "value")
                           .extension(KIND_EXTENSION, expectedKind)
                           .build());
@@ -319,7 +323,7 @@ class BindingPrimitiveWebFluxTest {
               Problem expected =
                   Problem.builder()
                       .status(HttpStatus.BAD_REQUEST.value())
-                      .detail(TYPE_MISMATCH_DETAIL)
+                      .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                       .extension(PROPERTY_EXTENSION, "value")
                       .extension(KIND_EXTENSION, "integer")
                       .build();
@@ -348,7 +352,7 @@ class BindingPrimitiveWebFluxTest {
               Problem expected =
                   Problem.builder()
                       .status(HttpStatus.BAD_REQUEST.value())
-                      .detail(TYPE_MISMATCH_DETAIL)
+                      .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                       .extension(PROPERTY_EXTENSION, "value")
                       .extension(KIND_EXTENSION, "integer")
                       .build();
@@ -412,7 +416,7 @@ class BindingPrimitiveWebFluxTest {
                     .isEqualTo(
                         Problem.builder()
                             .status(HttpStatus.BAD_REQUEST.value())
-                            .detail(TYPE_MISMATCH_DETAIL)
+                            .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
                             .extension(PROPERTY_EXTENSION, expectedProperty)
                             .extension(KIND_EXTENSION, expectedKind)
                             .build()));

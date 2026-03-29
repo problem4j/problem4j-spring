@@ -56,7 +56,8 @@ import tools.jackson.databind.json.JsonMapper;
 
 @SpringBootTest(
     classes = {WebMvcTestApp.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {"problem4j.detail-format=lowercase"})
 @AutoConfigureTestRestTemplate
 class MissingParameterWebMvcTest {
 
@@ -77,7 +78,7 @@ class MissingParameterWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(MISSING_PATH_VARIABLE_DETAIL)
+                .detail(MISSING_PATH_VARIABLE_DETAIL.toLowerCase())
                 .extension(NAME_EXTENSION, "var")
                 .build());
   }
@@ -105,7 +106,7 @@ class MissingParameterWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(MISSING_REQUEST_PARAM_DETAIL)
+                .detail(MISSING_REQUEST_PARAM_DETAIL.toLowerCase())
                 .extension(PARAM_EXTENSION, "param")
                 .extension(KIND_EXTENSION, "string")
                 .build());
@@ -140,7 +141,7 @@ class MissingParameterWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(MISSING_REQUEST_PART_DETAIL)
+                .detail(MISSING_REQUEST_PART_DETAIL.toLowerCase())
                 .extension(PARAM_EXTENSION, "file")
                 .build());
   }
@@ -195,7 +196,7 @@ class MissingParameterWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(MISSING_HEADER_DETAIL)
+                .detail(MISSING_HEADER_DETAIL.toLowerCase())
                 .extension(HEADER_EXTENSION, "X-Custom-Header")
                 .build());
   }
@@ -223,7 +224,7 @@ class MissingParameterWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(MISSING_COOKIE_DETAIL)
+                .detail(MISSING_COOKIE_DETAIL.toLowerCase())
                 .extension(COOKIE_EXTENSION, "x_session")
                 .build());
   }
@@ -251,7 +252,7 @@ class MissingParameterWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(MISSING_REQUEST_ATTRIBUTE_DETAIL)
+                .detail(MISSING_REQUEST_ATTRIBUTE_DETAIL.toLowerCase())
                 .extension(ATTRIBUTE_EXTENSION, "attr")
                 .build());
   }
@@ -267,7 +268,7 @@ class MissingParameterWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(MISSING_SESSION_ATTRIBUTE_DETAIL)
+                .detail(MISSING_SESSION_ATTRIBUTE_DETAIL.toLowerCase())
                 .extension(ATTRIBUTE_EXTENSION, "attr")
                 .build());
   }
