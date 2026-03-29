@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+## [1.2.9] - 2026-03-29
+
+- Fix formatting of `detailFormat` for resolving cause exceptions.
+
 ## [1.2.8] - 2026-03-26
 
 - Fix detail about enum deserialization errors to correctly say `"enum"` instead of `"string"`.
