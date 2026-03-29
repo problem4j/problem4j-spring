@@ -6,7 +6,16 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+## [2.2.4] - 2026-03-29
+
+### Fixed
+
+- Fix formatting of `detailFormat` for resolving cause exceptions.
+- Drop transitive dependency to `kotlin-stdlib` (added accidentally by Kotlin plugin, used in **tests** only).
+
 ## [2.2.3] - 2026-03-26
+
+### Fixed
 
 - Fix detail about enum deserialization errors to correctly say `"enum"` instead of `"string"`.
 
