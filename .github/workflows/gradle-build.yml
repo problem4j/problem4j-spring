@@ -55,9 +55,9 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-build-${{ runner.os }}-java-17-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          key: gradle-build-${{ runner.os }}-java-${{ matrix.java }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            gradle-build-${{ runner.os }}-java-17-
+            gradle-build-${{ runner.os }}-java-${{ matrix.java }}-
 
       - name: Gradle Build
         env:
