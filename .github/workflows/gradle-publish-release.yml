@@ -22,10 +22,22 @@ jobs:
           java-version: "17"
           distribution: "temurin"
 
-      # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
-      # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-disabled: true
+
+      # Not using cache from setup-gradle for now due to license change.
+      # See: https://blog.gradle.org/github-actions-for-gradle-v6
+      - name: Cache Gradle
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-publish-release-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-publish-release-${{ runner.os }}-
 
       - name: Publish Release
         env:

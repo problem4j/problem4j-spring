@@ -31,8 +31,18 @@ jobs:
           java-version: "17"
           distribution: "temurin"
 
-      # Generates and submits a dependency graph, enabling Dependabot Alerts for all project dependencies.
-      # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
+      # Not using cache from setup-gradle for now due to license change.
+      # See: https://blog.gradle.org/github-actions-for-gradle-v6
+      - name: Cache Gradle
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-dependency-submission-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-dependency-submission-${{ runner.os }}-
+
       - name: Generate and submit dependency graph
         uses: gradle/actions/dependency-submission@v6
         env:
@@ -42,5 +52,6 @@ jobs:
             -Dorg.gradle.parallel=false
             -Dorg.gradle.workers.max=1
         with:
+          cache-disabled: true
           dependency-graph-exclude-projects: ":buildSrc"
           dependency-graph-exclude-configurations: ".*[Tt]est(Compile|Runtime)Classpath"
