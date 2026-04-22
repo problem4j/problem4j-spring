@@ -34,6 +34,7 @@ import org.springframework.http.HttpStatusCode;
  * <p>Implementations are supposed to be stateless.
  */
 public interface ProblemResolver {
+
   /**
    * Returns the type of {@link Exception} this resolver supports.
    *
