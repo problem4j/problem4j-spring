@@ -5,9 +5,9 @@ Spring Boot integrations for RFC 7807 "Problem Details" - consistent error respo
 
 ## Modules
 
-| Module                     | Purpose                      | Entry point                                                                                                                                                          |
-|----------------------------|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `problem4j-spring-bom`     | BOM for dependency alignment | -                                                                                                                                                                    |
+| Module                     | Purpose                      | Entry point                                                                                                                                                       |
+|----------------------------|------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `problem4j-spring-bom`     | BOM for dependency alignment | -                                                                                                                                                                 |
 | `problem4j-spring-web`     | Core Spring integration      | [`ProblemAutoConfiguration`](problem4j-spring-web/src/main/java/io/github/problem4j/spring/web/autoconfigure/ProblemAutoConfiguration.java)                       |
 | `problem4j-spring-webmvc`  | WebMVC overrides             | [`ProblemWebMvcAutoConfiguration`](problem4j-spring-webmvc/src/main/java/io/github/problem4j/spring/webmvc/autoconfigure/ProblemWebMvcAutoConfiguration.java)     |
 | `problem4j-spring-webflux` | WebFlux overrides            | [`ProblemWebFluxAutoConfiguration`](problem4j-spring-webflux/src/main/java/io/github/problem4j/spring/webflux/autoconfigure/ProblemWebFluxAutoConfiguration.java) |
