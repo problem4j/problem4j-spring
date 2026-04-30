@@ -26,5 +26,3 @@ jobs:
   build:
     name: Build
     uses: problem4j/problem4j-workflows/.github/workflows/gradle-build.yml@main
-    with:
-      java-version: 17

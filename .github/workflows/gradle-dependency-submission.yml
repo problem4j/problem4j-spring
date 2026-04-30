@@ -21,5 +21,3 @@ jobs:
     permissions:
       contents: write
     uses: problem4j/problem4j-workflows/.github/workflows/gradle-dependency-submission.yml@main
-    with:
-      java-version: 17
