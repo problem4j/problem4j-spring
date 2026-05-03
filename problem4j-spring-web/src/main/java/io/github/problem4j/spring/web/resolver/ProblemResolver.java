@@ -1,37 +1,32 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web.resolver;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 
 /**
- * Represents a resolver from a specific {@link Exception} to a {@link ProblemBuilder}, can be
- * further extended or executed to create {@link Problem} response.
+ * Represents a resolver from a specific {@link Exception} to an immutable {@link Problem}.
  *
  * <p>Implementations are supposed to be stateless.
+ *
+ * @since 1.2.0
  */
 public interface ProblemResolver {
 
@@ -39,40 +34,19 @@ public interface ProblemResolver {
    * Returns the type of {@link Exception} this resolver supports.
    *
    * @return supported exception class
+   * @since 1.2.0
    */
   Class<? extends Exception> getExceptionClass();
 
   /**
-   * Resolves the given exception into a {@link ProblemBuilder}.
+   * Resolves the given exception into an immutable {@link Problem}.
    *
    * @param context problem context
    * @param ex exception to resolve
    * @param headers to be included in HTTP response
-   * @param status HTTP status recommented by caller
-   * @return problem builder representing the resolved problem
+   * @param status HTTP status recommended by caller
+   * @return an immutable {@link Problem} representing the resolved problem
+   * @since 3.0.0
    */
-  ProblemBuilder resolveBuilder(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status);
-
-  /**
-   * Resolves the given exception into an immutable {@link Problem}.
-   *
-   * <p>This method is a convenient shortcut for callers who do not need to modify the problem.
-   * Internally, it delegates to {@code #resolveBuilder(ProblemContext, Exception, HttpHeaders,
-   * HttpStatusCode)} and immediately calls {@link ProblemBuilder#build()} to produce a fully
-   * immutable {@link Problem}.
-   *
-   * <p>Use {@link #resolveBuilder(ProblemContext, Exception, HttpHeaders, HttpStatusCode)} directly
-   * if you need to further customize or enrich the problem before building.
-   *
-   * @param context problem context
-   * @param ex exception to resolve
-   * @param headers HTTP headers to include in the response
-   * @param status HTTP status recommended by the caller
-   * @return an immutable {@link Problem} representing the resolved error
-   */
-  default Problem resolveProblem(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return resolveBuilder(context, ex, headers, status).build();
-  }
+  Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status);
 }

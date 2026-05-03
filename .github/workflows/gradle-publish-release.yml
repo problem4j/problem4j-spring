@@ -11,5 +11,5 @@ jobs:
     name: Publish Release
     uses: problem4j/problem4j-workflows/.github/workflows/gradle-publish-release.yml@main
     with:
-      publish-task: publishAllPublicationsToCentralPortal
+      publish-task: publishAggregationToCentralPortal
     secrets: inherit

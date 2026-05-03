@@ -1,22 +1,17 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web.autoconfigure;
@@ -31,38 +26,64 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
  * Configuration properties for Problem Details integration.
  *
  * <p>These properties can be set under the {@code problem4j.*} prefix.
+ *
+ * @since 1.2.0
  */
 @ConfigurationProperties(prefix = "problem4j")
 public class ProblemProperties implements ProblemContextSettings, PostProcessorSettings {
 
-  /** Decides if Problem4J integration is enabled. */
+  /**
+   * Decides if Problem4J integration is enabled.
+   *
+   * @since 1.2.0
+   */
   private final boolean enabled;
 
   /**
    * Defines the format for the {@code detail} field in Problem responses. Supported values are
    * {@code "lowercase"}, {@code "capitalized"}, and {@code "uppercase"}.
+   *
+   * @since 1.2.0
    */
   private final String detailFormat;
 
   /**
    * Name of the HTTP header that carries a trace ID for simple tracing provided by this library. If
    * unset, the feature is disabled.
+   *
+   * @since 1.2.0
    */
   private final @Nullable String tracingHeaderName;
 
   /**
    * Template for overriding the {@code type} field of a Problem response. May contain placeholders
-   * like {@code {problem.type}}.
+   * like {@code {problem.type}} and {@code {context.<key>}}.
+   *
+   * @since 1.2.0
    */
   private final @Nullable String typeOverride;
 
   /**
+   * Template for overriding the {@code title} field of a Problem response. May contain placeholders
+   * like {@code {problem.title}} and {@code {context.<key>}}.
+   *
+   * @since 1.2.0
+   */
+  private final @Nullable String titleOverride;
+
+  /**
    * Template for overriding the {@code instance} field of a Problem response. May contain
-   * placeholders like {@code {problem.instance}} and {@code {context.traceId}} for dynamic values.
+   * placeholders like {@code {problem.instance}} and {@code {context.<key>}} for dynamic values.
+   *
+   * @since 1.2.0
    */
   private final @Nullable String instanceOverride;
 
-  /** Caching configuration for resolver lookups in {@code CachingProblemResolverStore}. */
+  /**
+   * Caching configuration for resolver lookups in {@code CachingProblemResolverStore}.
+   *
+   * @since 1.2.0
+   */
   private final ResolverCaching resolverCaching;
 
   /**
@@ -73,24 +94,29 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    *     {@link DetailFormat#CAPITALIZED}, {@link DetailFormat#UPPERCASE})
    * @param tracingHeaderName name of the HTTP header carrying a trace ID (nullable)
    * @param typeOverride template for overriding the {@code type} field; may contain {@code
-   *     {context.traceId}} placeholder (nullable)
+   *     {context.<key>}} placeholders (nullable)
+   * @param titleOverride template for overriding the {@code title} field; may contain {@code
+   *     {context.<key>}} placeholders (nullable)
    * @param instanceOverride template for overriding the {@code instance} field; may contain {@code
-   *     {context.traceId}} placeholder (nullable)
+   *     {context.<key>}} placeholders (nullable)
    * @param resolverCaching caching for resolver lookups ({@code CachingProblemResolverStore});
    *     defaults to {@link ResolverCaching#createDefault()}
    * @see io.github.problem4j.spring.web.CachingProblemResolverStore
+   * @since 1.2.0
    */
   public ProblemProperties(
       @DefaultValue("true") boolean enabled,
       @DefaultValue(DetailFormat.CAPITALIZED) String detailFormat,
       @Nullable String tracingHeaderName,
       @Nullable String typeOverride,
+      @Nullable String titleOverride,
       @Nullable String instanceOverride,
       @Nullable ResolverCaching resolverCaching) {
     this.enabled = enabled;
     this.detailFormat = detailFormat;
     this.tracingHeaderName = tracingHeaderName;
     this.typeOverride = typeOverride;
+    this.titleOverride = titleOverride;
     this.instanceOverride = instanceOverride;
     this.resolverCaching =
         resolverCaching != null ? resolverCaching : ResolverCaching.createDefault();
@@ -100,6 +126,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    * Indicates whether problem handling is currently enabled.
    *
    * @return {@code true} if problem handling is enabled; {@code false} otherwise
+   * @since 1.2.0
    */
   public boolean isEnabled() {
     return enabled;
@@ -109,6 +136,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    * Returns the configured format for the {@code "detail"} field.
    *
    * @return the detail format
+   * @since 1.2.0
    */
   public String getDetailFormat() {
     return detailFormat;
@@ -125,6 +153,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    *
    * @return the tracing header name, or {@code null} if not set
    * @see io.github.problem4j.core.Problem
+   * @since 1.2.0
    */
   @Override
   public @Nullable String getTracingHeaderName() {
@@ -140,20 +169,40 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    *
    * <ul>
    *   <li>{@code {problem.type}} - replaced with the original problem's type URI
-   *   <li>{@code {context.traceId}} - replaced with the current trace identifier from the {@code
+   *   <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@code
    *       ProblemContext}
    * </ul>
    *
-   * <p>This allows flexible configuration of problem types depending on context or trace
-   * information. If no override is configured, this method may return {@code null}, and the
-   * original problem type will be preserved.
+   * <p>If no override is configured, this method may return {@code null}, and the original problem
+   * type will be preserved.
    *
    * @return the configured type override string, or {@code null} if not set
    * @see io.github.problem4j.core.ProblemContext
+   * @since 1.2.0
    */
   @Override
   public @Nullable String getTypeOverride() {
     return typeOverride;
+  }
+
+  /**
+   * Returns the configured title override.
+   *
+   * <p>The value may include special placeholders that will be replaced at runtime:
+   *
+   * <ul>
+   *   <li>{@code {problem.title}} - replaced with the original problem's title
+   *   <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@code
+   *       ProblemContext}
+   * </ul>
+   *
+   * @return the configured title override string, or {@code null} if not set
+   * @see io.github.problem4j.core.ProblemContext
+   * @since 1.2.0
+   */
+  @Override
+  public @Nullable String getTitleOverride() {
+    return titleOverride;
   }
 
   /**
@@ -164,7 +213,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    *
    * <ul>
    *   <li>{@code {problem.instance}} - replaced with the original problem's instance URI
-   *   <li>{@code {context.traceId}} - replaced with the current trace identifier from the {@code
+   *   <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@code
    *       ProblemContext}
    * </ul>
    *
@@ -175,6 +224,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    * @return the configured instance override string, or {@code null} if not set
    * @see io.github.problem4j.core.ProblemContext
    * @see io.github.problem4j.core.ProblemException
+   * @since 1.2.0
    */
   @Override
   public @Nullable String getInstanceOverride() {
@@ -185,6 +235,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    * Returns the caching configuration.
    *
    * @return caching settings
+   * @since 1.2.0
    */
   public ResolverCaching getResolverCaching() {
     return resolverCaching;
@@ -196,76 +247,82 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    * <p>Controls whether resolver lookup caching is enabled and its maximum size.
    *
    * @see io.github.problem4j.spring.web.CachingProblemResolverStore
+   * @since 1.2.0
    */
   public static class ResolverCaching {
 
-    /** Default enabled flag for resolver caching. */
+    /**
+     * Default enabled flag for resolver caching.
+     *
+     * @since 1.2.0
+     */
     public static final boolean DEFAULT_ENABLED = false;
 
-    /** Default enabled value string for resolver caching. */
+    /**
+     * Default enabled value string for resolver caching.
+     *
+     * @since 1.2.0
+     */
     public static final String DEFAULT_ENABLED_VALUE = "false";
 
-    /** Default maximum cache size for resolver caching. */
-    public static final int DEFAULT_MAX_CACHE_SIZE = -1;
-
-    /** Default maximum cache size value string for resolver caching. */
-    public static final String DEFAULT_MAX_CACHE_SIZE_VALUE = "-1";
-
     private static ResolverCaching createDefault() {
-      return new ResolverCaching(DEFAULT_ENABLED, DEFAULT_MAX_CACHE_SIZE);
+      return new ResolverCaching(DEFAULT_ENABLED);
     }
 
-    /** Indicates whether resolver lookup caching is enabled. */
-    private final boolean enabled;
-
     /**
-     * Maximum number of cached entries for resolver lookups. A value of -1 means unbounded cache
-     * size.
+     * Indicates whether resolver lookup caching is enabled.
+     *
+     * @since 1.2.0
      */
-    private final int maxCacheSize;
+    private final boolean enabled;
 
     /**
      * Creates a new caching configuration.
      *
      * @param enabled whether caching is enabled
-     * @param maxCacheSize maximum number of cached entries (-1 or 0 means unbounded)
+     * @since 1.2.0
      */
-    public ResolverCaching(
-        @DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled,
-        @DefaultValue(DEFAULT_MAX_CACHE_SIZE_VALUE) int maxCacheSize) {
+    public ResolverCaching(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
       this.enabled = enabled;
-      this.maxCacheSize = maxCacheSize;
     }
 
     /**
      * Returns whether caching is enabled.
      *
      * @return true if enabled
+     * @since 1.2.0
      */
     public boolean isEnabled() {
       return enabled;
     }
-
-    /**
-     * Returns the maximum cache size.
-     *
-     * @return maximum entries; -1 (or non-positive) means unbounded
-     */
-    public int getMaxCacheSize() {
-      return maxCacheSize;
-    }
   }
 
-  /** Supported values for {@code detailFormat}. */
-  public static final class DetailFormat {
+  /**
+   * Supported values for {@code detailFormat}.
+   *
+   * @since 1.2.0
+   */
+  public static class DetailFormat {
 
-    /** All detail messages in lowercase. */
+    /**
+     * All detail messages in lowercase.
+     *
+     * @since 1.2.0
+     */
     public static final String LOWERCASE = "lowercase";
 
-    /** Detail messages with the first letter capitalized. */
+    /**
+     * Detail messages with the first letter capitalized.
+     *
+     * @since 1.2.0
+     */
     public static final String CAPITALIZED = "capitalized";
 
-    /** All detail messages in uppercase. */
+    /**
+     * All detail messages in uppercase.
+     *
+     * @since 1.2.0
+     */
     public static final String UPPERCASE = "uppercase";
 
     private DetailFormat() {}

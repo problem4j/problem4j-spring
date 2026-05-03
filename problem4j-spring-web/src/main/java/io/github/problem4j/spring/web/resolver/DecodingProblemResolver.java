@@ -1,30 +1,23 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web.resolver;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.springframework.core.codec.DecodingException;
 import org.springframework.http.HttpHeaders;
@@ -37,30 +30,44 @@ import org.springframework.http.HttpStatusCode;
  *
  * <p>Maps decoding failures (e.g. malformed JSON or invalid request bodies) to a {@link Problem}
  * response with {@code 400 Bad Request} status.
+ *
+ * @since 1.2.0
  */
 public class DecodingProblemResolver extends AbstractProblemResolver {
 
-  /** Constructs a new {@link DecodingProblemResolver} with the default problem format. */
+  /**
+   * Constructs a new {@link DecodingProblemResolver} with the default problem format.
+   *
+   * @since 1.2.0
+   */
   public DecodingProblemResolver() {
-    this(new IdentityProblemFormat());
+    this(ProblemFormat.identity());
   }
 
   /**
    * Constructs a new {@link DecodingProblemResolver} with the specified problem format.
    *
    * @param problemFormat the problem format to use
+   * @since 1.2.0
    */
   public DecodingProblemResolver(ProblemFormat problemFormat) {
     super(DecodingException.class, problemFormat);
   }
 
   /**
-   * Builds a {@link ProblemBuilder} for {@link DecodingException} with {@link
-   * HttpStatus#BAD_REQUEST} status.
+   * Returns a {@link Problem} for {@link DecodingException} with {@link HttpStatus#BAD_REQUEST}
+   * status.
+   *
+   * @param context problem context (unused)
+   * @param ex the triggering {@link DecodingException}
+   * @param headers HTTP headers (unused)
+   * @param status suggested status from caller (ignored; 400 enforced)
+   * @return problem with 400 status
+   * @since 3.0.0
    */
   @Override
-  public ProblemBuilder resolveBuilder(
+  public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return Problem.builder().status(HttpStatus.BAD_REQUEST.value());
+    return Problem.of(HttpStatus.BAD_REQUEST.value());
   }
 }

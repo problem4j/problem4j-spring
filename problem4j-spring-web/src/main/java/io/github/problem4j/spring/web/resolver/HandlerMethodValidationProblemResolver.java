@@ -1,33 +1,26 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web.resolver;
 
-import static io.github.problem4j.spring.web.ProblemSupport.ERRORS_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.VALIDATION_FAILED_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.ERRORS_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.VALIDATION_FAILED_DETAIL;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.parameter.DefaultMethodValidationResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
@@ -43,6 +36,8 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
  * parameter violations (via {@link MethodValidationResultSupport}). For 5xx statuses it returns
  * only a basic problem with the resolved status, avoiding leaking validation details when the
  * server indicates an internal failure.
+ *
+ * @since 1.2.0
  */
 public class HandlerMethodValidationProblemResolver extends AbstractProblemResolver {
 
@@ -51,9 +46,11 @@ public class HandlerMethodValidationProblemResolver extends AbstractProblemResol
   /**
    * Creates a new {@link HandlerMethodValidationProblemResolver} with the default problem format
    * and default method validation result support.
+   *
+   * @since 1.2.0
    */
   public HandlerMethodValidationProblemResolver() {
-    this(new IdentityProblemFormat());
+    this(ProblemFormat.identity());
   }
 
   /**
@@ -61,6 +58,7 @@ public class HandlerMethodValidationProblemResolver extends AbstractProblemResol
    * and default method validation result support.
    *
    * @param problemFormat the problem format to use
+   * @since 1.2.0
    */
   public HandlerMethodValidationProblemResolver(ProblemFormat problemFormat) {
     this(problemFormat, new DefaultMethodValidationResultSupport());
@@ -72,6 +70,7 @@ public class HandlerMethodValidationProblemResolver extends AbstractProblemResol
    *
    * @param problemFormat the problem format to use
    * @param methodValidationResultSupport the support for extracting validation results
+   * @since 1.2.0
    */
   public HandlerMethodValidationProblemResolver(
       ProblemFormat problemFormat, MethodValidationResultSupport methodValidationResultSupport) {
@@ -80,7 +79,7 @@ public class HandlerMethodValidationProblemResolver extends AbstractProblemResol
   }
 
   /**
-   * Builds a {@link ProblemBuilder} for a {@link HandlerMethodValidationException}. If the provided
+   * Returns a {@link Problem} for a {@link HandlerMethodValidationException}. If the provided
    * status is 5xx, returns a minimal problem with that status only. Otherwise, includes validation
    * violations collected by {@link MethodValidationResultSupport} and preserves the caller-provided
    * status.
@@ -89,18 +88,20 @@ public class HandlerMethodValidationProblemResolver extends AbstractProblemResol
    * @param ex the thrown validation exception (must be {@link HandlerMethodValidationException})
    * @param headers HTTP headers (unused)
    * @param status suggested HTTP status from caller (controls 4xx vs 5xx branch)
-   * @return builder representing validation failure (4xx) or minimal error (5xx)
+   * @return problem representing validation failure (4xx) or minimal error (5xx)
+   * @since 3.0.0
    */
   @Override
-  public ProblemBuilder resolveBuilder(
+  public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     HandlerMethodValidationException e = (HandlerMethodValidationException) ex;
     if (status.is5xxServerError()) {
-      return Problem.builder().status(status.value());
+      return Problem.of(status.value());
     }
     return Problem.builder()
         .status(status.value())
         .detail(formatDetail(VALIDATION_FAILED_DETAIL))
-        .extension(ERRORS_EXTENSION, methodValidationResultSupport.fetchViolations(e));
+        .extension(ERRORS_EXTENSION, methodValidationResultSupport.fetchViolations(e))
+        .build();
   }
 }

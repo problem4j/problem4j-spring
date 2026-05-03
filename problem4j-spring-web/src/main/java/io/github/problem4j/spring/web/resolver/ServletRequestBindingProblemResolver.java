@@ -1,43 +1,37 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web.resolver;
 
-import static io.github.problem4j.spring.web.ProblemSupport.ATTRIBUTE_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.COOKIE_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.HEADER_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.KIND_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.MISSING_COOKIE_DETAIL;
-import static io.github.problem4j.spring.web.ProblemSupport.MISSING_HEADER_DETAIL;
-import static io.github.problem4j.spring.web.ProblemSupport.MISSING_PATH_VARIABLE_DETAIL;
-import static io.github.problem4j.spring.web.ProblemSupport.MISSING_REQUEST_ATTRIBUTE_DETAIL;
-import static io.github.problem4j.spring.web.ProblemSupport.MISSING_REQUEST_PARAM_DETAIL;
-import static io.github.problem4j.spring.web.ProblemSupport.MISSING_SESSION_ATTRIBUTE_DETAIL;
-import static io.github.problem4j.spring.web.ProblemSupport.NAME_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.PARAM_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.ATTRIBUTE_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.COOKIE_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.HEADER_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.KIND_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_COOKIE_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_HEADER_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_PATH_VARIABLE_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_REQUEST_ATTRIBUTE_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_REQUEST_PARAM_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_SESSION_ATTRIBUTE_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.NAME_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.PARAM_EXTENSION;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -64,30 +58,36 @@ import org.springframework.web.bind.ServletRequestBindingException;
  * @see MissingRequestHeaderException
  * @see MissingServletRequestParameterException
  * @see ServletRequestBindingException
+ * @since 1.2.0
  */
 public class ServletRequestBindingProblemResolver extends AbstractProblemResolver {
 
   private static final Pattern MISSING_ATTRIBUTE_PATTERN =
       Pattern.compile("^Missing (session|request) attribute '([^']+)'");
 
-  /** Creates a new {@link ServletRequestBindingProblemResolver} with default problem format. */
+  /**
+   * Creates a new {@link ServletRequestBindingProblemResolver} with default problem format.
+   *
+   * @since 1.2.0
+   */
   public ServletRequestBindingProblemResolver() {
-    this(new IdentityProblemFormat());
+    this(ProblemFormat.identity());
   }
 
   /**
    * Creates a new {@link ServletRequestBindingProblemResolver} with the specified problem format.
    *
    * @param problemFormat the problem format to use
+   * @since 1.2.0
    */
   public ServletRequestBindingProblemResolver(ProblemFormat problemFormat) {
     super(ServletRequestBindingException.class, problemFormat);
   }
 
   /**
-   * Resolves a {@link ServletRequestBindingException} (or one of its common subclasses) into a
-   * {@link ProblemBuilder} with {@link HttpStatus#BAD_REQUEST} status and appropriate detail plus
-   * metadata extensions.
+   * Resolves a {@link ServletRequestBindingException} (or one of its common subclasses) into an
+   * immutable {@link Problem} with {@link HttpStatus#BAD_REQUEST} status and appropriate detail
+   * plus metadata extensions.
    *
    * <p>Subtype handling:
    *
@@ -109,11 +109,12 @@ public class ServletRequestBindingProblemResolver extends AbstractProblemResolve
    * @param ex binding-related exception to map
    * @param headers HTTP headers (unused)
    * @param status suggested status (ignored; always BAD_REQUEST)
-   * @return builder populated with status, detail, and extensions
-   * @see io.github.problem4j.spring.web.ProblemSupport
+   * @return problem with status, detail, and extensions
+   * @see io.github.problem4j.spring.web.parameter.ViolationSupport
+   * @since 3.0.0
    */
   @Override
-  public ProblemBuilder resolveBuilder(
+  public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ProblemBuilder builder = Problem.builder().status(HttpStatus.BAD_REQUEST.value());
 
@@ -147,18 +148,9 @@ public class ServletRequestBindingProblemResolver extends AbstractProblemResolve
       }
     }
 
-    return builder;
+    return builder.build();
   }
 
-  /**
-   * Applies the appropriate missing attribute detail (session vs request) and adds the attribute
-   * name extension.
-   *
-   * @param scope either "session" or "request" (already validated by regex match)
-   * @param builder current problem builder
-   * @param attribute missing attribute name extracted from exception message
-   * @return updated builder with detail and attribute extension
-   */
   private ProblemBuilder extentAttributeDetail(
       String scope, ProblemBuilder builder, String attribute) {
     if (scope.equals("session")) {

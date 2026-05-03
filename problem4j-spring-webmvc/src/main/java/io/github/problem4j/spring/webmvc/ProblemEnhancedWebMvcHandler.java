@@ -1,33 +1,27 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.webmvc;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
-import static io.github.problem4j.spring.web.ProblemSupport.resolveStatus;
+import static io.github.problem4j.spring.web.ResponseSupport.resolveStatus;
 import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.logAdviceException;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
@@ -59,6 +53,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  * </ul>
  *
  * @see io.github.problem4j.spring.web.resolver.ProblemResolver
+ * @since 1.2.0
  */
 @RestControllerAdvice
 public class ProblemEnhancedWebMvcHandler extends ResponseEntityExceptionHandler {
@@ -76,6 +71,7 @@ public class ProblemEnhancedWebMvcHandler extends ResponseEntityExceptionHandler
    * @param problemResolverStore the resolver store
    * @param problemPostProcessor the post-processor
    * @param adviceWebMvcInspectors the inspectors
+   * @since 1.2.0
    */
   public ProblemEnhancedWebMvcHandler(
       ProblemResolverStore problemResolverStore,
@@ -86,6 +82,19 @@ public class ProblemEnhancedWebMvcHandler extends ResponseEntityExceptionHandler
     this.adviceWebMvcInspectors = adviceWebMvcInspectors;
   }
 
+  /**
+   * Handles exceptions by resolving them to {@link Problem} objects, setting content type, and
+   * applying inspectors.
+   *
+   * @param ex the exception to handle
+   * @param body the body to use for the response
+   * @param headers the headers to use for the response
+   * @param status the status code to use for the response
+   * @param request the current request
+   * @return a {@link ResponseEntity} containing the resolved {@link Problem} and appropriate
+   *     headers and status
+   * @since 1.2.0
+   */
   @Override
   protected @Nullable ResponseEntity<Object> handleExceptionInternal(
       Exception ex,
@@ -104,7 +113,7 @@ public class ProblemEnhancedWebMvcHandler extends ResponseEntityExceptionHandler
 
     Problem problem;
     try {
-      problem = getBuilderForOverridingBody(context, ex, headers, status).build();
+      problem = getProblemForOverridingBody(context, ex, headers, status);
       problem = problemPostProcessor.process(context, problem);
     } catch (Exception e) {
       logAdviceException(log, ex, request, e);
@@ -121,30 +130,32 @@ public class ProblemEnhancedWebMvcHandler extends ResponseEntityExceptionHandler
   }
 
   /**
-   * Returns a {@link ProblemBuilder} for the given exception, using a resolver if available, or a
-   * fallback otherwise.
+   * Returns a {@link Problem} for the given exception, using a resolver if available, or a fallback
+   * otherwise.
    *
    * @param context the problem context
    * @param ex the exception to resolve
    * @param headers the HTTP headers
    * @param status the HTTP status code
-   * @return a {@link ProblemBuilder} for the exception
+   * @return a {@link Problem} for the exception
+   * @since 1.2.0
    */
-  protected ProblemBuilder getBuilderForOverridingBody(
+  protected Problem getProblemForOverridingBody(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     return problemResolverStore
         .findResolver(ex.getClass())
-        .map(resolver -> resolver.resolveBuilder(context, ex, headers, status))
+        .map(resolver -> resolver.resolve(context, ex, headers, status))
         .orElseGet(() -> fallbackProblem(status));
   }
 
   /**
-   * Returns a fallback {@link ProblemBuilder} with the given status.
+   * Returns a fallback {@link Problem} with the given status.
    *
    * @param status the HTTP status code
-   * @return a fallback {@link ProblemBuilder}
+   * @return a fallback {@link Problem}
+   * @since 1.2.0
    */
-  protected ProblemBuilder fallbackProblem(HttpStatusCode status) {
-    return Problem.builder().status(status.value());
+  protected Problem fallbackProblem(HttpStatusCode status) {
+    return Problem.of(status.value());
   }
 }

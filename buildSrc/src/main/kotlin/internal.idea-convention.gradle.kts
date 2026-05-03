@@ -1,4 +1,3 @@
-import org.jetbrains.gradle.ext.Application
 import org.jetbrains.gradle.ext.Gradle
 import org.jetbrains.gradle.ext.JUnit
 import org.jetbrains.gradle.ext.runConfigurations

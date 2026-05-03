@@ -1,36 +1,29 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web.resolver;
 
-import static io.github.problem4j.spring.web.ProblemSupport.VALIDATION_FAILED_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.VALIDATION_FAILED_DETAIL;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
-import io.github.problem4j.spring.web.ProblemSupport;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
 import io.github.problem4j.spring.web.parameter.DefaultBindingResultSupport;
+import io.github.problem4j.spring.web.parameter.ViolationSupport;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -57,6 +50,7 @@ import org.springframework.validation.BindException;
  * @see org.springframework.web.bind.MethodArgumentNotValidException
  * @see org.springframework.web.bind.annotation.ModelAttribute
  * @see org.springframework.web.bind.annotation.RequestBody
+ * @since 1.2.0
  */
 public class BindProblemResolver extends AbstractProblemResolver {
 
@@ -65,15 +59,18 @@ public class BindProblemResolver extends AbstractProblemResolver {
   /**
    * Constructs a new {@link BindProblemResolver} with the default problem format and binding result
    * support.
+   *
+   * @since 1.2.0
    */
   public BindProblemResolver() {
-    this(new IdentityProblemFormat());
+    this(ProblemFormat.identity());
   }
 
   /**
    * Constructs a new {@link BindProblemResolver} with the specified problem format.
    *
    * @param problemFormat the problem format to use
+   * @since 1.2.0
    */
   public BindProblemResolver(ProblemFormat problemFormat) {
     this(problemFormat, new DefaultBindingResultSupport());
@@ -85,6 +82,7 @@ public class BindProblemResolver extends AbstractProblemResolver {
    *
    * @param problemFormat the problem format to use
    * @param bindingResultSupport the binding result support to use
+   * @since 1.2.0
    */
   public BindProblemResolver(
       ProblemFormat problemFormat, BindingResultSupport bindingResultSupport) {
@@ -93,7 +91,7 @@ public class BindProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Resolves a {@link BindException} (or subclass) to a {@link ProblemBuilder} with {@link
+   * Resolves a {@link BindException} (or subclass) to a {@link Problem} with {@link
    * HttpStatus#BAD_REQUEST} and an {@code errors} extension listing field/global validation
    * violations produced by the underlying {@link BindException#getBindingResult()}.
    *
@@ -101,17 +99,19 @@ public class BindProblemResolver extends AbstractProblemResolver {
    * @param ex the binding / validation exception (must be a {@link BindException})
    * @param headers HTTP response headers (unused here but part of the SPI)
    * @param status suggested HTTP status from caller (ignored; BAD_REQUEST is enforced)
-   * @return builder pre-populated with validation detail and violations
+   * @return problem with validation detail and violations
+   * @since 3.0.0
    */
   @Override
-  public ProblemBuilder resolveBuilder(
+  public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     BindException e = (BindException) ex;
     return Problem.builder()
         .status(HttpStatus.BAD_REQUEST.value())
         .detail(formatDetail(VALIDATION_FAILED_DETAIL))
         .extension(
-            ProblemSupport.ERRORS_EXTENSION,
-            bindingResultSupport.fetchViolations(e.getBindingResult()));
+            ViolationSupport.ERRORS_EXTENSION,
+            bindingResultSupport.fetchViolations(e.getBindingResult()))
+        .build();
   }
 }

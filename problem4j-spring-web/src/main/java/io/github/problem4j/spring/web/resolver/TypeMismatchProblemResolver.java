@@ -1,34 +1,28 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web.resolver;
 
-import static io.github.problem4j.spring.web.ProblemSupport.KIND_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.PROPERTY_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.TYPE_MISMATCH_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.KIND_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.PROPERTY_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.TYPE_MISMATCH_DETAIL;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.SimpleTypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapper;
@@ -47,20 +41,27 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  *
  * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to
  * indicate that the provided input has an invalid type.
+ *
+ * @since 1.2.0
  */
 public class TypeMismatchProblemResolver extends AbstractProblemResolver {
 
   private final TypeNameMapper typeNameMapper;
 
-  /** Creates a new {@link TypeMismatchProblemResolver} with default problem format. */
+  /**
+   * Creates a new {@link TypeMismatchProblemResolver} with default problem format.
+   *
+   * @since 1.2.0
+   */
   public TypeMismatchProblemResolver() {
-    this(new IdentityProblemFormat());
+    this(ProblemFormat.identity());
   }
 
   /**
    * Creates a new {@link TypeMismatchProblemResolver} with the specified problem format.
    *
    * @param problemFormat the problem format to use
+   * @since 1.2.0
    */
   public TypeMismatchProblemResolver(ProblemFormat problemFormat) {
     this(problemFormat, new SimpleTypeNameMapper());
@@ -72,6 +73,7 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver {
    *
    * @param problemFormat the problem format to use
    * @param typeNameMapper the type name mapper to use
+   * @since 1.2.0
    */
   public TypeMismatchProblemResolver(ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
     super(TypeMismatchException.class, problemFormat);
@@ -80,14 +82,14 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver {
 
   /**
    * Resolves a {@link TypeMismatchException} (also {@link MethodArgumentTypeMismatchException})
-   * into a {@link ProblemBuilder} with status {@link HttpStatus#BAD_REQUEST}, a standardized detail
-   * ({@code ProblemSupport#TYPE_MISMATCH_DETAIL}), and optional extensions:
+   * into an immutable {@link Problem} with status {@link HttpStatus#BAD_REQUEST}, a standardized
+   * detail ({@code ViolationSupport#TYPE_MISMATCH_DETAIL}), and optional extensions:
    *
    * <ul>
-   *   <li>{@code property} ({@code ProblemSupport#PROPERTY_EXTENSION}) - name of the parameter /
+   *   <li>{@code property} ({@code ViolationSupport#PROPERTY_EXTENSION}) - name of the parameter /
    *       property that failed conversion
-   *   <li>{@code kind} ({@code ProblemSupport#KIND_EXTENSION}) - required target type in lowercase
-   *       simple form
+   *   <li>{@code kind} ({@code ViolationSupport#KIND_EXTENSION}) - required target type in
+   *       lowercase simple form
    * </ul>
    *
    * <p>Older Spring versions may not populate {@code propertyName} for {@link
@@ -98,11 +100,12 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver {
    * @param ex the triggering type mismatch exception
    * @param headers HTTP headers (unused)
    * @param status suggested status (ignored; BAD_REQUEST enforced)
-   * @return builder populated with status, detail and relevant extensions
-   * @see io.github.problem4j.spring.web.ProblemSupport
+   * @return problem populated with status, detail and relevant extensions
+   * @see io.github.problem4j.spring.web.parameter.ViolationSupport
+   * @since 3.0.0
    */
   @Override
-  public ProblemBuilder resolveBuilder(
+  public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ProblemBuilder builder =
         Problem.builder()
@@ -120,6 +123,6 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver {
     if (kind != null) {
       builder = builder.extension(KIND_EXTENSION, kind);
     }
-    return builder;
+    return builder.build();
   }
 }

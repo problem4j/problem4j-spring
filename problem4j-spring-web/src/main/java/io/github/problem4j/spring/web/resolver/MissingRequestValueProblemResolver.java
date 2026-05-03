@@ -1,51 +1,45 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web.resolver;
 
-import static io.github.problem4j.spring.web.ProblemSupport.ATTRIBUTE_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.COOKIE_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.COOKIE_LABEL;
-import static io.github.problem4j.spring.web.ProblemSupport.HEADER_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.HEADER_LABEL;
-import static io.github.problem4j.spring.web.ProblemSupport.KIND_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.MISSING_COOKIE_DETAIL;
-import static io.github.problem4j.spring.web.ProblemSupport.MISSING_HEADER_DETAIL;
-import static io.github.problem4j.spring.web.ProblemSupport.MISSING_PATH_VARIABLE_DETAIL;
-import static io.github.problem4j.spring.web.ProblemSupport.MISSING_REQUEST_ATTRIBUTE_DETAIL;
-import static io.github.problem4j.spring.web.ProblemSupport.MISSING_REQUEST_PARAM_DETAIL;
-import static io.github.problem4j.spring.web.ProblemSupport.MISSING_REQUEST_PART_DETAIL;
-import static io.github.problem4j.spring.web.ProblemSupport.MISSING_SESSION_ATTRIBUTE_DETAIL;
-import static io.github.problem4j.spring.web.ProblemSupport.NAME_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.PARAM_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.PATH_PARAMETER_LABEL;
-import static io.github.problem4j.spring.web.ProblemSupport.QUERY_PARAMETER_LABEL;
-import static io.github.problem4j.spring.web.ProblemSupport.REQUEST_ATTRIBUTE_LABEL;
-import static io.github.problem4j.spring.web.ProblemSupport.REQUEST_PART_LABEL;
-import static io.github.problem4j.spring.web.ProblemSupport.SESSION_ATTRIBUTE_LABEL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.ATTRIBUTE_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.COOKIE_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.COOKIE_LABEL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.HEADER_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.HEADER_LABEL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.KIND_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_COOKIE_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_HEADER_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_PATH_VARIABLE_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_REQUEST_ATTRIBUTE_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_REQUEST_PARAM_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_REQUEST_PART_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_SESSION_ATTRIBUTE_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.NAME_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.PARAM_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.PATH_PARAMETER_LABEL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.QUERY_PARAMETER_LABEL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.REQUEST_ATTRIBUTE_LABEL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.REQUEST_PART_LABEL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.SESSION_ATTRIBUTE_LABEL;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import java.util.Locale;
 import org.springframework.http.HttpHeaders;
@@ -62,26 +56,33 @@ import org.springframework.web.server.MissingRequestValueException;
  *
  * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to
  * indicate that a required input value is missing.
+ *
+ * @since 1.2.0
  */
 public class MissingRequestValueProblemResolver extends AbstractProblemResolver {
 
-  /** Creates a new {@link MissingRequestValueProblemResolver} with default problem format. */
+  /**
+   * Creates a new {@link MissingRequestValueProblemResolver} with default problem format.
+   *
+   * @since 1.2.0
+   */
   public MissingRequestValueProblemResolver() {
-    this(new IdentityProblemFormat());
+    this(ProblemFormat.identity());
   }
 
   /**
    * Creates a new {@link MissingRequestValueProblemResolver} with the specified problem format.
    *
    * @param problemFormat the problem format to use
+   * @since 1.2.0
    */
   public MissingRequestValueProblemResolver(ProblemFormat problemFormat) {
     super(MissingRequestValueException.class, problemFormat);
   }
 
   /**
-   * Builds a {@link ProblemBuilder} for a {@link MissingRequestValueException}. Chooses a specific
-   * detail message and sets identifying extensions based on {@link
+   * Returns a {@link Problem} for a {@link MissingRequestValueException}. Chooses a specific detail
+   * message and sets identifying extensions based on {@link
    * MissingRequestValueException#getLabel()}. Falls back to a bare BAD_REQUEST if the label is
    * {@code null}.
    *
@@ -89,10 +90,11 @@ public class MissingRequestValueProblemResolver extends AbstractProblemResolver 
    * @param ex the thrown {@link MissingRequestValueException}
    * @param headers HTTP headers (unused)
    * @param status suggested status (ignored; BAD_REQUEST enforced)
-   * @return builder populated with status, detail, and relevant extensions
+   * @return problem with status, detail, and relevant extensions
+   * @since 3.0.0
    */
   @Override
-  public ProblemBuilder resolveBuilder(
+  public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     MissingRequestValueException e = (MissingRequestValueException) ex;
 
@@ -137,6 +139,6 @@ public class MissingRequestValueProblemResolver extends AbstractProblemResolver 
                   .extension(ATTRIBUTE_EXTENSION, e.getName());
     }
 
-    return builder;
+    return builder.build();
   }
 }

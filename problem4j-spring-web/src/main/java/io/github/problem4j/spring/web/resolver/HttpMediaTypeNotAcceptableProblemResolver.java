@@ -1,30 +1,23 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web.resolver;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,14 +33,18 @@ import org.springframework.web.HttpMediaTypeNotAcceptableException;
  *
  * <p>The handler is responsible for returning an appropriate HTTP 406 (Not Acceptable) response to
  * inform the client that the requested content type is not available.
+ *
+ * @since 1.2.0
  */
 public class HttpMediaTypeNotAcceptableProblemResolver extends AbstractProblemResolver {
 
   /**
    * Creates a new {@link HttpMediaTypeNotAcceptableProblemResolver} with default problem format.
+   *
+   * @since 1.2.0
    */
   public HttpMediaTypeNotAcceptableProblemResolver() {
-    this(new IdentityProblemFormat());
+    this(ProblemFormat.identity());
   }
 
   /**
@@ -55,25 +52,27 @@ public class HttpMediaTypeNotAcceptableProblemResolver extends AbstractProblemRe
    * format.
    *
    * @param problemFormat the problem format to use
+   * @since 1.2.0
    */
   public HttpMediaTypeNotAcceptableProblemResolver(ProblemFormat problemFormat) {
     super(HttpMediaTypeNotAcceptableException.class, problemFormat);
   }
 
   /**
-   * Returns a {@link ProblemBuilder} with {@link HttpStatus#NOT_ACCEPTABLE} (HTTP 406). Other
-   * parameters ({@code context}, {@code headers}, {@code status}) are ignored because the status is
-   * dictated by the semantics of {@link HttpMediaTypeNotAcceptableException}.
+   * Returns a {@link Problem} with {@link HttpStatus#NOT_ACCEPTABLE} (HTTP 406). Other parameters
+   * ({@code context}, {@code headers}, {@code status}) are ignored because the status is dictated
+   * by the semantics of {@link HttpMediaTypeNotAcceptableException}.
    *
    * @param context problem context (unused)
    * @param ex the triggering {@link HttpMediaTypeNotAcceptableException}
    * @param headers HTTP headers (unused)
    * @param status suggested status from caller (ignored; 406 enforced)
-   * @return builder pre-populated with 406 status
+   * @return problem with 406 status
+   * @since 3.0.0
    */
   @Override
-  public ProblemBuilder resolveBuilder(
+  public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return Problem.builder().status(HttpStatus.NOT_ACCEPTABLE.value());
+    return Problem.of(HttpStatus.NOT_ACCEPTABLE.value());
   }
 }

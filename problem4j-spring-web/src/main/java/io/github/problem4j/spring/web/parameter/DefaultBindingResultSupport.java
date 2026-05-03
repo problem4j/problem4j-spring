@@ -1,27 +1,22 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web.parameter;
 
-import static io.github.problem4j.spring.web.ProblemSupport.IS_NOT_VALID_ERROR;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.IS_NOT_VALID_ERROR;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -39,7 +34,11 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.BindParam;
 
-/** Default implementation of {@link BindingResultSupport}. */
+/**
+ * Default implementation of {@link BindingResultSupport}.
+ *
+ * @since 1.2.0
+ */
 public class DefaultBindingResultSupport implements BindingResultSupport {
 
   /**
@@ -50,6 +49,7 @@ public class DefaultBindingResultSupport implements BindingResultSupport {
    *
    * @param result the binding/validation result to convert (must not be {@code null})
    * @return list of violations extracted from the binding result
+   * @since 1.2.0
    */
   @Override
   public List<Violation> fetchViolations(BindingResult result) {
@@ -72,6 +72,7 @@ public class DefaultBindingResultSupport implements BindingResultSupport {
    * @param bindingResult the {@link BindingResult} containing the validation errors
    * @param error the {@link FieldError} to convert
    * @return a {@link Violation} representing the field error
+   * @since 1.2.0
    */
   protected Violation resolveFieldError(BindingResult bindingResult, FieldError error) {
     Map<String, String> parametersMetadata = findParametersMetadata(bindingResult);
@@ -93,6 +94,7 @@ public class DefaultBindingResultSupport implements BindingResultSupport {
    * @param bindingResult the {@link BindingResult} containing the validation errors
    * @param error the {@link ObjectError} to convert
    * @return a {@link Violation} representing the global error
+   * @since 1.2.0
    */
   protected Violation resolveGlobalError(BindingResult bindingResult, ObjectError error) {
     return new Violation(null, error.getDefaultMessage());
@@ -104,6 +106,7 @@ public class DefaultBindingResultSupport implements BindingResultSupport {
    * @param bindingResult the BindingResult containing the target object
    * @return an unmodifiable map of parameter names to their bound names, or empty map if target is
    *     {@code null}
+   * @since 1.2.0
    */
   protected Map<String, String> findParametersMetadata(BindingResult bindingResult) {
     if (bindingResult.getTarget() != null) {
@@ -118,6 +121,7 @@ public class DefaultBindingResultSupport implements BindingResultSupport {
    *
    * @param target the class to analyze
    * @return an unmodifiable map of constructor parameter names to their bound names
+   * @since 1.2.0
    */
   protected Map<String, String> computeConstructorMetadata(Class<?> target) {
     return findBindingConstructor(target)
@@ -134,6 +138,7 @@ public class DefaultBindingResultSupport implements BindingResultSupport {
    *
    * @param target the class to inspect
    * @return an {@code Optional} containing the binding constructor if found
+   * @since 1.2.0
    */
   protected Optional<Constructor<?>> findBindingConstructor(Class<?> target) {
     if (target.isRecord()) {
@@ -165,6 +170,7 @@ public class DefaultBindingResultSupport implements BindingResultSupport {
    *
    * @param constructor the constructor to inspect
    * @return an unmodifiable map of parameter names to their bound names
+   * @since 1.2.0
    */
   protected Map<String, String> getConstructorParameterMetadata(Constructor<?> constructor) {
     Annotation[][] annotations = constructor.getParameterAnnotations();

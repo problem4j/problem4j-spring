@@ -1,22 +1,17 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web;
@@ -238,9 +233,98 @@ class DefaultProblemPostProcessorTest {
   }
 
   @Test
+  void givenContextPlaceholderInTypeOverride_withValue_shouldOverrideType() {
+    PostProcessorSettings settings = getSettings("/errors/{context.errorCode}", null, null);
+
+    ProblemContext context = ProblemContext.create().put("errorCode", "ERR-42");
+    Problem problem = Problem.builder().type("bad_request").instance("instance-1").build();
+
+    ProblemPostProcessor processor = new DefaultProblemPostProcessor(settings);
+    Problem result = processor.process(context, problem);
+
+    assertThat(result).isEqualTo(problem.toBuilder().type("/errors/ERR-42").build());
+  }
+
+  @Test
+  void givenContextPlaceholderInTypeOverride_withoutValue_shouldNotOverrideType() {
+    PostProcessorSettings settings = getSettings("/errors/{context.errorCode}", null, null);
+
+    ProblemContext context = ProblemContext.create();
+    Problem problem = Problem.builder().type("bad_request").instance("instance-1").build();
+
+    ProblemPostProcessor processor = new DefaultProblemPostProcessor(settings);
+    Problem result = processor.process(context, problem);
+
+    assertThat(result).isSameAs(problem);
+  }
+
+  @Test
+  void givenStaticTitleOverride_shouldOverrideTitle() {
+    PostProcessorSettings settings = getSettings(null, "Custom Error", null);
+
+    Problem problem = Problem.builder().type("bad_request").title("Bad Request").build();
+
+    ProblemPostProcessor processor = new DefaultProblemPostProcessor(settings);
+    Problem result = processor.process(null, problem);
+
+    assertThat(result).isEqualTo(problem.toBuilder().title("Custom Error").build());
+  }
+
+  @Test
+  void givenProblemTitlePlaceholderWithTitleValue_shouldOverrideTitle() {
+    PostProcessorSettings settings = getSettings(null, "Prefix: {problem.title}", null);
+
+    Problem problem = Problem.builder().type("bad_request").title("Bad Request").build();
+
+    ProblemPostProcessor processor = new DefaultProblemPostProcessor(settings);
+    Problem result = processor.process(null, problem);
+
+    assertThat(result).isEqualTo(problem.toBuilder().title("Prefix: Bad Request").build());
+  }
+
+  @Test
+  void givenContextPlaceholderInTitleOverride_withValue_shouldOverrideTitle() {
+    PostProcessorSettings settings = getSettings(null, "{context.env} Error", null);
+
+    ProblemContext context = ProblemContext.create().put("env", "prod");
+    Problem problem = Problem.builder().type("bad_request").title("Bad Request").build();
+
+    ProblemPostProcessor processor = new DefaultProblemPostProcessor(settings);
+    Problem result = processor.process(context, problem);
+
+    assertThat(result).isEqualTo(problem.toBuilder().title("prod Error").build());
+  }
+
+  @Test
+  void givenContextPlaceholderInTitleOverride_withoutValue_shouldNotOverrideTitle() {
+    PostProcessorSettings settings = getSettings(null, "{context.env} Error", null);
+
+    ProblemContext context = ProblemContext.create();
+    Problem problem = Problem.builder().type("bad_request").title("Bad Request").build();
+
+    ProblemPostProcessor processor = new DefaultProblemPostProcessor(settings);
+    Problem result = processor.process(context, problem);
+
+    assertThat(result).isSameAs(problem);
+  }
+
+  @Test
+  void givenContextPlaceholderInInstanceOverride_withNonTraceIdKey_shouldOverrideInstance() {
+    PostProcessorSettings settings = getSettings(null, null, "/req/{context.requestId}");
+
+    ProblemContext context = ProblemContext.create().put("requestId", "req-99");
+    Problem problem = Problem.builder().type("bad_request").instance("old-instance").build();
+
+    ProblemPostProcessor processor = new DefaultProblemPostProcessor(settings);
+    Problem result = processor.process(context, problem);
+
+    assertThat(result).isEqualTo(problem.toBuilder().instance("/req/req-99").build());
+  }
+
+  @Test
   void givenProcessorWithSettings_whenGetSettings_thenReturnsSameInstance() {
     PostProcessorSettings settings =
-        getSettings("/types/{problem.type}", "/instances/{context.traceId}");
+        getSettings("/types/{problem.type}", null, "/instances/{context.traceId}");
     DefaultProblemPostProcessor processor = new DefaultProblemPostProcessor(settings);
 
     assertThat(processor.getSettings()).isSameAs(settings);
@@ -248,10 +332,22 @@ class DefaultProblemPostProcessorTest {
 
   private PostProcessorSettings getSettings(
       @Nullable String typeOverride, @Nullable String instanceOverride) {
+    return getSettings(typeOverride, null, instanceOverride);
+  }
+
+  private PostProcessorSettings getSettings(
+      @Nullable String typeOverride,
+      @Nullable String titleOverride,
+      @Nullable String instanceOverride) {
     return new PostProcessorSettings() {
       @Override
       public @Nullable String getTypeOverride() {
         return typeOverride;
+      }
+
+      @Override
+      public @Nullable String getTitleOverride() {
+        return titleOverride;
       }
 
       @Override

@@ -1,30 +1,25 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
 import java.util.Optional;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jspecify.annotations.Nullable;
 import org.springframework.util.StringUtils;
@@ -33,9 +28,10 @@ import org.springframework.util.StringUtils;
  * {@link ProblemPostProcessor} implementation that overrides selected fields of a {@link Problem}
  * based on configurable templates.
  *
- * <p>This processor allows the {@code type} and {@code instance} fields to be replaced with custom
- * values defined through {@link PostProcessorSettings}. Each override can include placeholders that
- * are resolved at runtime using data from the current {@link Problem} or {@link ProblemContext}.
+ * <p>This processor allows the {@code type}, {@code title}, and {@code instance} fields to be
+ * replaced with custom values defined through {@link PostProcessorSettings}. Each override can
+ * include placeholders that are resolved at runtime using data from the current {@link Problem} or
+ * {@link ProblemContext}.
  *
  * <p>Supported placeholders:
  *
@@ -43,18 +39,28 @@ import org.springframework.util.StringUtils;
  *   <li><b>For {@code type} override:</b>
  *       <ul>
  *         <li>{@code {problem.type}} - replaced with the original problem's {@code type}
+ *         <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current
+ *             {@link ProblemContext}
+ *       </ul>
+ *   <li><b>For {@code title} override:</b>
+ *       <ul>
+ *         <li>{@code {problem.title}} - replaced with the original problem's {@code title}
+ *         <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current
+ *             {@link ProblemContext}
  *       </ul>
  *   <li><b>For {@code instance} override:</b>
  *       <ul>
  *         <li>{@code {problem.instance}} - replaced with the original problem's {@code instance}
- *         <li>{@code {context.traceId}} - replaced with the current request's trace identifier, if
- *             available
+ *         <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current
+ *             {@link ProblemContext}
  *       </ul>
  * </ul>
  *
+ * <p>If an override template contains a {@code {context.<key>}} placeholder whose value is absent
+ * or empty in the context, the override is skipped entirely for that field.
+ *
  * <p>If an override template produces the same value as the existing field, no change is applied.
- * If neither override results in a change, the original {@link Problem} instance is returned
- * unchanged.
+ * If no override results in a change, the original {@link Problem} instance is returned unchanged.
  *
  * <p>Example configuration:
  *
@@ -62,9 +68,12 @@ import org.springframework.util.StringUtils;
  * problem4j.type-override=https://errors.example.com/{problem.type}
  * problem4j.instance-override=/errors/{context.traceId}
  * }</pre>
+ *
+ * @since 1.2.0
  */
 public class DefaultProblemPostProcessor implements ProblemPostProcessor {
 
+  private static final String CONTEXT_PREFIX = "context.";
   private static final Pattern PLACEHOLDER = Pattern.compile("\\{([^}]+)}");
 
   private final PostProcessorSettings settings;
@@ -73,33 +82,31 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    * Constructs a new {@link DefaultProblemPostProcessor}.
    *
    * @param settings the post-processor settings to use
+   * @since 1.2.0
    */
   public DefaultProblemPostProcessor(PostProcessorSettings settings) {
     this.settings = settings;
   }
 
   /**
-   * Applies configured overrides to {@code type} and/or {@code instance}.
+   * Applies configured overrides to {@code type}, {@code title}, and/or {@code instance}.
    *
    * <p>About {@code about:blank}: when the original type is {@code null} or {@link
    * Problem#BLANK_TYPE}, the placeholder {@code {problem.type}} resolves to an empty string
    * (templates naturally collapse). If the template is exactly {@code {problem.type}}, the original
    * {@code about:blank} value is preserved instead of becoming empty.
+   *
+   * @since 1.2.0
    */
   @Override
   public Problem process(@Nullable ProblemContext context, Problem problem) {
     if (context == null) {
       context = ProblemContext.create();
     }
-
-    ProblemBuilder builder = null;
-
-    // Override type only if {problem.type} is referenced and original type is valid
-    builder = overrideProblemType(context, problem, builder);
-
-    builder = overrideProblemInstance(context, problem, builder);
-
-    return builder != null ? builder.build() : problem;
+    problem = overrideProblemType(context, problem);
+    problem = overrideProblemTitle(context, problem);
+    problem = overrideProblemInstance(context, problem);
+    return problem;
   }
 
   /**
@@ -107,40 +114,39 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    *
    * @param context the problem context
    * @param problem the original problem
-   * @param builder the problem builder to update, or null to create a new one
-   * @return the updated or original builder
+   * @return the updated problem if override was applied, or the original problem unchanged
+   * @since 1.2.0
    */
-  protected @Nullable ProblemBuilder overrideProblemType(
-      ProblemContext context, Problem problem, @Nullable ProblemBuilder builder) {
+  protected Problem overrideProblemType(ProblemContext context, Problem problem) {
     if (!StringUtils.hasLength(settings.getTypeOverride())) {
-      return builder;
+      return problem;
     }
 
     String template = settings.getTypeOverride();
     boolean requiresProblemType = template.contains("{problem.type}");
     boolean hasProblemType = problem.isTypeNonBlank();
 
-    if (canOverride(requiresProblemType, hasProblemType)) {
+    if (canOverride(requiresProblemType, hasProblemType)
+        && allContextPlaceholdersSatisfied(template, context)) {
       Optional<String> newTypeCandidate = overrideType(context, problem);
       if (newTypeCandidate.isPresent()) {
-        if (builder == null) {
-          builder = problem.toBuilder();
-        }
-        builder = builder.type(newTypeCandidate.get());
+        return problem.toBuilder().type(newTypeCandidate.get()).build();
       }
     }
-    return builder;
+    return problem;
   }
 
   /**
-   * Determines whether the {@code type} can be overridden.
+   * Determines whether a field can be overridden given whether its problem-field placeholder is
+   * required and available.
    *
-   * @param requiresProblemType whether the template requires a problem type
-   * @param hasProblemType whether the problem has a type
+   * @param requiresProblemField whether the template requires the problem field value
+   * @param hasProblemField whether the problem has that field value
    * @return true if override is allowed
+   * @since 1.2.0
    */
-  protected boolean canOverride(boolean requiresProblemType, boolean hasProblemType) {
-    return !requiresProblemType || hasProblemType;
+  protected boolean canOverride(boolean requiresProblemField, boolean hasProblemField) {
+    return !requiresProblemField || hasProblemField;
   }
 
   /**
@@ -153,6 +159,7 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    * @param problem the original problem
    * @return an optional containing the new type if override is possible
    * @see io.github.problem4j.spring.web.ProblemPostProcessor
+   * @since 1.2.0
    */
   protected Optional<String> overrideType(ProblemContext context, Problem problem) {
     if (!problem.isTypeNonBlank() || !StringUtils.hasLength(settings.getTypeOverride())) {
@@ -162,6 +169,64 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
     String template = settings.getTypeOverride();
     String original = stringOrEmpty(problem.getType());
     String resolved = template.replace("{problem.type}", original);
+    resolved = resolveContextPlaceholders(resolved, context);
+
+    if (hasRemainingUnknownPlaceholders(resolved)) {
+      return Optional.empty();
+    }
+
+    return Optional.of(resolved).filter(StringUtils::hasLength);
+  }
+
+  /**
+   * Applies a {@code title} override based on the configured template.
+   *
+   * @param context the problem context
+   * @param problem the original problem
+   * @return the updated problem if override was applied, or the original problem unchanged
+   * @since 3.0.0
+   */
+  protected Problem overrideProblemTitle(ProblemContext context, Problem problem) {
+    if (!StringUtils.hasLength(settings.getTitleOverride())) {
+      return problem;
+    }
+
+    String template = settings.getTitleOverride();
+    boolean requiresProblemTitle = template.contains("{problem.title}");
+    boolean hasProblemTitle = StringUtils.hasLength(problem.getTitle());
+
+    if (canOverride(requiresProblemTitle, hasProblemTitle)
+        && allContextPlaceholdersSatisfied(template, context)) {
+      Optional<String> newTitleCandidate = overrideTitle(context, problem);
+      if (newTitleCandidate.isPresent()) {
+        return problem.toBuilder().title(newTitleCandidate.get()).build();
+      }
+    }
+    return problem;
+  }
+
+  /**
+   * Because this implementation does not try to resolve dynamic fields, it does not reuse the code
+   * from {@code ProblemPostProcessor}. Instead, we rely on simple substring replacement in form of
+   * {@link String#replace(CharSequence, CharSequence)}, and then removing all remaining unknown
+   * variables.
+   *
+   * @param context the problem context
+   * @param problem the original problem
+   * @return an optional containing the new title if override is possible
+   * @see io.github.problem4j.spring.web.ProblemPostProcessor
+   * @since 3.0.0
+   */
+  protected Optional<String> overrideTitle(ProblemContext context, Problem problem) {
+    if (!StringUtils.hasLength(problem.getTitle())
+        || !StringUtils.hasLength(settings.getTitleOverride())) {
+      return Optional.empty();
+    }
+
+    String template = settings.getTitleOverride();
+    String original = stringOrEmpty(problem.getTitle());
+    String resolved = template.replace("{problem.title}", original);
+    resolved = resolveContextPlaceholders(resolved, context);
 
     if (hasRemainingUnknownPlaceholders(resolved)) {
       return Optional.empty();
@@ -175,50 +240,28 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    *
    * @param context the problem context
    * @param problem the original problem
-   * @param builder the problem builder to update, or null to create a new one
-   * @return the updated or original builder
+   * @return the updated problem if override was applied, or the original problem unchanged
+   * @since 1.2.0
    */
-  protected @Nullable ProblemBuilder overrideProblemInstance(
-      ProblemContext context, Problem problem, @Nullable ProblemBuilder builder) {
+  protected Problem overrideProblemInstance(ProblemContext context, Problem problem) {
     if (!StringUtils.hasLength(settings.getInstanceOverride())) {
-      return builder;
+      return problem;
     }
 
     String template = settings.getInstanceOverride();
     boolean needsProblemInstance = template.contains("{problem.instance}");
-    boolean needsTraceId = template.contains("{context.traceId}");
     boolean hasProblemInstance =
         problem.getInstance() != null && StringUtils.hasLength(problem.getInstance().toString());
-    boolean hasTraceId = StringUtils.hasLength(context.get("traceId"));
 
-    if (canOverride(needsProblemInstance, hasProblemInstance, needsTraceId, hasTraceId)) {
+    if (canOverride(needsProblemInstance, hasProblemInstance)
+        && allContextPlaceholdersSatisfied(template, context)) {
       String newInstance = overrideInstance(context, problem);
       if (StringUtils.hasLength(newInstance)
           && !newInstance.equals(stringOrEmpty(problem.getInstance()))) {
-        if (builder == null) {
-          builder = problem.toBuilder();
-        }
-        builder.instance(newInstance);
+        return problem.toBuilder().instance(newInstance).build();
       }
     }
-    return builder;
-  }
-
-  /**
-   * Determines whether the {@code instance} can be overridden.
-   *
-   * @param needsProblemInstance whether the template requires a problem instance
-   * @param hasProblemInstance whether the problem has an instance
-   * @param needsTraceId whether the template requires a trace ID
-   * @param hasTraceId whether the context has a trace ID
-   * @return true if override is allowed
-   */
-  protected boolean canOverride(
-      boolean needsProblemInstance,
-      boolean hasProblemInstance,
-      boolean needsTraceId,
-      boolean hasTraceId) {
-    return (!needsProblemInstance || hasProblemInstance) && (!needsTraceId || hasTraceId);
+    return problem;
   }
 
   /**
@@ -234,6 +277,7 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    * @param problem the original problem
    * @return the new instance string
    * @see io.github.problem4j.spring.web.ProblemPostProcessor
+   * @since 1.2.0
    */
   protected String overrideInstance(ProblemContext context, Problem problem) {
     if (!StringUtils.hasLength(settings.getInstanceOverride())) {
@@ -242,10 +286,9 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
 
     String template = settings.getInstanceOverride();
     String instanceValue = stringOrEmpty(problem.getInstance());
-    String traceIdValue = stringOrEmpty(context.get("traceId"));
 
     template = template.replace("{problem.instance}", instanceValue);
-    template = template.replace("{context.traceId}", traceIdValue);
+    template = resolveContextPlaceholders(template, context);
 
     if (hasRemainingUnknownPlaceholders(template)) {
       return instanceValue;
@@ -259,6 +302,7 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    *
    * @param value the value to convert
    * @return the string representation or empty string
+   * @since 1.2.0
    */
   protected String stringOrEmpty(@Nullable Object value) {
     return value != null ? value.toString() : "";
@@ -272,6 +316,7 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    * @param value the string to check
    * @return true if unresolved placeholders remain
    * @see io.github.problem4j.core.ProblemMapper
+   * @since 1.2.0
    */
   protected boolean hasRemainingUnknownPlaceholders(String value) {
     return PLACEHOLDER.matcher(value).find();
@@ -281,8 +326,37 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    * Returns the post-processor configuration settings.
    *
    * @return the post-processor settings
+   * @since 1.2.0
    */
   protected PostProcessorSettings getSettings() {
     return settings;
+  }
+
+  private boolean allContextPlaceholdersSatisfied(String template, ProblemContext context) {
+    Matcher matcher = PLACEHOLDER.matcher(template);
+    while (matcher.find()) {
+      String key = matcher.group(1);
+      if (key.startsWith(CONTEXT_PREFIX)
+          && !StringUtils.hasLength(context.get(key.substring(CONTEXT_PREFIX.length())))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private String resolveContextPlaceholders(String template, ProblemContext context) {
+    Matcher matcher = PLACEHOLDER.matcher(template);
+    StringBuilder result = new StringBuilder();
+    while (matcher.find()) {
+      String key = matcher.group(1);
+      if (key.startsWith(CONTEXT_PREFIX)) {
+        String value = stringOrEmpty(context.get(key.substring(CONTEXT_PREFIX.length())));
+        matcher.appendReplacement(result, Matcher.quoteReplacement(value));
+      } else {
+        matcher.appendReplacement(result, Matcher.quoteReplacement(matcher.group(0)));
+      }
+    }
+    matcher.appendTail(result);
+    return result.toString();
   }
 }

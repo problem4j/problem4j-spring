@@ -1,33 +1,26 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web.resolver;
 
-import static io.github.problem4j.spring.web.ProblemSupport.ERRORS_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.VALIDATION_FAILED_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.ERRORS_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.VALIDATION_FAILED_DETAIL;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.parameter.DefaultMethodValidationResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
@@ -55,20 +48,26 @@ import org.springframework.validation.method.MethodValidationException;
  * return value).
  *
  * @see jakarta.validation.ConstraintViolationException
+ * @since 1.2.0
  */
 public class MethodValidationProblemResolver extends AbstractProblemResolver {
 
   private final MethodValidationResultSupport methodValidationResultSupport;
 
-  /** Creates a new {@link MethodValidationProblemResolver} with default problem format. */
+  /**
+   * Creates a new {@link MethodValidationProblemResolver} with default problem format.
+   *
+   * @since 1.2.0
+   */
   public MethodValidationProblemResolver() {
-    this(new IdentityProblemFormat());
+    this(ProblemFormat.identity());
   }
 
   /**
    * Creates a new {@link MethodValidationProblemResolver} with the specified problem format.
    *
    * @param problemFormat the problem format to use
+   * @since 1.2.0
    */
   public MethodValidationProblemResolver(ProblemFormat problemFormat) {
     this(problemFormat, new DefaultMethodValidationResultSupport());
@@ -80,6 +79,7 @@ public class MethodValidationProblemResolver extends AbstractProblemResolver {
    *
    * @param problemFormat the problem format to use
    * @param methodValidationResultSupport the support for extracting validation results
+   * @since 1.2.0
    */
   public MethodValidationProblemResolver(
       ProblemFormat problemFormat, MethodValidationResultSupport methodValidationResultSupport) {
@@ -88,24 +88,25 @@ public class MethodValidationProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Converts the {@link MethodValidationException} into a {@link ProblemBuilder} with status {@link
-   * HttpStatus#BAD_REQUEST} and an {@code errors} extension describing each parameter or return
-   * value violation. Other parameters ({@code context}, {@code headers}, {@code status}) are
-   * ignored for status selection; 400 is enforced.
+   * Returns a {@link Problem} with status {@link HttpStatus#BAD_REQUEST} and an {@code errors}
+   * extension describing each parameter or return value violation. Other parameters ({@code
+   * context}, {@code headers}, {@code status}) are ignored for status selection; 400 is enforced.
    *
    * @param context problem context (unused)
    * @param ex the thrown {@link MethodValidationException}
    * @param headers HTTP headers (unused)
    * @param status suggested status (ignored; BAD_REQUEST enforced)
-   * @return builder pre-populated with validation details and BAD_REQUEST status
+   * @return problem with validation details and BAD_REQUEST status
+   * @since 3.0.0
    */
   @Override
-  public ProblemBuilder resolveBuilder(
+  public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     MethodValidationException e = (MethodValidationException) ex;
     return Problem.builder()
         .status(HttpStatus.BAD_REQUEST.value())
         .detail(formatDetail(VALIDATION_FAILED_DETAIL))
-        .extension(ERRORS_EXTENSION, methodValidationResultSupport.fetchViolations(e));
+        .extension(ERRORS_EXTENSION, methodValidationResultSupport.fetchViolations(e))
+        .build();
   }
 }

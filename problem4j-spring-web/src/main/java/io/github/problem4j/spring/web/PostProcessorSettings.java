@@ -1,22 +1,17 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web;
@@ -31,28 +26,43 @@ import org.jspecify.annotations.Nullable;
  * example, {@code problem4j.type-override} and {@code problem4j.instance-override}) and may include
  * runtime placeholders that are resolved during post-processing.
  *
- * <p>These settings allow applications to dynamically customize problem types and instances to
- * match organizational or tracing conventions.
+ * <p>These settings allow applications to dynamically customize problem types, titles, and
+ * instances to match organizational or tracing conventions.
+ *
+ * @since 1.2.0
  */
 public interface PostProcessorSettings {
 
   /**
    * Returns the configured override template for the {@code type} field of a problem.
    *
-   * <p>The value may include placeholders such as {@code {problem.type}}, which will be replaced at
-   * runtime.
+   * <p>The value may include placeholders such as {@code {problem.type}} or {@code
+   * {context.<key>}}, which will be replaced at runtime.
    *
    * @return the configured type override template, or {@code null} if not set
+   * @since 1.2.0
    */
   @Nullable String getTypeOverride();
+
+  /**
+   * Returns the configured override template for the {@code title} field of a problem.
+   *
+   * <p>The value may include placeholders such as {@code {problem.title}} or {@code
+   * {context.<key>}}, which will be replaced at runtime.
+   *
+   * @return the configured title override template, or {@code null} if not set
+   * @since 3.0.0
+   */
+  @Nullable String getTitleOverride();
 
   /**
    * Returns the configured override template for the {@code instance} field of a problem.
    *
    * <p>The value may include placeholders such as {@code {problem.instance}} or {@code
-   * {context.traceId}}, which will be replaced at runtime.
+   * {context.<key>}}, which will be replaced at runtime.
    *
    * @return the configured instance override template, or {@code null} if not set
+   * @since 1.2.0
    */
   @Nullable String getInstanceOverride();
 }

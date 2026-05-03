@@ -1,28 +1,23 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.webmvc.integration;
 
-import static io.github.problem4j.spring.web.ProblemSupport.ERRORS_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.VALIDATION_FAILED_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.ERRORS_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.VALIDATION_FAILED_DETAIL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 
@@ -164,7 +159,7 @@ class ValidateMethodArgumentFailingWebMvcTest {
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem.getExtensionValue(ERRORS_EXTENSION)).asInstanceOf(LIST).hasSize(2);
+    assertThat(problem.getExtensions().get(ERRORS_EXTENSION)).asInstanceOf(LIST).hasSize(2);
   }
 
   @ParameterizedTest
@@ -179,7 +174,7 @@ class ValidateMethodArgumentFailingWebMvcTest {
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem.getExtensionValue(ERRORS_EXTENSION)).asInstanceOf(LIST).hasSize(1);
+    assertThat(problem.getExtensions().get(ERRORS_EXTENSION)).asInstanceOf(LIST).hasSize(1);
   }
 
   @Test
@@ -193,7 +188,7 @@ class ValidateMethodArgumentFailingWebMvcTest {
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
+    assertThat(problem.getExtensions().get(ERRORS_EXTENSION))
         .asInstanceOf(LIST)
         .hasSize(1)
         .allSatisfy(e -> assertThat(((Map<?, ?>) e).get("field")).isEqualTo("firstParam"));
@@ -210,7 +205,7 @@ class ValidateMethodArgumentFailingWebMvcTest {
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
+    assertThat(problem.getExtensions().get(ERRORS_EXTENSION))
         .asInstanceOf(LIST)
         .hasSize(1)
         .allSatisfy(e -> assertThat(((Map<?, ?>) e).get("field")).isEqualTo("secondParam"));
@@ -236,8 +231,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
     assertThat(problem.getType()).isEqualTo(Problem.BLANK_TYPE);
     assertThat(problem.getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-    assertThat(problem.getExtensionMembers()).containsKey(ERRORS_EXTENSION);
-    assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
+    assertThat(problem.getExtensions()).containsKey(ERRORS_EXTENSION);
+    assertThat(problem.getExtensions().get(ERRORS_EXTENSION))
         .asInstanceOf(LIST)
         .containsExactlyInAnyOrder(
             Map.of("field", "text", "error", "size must be between 1 and 5"),
@@ -264,8 +259,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
     assertThat(problem.getType()).isEqualTo(Problem.BLANK_TYPE);
     assertThat(problem.getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-    assertThat(problem.getExtensionMembers()).containsKey(ERRORS_EXTENSION);
-    assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
+    assertThat(problem.getExtensions()).containsKey(ERRORS_EXTENSION);
+    assertThat(problem.getExtensions().get(ERRORS_EXTENSION))
         .asInstanceOf(LIST)
         .containsExactlyInAnyOrder(
             Map.of("field", "text", "error", "size must be between 1 and 5"),
@@ -293,8 +288,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
     assertThat(problem.getType()).isEqualTo(Problem.BLANK_TYPE);
     assertThat(problem.getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-    assertThat(problem.getExtensionMembers()).containsKey(ERRORS_EXTENSION);
-    assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
+    assertThat(problem.getExtensions()).containsKey(ERRORS_EXTENSION);
+    assertThat(problem.getExtensions().get(ERRORS_EXTENSION))
         .asInstanceOf(LIST)
         .containsExactlyInAnyOrder(
             Map.of("field", "text", "error", "size must be between 1 and 5"),

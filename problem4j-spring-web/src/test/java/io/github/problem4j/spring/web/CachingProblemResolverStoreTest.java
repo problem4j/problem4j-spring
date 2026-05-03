@@ -1,22 +1,17 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web;
@@ -29,9 +24,7 @@ import io.github.problem4j.spring.web.resolver.AbstractProblemResolver;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -39,7 +32,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.jspecify.annotations.NullUnmarked;
 import org.junit.jupiter.api.Test;
 
 class CachingProblemResolverStoreTest {
@@ -136,54 +128,5 @@ class CachingProblemResolverStoreTest {
     }
 
     assertEquals(1, computeCounter.get(), "computeResolver() should run exactly once");
-  }
-
-  private static class Ex1 extends Exception {}
-
-  private static class Ex2 extends Exception {}
-
-  private static class Ex3 extends Exception {}
-
-  @NullUnmarked
-  @Test
-  void givenLimitedCache_whenExceeded_thenEvictsLeastRecentlyUsed() {
-    int maxCacheSize = 2;
-
-    DummyResolver r1 = new DummyResolver(Ex1.class);
-    DummyResolver r2 = new DummyResolver(Ex2.class);
-    DummyResolver r3 = new DummyResolver(Ex3.class);
-
-    Map<Class<? extends Exception>, ProblemResolver> resolvers =
-        Map.of(
-            Ex1.class, r1,
-            Ex2.class, r2,
-            Ex3.class, r3);
-
-    Map<Class<? extends Exception>, AtomicInteger> counters = new HashMap<>();
-
-    ProblemResolverStore delegate =
-        clazz -> {
-          counters.computeIfAbsent(clazz, k -> new AtomicInteger()).incrementAndGet();
-          return Optional.ofNullable(resolvers.get(clazz));
-        };
-
-    CachingProblemResolverStore store = new CachingProblemResolverStore(delegate, maxCacheSize);
-
-    // Fill cache with Ex1, Ex2
-    assertTrue(store.findResolver(Ex1.class).isPresent());
-    assertTrue(store.findResolver(Ex2.class).isPresent());
-
-    // Touch Ex1 to make it most recently used (LRU order now: Ex2 oldest, Ex1 newest)
-    assertTrue(store.findResolver(Ex1.class).isPresent());
-
-    // Add Ex3 -> should evict Ex2
-    assertTrue(store.findResolver(Ex3.class).isPresent());
-
-    // Access Ex2 again -> should be cache miss and re-computed
-    assertTrue(store.findResolver(Ex2.class).isPresent());
-
-    assertEquals(1, counters.get(Ex1.class).get(), "Ex1 should be computed once");
-    assertEquals(2, counters.get(Ex2.class).get(), "Ex2 should be recomputed after eviction");
-    assertEquals(1, counters.get(Ex3.class).get(), "Ex3 should be computed once");
   }
 }

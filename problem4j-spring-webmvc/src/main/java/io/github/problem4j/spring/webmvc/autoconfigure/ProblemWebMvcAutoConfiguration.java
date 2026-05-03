@@ -1,22 +1,17 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.webmvc.autoconfigure;
@@ -33,9 +28,9 @@ import io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice;
 import java.util.List;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.webmvc.autoconfigure.WebMvcAutoConfiguration;
@@ -60,10 +55,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  *   <li>{@link ConditionalOnMissingBean} ensures user-defined beans override defaults.
  *   <li>{@link ConditionalOnClass} ensures compatibility with optional framework classes.
  * </ul>
+ *
+ * @since 1.2.0
  */
 @AutoConfiguration
 @EnableConfigurationProperties({ProblemWebMvcProperties.class})
-@ConditionalOnProperty(name = "problem4j.webmvc.enabled", matchIfMissing = true)
+@ConditionalOnBooleanProperty(name = "problem4j.webmvc.enabled", matchIfMissing = true)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @AutoConfigureBefore({ErrorMvcAutoConfiguration.class, WebMvcAutoConfiguration.class})
 @Import({ProblemErrorMvcConfiguration.class, ProblemResolverWebMvcConfiguration.class})
@@ -77,7 +74,9 @@ public class ProblemWebMvcAutoConfiguration {
    * according {@code ProblemResolver}-s managed by {@link ProblemResolverStore}.
    */
   @Order(Ordered.LOWEST_PRECEDENCE)
-  @ConditionalOnProperty(name = "problem4j.webmvc.exception-advice.enabled", matchIfMissing = true)
+  @ConditionalOnBooleanProperty(
+      name = "problem4j.webmvc.exception-advice.enabled",
+      matchIfMissing = true)
   @ConditionalOnMissingBean(ExceptionWebMvcAdvice.class)
   @Bean
   ExceptionWebMvcAdvice exceptionWebMvcAdvice(
@@ -97,7 +96,7 @@ public class ProblemWebMvcAutoConfiguration {
    * problem responses, using the configured post processor and inspectors.
    */
   @Order(Ordered.LOWEST_PRECEDENCE - 10)
-  @ConditionalOnProperty(
+  @ConditionalOnBooleanProperty(
       name = "problem4j.webmvc.problem-exception-advice.enabled",
       matchIfMissing = true)
   @ConditionalOnMissingBean(ProblemExceptionWebMvcAdvice.class)
@@ -112,7 +111,7 @@ public class ProblemWebMvcAutoConfiguration {
    * Nested configuration that registers the {@link ProblemContextWebMvcFilter} responsible for
    * preparing and propagating the Problem4J context across WebMVC request handling.
    */
-  @ConditionalOnProperty(
+  @ConditionalOnBooleanProperty(
       name = "problem4j.webmvc.problem-context-filter.enabled",
       matchIfMissing = true)
   @ConditionalOnClass(OncePerRequestFilter.class)
@@ -134,7 +133,9 @@ public class ProblemWebMvcAutoConfiguration {
    * Nested configuration that replaces the default WebMVC exception handler with a
    * Problem4J-enhanced implementation.
    */
-  @ConditionalOnProperty(name = "problem4j.webmvc.exception-handler.enabled", matchIfMissing = true)
+  @ConditionalOnBooleanProperty(
+      name = "problem4j.webmvc.exception-handler.enabled",
+      matchIfMissing = true)
   @ConditionalOnClass(ResponseEntityExceptionHandler.class)
   @Configuration(proxyBeanMethods = false)
   static class ResponseEntityExceptionHandlerConfiguration {

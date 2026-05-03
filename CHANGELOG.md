@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+### Added
+
+- Add `HttpStatusTitleResolver` - a SPI implementation fo `StatusTitleResolver` using Spring's `HttpStatus`.
+- Add `problem4j.title-override` property to configure `title` field override in `DefaultProblemPostProcessor`.
+- Make `DefaultProblemPostProcessor` support any fields from `ProblemContext` in value interpolation.
+
+### Changed
+
+- Bump `problem4j-core` to `2.0.0-RC1`.
+- Bump `problem4j-jackson2` to `2.0.0-RC1`.
+- Bump `problem4j-jackson3` to `2.0.0-RC1`.
+- Change `ProblemResolver` to contain just `resolve` method, returning `Problem`.
+- Hide `IdentityProblemFormat` and make it available via `ProblemFormat.identity()`.
+- Split `ProblemSupport` into `ViolationSupport` and `ResponseSupport` to separate concerns and mitigate conflicts with
+  `ProblemSupport` in `problem4j-core`.
+
+### Removed
+
+- Remove `problem4j.resolver-caching.max-cache-size` and evicting cache for `ProblemResolver`-s (non-evicting cache is
+  still present).
+- Remove `ProblemSupport.resolveStatus(HttpStatusCode)`.
+
 ## [2.2.4] - 2026-03-29
 
 ### Fixed

@@ -1,22 +1,17 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.webflux;
@@ -28,7 +23,7 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemException;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
-import io.github.problem4j.spring.web.ProblemSupport;
+import io.github.problem4j.spring.web.ResponseSupport;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +43,8 @@ import reactor.core.publisher.Mono;
  * content type {@code application/problem+json}.
  *
  * <p>This is intended for application-level exceptions already represented as {@link Problem}.
+ *
+ * @since 1.2.0
  */
 @RestControllerAdvice
 public class ProblemExceptionWebFluxAdvice {
@@ -63,6 +60,7 @@ public class ProblemExceptionWebFluxAdvice {
    *
    * @param problemPostProcessor the post-processor for problems
    * @param adviceWebFluxInspectors the inspectors to apply to advice
+   * @since 1.2.0
    */
   public ProblemExceptionWebFluxAdvice(
       ProblemPostProcessor problemPostProcessor,
@@ -78,6 +76,7 @@ public class ProblemExceptionWebFluxAdvice {
    * @param ex the ProblemException to handle
    * @param exchange the current server web exchange
    * @return a {@link Mono} emitting the response entity with a {@link Problem} body
+   * @since 1.2.0
    */
   @ExceptionHandler(ProblemException.class)
   public Mono<ResponseEntity<Problem>> handleProblemException(
@@ -97,7 +96,7 @@ public class ProblemExceptionWebFluxAdvice {
       problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
-    HttpStatus status = ProblemSupport.resolveStatus(problem);
+    HttpStatus status = ResponseSupport.resolveStatus(problem);
 
     for (AdviceWebFluxInspector inspector : adviceWebFluxInspectors) {
       inspector.inspect(context, problem, ex, headers, status, exchange);

@@ -1,22 +1,17 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.webflux.autoconfigure;
@@ -29,26 +24,52 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
  * Configuration properties for Problem Details WebFlux integration.
  *
  * <p>These properties can be set under the {@code problem4j.webflux.*} prefix.
+ *
+ * @since 1.2.0
  */
 @ConfigurationProperties(prefix = "problem4j.webflux")
 public class ProblemWebFluxProperties {
 
-  /** Whether Problem4J integration with WebFlux is enabled. */
+  /**
+   * Whether Problem4J integration with WebFlux is enabled.
+   *
+   * @since 1.2.0
+   */
   private final boolean enabled;
 
-  /** Configuration for {@code ExceptionWebFluxAdvice}. */
+  /**
+   * Configuration for {@code ExceptionWebFluxAdvice}.
+   *
+   * @since 1.2.0
+   */
   private final ExceptionAdvice exceptionAdvice;
 
-  /** Configuration for {@code ProblemExceptionWebFluxAdvice}. */
+  /**
+   * Configuration for {@code ProblemExceptionWebFluxAdvice}.
+   *
+   * @since 1.2.0
+   */
   private final ProblemExceptionAdvice problemExceptionAdvice;
 
-  /** Configuration for {@code ProblemContextWebFluxFilter}. */
+  /**
+   * Configuration for {@code ProblemContextWebFluxFilter}.
+   *
+   * @since 1.2.0
+   */
   private final ProblemContextFilter problemContextFilter;
 
-  /** Configuration for {@code ProblemEnhancedWebFluxHandler} replacement. */
+  /**
+   * Configuration for {@code ProblemEnhancedWebFluxHandler} replacement.
+   *
+   * @since 1.2.0
+   */
   private final ExceptionHandler exceptionHandler;
 
-  /** Configuration for {@code ProblemErrorWebExceptionHandler} replacement. */
+  /**
+   * Configuration for {@code ProblemErrorWebExceptionHandler} replacement.
+   *
+   * @since 1.2.0
+   */
   private final ErrorWebExceptionHandler errorWebExceptionHandler;
 
   /**
@@ -65,6 +86,7 @@ public class ProblemWebFluxProperties {
    * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
    * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
    * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
+   * @since 1.2.0
    */
   public ProblemWebFluxProperties(
       @DefaultValue("true") boolean enabled,
@@ -94,6 +116,7 @@ public class ProblemWebFluxProperties {
    * Indicates whether Problem4J integration with WebFlux is currently enabled.
    *
    * @return {@code true} if problem WebFlux is enabled; {@code false} otherwise
+   * @since 1.2.0
    */
   public boolean isEnabled() {
     return enabled;
@@ -105,6 +128,7 @@ public class ProblemWebFluxProperties {
    *
    * @return the configuration for exception advice
    * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
+   * @since 1.2.0
    */
   public ExceptionAdvice getExceptionAdvice() {
     return exceptionAdvice;
@@ -116,6 +140,7 @@ public class ProblemWebFluxProperties {
    *
    * @return the configuration for problem exception advice
    * @see io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice
+   * @since 1.2.0
    */
   public ProblemExceptionAdvice getProblemExceptionAdvice() {
     return problemExceptionAdvice;
@@ -128,6 +153,7 @@ public class ProblemWebFluxProperties {
    * @return the configuration for the {@code ProblemContextWebFluxFilter}
    * @see io.github.problem4j.core.ProblemContext
    * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
+   * @since 1.2.0
    */
   public ProblemContextFilter getProblemContextFilter() {
     return problemContextFilter;
@@ -141,6 +167,7 @@ public class ProblemWebFluxProperties {
    * @return the configuration for the overwritten exception handler
    * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
    * @see org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler
+   * @since 1.2.0
    */
   public ExceptionHandler getExceptionHandler() {
     return exceptionHandler;
@@ -154,6 +181,7 @@ public class ProblemWebFluxProperties {
    * @return the configuration for the overwritten error handler
    * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
    * @see org.springframework.boot.webflux.error.ErrorWebExceptionHandler
+   * @since 1.2.0
    */
   public ErrorWebExceptionHandler getErrorWebExceptionHandler() {
     return errorWebExceptionHandler;
@@ -165,20 +193,33 @@ public class ProblemWebFluxProperties {
    * <p>Controlled by the property {@code problem4j.webflux.exception-advice.enabled}.
    *
    * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
+   * @since 1.2.0
    */
   public static class ExceptionAdvice {
 
-    /** Default enabled value for {@code ExceptionAdvice} configuration group. */
+    /**
+     * Default enabled value for {@code ExceptionAdvice} configuration group.
+     *
+     * @since 1.2.0
+     */
     public static final boolean DEFAULT_ENABLED = true;
 
-    /** Default enabled value as a string for {@code ExceptionAdvice} configuration group. */
+    /**
+     * Default enabled value as a string for {@code ExceptionAdvice} configuration group.
+     *
+     * @since 1.2.0
+     */
     public static final String DEFAULT_ENABLED_VALUE = "true";
 
     private static ExceptionAdvice createDefault() {
       return new ExceptionAdvice(DEFAULT_ENABLED);
     }
 
-    /** Whether the {@code ExceptionWebFluxAdvice} bean should be registered. */
+    /**
+     * Whether the {@code ExceptionWebFluxAdvice} bean should be registered.
+     *
+     * @since 1.2.0
+     */
     private final boolean enabled;
 
     /**
@@ -186,6 +227,7 @@ public class ProblemWebFluxProperties {
      *
      * @param enabled whether the {@code ExceptionWebFluxAdvice} bean should be registered
      * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
+     * @since 1.2.0
      */
     public ExceptionAdvice(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
       this.enabled = enabled;
@@ -196,6 +238,7 @@ public class ProblemWebFluxProperties {
      *
      * @return {@code true} if exception advice is enabled, otherwise {@code false}
      * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
+     * @since 1.2.0
      */
     public boolean isEnabled() {
       return enabled;
@@ -208,20 +251,33 @@ public class ProblemWebFluxProperties {
    * <p>Controlled by the property {@code problem4j.webflux.problem-exception-advice.enabled}.
    *
    * @see io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice
+   * @since 1.2.0
    */
   public static class ProblemExceptionAdvice {
 
-    /** Default enabled value for {@code ProblemExceptionAdvice} configuration group. */
+    /**
+     * Default enabled value for {@code ProblemExceptionAdvice} configuration group.
+     *
+     * @since 1.2.0
+     */
     public static final boolean DEFAULT_ENABLED = true;
 
-    /** Default enabled value as a string for {@code ProblemExceptionAdvice} configuration group. */
+    /**
+     * Default enabled value as a string for {@code ProblemExceptionAdvice} configuration group.
+     *
+     * @since 1.2.0
+     */
     public static final String DEFAULT_ENABLED_VALUE = "true";
 
     private static ProblemExceptionAdvice createDefault() {
       return new ProblemExceptionAdvice(DEFAULT_ENABLED);
     }
 
-    /** Whether the {@code ProblemExceptionWebFluxAdvice} bean should be registered. */
+    /**
+     * Whether the {@code ProblemExceptionWebFluxAdvice} bean should be registered.
+     *
+     * @since 1.2.0
+     */
     private final boolean enabled;
 
     /**
@@ -229,6 +285,7 @@ public class ProblemWebFluxProperties {
      *
      * @param enabled whether the {@code ProblemExceptionWebFluxAdvice} bean should be registered
      * @see io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice
+     * @since 1.2.0
      */
     public ProblemExceptionAdvice(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
       this.enabled = enabled;
@@ -239,6 +296,7 @@ public class ProblemWebFluxProperties {
      *
      * @return {@code true} if the ProblemException advice is enabled, otherwise {@code false}
      * @see io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice
+     * @since 1.2.0
      */
     public boolean isEnabled() {
       return enabled;
@@ -251,20 +309,33 @@ public class ProblemWebFluxProperties {
    * <p>Controlled by the property {@code problem4j.webflux.problem-context-filter.enabled}.
    *
    * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
+   * @since 1.2.0
    */
   public static class ProblemContextFilter {
 
-    /** Default enabled value for {@code ProblemContextFilter} configuration group. */
+    /**
+     * Default enabled value for {@code ProblemContextFilter} configuration group.
+     *
+     * @since 1.2.0
+     */
     public static final boolean DEFAULT_ENABLED = true;
 
-    /** Default enabled value as a string for {@code ProblemContextFilter} configuration group. */
+    /**
+     * Default enabled value as a string for {@code ProblemContextFilter} configuration group.
+     *
+     * @since 1.2.0
+     */
     public static final String DEFAULT_ENABLED_VALUE = "true";
 
     private static ProblemContextFilter createDefault() {
       return new ProblemContextFilter(DEFAULT_ENABLED);
     }
 
-    /** Whether the {@code ProblemContextWebFluxFilter} bean should be registered. */
+    /**
+     * Whether the {@code ProblemContextWebFluxFilter} bean should be registered.
+     *
+     * @since 1.2.0
+     */
     private final boolean enabled;
 
     /**
@@ -272,6 +343,7 @@ public class ProblemWebFluxProperties {
      *
      * @param enabled whether the {@code ProblemContextWebFluxFilter} bean should be registered
      * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
+     * @since 1.2.0
      */
     public ProblemContextFilter(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
       this.enabled = enabled;
@@ -282,6 +354,7 @@ public class ProblemWebFluxProperties {
      *
      * @return {@code true} if the context filter is enabled, otherwise {@code false}
      * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
+     * @since 1.2.0
      */
     public boolean isEnabled() {
       return enabled;
@@ -294,20 +367,33 @@ public class ProblemWebFluxProperties {
    * <p>Controlled by the property {@code problem4j.webflux.exception-handler.enabled}.
    *
    * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
+   * @since 1.2.0
    */
   public static class ExceptionHandler {
 
-    /** Default enabled value for {@code ExceptionHandler} configuration group. */
+    /**
+     * Default enabled value for {@code ExceptionHandler} configuration group.
+     *
+     * @since 1.2.0
+     */
     public static final boolean DEFAULT_ENABLED = true;
 
-    /** Default enabled value as a string for {@code ExceptionHandler} configuration group. */
+    /**
+     * Default enabled value as a string for {@code ExceptionHandler} configuration group.
+     *
+     * @since 1.2.0
+     */
     public static final String DEFAULT_ENABLED_VALUE = "true";
 
     private static ExceptionHandler createDefault() {
       return new ExceptionHandler(DEFAULT_ENABLED);
     }
 
-    /** Whether the {@code ProblemEnhancedWebFluxHandler} should be registered. */
+    /**
+     * Whether the {@code ProblemEnhancedWebFluxHandler} should be registered.
+     *
+     * @since 1.2.0
+     */
     private final boolean enabled;
 
     /**
@@ -317,6 +403,7 @@ public class ProblemWebFluxProperties {
      *     {@code ProblemEnhancedWebFluxHandler}
      * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
      * @see org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler
+     * @since 1.2.0
      */
     public ExceptionHandler(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
       this.enabled = enabled;
@@ -327,6 +414,7 @@ public class ProblemWebFluxProperties {
      *
      * @return {@code true} if the overwritten exception handler is enabled, otherwise {@code false}
      * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
+     * @since 1.2.0
      */
     public boolean isEnabled() {
       return enabled;
@@ -341,14 +429,21 @@ public class ProblemWebFluxProperties {
    * @see org.springframework.boot.webflux.error.ErrorWebExceptionHandler
    * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
    * @see io.github.problem4j.spring.webflux.autoconfigure.ProblemErrorWebFluxConfiguration
+   * @since 1.2.0
    */
   public static class ErrorWebExceptionHandler {
 
-    /** Default enabled value for {@code ErrorWebExceptionHandler} configuration group. */
+    /**
+     * Default enabled value for {@code ErrorWebExceptionHandler} configuration group.
+     *
+     * @since 1.2.0
+     */
     public static final boolean DEFAULT_ENABLED = true;
 
     /**
      * Default enabled value as a string for {@code ErrorWebExceptionHandler} configuration group.
+     *
+     * @since 1.2.0
      */
     public static final String DEFAULT_ENABLED_VALUE = "true";
 
@@ -356,7 +451,11 @@ public class ProblemWebFluxProperties {
       return new ErrorWebExceptionHandler(DEFAULT_ENABLED);
     }
 
-    /** Whether the {@code ProblemErrorWebExceptionHandler} should be registered. */
+    /**
+     * Whether the {@code ProblemErrorWebExceptionHandler} should be registered.
+     *
+     * @since 1.2.0
+     */
     private final boolean enabled;
 
     /**
@@ -366,6 +465,7 @@ public class ProblemWebFluxProperties {
      *     ProblemErrorWebExceptionHandler}
      * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
      * @see org.springframework.boot.webflux.error.ErrorWebExceptionHandler
+     * @since 1.2.0
      */
     public ErrorWebExceptionHandler(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
       this.enabled = enabled;
@@ -376,6 +476,7 @@ public class ProblemWebFluxProperties {
      *
      * @return {@code true} if the overwritten exception handler is enabled, otherwise {@code false}
      * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
+     * @since 1.2.0
      */
     public boolean isEnabled() {
       return enabled;

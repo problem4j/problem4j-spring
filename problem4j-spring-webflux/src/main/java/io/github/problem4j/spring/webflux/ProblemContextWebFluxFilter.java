@@ -1,22 +1,17 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.webflux;
@@ -42,6 +37,8 @@ import reactor.util.context.Context;
  * <p>The filter reads the trace ID from a configured HTTP header, generates one if missing, and
  * stores it in the {@link ServerWebExchange} attributes, response headers, and Reactor context for
  * downstream access.
+ *
+ * @since 1.2.0
  */
 public class ProblemContextWebFluxFilter implements WebFilter {
 
@@ -51,6 +48,7 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    * Constructs a new {@link ProblemContextWebFluxFilter}.
    *
    * @param settings the context settings to use
+   * @since 1.2.0
    */
   public ProblemContextWebFluxFilter(ProblemContextSettings settings) {
     this.settings = settings;
@@ -66,6 +64,7 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    * @param exchange the current server exchange
    * @param chain the web filter chain to continue processing
    * @return a {@link Mono} that completes when request processing is finished
+   * @since 1.2.0
    */
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
@@ -85,6 +84,7 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    *
    * @param exchange the current server exchange
    * @return an existing or newly created {@link ProblemContext}
+   * @since 1.2.0
    */
   protected ProblemContext buildProblemContext(ServerWebExchange exchange) {
     return exchange.getAttribute(PROBLEM_CONTEXT_ATTRIBUTE) instanceof ProblemContext attribute
@@ -98,6 +98,7 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    *
    * @param exchange the current server exchange
    * @return an {@link Optional} containing the trace ID if present
+   * @since 1.2.0
    */
   protected Optional<String> findTraceId(ServerWebExchange exchange) {
     return Optional.ofNullable(exchange.getAttribute(TRACE_ID_ATTRIBUTE)).map(Object::toString);
@@ -111,6 +112,7 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    *
    * @param exchange the current server exchange
    * @return the existing or newly generated trace ID
+   * @since 1.2.0
    */
   protected String initTraceId(ServerWebExchange exchange) {
     if (!StringUtils.hasLength(getSettings().getTracingHeaderName())) {
@@ -129,6 +131,7 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    *
    * @param exchange the current server exchange
    * @return a newly generated trace ID
+   * @since 1.2.0
    */
   protected String createNewTraceId(ServerWebExchange exchange) {
     return "urn:uuid:" + UUID.randomUUID();
@@ -139,6 +142,7 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    *
    * @param exchange the current server exchange
    * @param context the problem context to assign
+   * @since 1.2.0
    */
   protected void assignContextAttributes(ServerWebExchange exchange, ProblemContext context) {
     exchange.getAttributes().put(PROBLEM_CONTEXT_ATTRIBUTE, context);
@@ -153,6 +157,7 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    *
    * @param exchange the current server exchange
    * @param context the current {@link ProblemContext}
+   * @since 1.2.0
    */
   protected void modifyServerExchange(ServerWebExchange exchange, ProblemContext context) {
     assignTracingHeader(exchange, context);
@@ -163,6 +168,7 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    *
    * @param exchange the current server exchange
    * @param context the current {@link ProblemContext}
+   * @since 1.2.0
    */
   protected void assignTracingHeader(ServerWebExchange exchange, ProblemContext context) {
     if (StringUtils.hasLength(getSettings().getTracingHeaderName())) {
@@ -180,6 +186,7 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    * @param exchange the active {@link ServerWebExchange} for the request
    * @param context the {@link ProblemContext} containing problem details and trace information
    * @return an updated {@link Context} containing the problem context and trace ID
+   * @since 1.2.0
    */
   protected Context contextWrite(Context ctx, ServerWebExchange exchange, ProblemContext context) {
     ctx = ctx.put(PROBLEM_CONTEXT_ATTRIBUTE, context);
@@ -194,6 +201,7 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    * Returns the active {@link ProblemContextSettings}.
    *
    * @return the current settings
+   * @since 1.2.0
    */
   protected ProblemContextSettings getSettings() {
     return settings;

@@ -1,41 +1,32 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web.resolver;
 
-import static io.github.problem4j.spring.web.ProblemSupport.PROPERTY_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.PROPERTY_EXTENSION;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.SimpleTypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapper;
 import io.github.problem4j.spring.web.parameter.DefaultMethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import java.util.Optional;
-import org.jspecify.annotations.Nullable;
 import org.springframework.beans.TypeMismatchException;
-import org.springframework.core.MethodParameter;
 import org.springframework.core.codec.DecodingException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -52,6 +43,8 @@ import tools.jackson.databind.exc.MismatchedInputException;
  *
  * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to
  * indicate that the client sent invalid or unreadable input.
+ *
+ * @since 1.2.0
  */
 public class ServerWebInputProblemResolver extends AbstractProblemResolver {
 
@@ -59,15 +52,20 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
   private final MethodParameterSupport methodParameterSupport;
   private final JacksonErrorHelper jacksonErrorHelper;
 
-  /** Creates a new {@link ServerWebInputProblemResolver} with default problem format. */
+  /**
+   * Creates a new {@link ServerWebInputProblemResolver} with default problem format.
+   *
+   * @since 1.2.0
+   */
   public ServerWebInputProblemResolver() {
-    this(new IdentityProblemFormat());
+    this(ProblemFormat.identity());
   }
 
   /**
    * Creates a new {@link ServerWebInputProblemResolver} with the specified problem format.
    *
    * @param problemFormat the problem format to use
+   * @since 1.2.0
    */
   public ServerWebInputProblemResolver(ProblemFormat problemFormat) {
     this(problemFormat, new DefaultMethodParameterSupport());
@@ -79,6 +77,7 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
    *
    * @param problemFormat the problem format to use
    * @param methodParameterSupport the support for extracting parameter names
+   * @since 1.2.0
    */
   public ServerWebInputProblemResolver(
       ProblemFormat problemFormat, MethodParameterSupport methodParameterSupport) {
@@ -97,6 +96,7 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
    * @param typeMismatchProblemResolver the resolver to use
    * @param methodParameterSupport the support for extracting parameter names
    * @param typeNameMapper the type name mapper to use for decoding exceptions
+   * @since 1.2.0
    */
   public ServerWebInputProblemResolver(
       ProblemFormat problemFormat,
@@ -110,21 +110,22 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Resolves a {@link ServerWebInputException} into a {@link ProblemBuilder}. If the root cause is
-   * a {@link TypeMismatchException}, delegates to {@link TypeMismatchProblemResolver} and, when
+   * Resolves a {@link ServerWebInputException} into an immutable {@link Problem}. If the root cause
+   * is a {@link TypeMismatchException}, delegates to {@link TypeMismatchProblemResolver} and, when
    * missing, attempts to append the offending property/parameter name as the {@code
-   * ProblemSupport#PROPERTY_EXTENSION}. Otherwise, returns a builder whose status reflects the
+   * ViolationSupport#PROPERTY_EXTENSION}. Otherwise, returns a problem whose status reflects the
    * exception's embedded HTTP status code.
    *
    * @param context problem context (unused for this resolver)
    * @param ex the triggering {@link ServerWebInputException}
    * @param headers HTTP headers (unused)
    * @param status suggested status from caller (ignored; status derived from exception)
-   * @return builder representing the invalid input condition
-   * @see io.github.problem4j.spring.web.ProblemSupport#PROPERTY_EXTENSION
+   * @return problem representing the invalid input condition
+   * @see io.github.problem4j.spring.web.parameter.ViolationSupport#PROPERTY_EXTENSION
+   * @since 3.0.0
    */
   @Override
-  public ProblemBuilder resolveBuilder(
+  public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ServerWebInputException swie = (ServerWebInputException) ex;
 
@@ -134,36 +135,30 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
       return resolveDecodingException(de);
     }
 
-    return Problem.builder().status(swie.getStatusCode().value());
+    return Problem.of(swie.getStatusCode().value());
   }
 
-  private ProblemBuilder resolveTypeMismatchException(
+  private Problem resolveTypeMismatchException(
       ProblemContext context,
       HttpHeaders headers,
       HttpStatusCode status,
       ServerWebInputException swie,
       TypeMismatchException tme) {
-    ProblemBuilder builder =
-        typeMismatchProblemResolver.resolveBuilder(context, tme, headers, status);
-    if (!builder.build().hasExtension(PROPERTY_EXTENSION)) {
-      return tryAppendingPropertyFromMethodParameter(swie.getMethodParameter(), builder);
+    Problem problem = typeMismatchProblemResolver.resolve(context, tme, headers, status);
+    if (!problem.getExtensions().containsKey(PROPERTY_EXTENSION)) {
+      Optional<String> optionalProperty =
+          methodParameterSupport.findParameterName(swie.getMethodParameter());
+      if (optionalProperty.isPresent()) {
+        return problem.toBuilder().extension(PROPERTY_EXTENSION, optionalProperty.get()).build();
+      }
     }
-    return builder;
+    return problem;
   }
 
-  private ProblemBuilder tryAppendingPropertyFromMethodParameter(
-      @Nullable MethodParameter parameter, ProblemBuilder builder) {
-    Optional<String> optionalProperty = methodParameterSupport.findParameterName(parameter);
-    if (optionalProperty.isPresent()) {
-      builder = builder.extension(PROPERTY_EXTENSION, optionalProperty.get());
-    }
-    return builder;
-  }
-
-  private ProblemBuilder resolveDecodingException(DecodingException ex) {
+  private Problem resolveDecodingException(DecodingException ex) {
     if (ex.getCause() instanceof MismatchedInputException e) {
       return jacksonErrorHelper.resolveMismatchedInput(e);
     }
-    return Problem.builder().status(HttpStatus.BAD_REQUEST.value());
+    return Problem.of(HttpStatus.BAD_REQUEST.value());
   }
 }

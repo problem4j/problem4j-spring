@@ -1,33 +1,27 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web.resolver;
 
-import static io.github.problem4j.spring.web.ProblemSupport.MAX_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.MAX_UPLOAD_SIZE_EXCEEDED_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.MAX_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.MAX_UPLOAD_SIZE_EXCEEDED_DETAIL;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -43,25 +37,32 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
  *
  * <p>The handler is responsible for returning an appropriate HTTP 413 (Payload Too Large) response
  * to inform the client that the uploaded file exceeds the allowed size.
+ *
+ * @since 1.2.0
  */
 public class MaxUploadSizeExceededProblemResolver extends AbstractProblemResolver {
 
-  /** Creates a new {@link MaxUploadSizeExceededProblemResolver} with default problem format. */
+  /**
+   * Creates a new {@link MaxUploadSizeExceededProblemResolver} with default problem format.
+   *
+   * @since 1.2.0
+   */
   public MaxUploadSizeExceededProblemResolver() {
-    this(new IdentityProblemFormat());
+    this(ProblemFormat.identity());
   }
 
   /**
    * Creates a new {@link MaxUploadSizeExceededProblemResolver} with the specified problem format.
    *
    * @param problemFormat the problem format to use
+   * @since 1.2.0
    */
   public MaxUploadSizeExceededProblemResolver(ProblemFormat problemFormat) {
     super(MaxUploadSizeExceededException.class, problemFormat);
   }
 
   /**
-   * Builds a {@link ProblemBuilder} with status {@link HttpStatus#CONTENT_TOO_LARGE}, a formatted
+   * Returns a {@link Problem} with status {@link HttpStatus#CONTENT_TOO_LARGE}, a formatted
    * standard detail message, and an extension entry providing the maximum allowed upload size.
    * Other parameters ({@code context}, {@code headers}, {@code status}) are ignored because the
    * semantics of {@link MaxUploadSizeExceededException} dictate the response.
@@ -70,10 +71,11 @@ public class MaxUploadSizeExceededProblemResolver extends AbstractProblemResolve
    * @param ex the triggering {@link MaxUploadSizeExceededException}
    * @param headers HTTP headers (unused)
    * @param status suggested status from caller (ignored; 413 enforced)
-   * @return builder pre-populated with status, detail, and max size extension
+   * @return problem with status, detail, and max size extension
+   * @since 3.0.0
    */
   @Override
-  public ProblemBuilder resolveBuilder(
+  public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     MaxUploadSizeExceededException e = (MaxUploadSizeExceededException) ex;
     ProblemBuilder builder =
@@ -81,8 +83,8 @@ public class MaxUploadSizeExceededProblemResolver extends AbstractProblemResolve
             .status(HttpStatus.CONTENT_TOO_LARGE.value())
             .detail(formatDetail(MAX_UPLOAD_SIZE_EXCEEDED_DETAIL));
     if (e.getMaxUploadSize() > 0) {
-      builder.extension(MAX_EXTENSION, e.getMaxUploadSize());
+      builder = builder.extension(MAX_EXTENSION, e.getMaxUploadSize());
     }
-    return builder;
+    return builder.build();
   }
 }

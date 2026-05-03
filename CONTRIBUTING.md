@@ -1,7 +1,7 @@
 # Contributing to Problem4J
 
-Problem4J is released under the [MIT License][mit]. By contributing to this project, you agree that your contributions
-will be licensed under the same terms.
+Problem4J is released under the [Apache License, Version 2.0][apache-2.0]. By contributing to this project, you agree
+that your contributions will be licensed under the same terms.
 
 ## How to Contribute
 
@@ -28,12 +28,12 @@ the author of your Git commits. Additional changes may be requested before mergi
 ## Developer Certificate of Origin (DCO)
 
 By submitting a Pull Request or commit, you certify that you have the right to contribute the code under the project's
-license (MIT), as defined by the [Developer Certificate of Origin][dco].
+license (Apache License, Version 2.0), as defined by the [Developer Certificate of Origin][dco].
 
 The DCO sign-off confirms that:
 
 1. You wrote the code or otherwise have permission to submit it.
-2. You agree to license your contribution under the [MIT license][mit].
+2. You agree to license your contribution under the [Apache License, Version 2.0][apache-2.0].
 3. Project maintainers can safely merge your work without further IP verification.
 
 If a PR contains unsigned commits, you will be asked to amend them.
@@ -72,4 +72,4 @@ Please remain respectful, constructive, and considerate of others.
 
 [issues]: https://github.com/problem4j/problem4j-spring/issues
 
-[mit]: https://opensource.org/license/MIT
+[apache-2.0]: https://www.apache.org/licenses/LICENSE-2.0

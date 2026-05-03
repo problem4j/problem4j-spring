@@ -1,33 +1,26 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web.resolver;
 
-import static io.github.problem4j.spring.web.ProblemSupport.MISSING_PATH_VARIABLE_DETAIL;
-import static io.github.problem4j.spring.web.ProblemSupport.NAME_EXTENSION;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_PATH_VARIABLE_DETAIL;
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.NAME_EXTENSION;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.MethodParameter;
@@ -50,31 +43,38 @@ import org.springframework.web.server.ServerErrorException;
  * <p>The handler is responsible for returning an appropriate HTTP 5xx response (e.g., 500 Internal
  * Server Error) to inform the client that the request could not be processed due to a server-side
  * problem.
+ *
+ * @since 1.2.0
  */
 public class ServerErrorProblemResolver extends AbstractProblemResolver {
 
-  /** Creates a new {@link ServerErrorProblemResolver} with default problem format. */
+  /**
+   * Creates a new {@link ServerErrorProblemResolver} with default problem format.
+   *
+   * @since 1.2.0
+   */
   public ServerErrorProblemResolver() {
-    this(new IdentityProblemFormat());
+    this(ProblemFormat.identity());
   }
 
   /**
    * Creates a new {@link ServerErrorProblemResolver} with the specified problem format.
    *
    * @param problemFormat the problem format to use
+   * @since 1.2.0
    */
   public ServerErrorProblemResolver(ProblemFormat problemFormat) {
     super(ServerErrorException.class, problemFormat);
   }
 
   /**
-   * Resolves a {@link ServerErrorException} into a {@link ProblemBuilder}.
+   * Resolves a {@link ServerErrorException} into an immutable {@link Problem}.
    *
    * <p>Special case: Spring WebFlux's {@code PathVariableMethodArgumentResolver} raises {@link
    * ServerErrorException} (instead of a missing-value exception) when a required {@code
    * PathVariable} is absent. In that scenario this method returns a BAD_REQUEST problem with a
-   * standardized detail ({@code ProblemSupport#MISSING_PATH_VARIABLE_DETAIL}) and an extension
-   * "{@code ProblemSupport#NAME_EXTENSION}" containing the variable name.
+   * standardized detail ({@code ViolationSupport#MISSING_PATH_VARIABLE_DETAIL}) and an extension
+   * "{@code ViolationSupport#NAME_EXTENSION}" containing the variable name.
    *
    * <p>Otherwise, it falls back to a generic INTERNAL_SERVER_ERROR problem.
    *
@@ -82,13 +82,14 @@ public class ServerErrorProblemResolver extends AbstractProblemResolver {
    * @param ex the triggering {@link ServerErrorException}
    * @param headers HTTP headers (unused)
    * @param status suggested status from caller (ignored; derives from condition)
-   * @return builder with BAD_REQUEST + path variable info or INTERNAL_SERVER_ERROR
-   * @see io.github.problem4j.spring.web.ProblemSupport#MISSING_PATH_VARIABLE_DETAIL
-   * @see io.github.problem4j.spring.web.ProblemSupport#NAME_EXTENSION
+   * @return problem with BAD_REQUEST + path variable info or INTERNAL_SERVER_ERROR
+   * @see io.github.problem4j.spring.web.parameter.ViolationSupport#MISSING_PATH_VARIABLE_DETAIL
+   * @see io.github.problem4j.spring.web.parameter.ViolationSupport#NAME_EXTENSION
    * @see org.springframework.web.bind.annotation.PathVariable
+   * @since 3.0.0
    */
   @Override
-  public ProblemBuilder resolveBuilder(
+  public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ServerErrorException e = (ServerErrorException) ex;
 
@@ -97,10 +98,11 @@ public class ServerErrorProblemResolver extends AbstractProblemResolver {
       return Problem.builder()
           .status(HttpStatus.BAD_REQUEST.value())
           .detail(formatDetail(MISSING_PATH_VARIABLE_DETAIL))
-          .extension(NAME_EXTENSION, name);
+          .extension(NAME_EXTENSION, name)
+          .build();
     }
 
-    return Problem.builder().status(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
   }
 
   /**
@@ -119,6 +121,7 @@ public class ServerErrorProblemResolver extends AbstractProblemResolver {
    * @see org.springframework.web.server.ServerErrorException
    * @return {@code true} if the exception actually refers to missing path variable, {@code false}
    *     otherwise
+   * @since 1.2.0
    */
   private boolean isMissingPathVariableError(ServerErrorException e) {
     return e.getHandlerMethod() != null
@@ -137,6 +140,7 @@ public class ServerErrorProblemResolver extends AbstractProblemResolver {
    *     when invoked)
    * @return explicit annotation name, falling back to the reflective parameter name (may be {@code
    *     null})
+   * @since 1.2.0
    */
   private @Nullable String findParameterName(@Nullable MethodParameter methodParameter) {
     if (methodParameter == null) {

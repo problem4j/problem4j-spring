@@ -1,28 +1,23 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.webflux;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
-import static io.github.problem4j.spring.web.ProblemSupport.resolveStatus;
+import static io.github.problem4j.spring.web.ResponseSupport.resolveStatus;
 import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.logAdviceException;
 
 import io.github.problem4j.core.Problem;
@@ -63,6 +58,8 @@ import reactor.core.publisher.Mono;
  * <p>Intended as a <b>generic fallback</b>, it ensures that unexpected exceptions still produce a
  * consistent {@link Problem} response. For more specific exception handling, use {@link
  * ProblemEnhancedWebFluxHandler}, {@link ProblemExceptionWebFluxAdvice}.
+ *
+ * @since 1.2.0
  */
 @RestControllerAdvice
 public class ExceptionWebFluxAdvice {
@@ -82,6 +79,7 @@ public class ExceptionWebFluxAdvice {
    * @param problemResolverStore the resolver store for mapping exceptions
    * @param problemPostProcessor the post-processor for problems
    * @param adviceWebFluxInspectors the inspectors to apply to advice
+   * @since 1.2.0
    */
   public ExceptionWebFluxAdvice(
       ProblemMapper problemMapper,
@@ -102,6 +100,7 @@ public class ExceptionWebFluxAdvice {
    * @param ex the exception to handle
    * @param exchange the current server web exchange
    * @return a {@link Mono} emitting the response entity with a {@link Problem} body
+   * @since 1.2.0
    */
   @ExceptionHandler(Exception.class)
   public Mono<ResponseEntity<Problem>> handleException(Exception ex, ServerWebExchange exchange) {
@@ -113,7 +112,7 @@ public class ExceptionWebFluxAdvice {
 
     Problem problem;
     try {
-      problem = getProblemBuilder(ex, context, headers).build();
+      problem = getProblem(ex, context, headers);
       problem = problemPostProcessor.process(context, problem);
     } catch (Exception e) {
       logAdviceException(log, ex, exchange, e);
@@ -129,31 +128,23 @@ public class ExceptionWebFluxAdvice {
     return Mono.just(new ResponseEntity<>(problem, headers, status));
   }
 
-  private ProblemBuilder getProblemBuilder(
-      Exception ex, ProblemContext context, HttpHeaders headers) {
-    ProblemBuilder builder;
+  private Problem getProblem(Exception ex, ProblemContext context, HttpHeaders headers) {
     if (problemMapper.isMappingCandidate(ex)) {
-      builder = problemMapper.toProblemBuilder(ex, context);
-    } else {
-      Optional<ProblemResolver> optionalResolver = problemResolverStore.findResolver(ex.getClass());
-      if (optionalResolver.isPresent()) {
-        builder =
-            optionalResolver
-                .get()
-                .resolveBuilder(context, ex, headers, HttpStatus.INTERNAL_SERVER_ERROR);
-      } else {
-        ResponseStatus responseStatus =
-            AnnotatedElementUtils.findMergedAnnotation(ex.getClass(), ResponseStatus.class);
-        if (responseStatus != null) {
-          builder = Problem.builder().status(responseStatus.code().value());
-          if (StringUtils.hasLength(responseStatus.reason())) {
-            builder = builder.detail(responseStatus.reason());
-          }
-        } else {
-          builder = Problem.builder().status(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        }
-      }
+      return problemMapper.toProblemBuilder(ex, context).build();
     }
-    return builder;
+    Optional<ProblemResolver> optionalResolver = problemResolverStore.findResolver(ex.getClass());
+    if (optionalResolver.isPresent()) {
+      return optionalResolver.get().resolve(context, ex, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    ResponseStatus responseStatus =
+        AnnotatedElementUtils.findMergedAnnotation(ex.getClass(), ResponseStatus.class);
+    if (responseStatus != null) {
+      ProblemBuilder builder = Problem.builder().status(responseStatus.code().value());
+      if (StringUtils.hasLength(responseStatus.reason())) {
+        builder = builder.detail(responseStatus.reason());
+      }
+      return builder.build();
+    }
+    return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
   }
 }

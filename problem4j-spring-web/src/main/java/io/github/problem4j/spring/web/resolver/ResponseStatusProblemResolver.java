@@ -1,30 +1,23 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web.resolver;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.IdentityProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -40,25 +33,32 @@ import org.springframework.web.server.ResponseStatusException;
  *
  * <p>The handler is responsible for translating the exception into the corresponding HTTP response
  * with the specified status code, reason, and any additional details.
+ *
+ * @since 1.2.0
  */
 public class ResponseStatusProblemResolver extends AbstractProblemResolver {
 
-  /** Creates a new {@link ResponseStatusProblemResolver} with default problem format. */
+  /**
+   * Creates a new {@link ResponseStatusProblemResolver} with default problem format.
+   *
+   * @since 1.2.0
+   */
   public ResponseStatusProblemResolver() {
-    this(new IdentityProblemFormat());
+    this(ProblemFormat.identity());
   }
 
   /**
    * Creates a new {@link ResponseStatusProblemResolver} with the specified problem format.
    *
    * @param problemFormat the problem format to use
+   * @since 1.2.0
    */
   public ResponseStatusProblemResolver(ProblemFormat problemFormat) {
     super(ResponseStatusException.class, problemFormat);
   }
 
   /**
-   * Builds a {@link ProblemBuilder} reflecting {@link ResponseStatusException} and the HTTP status
+   * Returns a {@link Problem} reflecting {@link ResponseStatusException} and the HTTP status
    * carried by it. Ignores provided {@code status}, {@code headers}, and {@code context}; the
    * resolver always uses {@link ResponseStatusException#getStatusCode()}.
    *
@@ -69,12 +69,13 @@ public class ResponseStatusProblemResolver extends AbstractProblemResolver {
    * @param ex the {@link ResponseStatusException} to convert
    * @param headers HTTP headers (unused)
    * @param status suggested status from caller (ignored)
-   * @return builder pre-populated with the exception's status code
+   * @return problem with the exception's status code
+   * @since 3.0.0
    */
   @Override
-  public ProblemBuilder resolveBuilder(
+  public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ResponseStatusException e = (ResponseStatusException) ex;
-    return Problem.builder().status(e.getStatusCode().value());
+    return Problem.of(e.getStatusCode().value());
   }
 }

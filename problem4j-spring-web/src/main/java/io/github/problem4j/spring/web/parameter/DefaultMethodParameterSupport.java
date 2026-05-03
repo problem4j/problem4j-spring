@@ -1,22 +1,17 @@
 /*
- * Copyright (c) 2025-2026 The Problem4J Authors
+ * Copyright 2025-2026 The Problem4J Authors
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, subject to the following conditions:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.github.problem4j.spring.web.parameter;
@@ -35,7 +30,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
-/** Default implementation of {@link MethodParameterSupport}. */
+/**
+ * Default implementation of {@link MethodParameterSupport}.
+ *
+ * @since 1.2.0
+ */
 public class DefaultMethodParameterSupport implements MethodParameterSupport {
 
   /**
@@ -46,6 +45,7 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    *
    * @param parameter Spring {@link org.springframework.core.MethodParameter} (may be {@code null})
    * @return optional parameter name; empty if the input is {@code null}
+   * @since 1.2.0
    */
   @Override
   public Optional<String> findParameterName(@Nullable MethodParameter parameter) {
@@ -92,6 +92,7 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @param annotation path variable annotation
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
+   * @since 1.2.0
    */
   protected @Nullable String findPathVariableName(
       PathVariable annotation, @Nullable String defaultName) {
@@ -109,6 +110,7 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @param annotation request param annotation
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
+   * @since 1.2.0
    */
   protected @Nullable String findRequestParamName(
       RequestParam annotation, @Nullable String defaultName) {
@@ -126,6 +128,7 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @param annotation request part annotation
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
+   * @since 1.2.0
    */
   protected @Nullable String findRequestPartName(
       RequestPart annotation, @Nullable String defaultName) {
@@ -143,6 +146,7 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @param annotation request header annotation
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
+   * @since 1.2.0
    */
   protected @Nullable String findRequestHeaderName(
       RequestHeader annotation, @Nullable String defaultName) {
@@ -160,6 +164,7 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @param annotation cookie value annotation
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
+   * @since 1.2.0
    */
   protected @Nullable String findCookieValueName(
       CookieValue annotation, @Nullable String defaultName) {
@@ -177,6 +182,7 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @param annotation session attribute annotation
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
+   * @since 1.2.0
    */
   protected @Nullable String findSessionAttributeName(
       SessionAttribute annotation, @Nullable String defaultName) {
@@ -194,6 +200,7 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @param annotation request attribute annotation
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
+   * @since 1.2.0
    */
   protected @Nullable String findRequestAttributeName(
       RequestAttribute annotation, @Nullable String defaultName) {
@@ -211,6 +218,7 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
    * @param annotation matrix variable annotation
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
+   * @since 1.2.0
    */
   protected @Nullable String findMatrixVariableName(
       MatrixVariable annotation, @Nullable String defaultName) {
