@@ -186,11 +186,11 @@ extension to it and does not bring it transitively.
 This repository maintains two major versions, supporting Spring Boot 3 and 4. The goal is to maintain both versions at
 least until Spring Boot 3 reaches its end of life or becomes irrelevant.
 
-| branch           | info                                                                     | latest                                                                                                                   |
-|------------------|--------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
-| `main`           | version `3.x` supporting Spring Boot `4.x`, based on `problem4j-core-v2` | [![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=3.*)][maven-central] |
-| `release-v2.*.x` | version `2.x` supporting Spring Boot `4.x`, based on `problem4j-core-v1` | [![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=2.*)][maven-central] |
-| `release-v1.*.x` | version `1.x` supporting Spring Boot `3.x`, based on `problem4j-core-v1` | [![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=1.*)][maven-central] |
+| branch           | info                                                       | latest                                                                                                                   |
+|------------------|------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| `main`           | `v3.x` for Spring Boot `4.x`, based on `problem4j-core-v2` | [![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=3.*)][maven-central] |
+| `release-v2.*.x` | `v2.x` for Spring Boot `4.x`, based on `problem4j-core-v1` | [![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=2.*)][maven-central] |
+| `release-v1.*.x` | `v1.x` for Spring Boot `3.x`, based on `problem4j-core-v1` | [![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=1.*)][maven-central] |
 
 ## Project Status
 
