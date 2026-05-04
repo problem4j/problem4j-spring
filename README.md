@@ -183,8 +183,7 @@ extension to it and does not bring it transitively.
 
 ## Repository
 
-This repository maintains two major versions, supporting Spring Boot 3 and 4. The goal is to maintain both versions at
-least until Spring Boot 3 reaches its end of life or becomes irrelevant.
+This project contains three major versions, dedicated to Spring Boot 3 and 4.
 
 | branch           | info                                                       | latest                                                                                                                   |
 |------------------|------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
