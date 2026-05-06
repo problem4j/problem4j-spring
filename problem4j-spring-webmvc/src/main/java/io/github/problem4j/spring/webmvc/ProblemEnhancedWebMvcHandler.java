@@ -17,7 +17,6 @@
 package io.github.problem4j.spring.webmvc;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
-import static io.github.problem4j.spring.web.ResponseSupport.resolveStatus;
 import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.logAdviceException;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
@@ -26,6 +25,7 @@ import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import java.util.List;
+import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,7 +120,9 @@ public class ProblemEnhancedWebMvcHandler extends ResponseEntityExceptionHandler
       problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
-    status = resolveStatus(problem);
+    status =
+        Optional.ofNullable(HttpStatus.resolve(problem.getStatus()))
+            .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
     for (AdviceWebMvcInspector inspector : adviceWebMvcInspectors) {
       inspector.inspect(context, problem, ex, headers, status, request);

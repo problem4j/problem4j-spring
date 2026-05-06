@@ -17,7 +17,6 @@
 package io.github.problem4j.spring.webflux;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
-import static io.github.problem4j.spring.web.ResponseSupport.resolveStatus;
 import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.logAdviceException;
 
 import io.github.problem4j.core.Problem;
@@ -119,7 +118,9 @@ public class ExceptionWebFluxAdvice {
       problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
-    HttpStatus status = resolveStatus(problem);
+    HttpStatus status =
+        Optional.ofNullable(HttpStatus.resolve(problem.getStatus()))
+            .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
     for (AdviceWebFluxInspector inspector : adviceWebFluxInspectors) {
       inspector.inspect(context, problem, ex, headers, status, exchange);

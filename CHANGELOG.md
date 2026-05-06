@@ -19,14 +19,15 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Bump `problem4j-jackson3` to `2.0.0-RC1`.
 - Change `ProblemResolver` to contain just `resolve` method, returning `Problem`.
 - Hide `IdentityProblemFormat` and make it available via `ProblemFormat.identity()`.
-- Split `ProblemSupport` into `ViolationSupport` and `ResponseSupport` to separate concerns and mitigate conflicts with
-  `ProblemSupport` in `problem4j-core`.
+- Hide `IdentityProblemPostProcessor` and make it available via `ProblemPostProcessor.identity()`.
+- Move `ProblemSupport` into `ViolationSupport` to mitigate conflicts with `ProblemSupport` in `problem4j-core`.
 
 ### Removed
 
 - Remove `problem4j.resolver-caching.max-cache-size` and evicting cache for `ProblemResolver`-s (non-evicting cache is
   still present).
 - Remove `ProblemSupport.resolveStatus(HttpStatusCode)`.
+- Remove `ProblemSupport.resolveStatus(Problem)`.
 
 ## [2.2.4] - 2026-03-29
 

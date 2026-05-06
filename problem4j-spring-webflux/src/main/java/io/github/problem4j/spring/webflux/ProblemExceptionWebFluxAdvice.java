@@ -23,8 +23,8 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemException;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
-import io.github.problem4j.spring.web.ResponseSupport;
 import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -96,7 +96,9 @@ public class ProblemExceptionWebFluxAdvice {
       problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
-    HttpStatus status = ResponseSupport.resolveStatus(problem);
+    HttpStatus status =
+        Optional.ofNullable(HttpStatus.resolve(problem.getStatus()))
+            .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
     for (AdviceWebFluxInspector inspector : adviceWebFluxInspectors) {
       inspector.inspect(context, problem, ex, headers, status, exchange);

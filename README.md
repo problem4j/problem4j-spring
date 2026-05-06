@@ -124,14 +124,15 @@ public class ExampleExceptionResolver implements ProblemResolver {
   }
 
   @Override
-  public ProblemBuilder resolveBuilder(
+  public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     return Problem.builder()
         .type("errors/invalid-request")
         .title("Invalid Request")
         .status(400)
         .detail("bad input for user " + ((ExampleException) ex).getUserId())
-        .extension("userId", ((ExampleException) ex).getUserId());
+        .extension("userId", ((ExampleException) ex).getUserId())
+        .build();
   }
 }
 ```

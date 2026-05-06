@@ -17,7 +17,6 @@
 package io.github.problem4j.spring.webflux;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
-import static io.github.problem4j.spring.web.ResponseSupport.resolveStatus;
 import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.logAdviceException;
 
 import io.github.problem4j.core.Problem;
@@ -25,6 +24,7 @@ import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import java.util.List;
+import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,7 +119,9 @@ public class ProblemEnhancedWebFluxHandler extends ResponseEntityExceptionHandle
       problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
-    status = resolveStatus(problem);
+    status =
+        Optional.ofNullable(HttpStatus.resolve(problem.getStatus()))
+            .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
     for (AdviceWebFluxInspector inspector : adviceWebFluxInspectors) {
       inspector.inspect(context, problem, ex, headers, status, exchange);
