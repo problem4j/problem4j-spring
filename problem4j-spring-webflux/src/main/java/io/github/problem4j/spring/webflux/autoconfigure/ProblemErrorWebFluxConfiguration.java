@@ -49,12 +49,6 @@ import org.springframework.web.reactive.result.view.ViewResolver;
 @Configuration(proxyBeanMethods = false)
 class ProblemErrorWebFluxConfiguration {
 
-  private final WebProperties webProperties;
-
-  ProblemErrorWebFluxConfiguration(WebProperties webProperties) {
-    this.webProperties = webProperties;
-  }
-
   /**
    * Registers a default {@link ErrorAttributes} bean if none is already defined.
    *
@@ -91,7 +85,7 @@ class ProblemErrorWebFluxConfiguration {
             problemPostProcessor,
             errorAttributes,
             webProperties.getResources(),
-            this.webProperties.getError(),
+            webProperties.getError(),
             applicationContext);
     exceptionHandler.setViewResolvers(viewResolvers.orderedStream().toList());
     exceptionHandler.setMessageWriters(serverCodecConfigurer.getWriters());
