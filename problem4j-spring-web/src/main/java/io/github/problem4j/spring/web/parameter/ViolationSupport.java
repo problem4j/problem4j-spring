@@ -29,8 +29,6 @@ package io.github.problem4j.spring.web.parameter;
  *   <li>Generic fragments reused inside violations or fallback messages
  * </ul>
  *
- * Not intended for instantiation or external mutation.
- *
  * @since 3.0.0
  */
 public final class ViolationSupport {
