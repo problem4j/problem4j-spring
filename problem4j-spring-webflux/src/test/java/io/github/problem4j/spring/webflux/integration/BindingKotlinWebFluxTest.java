@@ -16,9 +16,6 @@
 
 package io.github.problem4j.spring.webflux.integration;
 
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.KIND_EXTENSION;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.PROPERTY_EXTENSION;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.TYPE_MISMATCH_DETAIL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
@@ -80,9 +77,9 @@ class BindingKotlinWebFluxTest {
                   .isEqualTo(
                       Problem.builder()
                           .status(HttpStatus.BAD_REQUEST.value())
-                          .detail(TYPE_MISMATCH_DETAIL)
-                          .extension(PROPERTY_EXTENSION, "value")
-                          .extension(KIND_EXTENSION, expectedKind)
+                          .detail("Type mismatch")
+                          .extension("property", "value")
+                          .extension("kind", expectedKind)
                           .build());
             });
   }
@@ -123,9 +120,9 @@ class BindingKotlinWebFluxTest {
                   .isEqualTo(
                       Problem.builder()
                           .status(HttpStatus.BAD_REQUEST.value())
-                          .detail(TYPE_MISMATCH_DETAIL)
-                          .extension(PROPERTY_EXTENSION, "nested.value")
-                          .extension(KIND_EXTENSION, expectedKind)
+                          .detail("Type mismatch")
+                          .extension("property", "nested.value")
+                          .extension("kind", expectedKind)
                           .build());
             });
   }
@@ -161,8 +158,8 @@ class BindingKotlinWebFluxTest {
                     .isEqualTo(
                         Problem.builder()
                             .status(HttpStatus.BAD_REQUEST.value())
-                            .detail(TYPE_MISMATCH_DETAIL)
-                            .extension(PROPERTY_EXTENSION, "nested")
+                            .detail("Type mismatch")
+                            .extension("property", "nested")
                             .build()));
   }
 
@@ -194,9 +191,9 @@ class BindingKotlinWebFluxTest {
                     .isEqualTo(
                         Problem.builder()
                             .status(HttpStatus.BAD_REQUEST.value())
-                            .detail(TYPE_MISMATCH_DETAIL)
-                            .extension(PROPERTY_EXTENSION, expectedProperty)
-                            .extension(KIND_EXTENSION, expectedKind)
+                            .detail("Type mismatch")
+                            .extension("property", expectedProperty)
+                            .extension("kind", expectedKind)
                             .build()));
   }
 
@@ -243,9 +240,9 @@ class BindingKotlinWebFluxTest {
                     .isEqualTo(
                         Problem.builder()
                             .status(HttpStatus.BAD_REQUEST.value())
-                            .detail(TYPE_MISMATCH_DETAIL)
-                            .extension(PROPERTY_EXTENSION, "values")
-                            .extension(KIND_EXTENSION, "integer")
+                            .detail("Type mismatch")
+                            .extension("property", "values")
+                            .extension("kind", "integer")
                             .build()));
   }
 
@@ -280,9 +277,9 @@ class BindingKotlinWebFluxTest {
                     .isEqualTo(
                         Problem.builder()
                             .status(HttpStatus.BAD_REQUEST.value())
-                            .detail(TYPE_MISMATCH_DETAIL)
-                            .extension(PROPERTY_EXTENSION, "map.k")
-                            .extension(KIND_EXTENSION, "integer")
+                            .detail("Type mismatch")
+                            .extension("property", "map.k")
+                            .extension("kind", "integer")
                             .build()));
   }
 
@@ -389,9 +386,9 @@ class BindingKotlinWebFluxTest {
               Problem expected =
                   Problem.builder()
                       .status(HttpStatus.BAD_REQUEST.value())
-                      .detail(TYPE_MISMATCH_DETAIL)
-                      .extension(PROPERTY_EXTENSION, "value")
-                      .extension(KIND_EXTENSION, expectedKind)
+                      .detail("Type mismatch")
+                      .extension("property", "value")
+                      .extension("kind", expectedKind)
                       .build();
 
               if (!problem.equals(expected)) {
@@ -492,9 +489,9 @@ class BindingKotlinWebFluxTest {
                   .isEqualTo(
                       Problem.builder()
                           .status(HttpStatus.BAD_REQUEST.value())
-                          .detail(TYPE_MISMATCH_DETAIL)
-                          .extension(PROPERTY_EXTENSION, "nested.value")
-                          .extension(KIND_EXTENSION, expectedKind)
+                          .detail("Type mismatch")
+                          .extension("property", "nested.value")
+                          .extension("kind", expectedKind)
                           .build());
             });
   }
@@ -538,9 +535,9 @@ class BindingKotlinWebFluxTest {
                   .isEqualTo(
                       Problem.builder()
                           .status(HttpStatus.BAD_REQUEST.value())
-                          .detail(TYPE_MISMATCH_DETAIL)
-                          .extension(PROPERTY_EXTENSION, "value")
-                          .extension(KIND_EXTENSION, expectedKind)
+                          .detail("Type mismatch")
+                          .extension("property", "value")
+                          .extension("kind", expectedKind)
                           .build());
             });
   }
@@ -571,9 +568,9 @@ class BindingKotlinWebFluxTest {
               Problem expected =
                   Problem.builder()
                       .status(HttpStatus.BAD_REQUEST.value())
-                      .detail(TYPE_MISMATCH_DETAIL)
-                      .extension(PROPERTY_EXTENSION, "value")
-                      .extension(KIND_EXTENSION, "integer")
+                      .detail("Type mismatch")
+                      .extension("property", "value")
+                      .extension("kind", "integer")
                       .build();
 
               if (!problem.equals(expected)) {

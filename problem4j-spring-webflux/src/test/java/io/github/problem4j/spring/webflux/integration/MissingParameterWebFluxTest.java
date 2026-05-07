@@ -16,19 +16,6 @@
 
 package io.github.problem4j.spring.webflux.integration;
 
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.ATTRIBUTE_EXTENSION;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.COOKIE_EXTENSION;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.HEADER_EXTENSION;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.KIND_EXTENSION;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_COOKIE_DETAIL;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_HEADER_DETAIL;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_PATH_VARIABLE_DETAIL;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_REQUEST_ATTRIBUTE_DETAIL;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_REQUEST_PARAM_DETAIL;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_REQUEST_PART_DETAIL;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.MISSING_SESSION_ATTRIBUTE_DETAIL;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.NAME_EXTENSION;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.PARAM_EXTENSION;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import io.github.problem4j.core.Problem;
@@ -72,8 +59,8 @@ class MissingParameterWebFluxTest {
                   .isEqualTo(
                       Problem.builder()
                           .status(HttpStatus.BAD_REQUEST.value())
-                          .detail(MISSING_PATH_VARIABLE_DETAIL.toLowerCase())
-                          .extension(NAME_EXTENSION, "var")
+                          .detail("missing path variable")
+                          .extension("name", "var")
                           .build());
             });
   }
@@ -108,9 +95,9 @@ class MissingParameterWebFluxTest {
                   .isEqualTo(
                       Problem.builder()
                           .status(HttpStatus.BAD_REQUEST.value())
-                          .detail(MISSING_REQUEST_PARAM_DETAIL.toLowerCase())
-                          .extension(PARAM_EXTENSION, "param")
-                          .extension(KIND_EXTENSION, "string")
+                          .detail("missing request param")
+                          .extension("param", "param")
+                          .extension("kind", "string")
                           .build());
             });
   }
@@ -150,8 +137,8 @@ class MissingParameterWebFluxTest {
                   .isEqualTo(
                       Problem.builder()
                           .status(HttpStatus.BAD_REQUEST.value())
-                          .detail(MISSING_REQUEST_PART_DETAIL.toLowerCase())
-                          .extension(PARAM_EXTENSION, "file")
+                          .detail("missing request part")
+                          .extension("param", "file")
                           .build());
             });
   }
@@ -198,8 +185,8 @@ class MissingParameterWebFluxTest {
                   .isEqualTo(
                       Problem.builder()
                           .status(HttpStatus.BAD_REQUEST.value())
-                          .detail(MISSING_HEADER_DETAIL.toLowerCase())
-                          .extension(HEADER_EXTENSION, "X-Custom-Header")
+                          .detail("missing header")
+                          .extension("header", "X-Custom-Header")
                           .build());
             });
   }
@@ -235,8 +222,8 @@ class MissingParameterWebFluxTest {
                   .isEqualTo(
                       Problem.builder()
                           .status(HttpStatus.BAD_REQUEST.value())
-                          .detail(MISSING_COOKIE_DETAIL.toLowerCase())
-                          .extension(COOKIE_EXTENSION, "x_session")
+                          .detail("missing cookie")
+                          .extension("cookie", "x_session")
                           .build());
             });
   }
@@ -272,8 +259,8 @@ class MissingParameterWebFluxTest {
                   .isEqualTo(
                       Problem.builder()
                           .status(HttpStatus.BAD_REQUEST.value())
-                          .detail(MISSING_REQUEST_ATTRIBUTE_DETAIL.toLowerCase())
-                          .extension(ATTRIBUTE_EXTENSION, "attr")
+                          .detail("missing request attribute")
+                          .extension("attribute", "attr")
                           .build());
             });
   }
@@ -293,8 +280,8 @@ class MissingParameterWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(MISSING_SESSION_ATTRIBUTE_DETAIL.toLowerCase())
-                .extension(ATTRIBUTE_EXTENSION, "attr")
+                .detail("missing session attribute")
+                .extension("attribute", "attr")
                 .build());
   }
 }

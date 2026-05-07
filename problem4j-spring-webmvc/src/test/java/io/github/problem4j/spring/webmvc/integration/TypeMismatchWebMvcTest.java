@@ -16,9 +16,6 @@
 
 package io.github.problem4j.spring.webmvc.integration;
 
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.KIND_EXTENSION;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.PROPERTY_EXTENSION;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.TYPE_MISMATCH_DETAIL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import io.github.problem4j.core.Problem;
@@ -60,9 +57,9 @@ class TypeMismatchWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-                .extension(PROPERTY_EXTENSION, "id")
-                .extension(KIND_EXTENSION, "integer")
+                .detail("type mismatch")
+                .extension("property", "id")
+                .extension("kind", "integer")
                 .build());
   }
 
@@ -89,9 +86,9 @@ class TypeMismatchWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-                .extension(PROPERTY_EXTENSION, "id")
-                .extension(KIND_EXTENSION, "integer")
+                .detail("type mismatch")
+                .extension("property", "id")
+                .extension("kind", "integer")
                 .build());
   }
 
@@ -124,9 +121,9 @@ class TypeMismatchWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-                .extension(PROPERTY_EXTENSION, "X-Id")
-                .extension(KIND_EXTENSION, "integer")
+                .detail("type mismatch")
+                .extension("property", "X-Id")
+                .extension("kind", "integer")
                 .build());
   }
 
@@ -164,9 +161,9 @@ class TypeMismatchWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-                .extension(PROPERTY_EXTENSION, "id")
-                .extension(KIND_EXTENSION, "integer")
+                .detail("type mismatch")
+                .extension("property", "id")
+                .extension("kind", "integer")
                 .build());
   }
 
@@ -204,9 +201,9 @@ class TypeMismatchWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-                .extension(PROPERTY_EXTENSION, "status")
-                .extension(KIND_EXTENSION, "enum")
+                .detail("type mismatch")
+                .extension("property", "status")
+                .extension("kind", "enum")
                 .build());
   }
 

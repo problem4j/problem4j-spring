@@ -20,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.parameter.ViolationSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.TypeMismatchException;
@@ -50,9 +49,9 @@ class TypeMismatchProblemResolverTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(ViolationSupport.TYPE_MISMATCH_DETAIL)
-                .extension(ViolationSupport.PROPERTY_EXTENSION, "age")
-                .extension(ViolationSupport.KIND_EXTENSION, "integer")
+                .detail("Type mismatch")
+                .extension("property", "age")
+                .extension("kind", "integer")
                 .build());
   }
 
@@ -68,8 +67,8 @@ class TypeMismatchProblemResolverTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(ViolationSupport.TYPE_MISMATCH_DETAIL)
-                .extension(ViolationSupport.KIND_EXTENSION, "integer")
+                .detail("Type mismatch")
+                .extension("kind", "integer")
                 .build());
   }
 
@@ -86,8 +85,8 @@ class TypeMismatchProblemResolverTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(ViolationSupport.TYPE_MISMATCH_DETAIL)
-                .extension(ViolationSupport.PROPERTY_EXTENSION, "field")
+                .detail("Type mismatch")
+                .extension("property", "field")
                 .build());
   }
 }

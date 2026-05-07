@@ -16,8 +16,6 @@
 
 package io.github.problem4j.spring.webmvc.integration;
 
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.ERRORS_EXTENSION;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.VALIDATION_FAILED_DETAIL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 
@@ -67,9 +65,8 @@ class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
-                .extension(
-                    ERRORS_EXTENSION, List.of(Map.of("field", "id", "error", VIOLATION_ERROR)))
+                .detail("validation failed")
+                .extension("errors", List.of(Map.of("field", "id", "error", VIOLATION_ERROR)))
                 .build());
   }
 
@@ -87,9 +84,8 @@ class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
-                .extension(
-                    ERRORS_EXTENSION, List.of(Map.of("field", "query", "error", VIOLATION_ERROR)))
+                .detail("validation failed")
+                .extension("errors", List.of(Map.of("field", "query", "error", VIOLATION_ERROR)))
                 .build());
   }
 
@@ -114,10 +110,9 @@ class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
+                .detail("validation failed")
                 .extension(
-                    ERRORS_EXTENSION,
-                    List.of(Map.of("field", "X-Custom-Header", "error", VIOLATION_ERROR)))
+                    "errors", List.of(Map.of("field", "X-Custom-Header", "error", VIOLATION_ERROR)))
                 .build());
   }
 
@@ -142,10 +137,9 @@ class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
+                .detail("validation failed")
                 .extension(
-                    ERRORS_EXTENSION,
-                    List.of(Map.of("field", "x_session", "error", VIOLATION_ERROR)))
+                    "errors", List.of(Map.of("field", "x_session", "error", VIOLATION_ERROR)))
                 .build());
   }
 
@@ -159,7 +153,7 @@ class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem.getExtensions().get(ERRORS_EXTENSION)).asInstanceOf(LIST).hasSize(2);
+    assertThat(problem.getExtensions().get("errors")).asInstanceOf(LIST).hasSize(2);
   }
 
   @ParameterizedTest
@@ -174,7 +168,7 @@ class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem.getExtensions().get(ERRORS_EXTENSION)).asInstanceOf(LIST).hasSize(1);
+    assertThat(problem.getExtensions().get("errors")).asInstanceOf(LIST).hasSize(1);
   }
 
   @Test
@@ -188,7 +182,7 @@ class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem.getExtensions().get(ERRORS_EXTENSION))
+    assertThat(problem.getExtensions().get("errors"))
         .asInstanceOf(LIST)
         .hasSize(1)
         .allSatisfy(e -> assertThat(((Map<?, ?>) e).get("field")).isEqualTo("first"));
@@ -205,7 +199,7 @@ class ValidateMethodArgumentFailingWithAdaptionWebMvcTest {
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem.getExtensions().get(ERRORS_EXTENSION))
+    assertThat(problem.getExtensions().get("errors"))
         .asInstanceOf(LIST)
         .hasSize(1)
         .allSatisfy(e -> assertThat(((Map<?, ?>) e).get("field")).isEqualTo("second"));
