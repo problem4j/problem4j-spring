@@ -21,8 +21,6 @@
 
 package io.github.problem4j.spring.webmvc.integration;
 
-import static io.github.problem4j.spring.web.ProblemSupport.ERRORS_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.VALIDATION_FAILED_DETAIL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 
@@ -69,9 +67,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
-                .extension(
-                    ERRORS_EXTENSION, List.of(Map.of("field", "idVar", "error", VIOLATION_ERROR)))
+                .detail("validation failed")
+                .extension("errors", List.of(Map.of("field", "idVar", "error", VIOLATION_ERROR)))
                 .build());
   }
 
@@ -89,10 +86,9 @@ class ValidateMethodArgumentFailingWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
+                .detail("validation failed")
                 .extension(
-                    ERRORS_EXTENSION,
-                    List.of(Map.of("field", "queryParam", "error", VIOLATION_ERROR)))
+                    "errors", List.of(Map.of("field", "queryParam", "error", VIOLATION_ERROR)))
                 .build());
   }
 
@@ -117,10 +113,9 @@ class ValidateMethodArgumentFailingWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
+                .detail("validation failed")
                 .extension(
-                    ERRORS_EXTENSION,
-                    List.of(Map.of("field", "xCustomHeader", "error", VIOLATION_ERROR)))
+                    "errors", List.of(Map.of("field", "xCustomHeader", "error", VIOLATION_ERROR)))
                 .build());
   }
 
@@ -145,10 +140,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
-                .extension(
-                    ERRORS_EXTENSION,
-                    List.of(Map.of("field", "xSession", "error", VIOLATION_ERROR)))
+                .detail("validation failed")
+                .extension("errors", List.of(Map.of("field", "xSession", "error", VIOLATION_ERROR)))
                 .build());
   }
 
@@ -162,7 +155,7 @@ class ValidateMethodArgumentFailingWebMvcTest {
 
     Problem problem = objectMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem.getExtensionValue(ERRORS_EXTENSION)).asInstanceOf(LIST).hasSize(2);
+    assertThat(problem.getExtensionValue("errors")).asInstanceOf(LIST).hasSize(2);
   }
 
   @ParameterizedTest
@@ -177,7 +170,7 @@ class ValidateMethodArgumentFailingWebMvcTest {
 
     Problem problem = objectMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem.getExtensionValue(ERRORS_EXTENSION)).asInstanceOf(LIST).hasSize(1);
+    assertThat(problem.getExtensionValue("errors")).asInstanceOf(LIST).hasSize(1);
   }
 
   @Test
@@ -191,7 +184,7 @@ class ValidateMethodArgumentFailingWebMvcTest {
 
     Problem problem = objectMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
+    assertThat(problem.getExtensionValue("errors"))
         .asInstanceOf(LIST)
         .hasSize(1)
         .allSatisfy(e -> assertThat(((Map<?, ?>) e).get("field")).isEqualTo("firstParam"));
@@ -208,7 +201,7 @@ class ValidateMethodArgumentFailingWebMvcTest {
 
     Problem problem = objectMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
+    assertThat(problem.getExtensionValue("errors"))
         .asInstanceOf(LIST)
         .hasSize(1)
         .allSatisfy(e -> assertThat(((Map<?, ?>) e).get("field")).isEqualTo("secondParam"));
@@ -234,8 +227,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
     assertThat(problem.getType()).isEqualTo(Problem.BLANK_TYPE);
     assertThat(problem.getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-    assertThat(problem.getExtensionMembers()).containsKey(ERRORS_EXTENSION);
-    assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
+    assertThat(problem.getExtensionMembers()).containsKey("errors");
+    assertThat(problem.getExtensionValue("errors"))
         .asInstanceOf(LIST)
         .containsExactlyInAnyOrder(
             Map.of("field", "text", "error", "size must be between 1 and 5"),
@@ -262,8 +255,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
     assertThat(problem.getType()).isEqualTo(Problem.BLANK_TYPE);
     assertThat(problem.getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-    assertThat(problem.getExtensionMembers()).containsKey(ERRORS_EXTENSION);
-    assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
+    assertThat(problem.getExtensionMembers()).containsKey("errors");
+    assertThat(problem.getExtensionValue("errors"))
         .asInstanceOf(LIST)
         .containsExactlyInAnyOrder(
             Map.of("field", "text", "error", "size must be between 1 and 5"),
@@ -291,8 +284,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
     assertThat(problem.getType()).isEqualTo(Problem.BLANK_TYPE);
     assertThat(problem.getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-    assertThat(problem.getExtensionMembers()).containsKey(ERRORS_EXTENSION);
-    assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
+    assertThat(problem.getExtensionMembers()).containsKey("errors");
+    assertThat(problem.getExtensionValue("errors"))
         .asInstanceOf(LIST)
         .containsExactlyInAnyOrder(
             Map.of("field", "text", "error", "size must be between 1 and 5"),

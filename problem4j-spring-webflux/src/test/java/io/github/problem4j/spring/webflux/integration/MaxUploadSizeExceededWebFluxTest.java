@@ -21,8 +21,6 @@
 
 package io.github.problem4j.spring.webflux.integration;
 
-import static io.github.problem4j.spring.web.ProblemSupport.MAX_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.MAX_UPLOAD_SIZE_EXCEEDED_DETAIL;
 import static org.hamcrest.Matchers.notNullValue;
 
 import io.github.problem4j.core.Problem;
@@ -58,8 +56,8 @@ class MaxUploadSizeExceededWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.PAYLOAD_TOO_LARGE.value())
-                .detail(MAX_UPLOAD_SIZE_EXCEEDED_DETAIL.toLowerCase())
-                .extension(MAX_EXTENSION, 1)
+                .detail("max upload size exceeded")
+                .extension("max", 1)
                 .build());
   }
 }

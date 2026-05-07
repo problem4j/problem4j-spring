@@ -21,9 +21,6 @@
 
 package io.github.problem4j.spring.webflux.integration;
 
-import static io.github.problem4j.spring.web.ProblemSupport.KIND_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.PROPERTY_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.TYPE_MISMATCH_DETAIL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
@@ -139,9 +136,9 @@ class BindingPrimitiveWebFluxTest {
               Problem expected =
                   Problem.builder()
                       .status(HttpStatus.BAD_REQUEST.value())
-                      .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-                      .extension(PROPERTY_EXTENSION, "value")
-                      .extension(KIND_EXTENSION, expectedKind)
+                      .detail("type mismatch")
+                      .extension("property", "value")
+                      .extension("kind", expectedKind)
                       .build();
 
               if (!problem.equals(expected)) {
@@ -242,9 +239,9 @@ class BindingPrimitiveWebFluxTest {
                   .isEqualTo(
                       Problem.builder()
                           .status(HttpStatus.BAD_REQUEST.value())
-                          .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-                          .extension(PROPERTY_EXTENSION, "nested.value")
-                          .extension(KIND_EXTENSION, expectedKind)
+                          .detail("type mismatch")
+                          .extension("property", "nested.value")
+                          .extension("kind", expectedKind)
                           .build());
             });
   }
@@ -288,9 +285,9 @@ class BindingPrimitiveWebFluxTest {
                   .isEqualTo(
                       Problem.builder()
                           .status(HttpStatus.BAD_REQUEST.value())
-                          .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-                          .extension(PROPERTY_EXTENSION, "value")
-                          .extension(KIND_EXTENSION, expectedKind)
+                          .detail("type mismatch")
+                          .extension("property", "value")
+                          .extension("kind", expectedKind)
                           .build());
             });
   }
@@ -321,9 +318,9 @@ class BindingPrimitiveWebFluxTest {
               Problem expected =
                   Problem.builder()
                       .status(HttpStatus.BAD_REQUEST.value())
-                      .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-                      .extension(PROPERTY_EXTENSION, "value")
-                      .extension(KIND_EXTENSION, "integer")
+                      .detail("type mismatch")
+                      .extension("property", "value")
+                      .extension("kind", "integer")
                       .build();
 
               if (!problem.equals(expected)) {
@@ -350,9 +347,9 @@ class BindingPrimitiveWebFluxTest {
               Problem expected =
                   Problem.builder()
                       .status(HttpStatus.BAD_REQUEST.value())
-                      .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-                      .extension(PROPERTY_EXTENSION, "value")
-                      .extension(KIND_EXTENSION, "integer")
+                      .detail("type mismatch")
+                      .extension("property", "value")
+                      .extension("kind", "integer")
                       .build();
 
               if (!problem.equals(expected)) {
@@ -414,9 +411,9 @@ class BindingPrimitiveWebFluxTest {
                     .isEqualTo(
                         Problem.builder()
                             .status(HttpStatus.BAD_REQUEST.value())
-                            .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-                            .extension(PROPERTY_EXTENSION, expectedProperty)
-                            .extension(KIND_EXTENSION, expectedKind)
+                            .detail("type mismatch")
+                            .extension("property", expectedProperty)
+                            .extension("kind", expectedKind)
                             .build()));
   }
 }

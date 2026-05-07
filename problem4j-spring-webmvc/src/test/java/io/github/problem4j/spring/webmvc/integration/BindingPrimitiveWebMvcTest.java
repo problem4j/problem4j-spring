@@ -21,9 +21,6 @@
 
 package io.github.problem4j.spring.webmvc.integration;
 
-import static io.github.problem4j.spring.web.ProblemSupport.KIND_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.PROPERTY_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.TYPE_MISMATCH_DETAIL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -142,9 +139,9 @@ class BindingPrimitiveWebMvcTest {
     Problem expected =
         Problem.builder()
             .status(HttpStatus.BAD_REQUEST.value())
-            .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-            .extension(PROPERTY_EXTENSION, "value")
-            .extension(KIND_EXTENSION, expectedKind)
+            .detail("type mismatch")
+            .extension("property", "value")
+            .extension("kind", expectedKind)
             .build();
 
     if (!problem.equals(expected)) {
@@ -241,9 +238,9 @@ class BindingPrimitiveWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-                .extension(PROPERTY_EXTENSION, "nested.value")
-                .extension(KIND_EXTENSION, expectedKind)
+                .detail("type mismatch")
+                .extension("property", "nested.value")
+                .extension("kind", expectedKind)
                 .build());
   }
 
@@ -285,9 +282,9 @@ class BindingPrimitiveWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-                .extension(PROPERTY_EXTENSION, "value")
-                .extension(KIND_EXTENSION, expectedKind)
+                .detail("type mismatch")
+                .extension("property", "value")
+                .extension("kind", expectedKind)
                 .build());
   }
 
@@ -316,9 +313,9 @@ class BindingPrimitiveWebMvcTest {
     Problem expected =
         Problem.builder()
             .status(HttpStatus.BAD_REQUEST.value())
-            .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-            .extension(PROPERTY_EXTENSION, "value")
-            .extension(KIND_EXTENSION, "integer")
+            .detail("type mismatch")
+            .extension("property", "value")
+            .extension("kind", "integer")
             .build();
 
     if (!problem.equals(expected)) {
@@ -345,9 +342,9 @@ class BindingPrimitiveWebMvcTest {
     Problem expected =
         Problem.builder()
             .status(HttpStatus.BAD_REQUEST.value())
-            .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-            .extension(PROPERTY_EXTENSION, "value")
-            .extension(KIND_EXTENSION, "integer")
+            .detail("type mismatch")
+            .extension("property", "value")
+            .extension("kind", "integer")
             .build();
 
     if (!problem.equals(expected)) {
@@ -405,9 +402,9 @@ class BindingPrimitiveWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(TYPE_MISMATCH_DETAIL.toLowerCase())
-                .extension(PROPERTY_EXTENSION, expectedProperty)
-                .extension(KIND_EXTENSION, expectedKind)
+                .detail("type mismatch")
+                .extension("property", expectedProperty)
+                .extension("kind", expectedKind)
                 .build());
   }
 }

@@ -21,9 +21,6 @@
 
 package io.github.problem4j.spring.webmvc.integration;
 
-import static io.github.problem4j.spring.web.ProblemSupport.ERRORS_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.IS_NOT_VALID_ERROR;
-import static io.github.problem4j.spring.web.ProblemSupport.VALIDATION_FAILED_DETAIL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,10 +58,8 @@ class MethodArgumentNotValidWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
-                .extension(
-                    ERRORS_EXTENSION,
-                    List.of(Map.of("field", "number", "error", IS_NOT_VALID_ERROR)))
+                .detail("validation failed")
+                .extension("errors", List.of(Map.of("field", "number", "error", "is not valid")))
                 .build());
   }
 }

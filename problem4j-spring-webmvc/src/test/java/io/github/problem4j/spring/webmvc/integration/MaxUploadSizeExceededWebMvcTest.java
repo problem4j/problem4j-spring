@@ -21,7 +21,6 @@
 
 package io.github.problem4j.spring.webmvc.integration;
 
-import static io.github.problem4j.spring.web.ProblemSupport.MAX_UPLOAD_SIZE_EXCEEDED_DETAIL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,7 +72,7 @@ class MaxUploadSizeExceededWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.PAYLOAD_TOO_LARGE.value())
-                .detail(MAX_UPLOAD_SIZE_EXCEEDED_DETAIL.toLowerCase())
+                .detail("max upload size exceeded")
                 .build());
   }
 

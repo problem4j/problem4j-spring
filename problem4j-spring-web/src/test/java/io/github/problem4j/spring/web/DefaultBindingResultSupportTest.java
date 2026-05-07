@@ -21,7 +21,6 @@
 
 package io.github.problem4j.spring.web;
 
-import static io.github.problem4j.spring.web.ProblemSupport.IS_NOT_VALID_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
@@ -62,7 +61,7 @@ class DefaultBindingResultSupportTest {
 
     List<Violation> violations = support.fetchViolations(bindingResult);
 
-    assertThat(violations).containsExactly(new Violation("age", IS_NOT_VALID_ERROR));
+    assertThat(violations).containsExactly(new Violation("age", "is not valid"));
   }
 
   @Test

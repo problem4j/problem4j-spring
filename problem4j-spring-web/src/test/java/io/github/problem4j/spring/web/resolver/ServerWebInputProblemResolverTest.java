@@ -25,7 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.ProblemSupport;
 import java.lang.reflect.Method;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,9 +67,9 @@ class ServerWebInputProblemResolverTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(ProblemSupport.TYPE_MISMATCH_DETAIL)
-                .extension(ProblemSupport.PROPERTY_EXTENSION, "value")
-                .extension(ProblemSupport.KIND_EXTENSION, "boolean")
+                .detail("Type mismatch")
+                .extension("property", "value")
+                .extension("kind", "boolean")
                 .build());
   }
 
@@ -92,9 +91,9 @@ class ServerWebInputProblemResolverTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(ProblemSupport.TYPE_MISMATCH_DETAIL)
-                .extension(ProblemSupport.PROPERTY_EXTENSION, "flag")
-                .extension(ProblemSupport.KIND_EXTENSION, "boolean")
+                .detail("Type mismatch")
+                .extension("property", "flag")
+                .extension("kind", "boolean")
                 .build());
   }
 
