@@ -21,8 +21,6 @@
 
 package io.github.problem4j.spring.webflux.integration;
 
-import static io.github.problem4j.spring.web.ProblemSupport.ERRORS_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.VALIDATION_FAILED_DETAIL;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 
@@ -71,9 +69,8 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
-                .extension(
-                    ERRORS_EXTENSION, List.of(Map.of("field", "idVar", "error", VIOLATION_ERROR)))
+                .detail("validation failed")
+                .extension("errors", List.of(Map.of("field", "idVar", "error", VIOLATION_ERROR)))
                 .build());
   }
 
@@ -100,10 +97,9 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
+                .detail("validation failed")
                 .extension(
-                    ERRORS_EXTENSION,
-                    List.of(Map.of("field", "queryParam", "error", VIOLATION_ERROR)))
+                    "errors", List.of(Map.of("field", "queryParam", "error", VIOLATION_ERROR)))
                 .build());
   }
 
@@ -126,10 +122,9 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
+                .detail("validation failed")
                 .extension(
-                    ERRORS_EXTENSION,
-                    List.of(Map.of("field", "xCustomHeader", "error", VIOLATION_ERROR)))
+                    "errors", List.of(Map.of("field", "xCustomHeader", "error", VIOLATION_ERROR)))
                 .build());
   }
 
@@ -153,10 +148,8 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
-                .extension(
-                    ERRORS_EXTENSION,
-                    List.of(Map.of("field", "xSession", "error", VIOLATION_ERROR)))
+                .detail("validation failed")
+                .extension("errors", List.of(Map.of("field", "xSession", "error", VIOLATION_ERROR)))
                 .build());
   }
 
@@ -182,9 +175,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .value(v -> assertThat(v).isNotNull())
         .value(
             problem ->
-                assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
-                    .asInstanceOf(LIST)
-                    .hasSize(2));
+                assertThat(problem.getExtensionValue("errors")).asInstanceOf(LIST).hasSize(2));
   }
 
   /**
@@ -210,9 +201,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .value(v -> assertThat(v).isNotNull())
         .value(
             problem ->
-                assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
-                    .asInstanceOf(LIST)
-                    .hasSize(1));
+                assertThat(problem.getExtensionValue("errors")).asInstanceOf(LIST).hasSize(1));
   }
 
   /**
@@ -238,7 +227,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .value(v -> assertThat(v).isNotNull())
         .value(
             problem ->
-                assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
+                assertThat(problem.getExtensionValue("errors"))
                     .asInstanceOf(LIST)
                     .hasSize(1)
                     .allSatisfy(
@@ -269,7 +258,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .value(v -> assertThat(v).isNotNull())
         .value(
             problem ->
-                assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
+                assertThat(problem.getExtensionValue("errors"))
                     .asInstanceOf(LIST)
                     .hasSize(1)
                     .allSatisfy(
@@ -307,7 +296,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
               assertThat(problem.getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
               assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 
-              assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
+              assertThat(problem.getExtensionValue("errors"))
                   .asInstanceOf(LIST)
                   .containsExactlyInAnyOrder(
                       Map.of("field", "text", "error", "size must be between 1 and 5"),
@@ -342,7 +331,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
               assertThat(problem.getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
               assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 
-              assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
+              assertThat(problem.getExtensionValue("errors"))
                   .asInstanceOf(LIST)
                   .containsExactlyInAnyOrder(
                       Map.of("field", "text", "error", "size must be between 1 and 5"),
@@ -379,7 +368,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
               assertThat(problem.getTitle()).isEqualTo(HttpStatus.BAD_REQUEST.getReasonPhrase());
               assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
 
-              assertThat(problem.getExtensionValue(ERRORS_EXTENSION))
+              assertThat(problem.getExtensionValue("errors"))
                   .asInstanceOf(LIST)
                   .containsExactlyInAnyOrder(
                       Map.of("field", "text", "error", "size must be between 1 and 5"),

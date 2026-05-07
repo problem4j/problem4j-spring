@@ -21,8 +21,6 @@
 
 package io.github.problem4j.spring.webflux.integration;
 
-import static io.github.problem4j.spring.web.ProblemSupport.ERRORS_EXTENSION;
-import static io.github.problem4j.spring.web.ProblemSupport.VALIDATION_FAILED_DETAIL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
@@ -71,10 +69,8 @@ class ValidateRequestBodyWebFluxTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
-                .extension(
-                    ERRORS_EXTENSION,
-                    List.of(Map.of("field", "name", "error", "must not be blank")))
+                .detail("validation failed")
+                .extension("errors", List.of(Map.of("field", "name", "error", "must not be blank")))
                 .build());
   }
 
@@ -100,8 +96,8 @@ class ValidateRequestBodyWebFluxTest {
                   .isEqualTo(
                       Problem.builder()
                           .status(HttpStatus.BAD_REQUEST.value())
-                          .detail(VALIDATION_FAILED_DETAIL.toLowerCase())
-                          .extension(ERRORS_EXTENSION, List.of(error))
+                          .detail("validation failed")
+                          .extension("errors", List.of(error))
                           .build());
             });
   }

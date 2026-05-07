@@ -21,8 +21,6 @@
 
 package io.github.problem4j.spring.webmvc.integration;
 
-import static io.github.problem4j.spring.web.ProblemSupport.MISSING_REQUEST_PART_DETAIL;
-import static io.github.problem4j.spring.web.ProblemSupport.PARAM_EXTENSION;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import io.github.problem4j.core.Problem;
@@ -71,8 +69,8 @@ class MalformedMultipartWebMvcTest {
         .isEqualTo(
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .detail(MISSING_REQUEST_PART_DETAIL.toLowerCase())
-                .extension(PARAM_EXTENSION, "file")
+                .detail("missing request part")
+                .extension("param", "file")
                 .build());
   }
 }
