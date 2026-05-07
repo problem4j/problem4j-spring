@@ -6,8 +6,6 @@ updates:
       interval: "monthly"
     target-branch: main
     open-pull-requests-limit: 10
-    labels:
-      - "dependencies"
 
   - package-ecosystem: "gradle"
     directory: "/"
@@ -21,5 +19,4 @@ updates:
       - dependency-name: "*"
         update-types:
           - "version-update:semver-major"
-    labels:
-      - "dependencies"
+      - dependency-name: "gradle-wrapper"
