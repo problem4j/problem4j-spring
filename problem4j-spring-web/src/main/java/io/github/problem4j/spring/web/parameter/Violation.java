@@ -125,6 +125,6 @@ public final class Violation implements Serializable {
    */
   @Override
   public String toString() {
-    return "Violation{field='" + field + "', error='" + error + "'}";
+    return "Violation[field=" + field + ", error=" + error + "]";
   }
 }

@@ -19,12 +19,17 @@ package io.github.problem4j.spring.web;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.github.problem4j.core.Problem;
+import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.resolver.AbstractProblemResolver;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 class DefaultProblemResolverStoreTest {
 
@@ -39,6 +44,12 @@ class DefaultProblemResolverStoreTest {
   private static class TestResolver extends AbstractProblemResolver {
     TestResolver(Class<? extends Exception> clazz) {
       super(clazz);
+    }
+
+    @Override
+    public Problem resolve(
+        ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+      return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
   }
 

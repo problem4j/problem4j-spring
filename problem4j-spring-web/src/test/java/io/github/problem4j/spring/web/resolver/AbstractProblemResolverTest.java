@@ -38,7 +38,14 @@ class AbstractProblemResolverTest {
   @ParameterizedTest
   @MethodSource("exceptions")
   void givenAnyMapping_shouldReturnExceptionClass(Class<? extends Exception> clazz) {
-    AbstractProblemResolver resolver = new AbstractProblemResolver(clazz) {};
+    AbstractProblemResolver resolver =
+        new AbstractProblemResolver(clazz) {
+          @Override
+          public Problem resolve(
+              ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+            return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
+          }
+        };
 
     Class<? extends Exception> exceptionClass = resolver.getExceptionClass();
 
@@ -47,7 +54,14 @@ class AbstractProblemResolverTest {
 
   @Test
   void givenNoResolveProblemOverride_whenResolve_thenReturnsInternalServerError() {
-    AbstractProblemResolver resolver = new AbstractProblemResolver(RuntimeException.class) {};
+    AbstractProblemResolver resolver =
+        new AbstractProblemResolver(RuntimeException.class) {
+          @Override
+          public Problem resolve(
+              ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+            return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
+          }
+        };
 
     Problem problem =
         resolver.resolve(

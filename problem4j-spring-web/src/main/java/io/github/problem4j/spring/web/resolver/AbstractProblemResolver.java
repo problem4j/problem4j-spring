@@ -16,13 +16,8 @@
 
 package io.github.problem4j.spring.web.resolver;
 
-import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.jspecify.annotations.Nullable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 
 /**
  * Convenience base class for {@link ProblemResolver}-s.
@@ -67,19 +62,6 @@ public abstract class AbstractProblemResolver implements ProblemResolver {
   @Override
   public Class<? extends Exception> getExceptionClass() {
     return clazz;
-  }
-
-  /**
-   * Default implementation returning a {@link Problem} with {@link
-   * HttpStatus#INTERNAL_SERVER_ERROR}. Subclasses override this to populate fields like {@code
-   * type}, {@code title}, {@code detail}, and extensions.
-   *
-   * @since 3.0.0
-   */
-  @Override
-  public Problem resolve(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
   }
 
   /**

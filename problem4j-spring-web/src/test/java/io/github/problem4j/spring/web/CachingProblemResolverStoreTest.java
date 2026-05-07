@@ -20,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.github.problem4j.core.Problem;
+import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.resolver.AbstractProblemResolver;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.io.IOException;
@@ -33,6 +35,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 class CachingProblemResolverStoreTest {
 
@@ -41,6 +46,12 @@ class CachingProblemResolverStoreTest {
   private static class TestResolver extends AbstractProblemResolver {
     TestResolver(Class<? extends Exception> clazz) {
       super(clazz);
+    }
+
+    @Override
+    public Problem resolve(
+        ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+      return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
   }
 
@@ -92,6 +103,12 @@ class CachingProblemResolverStoreTest {
   private static class DummyResolver extends AbstractProblemResolver {
     DummyResolver(Class<? extends Exception> clazz) {
       super(clazz);
+    }
+
+    @Override
+    public Problem resolve(
+        ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+      return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
   }
 
