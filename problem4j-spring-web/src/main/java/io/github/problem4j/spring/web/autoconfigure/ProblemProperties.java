@@ -32,58 +32,40 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConfigurationProperties(prefix = "problem4j")
 public class ProblemProperties implements ProblemContextSettings, PostProcessorSettings {
 
-  /**
-   * Decides if Problem4J integration is enabled.
-   *
-   * @since 1.2.0
-   */
+  /** Decides if Problem4J integration is enabled. */
   private final boolean enabled;
 
   /**
    * Defines the format for the {@code detail} field in Problem responses. Supported values are
    * {@code "lowercase"}, {@code "capitalized"}, and {@code "uppercase"}.
-   *
-   * @since 1.2.0
    */
   private final String detailFormat;
 
   /**
    * Name of the HTTP header that carries a trace ID for simple tracing provided by this library. If
    * unset, the feature is disabled.
-   *
-   * @since 1.2.0
    */
   private final @Nullable String tracingHeaderName;
 
   /**
    * Template for overriding the {@code type} field of a Problem response. May contain placeholders
    * like {@code {problem.type}} and {@code {context.<key>}}.
-   *
-   * @since 1.2.0
    */
   private final @Nullable String typeOverride;
 
   /**
    * Template for overriding the {@code title} field of a Problem response. May contain placeholders
    * like {@code {problem.title}} and {@code {context.<key>}}.
-   *
-   * @since 1.2.0
    */
   private final @Nullable String titleOverride;
 
   /**
    * Template for overriding the {@code instance} field of a Problem response. May contain
    * placeholders like {@code {problem.instance}} and {@code {context.<key>}} for dynamic values.
-   *
-   * @since 1.2.0
    */
   private final @Nullable String instanceOverride;
 
-  /**
-   * Caching configuration for resolver lookups in {@code CachingProblemResolverStore}.
-   *
-   * @since 1.2.0
-   */
+  /** Caching configuration for resolver lookups in {@code CachingProblemResolverStore}. */
   private final ResolverCaching resolverCaching;
 
   /**

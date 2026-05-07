@@ -30,46 +30,22 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConfigurationProperties(prefix = "problem4j.webflux")
 public class ProblemWebFluxProperties {
 
-  /**
-   * Whether Problem4J integration with WebFlux is enabled.
-   *
-   * @since 1.2.0
-   */
+  /** Whether Problem4J integration with WebFlux is enabled. */
   private final boolean enabled;
 
-  /**
-   * Configuration for {@code ExceptionWebFluxAdvice}.
-   *
-   * @since 1.2.0
-   */
+  /** Configuration for {@code ExceptionWebFluxAdvice}. */
   private final ExceptionAdvice exceptionAdvice;
 
-  /**
-   * Configuration for {@code ProblemExceptionWebFluxAdvice}.
-   *
-   * @since 1.2.0
-   */
+  /** Configuration for {@code ProblemExceptionWebFluxAdvice}. */
   private final ProblemExceptionAdvice problemExceptionAdvice;
 
-  /**
-   * Configuration for {@code ProblemContextWebFluxFilter}.
-   *
-   * @since 1.2.0
-   */
+  /** Configuration for {@code ProblemContextWebFluxFilter}. */
   private final ProblemContextFilter problemContextFilter;
 
-  /**
-   * Configuration for {@code ProblemEnhancedWebFluxHandler} replacement.
-   *
-   * @since 1.2.0
-   */
+  /** Configuration for {@code ProblemEnhancedWebFluxHandler} replacement. */
   private final ExceptionHandler exceptionHandler;
 
-  /**
-   * Configuration for {@code ProblemErrorWebExceptionHandler} replacement.
-   *
-   * @since 1.2.0
-   */
+  /** Configuration for {@code ProblemErrorWebExceptionHandler} replacement. */
   private final ErrorWebExceptionHandler errorWebExceptionHandler;
 
   /**

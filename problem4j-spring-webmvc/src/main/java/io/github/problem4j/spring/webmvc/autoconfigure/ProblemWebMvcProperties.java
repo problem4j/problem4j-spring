@@ -30,46 +30,22 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConfigurationProperties(prefix = "problem4j.webmvc")
 public class ProblemWebMvcProperties {
 
-  /**
-   * Whether Problem4J integration with WebMVC is enabled.
-   *
-   * @since 1.2.0
-   */
+  /** Whether Problem4J integration with WebMVC is enabled. */
   private final boolean enabled;
 
-  /**
-   * Configuration for {@code ExceptionWebMvcAdvice}.
-   *
-   * @since 1.2.0
-   */
+  /** Configuration for {@code ExceptionWebMvcAdvice}. */
   private final ExceptionAdvice exceptionAdvice;
 
-  /**
-   * Configuration for {@code ProblemExceptionWebMvcAdvice}.
-   *
-   * @since 1.2.0
-   */
+  /** Configuration for {@code ProblemExceptionWebMvcAdvice}. */
   private final ProblemExceptionAdvice problemExceptionAdvice;
 
-  /**
-   * Configuration for {@code ProblemContextWebMvcFilter}.
-   *
-   * @since 1.2.0
-   */
+  /** Configuration for {@code ProblemContextWebMvcFilter}. */
   private final ProblemContextFilter problemContextFilter;
 
-  /**
-   * Configuration for {@code ProblemEnhancedWebMvcHandler} replacement.
-   *
-   * @since 1.2.0
-   */
+  /** Configuration for {@code ProblemEnhancedWebMvcHandler} replacement. */
   private final ExceptionHandler exceptionHandler;
 
-  /**
-   * Configuration for {@code ProblemErrorController} replacement.
-   *
-   * @since 1.2.0
-   */
+  /** Configuration for {@code ProblemErrorController} replacement. */
   private final ErrorController errorController;
 
   /**
