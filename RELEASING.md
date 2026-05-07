@@ -11,33 +11,6 @@
 7. If the release was made on a maintenance branch, make sure to `merge` or `cherry-pick` the `CHANGELOG.md` entry to
    the `main` branch as well.
 
-## Branching and Release Workflow
-
-This repository maintains two major versions, supporting Spring Boot 3 and 4. The goal is to maintain both versions at
-least until Spring Boot 3 reaches its end of life or becomes irrelevant.
-
-| branch           | info                                       | latest                                                                                                                   |
-|------------------|--------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
-| `main`           | version `2.x` supporting Spring Boot `4.x` | [![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=2.*)][maven-central] |
-| `release-v1.*.x` | version `1.x` supporting Spring Boot `3.x` | [![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=1.*)][maven-central] |
-
-Bugfixes for `1.x` should be merged into the lowest applicable `1.x` release branch. From there, they are cascaded
-forward into newer version branches if applicable, so fixes propagate through the release line without being duplicated
-unnecessarily.
-
-Following diagram demonstrates the merge direction that comes from `release-v1.0.x` up to `main`.
-
-```mermaid
-graph LR
-    A[release-v1.0.x<br/>original bugfix]
-    A --> B[release-v1.1.x<br/>merge commit with release-v1.0.x]
-    B --> C[main<br/>merge commit with release-v1.1.x]
-```
-
-**Note** that the `1.x` major version is supported, but older minor release lines may not be maintained long-term. Bug
-fixes are applied only when necessary, and maintenance typically focuses on the more recent `1.*.x` branches unless an
-issue is critical or a change can be backported with minimal effort.
-
 ## Maven Central
 
 [![Publish Release Status](https://github.com/problem4j/problem4j-spring/actions/workflows/gradle-publish-release.yml/badge.svg)][gradle-publish-release]
