@@ -1,6 +1,6 @@
 # BOM of Problem4J
 
-[![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom)](https://central.sonatype.com/artifact/io.github.problem4j/problem4j-spring-bom)
+[![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=2.2.*)](https://central.sonatype.com/artifact/io.github.problem4j/problem4j-spring-bom)
 
 Bill Of Materials (BOM) for the Spring integrations of **Problem4J**, a library implementing *RFC 7807 - Problem Details
 for HTTP APIs*.
