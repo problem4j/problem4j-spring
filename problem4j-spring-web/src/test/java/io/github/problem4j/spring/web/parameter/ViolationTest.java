@@ -87,7 +87,7 @@ class ViolationTest {
   void givenViolation_whenToString_thenContainsFieldAndError() {
     Violation violation = new Violation("age", "must be positive");
 
-    assertThat(violation.toString()).contains("age").contains("must be positive");
+    assertThat(violation.toString()).isEqualTo("Violation[field=age, error=must be positive]");
   }
 
   @Test

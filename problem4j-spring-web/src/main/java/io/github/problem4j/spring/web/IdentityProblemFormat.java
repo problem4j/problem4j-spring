@@ -18,8 +18,7 @@ package io.github.problem4j.spring.web;
 
 import org.jspecify.annotations.Nullable;
 
-/** No-op {@link ProblemFormat} that returns input data unchanged. */
-class IdentityProblemFormat implements ProblemFormat {
+final class IdentityProblemFormat implements ProblemFormat {
 
   static final IdentityProblemFormat INSTANCE = new IdentityProblemFormat();
 

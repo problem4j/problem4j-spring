@@ -20,8 +20,7 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import org.jspecify.annotations.Nullable;
 
-/** No-op {@link ProblemPostProcessor} that returns the {@link Problem} unchanged. */
-class IdentityProblemPostProcessor implements ProblemPostProcessor {
+final class IdentityProblemPostProcessor implements ProblemPostProcessor {
 
   static final IdentityProblemPostProcessor INSTANCE = new IdentityProblemPostProcessor();
 
