@@ -22,8 +22,6 @@
 package io.github.problem4j.spring.web.resolver;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
@@ -31,39 +29,47 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.method.MethodValidationResult;
-import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.mock.http.MockHttpInputMessage;
 
-class HandlerMethodValidationProblemResolverTest {
+class HttpMessageNotReadableProblemResolverTest {
 
-  private HandlerMethodValidationProblemResolver handlerMethodValidationProblemResolver;
+  private HttpMessageNotReadableProblemResolver resolver;
 
   @BeforeEach
   void beforeEach() {
-    handlerMethodValidationProblemResolver = new HandlerMethodValidationProblemResolver();
+    resolver = new HttpMessageNotReadableProblemResolver();
   }
 
   @Test
-  void givenDefaultConstructor_whenGetExceptionClass_thenReturnsHandlerMethodValidationException() {
-    assertThat(handlerMethodValidationProblemResolver.getExceptionClass())
-        .isEqualTo(HandlerMethodValidationException.class);
+  void givenDefaultConstructor_whenGetExceptionClass_thenReturnsHttpMessageNotReadableException() {
+    assertThat(resolver.getExceptionClass()).isEqualTo(HttpMessageNotReadableException.class);
   }
 
   @Test
-  void givenHandlerMethodValidationException_shouldGenerateProblem() {
-    MethodValidationResult mockMethodValidationResult = mock(MethodValidationResult.class);
-    HandlerMethodValidationException ex =
-        new HandlerMethodValidationException(mockMethodValidationResult);
+  void givenExceptionWithoutJacksonCause_whenResolve_thenReturnsBadRequestProblem() {
+    HttpMessageNotReadableException ex =
+        new HttpMessageNotReadableException("msg", new MockHttpInputMessage(new byte[0]));
 
     Problem problem =
-        handlerMethodValidationProblemResolver.resolveProblem(
-            ProblemContext.create().put("traceId", "traceId"),
-            ex,
-            new HttpHeaders(),
-            ex.getStatusCode());
+        resolver
+            .resolveBuilder(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST)
+            .build();
 
-    assertEquals(Problem.BLANK_TYPE, problem.getType());
-    assertEquals(HttpStatus.BAD_REQUEST.getReasonPhrase(), problem.getTitle());
-    assertEquals(HttpStatus.BAD_REQUEST.value(), problem.getStatus());
+    assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+  }
+
+  @Test
+  void givenExceptionWithoutJacksonCause_whenResolve_thenIgnoresPassedStatus() {
+    HttpMessageNotReadableException ex =
+        new HttpMessageNotReadableException("msg", new MockHttpInputMessage(new byte[0]));
+
+    Problem problem =
+        resolver
+            .resolveBuilder(
+                ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR)
+            .build();
+
+    assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
   }
 }

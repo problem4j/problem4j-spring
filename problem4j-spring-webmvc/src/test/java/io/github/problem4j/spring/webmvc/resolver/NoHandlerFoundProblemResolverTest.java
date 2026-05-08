@@ -19,11 +19,9 @@
  * SOFTWARE.
  */
 
-package io.github.problem4j.spring.web.resolver;
+package io.github.problem4j.spring.webmvc.resolver;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
@@ -31,39 +29,44 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.method.MethodValidationResult;
-import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
-class HandlerMethodValidationProblemResolverTest {
+class NoHandlerFoundProblemResolverTest {
 
-  private HandlerMethodValidationProblemResolver handlerMethodValidationProblemResolver;
+  private NoHandlerFoundProblemResolver resolver;
 
   @BeforeEach
   void beforeEach() {
-    handlerMethodValidationProblemResolver = new HandlerMethodValidationProblemResolver();
+    resolver = new NoHandlerFoundProblemResolver();
   }
 
   @Test
-  void givenDefaultConstructor_whenGetExceptionClass_thenReturnsHandlerMethodValidationException() {
-    assertThat(handlerMethodValidationProblemResolver.getExceptionClass())
-        .isEqualTo(HandlerMethodValidationException.class);
+  void givenDefaultConstructor_whenGetExceptionClass_thenReturnsNoHandlerFoundException() {
+    assertThat(resolver.getExceptionClass()).isEqualTo(NoHandlerFoundException.class);
   }
 
   @Test
-  void givenHandlerMethodValidationException_shouldGenerateProblem() {
-    MethodValidationResult mockMethodValidationResult = mock(MethodValidationResult.class);
-    HandlerMethodValidationException ex =
-        new HandlerMethodValidationException(mockMethodValidationResult);
+  void givenNoHandlerFoundException_whenResolve_thenReturnsNotFoundProblem() {
+    NoHandlerFoundException ex = new NoHandlerFoundException("GET", "/missing", new HttpHeaders());
 
     Problem problem =
-        handlerMethodValidationProblemResolver.resolveProblem(
-            ProblemContext.create().put("traceId", "traceId"),
-            ex,
-            new HttpHeaders(),
-            ex.getStatusCode());
+        resolver
+            .resolveBuilder(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.NOT_FOUND)
+            .build();
 
-    assertEquals(Problem.BLANK_TYPE, problem.getType());
-    assertEquals(HttpStatus.BAD_REQUEST.getReasonPhrase(), problem.getTitle());
-    assertEquals(HttpStatus.BAD_REQUEST.value(), problem.getStatus());
+    assertThat(problem).isEqualTo(Problem.builder().status(HttpStatus.NOT_FOUND.value()).build());
+  }
+
+  @Test
+  void givenNoHandlerFoundException_whenResolve_thenIgnoresPassedStatus() {
+    NoHandlerFoundException ex = new NoHandlerFoundException("GET", "/missing", new HttpHeaders());
+
+    Problem problem =
+        resolver
+            .resolveBuilder(
+                ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR)
+            .build();
+
+    assertThat(problem.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
   }
 }
