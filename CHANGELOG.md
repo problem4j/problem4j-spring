@@ -11,16 +11,26 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Add `HttpStatusTitleResolver` - a SPI implementation fo `StatusTitleResolver` using Spring's `HttpStatus`.
 - Add `problem4j.title-override` property to configure `title` field override in `DefaultProblemPostProcessor`.
 - Make `DefaultProblemPostProcessor` support any fields from `ProblemContext` in value interpolation.
+- Add `@FunctionalInterface` contract to:
+  - `MethodParameterSupport`,
+  - `MethodValidationResultSupport`,
+  - `BindingResultSupport`,
+  - `ProblemResolverStore`,
+  - `ProblemPostProcessor`,
+  - `TypeNameMapper`,
+  - `AdviceWebFluxInspector`,
+  - `AdviceWebMvcInspector`.
 
 ### Changed
 
-- Bump `problem4j-core` to `2.0.0-RC1`.
-- Bump `problem4j-jackson2` to `2.0.0-RC1`.
-- Bump `problem4j-jackson3` to `2.0.0-RC1`.
+- Bump `problem4j-core` to `2.0.0`.
+- Bump `problem4j-jackson2` to `2.0.0`.
+- Bump `problem4j-jackson3` to `2.0.0`.
 - Change `ProblemResolver` to contain just `resolve` method, returning `Problem`.
 - Hide `IdentityProblemFormat` and make it available via `ProblemFormat.identity()`.
 - Hide `IdentityProblemPostProcessor` and make it available via `ProblemPostProcessor.identity()`.
 - Move `ProblemSupport` into `ViolationSupport` to mitigate conflicts with `ProblemSupport` in `problem4j-core`.
+- Simple tracing now produces 32-character, lowercase-hex string.
 
 ### Removed
 
