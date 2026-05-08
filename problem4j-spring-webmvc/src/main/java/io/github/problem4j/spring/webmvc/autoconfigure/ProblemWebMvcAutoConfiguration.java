@@ -60,6 +60,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  */
 @AutoConfiguration
 @EnableConfigurationProperties({ProblemWebMvcProperties.class})
+@ConditionalOnBooleanProperty(name = "problem4j.enabled", matchIfMissing = true)
 @ConditionalOnBooleanProperty(name = "problem4j.webmvc.enabled", matchIfMissing = true)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @AutoConfigureBefore({ErrorMvcAutoConfiguration.class, WebMvcAutoConfiguration.class})

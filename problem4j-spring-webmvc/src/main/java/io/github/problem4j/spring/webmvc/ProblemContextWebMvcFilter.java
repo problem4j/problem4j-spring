@@ -123,18 +123,18 @@ public class ProblemContextWebMvcFilter extends OncePerRequestFilter {
    * @since 1.2.0
    */
   protected String initTraceId(HttpServletRequest request, HttpServletResponse response) {
-    if (!StringUtils.hasLength(getSettings().getTracingHeaderName())) {
+    if (!StringUtils.hasLength(settings.getTracingHeaderName())) {
       return createNewTraceId(request, response);
     }
-    String traceId = request.getHeader(getSettings().getTracingHeaderName());
+    String traceId = request.getHeader(settings.getTracingHeaderName());
     return StringUtils.hasLength(traceId) ? traceId : createNewTraceId(request, response);
   }
 
   /**
    * Generates a new trace identifier.
    *
-   * <p>Subclasses may override this method to customize the trace identifier generation logic. By
-   * default, it delegates to {@code getRandomTraceId()}.
+   * <p>Subclasses may override this method to customize the trace ID generation logic. By default,
+   * it generates a random UUID and removes dashes, producing a 32-character lowercase hex string.
    *
    * @param request the current server request
    * @param response the current server response
@@ -142,7 +142,7 @@ public class ProblemContextWebMvcFilter extends OncePerRequestFilter {
    * @since 1.2.0
    */
   protected String createNewTraceId(HttpServletRequest request, HttpServletResponse response) {
-    return "urn:uuid:" + UUID.randomUUID();
+    return UUID.randomUUID().toString().replace("-", "");
   }
 
   /**
@@ -185,8 +185,8 @@ public class ProblemContextWebMvcFilter extends OncePerRequestFilter {
    */
   protected void assignTracingHeader(
       HttpServletRequest request, HttpServletResponse response, ProblemContext context) {
-    if (StringUtils.hasLength(getSettings().getTracingHeaderName())) {
-      response.setHeader(getSettings().getTracingHeaderName(), context.get("traceId"));
+    if (StringUtils.hasLength(settings.getTracingHeaderName())) {
+      response.setHeader(settings.getTracingHeaderName(), context.get("traceId"));
     }
   }
 
@@ -196,7 +196,7 @@ public class ProblemContextWebMvcFilter extends OncePerRequestFilter {
    * @return the current settings
    * @since 1.2.0
    */
-  protected ProblemContextSettings getSettings() {
+  protected final ProblemContextSettings getSettings() {
     return settings;
   }
 }

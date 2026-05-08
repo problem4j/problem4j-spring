@@ -57,6 +57,34 @@ class ProblemWebMvcAutoConfigurationTest {
 
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
+      properties = {"problem4j.enabled=false"})
+  @Nested
+  class WithParentDisabled {
+
+    @Autowired(required = false)
+    private ProblemWebMvcAutoConfiguration problemWebMvcAutoConfiguration;
+
+    @Autowired(required = false)
+    private ProblemErrorMvcConfiguration problemErrorMvcConfiguration;
+
+    @Autowired(required = false)
+    private ProblemResolverWebMvcConfiguration problemResolverWebMvcConfiguration;
+
+    @Autowired(required = false)
+    private ProblemWebMvcProperties properties;
+
+    @Test
+    void contextLoadsWithoutConfiguration() {
+      assertThat(problemWebMvcAutoConfiguration).isNull();
+      assertThat(problemErrorMvcConfiguration).isNull();
+      assertThat(problemResolverWebMvcConfiguration).isNull();
+
+      assertThat(properties).isNull();
+    }
+  }
+
+  @SpringBootTest(
+      classes = {WebMvcTestApp.class},
       properties = {"problem4j.webmvc.enabled=false"})
   @Nested
   class WithDisabled {

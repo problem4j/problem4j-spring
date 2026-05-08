@@ -33,6 +33,7 @@ import org.springframework.web.context.request.WebRequest;
  *
  * @since 1.2.0
  */
+@FunctionalInterface
 public interface AdviceWebMvcInspector {
 
   /**

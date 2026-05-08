@@ -24,6 +24,7 @@ import org.springframework.validation.BindingResult;
  *
  * @since 1.2.0
  */
+@FunctionalInterface
 public interface BindingResultSupport {
 
   /**

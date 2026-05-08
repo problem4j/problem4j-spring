@@ -26,6 +26,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @since 1.2.7
  */
+@FunctionalInterface
 public interface TypeNameMapper {
 
   /**

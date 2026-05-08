@@ -28,6 +28,7 @@ import org.jspecify.annotations.Nullable;
  * @see io.github.problem4j.core.Problem
  * @since 1.2.0
  */
+@FunctionalInterface
 public interface ProblemFormat {
 
   /**

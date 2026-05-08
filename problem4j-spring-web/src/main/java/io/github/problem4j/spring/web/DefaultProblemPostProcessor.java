@@ -66,6 +66,7 @@ import org.springframework.util.StringUtils;
  *
  * <pre>{@code
  * problem4j.type-override=https://errors.example.com/{problem.type}
+ * problem4j.title-override={problem.title} on {context.env}
  * problem4j.instance-override=/errors/{context.traceId}
  * }</pre>
  *
@@ -73,8 +74,29 @@ import org.springframework.util.StringUtils;
  */
 public class DefaultProblemPostProcessor implements ProblemPostProcessor {
 
-  private static final String CONTEXT_PREFIX = "context.";
-  private static final Pattern PLACEHOLDER = Pattern.compile("\\{([^}]+)}");
+  /**
+   * Prefix for context placeholders in override templates. For example, a placeholder like {@code
+   * {context.userId}} would look for a value with key {@code userId} in the {@link ProblemContext}.
+   *
+   * @since 3.0.0
+   */
+  protected static final String CONTEXT_PREFIX = "context.";
+
+  /**
+   * Regular expression pattern to identify placeholders in override templates. It matches any
+   * substring enclosed in curly braces, such as {@code {problem.type}} or {@code {context.userId}}.
+   *
+   * @since 3.0.0
+   */
+  protected static final String PLACEHOLDER_REGEX = "\\{([^}]+)}";
+
+  /**
+   * Compiled pattern for detecting placeholders in override templates. This is used to find and
+   * process placeholders when applying overrides.
+   *
+   * @since 3.0.0
+   */
+  protected static final Pattern PLACEHOLDER_PATTERN = Pattern.compile(PLACEHOLDER_REGEX);
 
   private final PostProcessorSettings settings;
 
@@ -145,7 +167,7 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    * @return true if override is allowed
    * @since 1.2.0
    */
-  protected boolean canOverride(boolean requiresProblemField, boolean hasProblemField) {
+  protected final boolean canOverride(boolean requiresProblemField, boolean hasProblemField) {
     return !requiresProblemField || hasProblemField;
   }
 
@@ -304,7 +326,7 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    * @return the string representation or empty string
    * @since 1.2.0
    */
-  protected String stringOrEmpty(@Nullable Object value) {
+  protected final String stringOrEmpty(@Nullable Object value) {
     return value != null ? value.toString() : "";
   }
 
@@ -319,7 +341,7 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    * @since 1.2.0
    */
   protected boolean hasRemainingUnknownPlaceholders(String value) {
-    return PLACEHOLDER.matcher(value).find();
+    return PLACEHOLDER_PATTERN.matcher(value).find();
   }
 
   /**
@@ -328,12 +350,12 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    * @return the post-processor settings
    * @since 1.2.0
    */
-  protected PostProcessorSettings getSettings() {
+  protected final PostProcessorSettings getSettings() {
     return settings;
   }
 
   private boolean allContextPlaceholdersSatisfied(String template, ProblemContext context) {
-    Matcher matcher = PLACEHOLDER.matcher(template);
+    Matcher matcher = PLACEHOLDER_PATTERN.matcher(template);
     while (matcher.find()) {
       String key = matcher.group(1);
       if (key.startsWith(CONTEXT_PREFIX)
@@ -345,7 +367,7 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
   }
 
   private String resolveContextPlaceholders(String template, ProblemContext context) {
-    Matcher matcher = PLACEHOLDER.matcher(template);
+    Matcher matcher = PLACEHOLDER_PATTERN.matcher(template);
     StringBuilder result = new StringBuilder();
     while (matcher.find()) {
       String key = matcher.group(1);

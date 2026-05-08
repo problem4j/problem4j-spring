@@ -38,6 +38,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @since 1.2.0
  */
+@FunctionalInterface
 public interface ProblemPostProcessor {
 
   /**

@@ -18,6 +18,7 @@ package io.github.problem4j.spring.web.autoconfigure;
 
 import com.fasterxml.jackson.databind.Module;
 import io.github.problem4j.core.DefaultProblemMapper;
+import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemMapper;
 import io.github.problem4j.jackson2.ProblemModule;
 import io.github.problem4j.spring.web.CachingProblemResolverStore;
@@ -104,7 +105,8 @@ public class ProblemAutoConfiguration {
    * <ul>
    *   <li>{@code {problem.type}} - replaced with the original problem's type URI
    *   <li>{@code {problem.instance}} - replaced with the original problem's instance URI
-   *   <li>{@code {context.traceId}} - replaced with the current trace identifier, if available
+   *   <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@link
+   *       ProblemContext}
    * </ul>
    *
    * <p>This allows enriching or normalizing problem responses without modifying the original

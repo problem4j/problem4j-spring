@@ -25,6 +25,7 @@ import org.springframework.validation.method.MethodValidationResult;
  *
  * @since 1.2.0
  */
+@FunctionalInterface
 public interface MethodValidationResultSupport {
 
   /**

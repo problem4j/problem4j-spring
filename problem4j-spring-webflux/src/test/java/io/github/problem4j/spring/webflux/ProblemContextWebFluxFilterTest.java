@@ -34,8 +34,7 @@ class ProblemContextWebFluxFilterTest {
 
     filter.filter(exchange, ex -> Mono.empty()).block();
 
-    assertThat((String) exchange.getAttribute(TRACE_ID_ATTRIBUTE))
-        .matches("^urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
+    assertThat((String) exchange.getAttribute(TRACE_ID_ATTRIBUTE)).matches("^[0-9a-f]{32}$");
   }
 
   @Test
@@ -47,8 +46,7 @@ class ProblemContextWebFluxFilterTest {
 
     filter.filter(exchange, ex -> Mono.empty()).block();
 
-    assertThat((String) exchange.getAttribute(TRACE_ID_ATTRIBUTE))
-        .matches("^urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
+    assertThat((String) exchange.getAttribute(TRACE_ID_ATTRIBUTE)).matches("^[0-9a-f]{32}$");
   }
 
   @Test

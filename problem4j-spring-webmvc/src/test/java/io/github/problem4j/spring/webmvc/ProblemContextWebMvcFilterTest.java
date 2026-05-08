@@ -34,8 +34,7 @@ class ProblemContextWebMvcFilterTest {
 
     filter.doFilterInternal(request, response, (req, res) -> {});
 
-    assertThat((String) request.getAttribute(TRACE_ID_ATTRIBUTE))
-        .matches("^urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
+    assertThat((String) request.getAttribute(TRACE_ID_ATTRIBUTE)).matches("^[0-9a-f]{32}$");
   }
 
   @Test
@@ -48,8 +47,7 @@ class ProblemContextWebMvcFilterTest {
 
     filter.doFilterInternal(request, response, (req, res) -> {});
 
-    assertThat((String) request.getAttribute(TRACE_ID_ATTRIBUTE))
-        .matches("^urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
+    assertThat((String) request.getAttribute(TRACE_ID_ATTRIBUTE)).matches("^[0-9a-f]{32}$");
   }
 
   @Test

@@ -21,10 +21,16 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.core.MethodParameter;
 
 /**
- * Marker interface for method parameter support in problem4j-spring-web.
+ * Strategy for resolving method parameter names, supporting Spring's common binding annotations
+ * such as {@code @RequestParam}, {@code @PathVariable}, {@code @RequestHeader}, and
+ * {@code @ModelAttribute}. If a supported annotation is present and specifies an explicit name,
+ * that name is returned; otherwise, the parameter's discovered name is used. Unknown or unsupported
+ * annotations are ignored, and the parameter name resolution falls back to the default behavior
+ * (e.g. using Java 8+ parameter name discovery if available).
  *
  * @since 1.2.0
  */
+@FunctionalInterface
 public interface MethodParameterSupport {
 
   /**

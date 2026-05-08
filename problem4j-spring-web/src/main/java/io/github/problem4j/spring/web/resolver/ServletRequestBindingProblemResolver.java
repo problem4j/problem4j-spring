@@ -62,8 +62,25 @@ import org.springframework.web.bind.ServletRequestBindingException;
  */
 public class ServletRequestBindingProblemResolver extends AbstractProblemResolver {
 
-  private static final Pattern MISSING_ATTRIBUTE_PATTERN =
-      Pattern.compile("^Missing (session|request) attribute '([^']+)'");
+  /**
+   * Regular expression to match generic ServletRequestBindingException messages indicating missing
+   * session or request attributes, e.g. "Missing session attribute 'userId'". Captures the scope
+   * (session or request) and the attribute name.
+   *
+   * @since 3.0.0
+   */
+  protected static final String MISSING_ATTRIBUTE_REGEX =
+      "^Missing (session|request) attribute '([^']+)'";
+
+  /**
+   * Pattern to match generic ServletRequestBindingException messages indicating missing session or
+   * request attributes, e.g. "Missing session attribute 'userId'". Captures the scope (session or
+   * request) and the attribute name.
+   *
+   * @since 3.0.0
+   */
+  protected static final Pattern MISSING_ATTRIBUTE_PATTERN =
+      Pattern.compile(MISSING_ATTRIBUTE_REGEX);
 
   /**
    * Creates a new {@link ServletRequestBindingProblemResolver} with default problem format.

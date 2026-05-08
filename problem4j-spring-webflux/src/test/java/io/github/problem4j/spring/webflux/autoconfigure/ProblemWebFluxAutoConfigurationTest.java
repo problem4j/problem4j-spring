@@ -53,6 +53,30 @@ class ProblemWebFluxAutoConfigurationTest {
 
   @SpringBootTest(
       classes = {WebFluxTestApp.class},
+      properties = {"problem4j.enabled=false"})
+  @Nested
+  class WithParentDisabled {
+
+    @Autowired(required = false)
+    private ProblemWebFluxAutoConfiguration problemWebFluxAutoConfiguration;
+
+    @Autowired(required = false)
+    private ProblemErrorWebFluxConfiguration problemErrorWebFluxConfiguration;
+
+    @Autowired(required = false)
+    private ProblemWebFluxProperties properties;
+
+    @Test
+    void contextLoadsWithoutProblemConfiguration() {
+      assertThat(problemWebFluxAutoConfiguration).isNull();
+      assertThat(problemErrorWebFluxConfiguration).isNull();
+
+      assertThat(properties).isNull();
+    }
+  }
+
+  @SpringBootTest(
+      classes = {WebFluxTestApp.class},
       properties = {"problem4j.webflux.enabled=false"})
   @Nested
   class WithDisabled {

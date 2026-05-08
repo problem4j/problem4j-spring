@@ -28,6 +28,7 @@ import java.util.Optional;
  *
  * @since 1.2.0
  */
+@FunctionalInterface
 public interface ProblemResolverStore {
 
   /**

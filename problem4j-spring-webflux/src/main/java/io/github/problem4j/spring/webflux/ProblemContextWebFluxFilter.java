@@ -115,11 +115,10 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    * @since 1.2.0
    */
   protected String initTraceId(ServerWebExchange exchange) {
-    if (!StringUtils.hasLength(getSettings().getTracingHeaderName())) {
+    if (!StringUtils.hasLength(settings.getTracingHeaderName())) {
       return createNewTraceId(exchange);
     }
-    String traceId =
-        exchange.getRequest().getHeaders().getFirst(getSettings().getTracingHeaderName());
+    String traceId = exchange.getRequest().getHeaders().getFirst(settings.getTracingHeaderName());
     return StringUtils.hasLength(traceId) ? traceId : createNewTraceId(exchange);
   }
 
@@ -127,14 +126,14 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    * Generates a new trace identifier.
    *
    * <p>Subclasses may override this method to customize the trace ID generation logic. By default,
-   * it delegates to {@code getRandomTraceId()}.
+   * it generates a random UUID and removes dashes, producing a 32-character lowercase hex string.
    *
    * @param exchange the current server exchange
    * @return a newly generated trace ID
    * @since 1.2.0
    */
   protected String createNewTraceId(ServerWebExchange exchange) {
-    return "urn:uuid:" + UUID.randomUUID();
+    return UUID.randomUUID().toString().replace("-", "");
   }
 
   /**
@@ -171,11 +170,11 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    * @since 1.2.0
    */
   protected void assignTracingHeader(ServerWebExchange exchange, ProblemContext context) {
-    if (StringUtils.hasLength(getSettings().getTracingHeaderName())) {
+    if (StringUtils.hasLength(settings.getTracingHeaderName())) {
       exchange
           .getResponse()
           .getHeaders()
-          .set(getSettings().getTracingHeaderName(), context.get("traceId"));
+          .set(settings.getTracingHeaderName(), context.get("traceId"));
     }
   }
 
@@ -203,7 +202,7 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    * @return the current settings
    * @since 1.2.0
    */
-  protected ProblemContextSettings getSettings() {
+  protected final ProblemContextSettings getSettings() {
     return settings;
   }
 }

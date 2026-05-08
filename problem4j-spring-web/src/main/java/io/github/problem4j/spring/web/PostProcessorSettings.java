@@ -23,8 +23,9 @@ import org.jspecify.annotations.Nullable;
  * how problem responses are modified before being returned to the client.
  *
  * <p>Implementations of this interface typically provide values from application configuration (for
- * example, {@code problem4j.type-override} and {@code problem4j.instance-override}) and may include
- * runtime placeholders that are resolved during post-processing.
+ * example, {@code problem4j.type-override}, {@code problem4j.type-override} and {@code
+ * problem4j.instance-override}) and may include runtime placeholders that are resolved during
+ * post-processing.
  *
  * <p>These settings allow applications to dynamically customize problem types, titles, and
  * instances to match organizational or tracing conventions.

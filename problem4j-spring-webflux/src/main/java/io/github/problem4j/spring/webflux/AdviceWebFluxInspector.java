@@ -34,6 +34,7 @@ import org.springframework.web.server.ServerWebExchange;
  *
  * @since 1.2.0
  */
+@FunctionalInterface
 public interface AdviceWebFluxInspector {
 
   /**
