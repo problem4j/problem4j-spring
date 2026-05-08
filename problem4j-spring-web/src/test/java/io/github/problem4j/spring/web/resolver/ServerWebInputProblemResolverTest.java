@@ -41,6 +41,11 @@ class ServerWebInputProblemResolverTest {
   }
 
   @Test
+  void givenDefaultConstructor_whenGetExceptionClass_thenReturnsServerWebInputException() {
+    assertThat(serverWebInputMapping.getExceptionClass()).isEqualTo(ServerWebInputException.class);
+  }
+
+  @Test
   void givenExceptionWithCauseAndWithoutPropertyName_shouldDelegateAndIncludeMethodParameter()
       throws NoSuchMethodException {
     Method method = DummyController.class.getMethod("paramMethod", Boolean.class);

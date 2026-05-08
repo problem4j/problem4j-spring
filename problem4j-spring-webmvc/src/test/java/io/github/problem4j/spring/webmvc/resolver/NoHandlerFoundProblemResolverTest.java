@@ -1,0 +1,63 @@
+/*
+ * Copyright 2025-2026 The Problem4J Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.github.problem4j.spring.webmvc.resolver;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import io.github.problem4j.core.Problem;
+import io.github.problem4j.core.ProblemContext;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.NoHandlerFoundException;
+
+class NoHandlerFoundProblemResolverTest {
+
+  private NoHandlerFoundProblemResolver resolver;
+
+  @BeforeEach
+  void beforeEach() {
+    resolver = new NoHandlerFoundProblemResolver();
+  }
+
+  @Test
+  void givenDefaultConstructor_whenGetExceptionClass_thenReturnsNoHandlerFoundException() {
+    assertThat(resolver.getExceptionClass()).isEqualTo(NoHandlerFoundException.class);
+  }
+
+  @Test
+  void givenNoHandlerFoundException_whenResolve_thenReturnsNotFoundProblem() {
+    NoHandlerFoundException ex = new NoHandlerFoundException("GET", "/missing", new HttpHeaders());
+
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.NOT_FOUND);
+
+    assertThat(problem).isEqualTo(Problem.builder().status(HttpStatus.NOT_FOUND.value()).build());
+  }
+
+  @Test
+  void givenNoHandlerFoundException_whenResolve_thenIgnoresPassedStatus() {
+    NoHandlerFoundException ex = new NoHandlerFoundException("GET", "/missing", new HttpHeaders());
+
+    Problem problem =
+        resolver.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+
+    assertThat(problem.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+  }
+}

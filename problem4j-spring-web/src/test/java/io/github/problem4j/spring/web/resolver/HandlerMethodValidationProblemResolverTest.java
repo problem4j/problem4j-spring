@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.web.resolver;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
@@ -35,6 +36,12 @@ class HandlerMethodValidationProblemResolverTest {
   @BeforeEach
   void beforeEach() {
     handlerMethodValidationProblemResolver = new HandlerMethodValidationProblemResolver();
+  }
+
+  @Test
+  void givenDefaultConstructor_whenGetExceptionClass_thenReturnsHandlerMethodValidationException() {
+    assertThat(handlerMethodValidationProblemResolver.getExceptionClass())
+        .isEqualTo(HandlerMethodValidationException.class);
   }
 
   @Test

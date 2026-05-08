@@ -37,6 +37,11 @@ class TypeMismatchProblemResolverTest {
   }
 
   @Test
+  void givenDefaultConstructor_whenGetExceptionClass_thenReturnsTypeMismatchException() {
+    assertThat(typeMismatchMapping.getExceptionClass()).isEqualTo(TypeMismatchException.class);
+  }
+
+  @Test
   void givenExceptionWithParameterNameAndType_shouldReturnProblemWithAll() {
     TypeMismatchException ex = new TypeMismatchException("42", Integer.class);
     ex.initPropertyName("age");
