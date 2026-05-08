@@ -188,11 +188,7 @@ public class ProblemWebMvcProperties {
       return new ExceptionAdvice(DEFAULT_ENABLED);
     }
 
-    /**
-     * Whether the {@code ExceptionWebMvcAdvice} bean should be registered.
-     *
-     * @since 1.2.0
-     */
+    /** Whether the {@code ExceptionWebMvcAdvice} bean should be registered. */
     private final boolean enabled;
 
     /**
@@ -246,11 +242,7 @@ public class ProblemWebMvcProperties {
       return new ProblemExceptionAdvice(DEFAULT_ENABLED);
     }
 
-    /**
-     * Whether the {@code ProblemExceptionWebMvcAdvice} bean should be registered.
-     *
-     * @since 1.2.0
-     */
+    /** Whether the {@code ProblemExceptionWebMvcAdvice} bean should be registered. */
     private final boolean enabled;
 
     /**
@@ -304,11 +296,7 @@ public class ProblemWebMvcProperties {
       return new ProblemContextFilter(DEFAULT_ENABLED);
     }
 
-    /**
-     * Whether the {@code ProblemContextWebMvcFilter} bean should be registered.
-     *
-     * @since 1.2.0
-     */
+    /** Whether the {@code ProblemContextWebMvcFilter} bean should be registered. */
     private final boolean enabled;
 
     /**
@@ -362,11 +350,7 @@ public class ProblemWebMvcProperties {
       return new ExceptionHandler(DEFAULT_ENABLED);
     }
 
-    /**
-     * Whether the {@code ProblemEnhancedWebMvcHandler} should be registered.
-     *
-     * @since 1.2.0
-     */
+    /** Whether the {@code ProblemEnhancedWebMvcHandler} should be registered. */
     private final boolean enabled;
 
     /**
@@ -424,11 +408,7 @@ public class ProblemWebMvcProperties {
       return new ErrorController(DEFAULT_ENABLED);
     }
 
-    /**
-     * Whether the {@code ProblemErrorController} should be registered.
-     *
-     * @since 1.2.0
-     */
+    /** Whether the {@code ProblemErrorController} should be registered. */
     private final boolean enabled;
 
     /**

@@ -191,11 +191,7 @@ public class ProblemWebFluxProperties {
       return new ExceptionAdvice(DEFAULT_ENABLED);
     }
 
-    /**
-     * Whether the {@code ExceptionWebFluxAdvice} bean should be registered.
-     *
-     * @since 1.2.0
-     */
+    /** Whether the {@code ExceptionWebFluxAdvice} bean should be registered. */
     private final boolean enabled;
 
     /**
@@ -249,11 +245,7 @@ public class ProblemWebFluxProperties {
       return new ProblemExceptionAdvice(DEFAULT_ENABLED);
     }
 
-    /**
-     * Whether the {@code ProblemExceptionWebFluxAdvice} bean should be registered.
-     *
-     * @since 1.2.0
-     */
+    /** Whether the {@code ProblemExceptionWebFluxAdvice} bean should be registered. */
     private final boolean enabled;
 
     /**
@@ -307,11 +299,7 @@ public class ProblemWebFluxProperties {
       return new ProblemContextFilter(DEFAULT_ENABLED);
     }
 
-    /**
-     * Whether the {@code ProblemContextWebFluxFilter} bean should be registered.
-     *
-     * @since 1.2.0
-     */
+    /** Whether the {@code ProblemContextWebFluxFilter} bean should be registered. */
     private final boolean enabled;
 
     /**
@@ -365,11 +353,7 @@ public class ProblemWebFluxProperties {
       return new ExceptionHandler(DEFAULT_ENABLED);
     }
 
-    /**
-     * Whether the {@code ProblemEnhancedWebFluxHandler} should be registered.
-     *
-     * @since 1.2.0
-     */
+    /** Whether the {@code ProblemEnhancedWebFluxHandler} should be registered. */
     private final boolean enabled;
 
     /**
@@ -409,17 +393,11 @@ public class ProblemWebFluxProperties {
    */
   public static class ErrorWebExceptionHandler {
 
-    /**
-     * Default enabled value for {@code ErrorWebExceptionHandler} configuration group.
-     *
-     * @since 1.2.0
-     */
+    /** Default enabled value for {@code ErrorWebExceptionHandler} configuration group. */
     public static final boolean DEFAULT_ENABLED = true;
 
     /**
      * Default enabled value as a string for {@code ErrorWebExceptionHandler} configuration group.
-     *
-     * @since 1.2.0
      */
     public static final String DEFAULT_ENABLED_VALUE = "true";
 
@@ -427,11 +405,7 @@ public class ProblemWebFluxProperties {
       return new ErrorWebExceptionHandler(DEFAULT_ENABLED);
     }
 
-    /**
-     * Whether the {@code ProblemErrorWebExceptionHandler} should be registered.
-     *
-     * @since 1.2.0
-     */
+    /** Whether the {@code ProblemErrorWebExceptionHandler} should be registered. */
     private final boolean enabled;
 
     /**

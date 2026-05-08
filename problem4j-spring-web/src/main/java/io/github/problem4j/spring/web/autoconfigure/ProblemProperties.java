@@ -251,11 +251,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
       return new ResolverCaching(DEFAULT_ENABLED);
     }
 
-    /**
-     * Indicates whether resolver lookup caching is enabled.
-     *
-     * @since 1.2.0
-     */
+    /** Indicates whether resolver lookup caching is enabled. */
     private final boolean enabled;
 
     /**
