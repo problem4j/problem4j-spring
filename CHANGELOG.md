@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-05-08
+
 ### Added
 
 - Add `HttpStatusTitleResolver` - a SPI implementation fo `StatusTitleResolver` using Spring's `HttpStatus`.
