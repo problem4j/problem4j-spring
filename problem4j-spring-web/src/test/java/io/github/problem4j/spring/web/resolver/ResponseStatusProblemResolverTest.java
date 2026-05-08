@@ -22,8 +22,6 @@
 package io.github.problem4j.spring.web.resolver;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
@@ -31,39 +29,44 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.method.MethodValidationResult;
-import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.server.ResponseStatusException;
 
-class HandlerMethodValidationProblemResolverTest {
+class ResponseStatusProblemResolverTest {
 
-  private HandlerMethodValidationProblemResolver handlerMethodValidationProblemResolver;
+  private ResponseStatusProblemResolver resolver;
 
   @BeforeEach
   void beforeEach() {
-    handlerMethodValidationProblemResolver = new HandlerMethodValidationProblemResolver();
+    resolver = new ResponseStatusProblemResolver();
   }
 
   @Test
-  void givenDefaultConstructor_whenGetExceptionClass_thenReturnsHandlerMethodValidationException() {
-    assertThat(handlerMethodValidationProblemResolver.getExceptionClass())
-        .isEqualTo(HandlerMethodValidationException.class);
+  void givenDefaultConstructor_whenGetExceptionClass_thenReturnsResponseStatusException() {
+    assertThat(resolver.getExceptionClass()).isEqualTo(ResponseStatusException.class);
   }
 
   @Test
-  void givenHandlerMethodValidationException_shouldGenerateProblem() {
-    MethodValidationResult mockMethodValidationResult = mock(MethodValidationResult.class);
-    HandlerMethodValidationException ex =
-        new HandlerMethodValidationException(mockMethodValidationResult);
+  void givenResponseStatusException_whenResolve_thenCopiesStatusFromException() {
+    ResponseStatusException ex = new ResponseStatusException(HttpStatus.NOT_FOUND);
 
     Problem problem =
-        handlerMethodValidationProblemResolver.resolveProblem(
-            ProblemContext.create().put("traceId", "traceId"),
-            ex,
-            new HttpHeaders(),
-            ex.getStatusCode());
+        resolver
+            .resolveBuilder(
+                ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR)
+            .build();
 
-    assertEquals(Problem.BLANK_TYPE, problem.getType());
-    assertEquals(HttpStatus.BAD_REQUEST.getReasonPhrase(), problem.getTitle());
-    assertEquals(HttpStatus.BAD_REQUEST.value(), problem.getStatus());
+    assertThat(problem.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
+  }
+
+  @Test
+  void givenResponseStatusExceptionWithCustomStatus_whenResolve_thenUsesExceptionStatus() {
+    ResponseStatusException ex = new ResponseStatusException(HttpStatus.PAYMENT_REQUIRED);
+
+    Problem problem =
+        resolver
+            .resolveBuilder(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.OK)
+            .build();
+
+    assertThat(problem.getStatus()).isEqualTo(HttpStatus.PAYMENT_REQUIRED.value());
   }
 }
