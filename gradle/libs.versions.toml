@@ -1,9 +1,9 @@
 [versions]
 idea-ext = "1.4.1"
-nmcp = "1.4.4"
+nmcp = "1.5.0"
 problem4j-core = "1.4.3"
 problem4j-jackson2 = "1.4.3"
-spotless = "8.2.1"
+spotless = "8.4.0"
 spring-boot = "3.5.14"
 
 [plugins]
