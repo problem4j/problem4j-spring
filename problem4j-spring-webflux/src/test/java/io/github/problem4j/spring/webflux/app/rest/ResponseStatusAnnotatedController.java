@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webflux.app.rest;
 
+import io.github.problem4j.spring.webflux.app.problem.BothAnnotatedException;
 import io.github.problem4j.spring.webflux.app.problem.ForbiddenAnnotatedException;
 import io.github.problem4j.spring.webflux.app.problem.ReasonAnnotatedException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,5 +35,10 @@ public class ResponseStatusAnnotatedController {
   @GetMapping("/reason-annotated")
   public String reasonAnnotated() {
     throw new ReasonAnnotatedException();
+  }
+
+  @GetMapping("/both-annotated")
+  public String bothAnnotated() {
+    throw new BothAnnotatedException();
   }
 }
