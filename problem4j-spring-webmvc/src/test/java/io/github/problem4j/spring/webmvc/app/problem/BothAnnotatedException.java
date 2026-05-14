@@ -19,31 +19,12 @@
  * SOFTWARE.
  */
 
-package io.github.problem4j.spring.webmvc.app.rest;
+package io.github.problem4j.spring.webmvc.app.problem;
 
-import io.github.problem4j.spring.webmvc.app.problem.BothAnnotatedException;
-import io.github.problem4j.spring.webmvc.app.problem.ForbiddenAnnotatedException;
-import io.github.problem4j.spring.webmvc.app.problem.ReasonAnnotatedException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.github.problem4j.core.ProblemMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-@RestController
-@RequestMapping(path = "/response-status-annotated")
-public class ResponseStatusAnnotatedController {
-
-  @GetMapping("/forbidden-status-annotated")
-  public String responseStatusAnnotated() {
-    throw new ForbiddenAnnotatedException();
-  }
-
-  @GetMapping("/reason-annotated")
-  public String reasonAnnotated() {
-    throw new ReasonAnnotatedException();
-  }
-
-  @GetMapping("/both-annotated")
-  public String bothAnnotated() {
-    throw new BothAnnotatedException();
-  }
-}
+@ResponseStatus(HttpStatus.FORBIDDEN)
+@ProblemMapping(status = 418, title = "Both Annotated Exception")
+public class BothAnnotatedException extends RuntimeException {}
