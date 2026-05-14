@@ -68,4 +68,19 @@ class ResponseStatusAnnotatedExceptionWebMvcTest {
 
     assertThat(problem).isEqualTo(Problem.of(HttpStatus.FORBIDDEN.value(), "this is reason"));
   }
+
+  @Test
+  void givenBothResponseStatusAndProblemMappingAnnotations_shouldPreferProblemMapping()
+      throws Exception {
+    ResponseEntity<String> response =
+        restTemplate.getForEntity("/response-status-annotated/both-annotated", String.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.valueOf(418));
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+
+    Problem problem = objectMapper.readValue(response.getBody(), Problem.class);
+
+    assertThat(problem)
+        .isEqualTo(Problem.builder().status(418).title("Both Annotated Exception").build());
+  }
 }
