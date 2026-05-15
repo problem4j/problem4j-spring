@@ -33,6 +33,7 @@ dependencies {
     testImplementation(libs.jspecify)
     testImplementation(libs.kotlin.reflect)
     testImplementation(libs.kotlin.stdlib)
+    testImplementation(libs.kotlin.test)
 
     testRuntimeOnly(libs.junit.platform.launcher)
 

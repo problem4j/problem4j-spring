@@ -20,6 +20,7 @@ dependencies {
     compileOnly(libs.jackson3.dataformat.xml)
     compileOnly(libs.jakarta.servlet.api)
     compileOnly(libs.jakarta.validation.api)
+    compileOnly(libs.kotlin.stdlib)
 
     // for backwards compatibility with jackson-databind v2
     compileOnly(libs.jackson2.databind)
@@ -38,6 +39,9 @@ dependencies {
     testImplementation(libs.archunit.junit5)
     testImplementation(libs.jakarta.servlet.api)
     testImplementation(libs.jspecify)
+    testImplementation(libs.kotlin.reflect)
+    testImplementation(libs.kotlin.stdlib)
+    testImplementation(libs.kotlin.test)
 
     testRuntimeOnly(libs.junit.platform.launcher)
 

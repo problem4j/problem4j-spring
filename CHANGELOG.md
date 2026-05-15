@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+### Added
+
+- Add Kotlin extensions and DSL functions for common Problem4J classes.
+
 ### Fixed
 
 - Make `Automatic-Module-Name` stable, by adding it to `META-INF/MANIFEST.MF`.
