@@ -20,7 +20,6 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.multipart.MultipartException;
 
@@ -55,8 +54,8 @@ public class MultipartProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Resolves the given {@link MultipartException} into a {@link Problem} with {@link
-   * HttpStatus#BAD_REQUEST} status.
+   * Resolves the given {@link MultipartException} into a {@link Problem} with {@code 400 Bad
+   * Request} status.
    *
    * @param context the {@link ProblemContext} providing information about the current request
    * @param ex the {@link MultipartException} to be resolved
@@ -68,6 +67,6 @@ public class MultipartProblemResolver extends AbstractProblemResolver {
   @Override
   public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return Problem.of(HttpStatus.BAD_REQUEST.value());
+    return BAD_REQUEST;
   }
 }

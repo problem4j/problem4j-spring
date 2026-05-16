@@ -20,7 +20,6 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 
@@ -59,9 +58,9 @@ public class HttpMediaTypeNotAcceptableProblemResolver extends AbstractProblemRe
   }
 
   /**
-   * Returns a {@link Problem} with {@link HttpStatus#NOT_ACCEPTABLE} (HTTP 406). Other parameters
-   * ({@code context}, {@code headers}, {@code status}) are ignored because the status is dictated
-   * by the semantics of {@link HttpMediaTypeNotAcceptableException}.
+   * Returns a {@link Problem} with {@code 406 Not Acceptable}. Other parameters ({@code context},
+   * {@code headers}, {@code status}) are ignored because the status is dictated by the semantics of
+   * {@link HttpMediaTypeNotAcceptableException}.
    *
    * @param context problem context (unused)
    * @param ex the triggering {@link HttpMediaTypeNotAcceptableException}
@@ -73,6 +72,6 @@ public class HttpMediaTypeNotAcceptableProblemResolver extends AbstractProblemRe
   @Override
   public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return Problem.of(HttpStatus.NOT_ACCEPTABLE.value());
+    return NOT_ACCEPTABLE;
   }
 }

@@ -16,8 +16,10 @@
 
 package io.github.problem4j.spring.web.resolver;
 
+import io.github.problem4j.core.Problem;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.jspecify.annotations.Nullable;
+import org.springframework.http.HttpStatus;
 
 /**
  * Convenience base class for {@link ProblemResolver}-s.
@@ -25,6 +27,51 @@ import org.jspecify.annotations.Nullable;
  * @since 1.2.0
  */
 public abstract class AbstractProblemResolver implements ProblemResolver {
+
+  /**
+   * Pre-built {@link Problem} with {@link HttpStatus#BAD_REQUEST} (400) status.
+   *
+   * @since 3.1.0
+   */
+  protected static final Problem BAD_REQUEST = Problem.of(HttpStatus.BAD_REQUEST.value());
+
+  /**
+   * Pre-built {@link Problem} with {@link HttpStatus#NOT_FOUND} (404) status.
+   *
+   * @since 3.1.0
+   */
+  protected static final Problem NOT_FOUND = Problem.of(HttpStatus.NOT_FOUND.value());
+
+  /**
+   * Pre-built {@link Problem} with {@link HttpStatus#METHOD_NOT_ALLOWED} (405) status.
+   *
+   * @since 3.1.0
+   */
+  protected static final Problem METHOD_NOT_ALLOWED =
+      Problem.of(HttpStatus.METHOD_NOT_ALLOWED.value());
+
+  /**
+   * Pre-built {@link Problem} with {@link HttpStatus#NOT_ACCEPTABLE} (406) status.
+   *
+   * @since 3.1.0
+   */
+  protected static final Problem NOT_ACCEPTABLE = Problem.of(HttpStatus.NOT_ACCEPTABLE.value());
+
+  /**
+   * Pre-built {@link Problem} with {@link HttpStatus#UNSUPPORTED_MEDIA_TYPE} (415) status.
+   *
+   * @since 3.1.0
+   */
+  protected static final Problem UNSUPPORTED_MEDIA_TYPE =
+      Problem.of(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value());
+
+  /**
+   * Pre-built {@link Problem} with {@link HttpStatus#INTERNAL_SERVER_ERROR} (500) status.
+   *
+   * @since 3.1.0
+   */
+  protected static final Problem INTERNAL_SERVER_ERROR =
+      Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
 
   private final Class<? extends Exception> clazz;
 

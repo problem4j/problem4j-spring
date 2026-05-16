@@ -102,7 +102,7 @@ public class ServerErrorProblemResolver extends AbstractProblemResolver {
           .build();
     }
 
-    return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    return INTERNAL_SERVER_ERROR;
   }
 
   /**

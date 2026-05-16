@@ -20,7 +20,6 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 
@@ -59,9 +58,8 @@ public class HttpMediaTypeNotSupportedProblemResolver extends AbstractProblemRes
   }
 
   /**
-   * Returns a {@link Problem} with status {@link HttpStatus#UNSUPPORTED_MEDIA_TYPE} (HTTP 415).
-   * Other parameters are ignored because the status is mandated by the semantics of {@link
-   * HttpMediaTypeNotSupportedException}.
+   * Returns a {@link Problem} with {@code 415 Unsupported Media Type}. Other parameters are ignored
+   * because the status is mandated by the semantics of {@link HttpMediaTypeNotSupportedException}.
    *
    * @param context problem context (unused)
    * @param ex the triggering {@link HttpMediaTypeNotSupportedException}
@@ -73,6 +71,6 @@ public class HttpMediaTypeNotSupportedProblemResolver extends AbstractProblemRes
   @Override
   public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return Problem.of(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value());
+    return UNSUPPORTED_MEDIA_TYPE;
   }
 }

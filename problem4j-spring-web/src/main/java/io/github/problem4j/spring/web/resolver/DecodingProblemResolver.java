@@ -21,7 +21,6 @@ import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
 import org.springframework.core.codec.DecodingException;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 /**
@@ -55,8 +54,7 @@ public class DecodingProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Returns a {@link Problem} for {@link DecodingException} with {@link HttpStatus#BAD_REQUEST}
-   * status.
+   * Returns a {@link Problem} for {@link DecodingException} with {@code 400 Bad Request} status.
    *
    * @param context problem context (unused)
    * @param ex the triggering {@link DecodingException}
@@ -68,6 +66,6 @@ public class DecodingProblemResolver extends AbstractProblemResolver {
   @Override
   public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return Problem.of(HttpStatus.BAD_REQUEST.value());
+    return BAD_REQUEST;
   }
 }

@@ -29,7 +29,6 @@ import java.util.Optional;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.codec.DecodingException;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ServerWebInputException;
 import tools.jackson.databind.exc.MismatchedInputException;
@@ -159,6 +158,6 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
     if (ex.getCause() instanceof MismatchedInputException e) {
       return jacksonErrorHelper.resolveMismatchedInput(e);
     }
-    return Problem.of(HttpStatus.BAD_REQUEST.value());
+    return BAD_REQUEST;
   }
 }

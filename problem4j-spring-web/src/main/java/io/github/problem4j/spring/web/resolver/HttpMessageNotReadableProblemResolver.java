@@ -22,7 +22,6 @@ import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.SimpleTypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapper;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import tools.jackson.databind.exc.MismatchedInputException;
@@ -78,9 +77,9 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
   }
 
   /**
-   * Returns a {@link Problem} with {@link HttpStatus#BAD_REQUEST} (HTTP 400). Other parameters
-   * ({@code context}, {@code headers}, {@code status}) are ignored because a malformed or
-   * unreadable request body always maps to a client error.
+   * Returns a {@link Problem} with {@code 400 Bad Request}. Other parameters ({@code context},
+   * {@code headers}, {@code status}) are ignored because a malformed or unreadable request body
+   * always maps to a client error.
    *
    * @param context problem context (unused)
    * @param ex the triggering {@link HttpMessageNotReadableException}
@@ -95,6 +94,6 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
     if (ex.getCause() instanceof MismatchedInputException e) {
       return jacksonErrorHelper.resolveMismatchedInput(e);
     }
-    return Problem.of(HttpStatus.BAD_REQUEST.value());
+    return BAD_REQUEST;
   }
 }

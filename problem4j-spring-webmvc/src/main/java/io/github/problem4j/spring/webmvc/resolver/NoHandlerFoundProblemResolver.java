@@ -21,7 +21,6 @@ import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.resolver.AbstractProblemResolver;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -59,10 +58,10 @@ public class NoHandlerFoundProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Returns a {@link Problem} with {@link HttpStatus#NOT_FOUND} (HTTP 404) indicating no controller
-   * handler matched the incoming request (URL + HTTP method). Other parameters ({@code context},
-   * {@code headers}, {@code status}) are ignored because the semantics of {@link
-   * NoHandlerFoundException} unambiguously map to 404.
+   * Returns a {@link Problem} with {@code 404 Not Found} indicating no controller handler matched
+   * the incoming request (URL + HTTP method). Other parameters ({@code context}, {@code headers},
+   * {@code status}) are ignored because the semantics of {@link NoHandlerFoundException}
+   * unambiguously map to 404.
    *
    * @param context problem context (unused)
    * @param ex the triggering {@link NoHandlerFoundException}
@@ -74,6 +73,6 @@ public class NoHandlerFoundProblemResolver extends AbstractProblemResolver {
   @Override
   public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return Problem.of(HttpStatus.NOT_FOUND.value());
+    return NOT_FOUND;
   }
 }
