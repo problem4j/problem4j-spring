@@ -19,6 +19,7 @@ dependencies {
     compileOnly(libs.jakarta.validation.api)
 
     annotationProcessor(platform(libs.spring.boot.dependencies))
+    annotationProcessor(libs.spring.boot.autoconfigure.processor)
     annotationProcessor(libs.spring.boot.configuration.processor)
 
     // Test
