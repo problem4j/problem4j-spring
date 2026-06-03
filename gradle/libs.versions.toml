@@ -9,7 +9,7 @@ nullaway = "0.13.4"
 problem4j-core = "2.0.0"
 problem4j-jackson2 = "2.0.0"
 problem4j-jackson3 = "2.0.0"
-spotless = "8.4.0"
+spotless = "8.6.0"
 spring-boot = "4.0.6"
 
 [plugins]
