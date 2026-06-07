@@ -2,7 +2,7 @@ import internal.isTestTask
 import net.ltgt.gradle.errorprone.errorprone
 
 plugins {
-    id("internal.java-convention")
+    id("java")
     id("net.ltgt.errorprone")
 }
 

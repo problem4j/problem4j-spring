@@ -8,7 +8,6 @@ on:
       - "release-*"
     paths:
       - ".github/workflows/gradle-dependency-submission.yml"
-      - "buildSrc/**"
       - "gradle/**"
       - "**/*.gradle.kts"
       - "gradle.properties"

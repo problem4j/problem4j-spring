@@ -2,7 +2,6 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-    id("internal.common-convention")
     id("java-library")
 }
 
@@ -19,7 +18,11 @@ plugins {
 // Tests are NOT compiled with --release XYZ, so they may use newer Java APIs.
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(25)
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+    withSourcesJar()
+    withJavadocJar()
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -27,8 +30,22 @@ tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
 }
 
-tasks.named<JavaCompile>("compileJava") {
+tasks.named<JavaCompile>("compileJava").configure {
     options.release = 17
+}
+
+tasks.withType<Jar>().configureEach {
+    manifest {
+        attributes["Implementation-Title"] = project.name
+        attributes["Implementation-Version"] = project.version
+        attributes["Build-Jdk-Spec"] = java.toolchain.languageVersion.get().toString()
+        attributes["Created-By"] = "Gradle ${gradle.gradleVersion}"
+        attributes["Automatic-Module-Name"] = project.name.replace('-', '.')
+    }
+    from("${rootProject.rootDir}/LICENSE") {
+        into("META-INF/")
+        rename { "LICENSE.txt" }
+    }
 }
 
 tasks.withType<Test>().configureEach {
@@ -51,14 +68,20 @@ tasks.withType<Javadoc>().configureEach {
     javadocTool = javaToolchains.javadocToolFor { languageVersion = JavaLanguageVersion.of(17) }
 }
 
-tasks.withType<Jar>().configureEach {
-    manifest {
-        attributes["Implementation-Title"] = project.name
-        attributes["Implementation-Version"] = project.version
-        attributes["Created-By"] = "Gradle ${gradle.gradleVersion}"
+// Usage:
+//   ./gradlew printVersion
+tasks.register<DefaultTask>("printVersion") {
+    description = "Prints the current project version to the console."
+    group = "help"
+
+    val projectName = project.name
+    val projectVersion = project.version.toString()
+
+    doLast {
+        println("$projectName version: $projectVersion")
     }
-    from("${rootProject.rootDir}/LICENSE") {
-        into("META-INF/")
-        rename { "LICENSE.txt" }
-    }
+}
+
+tasks.withType<PublishToMavenLocal>().configureEach {
+    finalizedBy("printVersion")
 }
