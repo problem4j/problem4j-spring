@@ -1,7 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-    id("internal.common-convention")
     id("java-library")
 }
 
@@ -33,7 +33,7 @@ tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 
     testLogging {
-        events("passed", "skipped", "failed", "standardOut", "standardError")
+        events(TestLogEvent.FAILED, TestLogEvent.PASSED, TestLogEvent.SKIPPED)
         exceptionFormat = TestExceptionFormat.SHORT
         showStandardStreams = true
     }
@@ -45,7 +45,20 @@ tasks.withType<Test>().configureEach {
     systemProperty("user.country", "US")
 }
 
-// buildSrc/src/main/kotlin/internal.common-convention.gradle.kts - "printVersion" task definition
+// Usage:
+//   ./gradlew printVersion
+tasks.register<DefaultTask>("printVersion") {
+    description = "Prints the current project version to the console."
+    group = "help"
+
+    val projectName = project.name
+    val projectVersion = project.version.toString()
+
+    doLast {
+        println("$projectName version: $projectVersion")
+    }
+}
+
 tasks.withType<PublishToMavenLocal>().configureEach {
     finalizedBy("printVersion")
 }

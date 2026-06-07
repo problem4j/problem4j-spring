@@ -31,7 +31,7 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
-// see buildSrc/src/main/kotlin/internal.publishing-convention.gradle.kts
+// see build-logic/src/main/kotlin/internal.publishing-convention.gradle.kts
 internalPublishing {
     displayName = "Problem4J Spring WebMVC"
     description = "Spring WebMVC integration for library implementing RFC7807 (aka RFC9457)."

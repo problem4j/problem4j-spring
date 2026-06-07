@@ -1,5 +1,5 @@
 plugins {
-    id("internal.java-platform-convention")
+    id("java-platform")
     id("internal.publishing-convention")
     alias(libs.plugins.nmcp)
 }
@@ -14,7 +14,7 @@ dependencies {
     }
 }
 
-// see buildSrc/src/main/kotlin/internal.publishing-convention.gradle.kts
+// see build-logic/src/main/kotlin/internal.publishing-convention.gradle.kts
 internalPublishing {
     displayName = "Problem4J Spring BOM"
     description = "BOM of Spring integration for library implementing RFC7807 (aka RFC9457)."
