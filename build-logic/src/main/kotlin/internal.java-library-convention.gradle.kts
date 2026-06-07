@@ -6,7 +6,9 @@ plugins {
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(17)
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
     withSourcesJar()
     withJavadocJar()
 }
@@ -22,6 +24,7 @@ tasks.withType<Jar>().configureEach {
         attributes["Implementation-Version"] = project.version
         attributes["Build-Jdk-Spec"] = java.toolchain.languageVersion.get().toString()
         attributes["Created-By"] = "Gradle ${gradle.gradleVersion}"
+        attributes["Automatic-Module-Name"] = project.name.replace('-', '.')
     }
     from("${rootProject.rootDir}/LICENSE") {
         into("META-INF/")
