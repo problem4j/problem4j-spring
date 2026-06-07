@@ -2,7 +2,6 @@ import com.diffplug.spotless.LineEnding
 import internal.getBooleanProperty
 
 plugins {
-    id("internal.common-convention")
     id("internal.idea-convention")
     id("jacoco-report-aggregation")
     alias(libs.plugins.nmcp).apply(false)
@@ -73,13 +72,14 @@ spotless {
     kotlin {
         target("**/src/**/*.kt")
 
-        ktfmt("0.61").metaStyle()
+        ktfmt("0.63").metaStyle()
         endWithNewline()
         lineEndings = LineEnding.UNIX
     }
 
     kotlinGradle {
-        target("*.gradle.kts", "problem4j-*/*.gradle.kts", "buildSrc/*.gradle.kts", "buildSrc/src/**/*.gradle.kts")
+        target("**/*.gradle.kts")
+        targetExclude("**/build/**")
 
         ktlint("1.8.0").editorConfigOverride(mapOf("max_line_length" to "120"))
         endWithNewline()
