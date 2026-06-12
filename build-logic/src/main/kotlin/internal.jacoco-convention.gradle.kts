@@ -3,7 +3,7 @@ plugins {
     id("jacoco")
 }
 
-tasks.named<JacocoReport>("jacocoTestReport") {
+tasks.named<JacocoReport>("jacocoTestReport").configure {
     dependsOn(tasks.named("test"))
 
     reports {
@@ -13,6 +13,6 @@ tasks.named<JacocoReport>("jacocoTestReport") {
     }
 }
 
-tasks.named<Task>("check") {
+tasks.named<Task>("check").configure {
     finalizedBy(tasks.named("jacocoTestReport"))
 }

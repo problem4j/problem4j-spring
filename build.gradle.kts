@@ -105,7 +105,7 @@ spotless {
     }
 }
 
-tasks.named<Task>("check") {
+tasks.named<Task>("check").configure {
     dependsOn(tasks.named<JacocoReport>("testCodeCoverageReport"))
 }
 
