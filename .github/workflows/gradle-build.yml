@@ -31,3 +31,7 @@ jobs:
     uses: problem4j/problem4j-workflows/.github/workflows/gradle-build.yml@main
     with:
       java-version: ${{ matrix.java }}
+      codecov-enabled: ${{ matrix.java == 25 }}
+      codecov-files: "build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

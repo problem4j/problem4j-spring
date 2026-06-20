@@ -1,8 +1,9 @@
 # Problem4J Spring
 
+[![Codecov](https://codecov.io/gh/problem4j/problem4j-spring/graph/badge.svg?token=S2DOKHIXMH)](https://codecov.io/gh/problem4j/problem4j-spring)
 [![Build Status](https://github.com/problem4j/problem4j-spring/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/problem4j/problem4j-spring/actions/workflows/gradle-build.yml)
 [![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom)][maven-central]
-[![License](https://img.shields.io/github/license/problem4j/problem4j-spring)](https://github.com/problem4j/problem4j-spring/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green)](https://github.com/problem4j/problem4j-spring/blob/main/LICENSE)
 
 Designing clear and consistent error responses in a REST API is often harder than it looks. Without a shared standard,
 each application ends up inventing its own ad-hoc format, which quickly leads to inconsistency and confusion.
