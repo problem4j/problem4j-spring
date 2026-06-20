@@ -25,3 +25,8 @@ jobs:
   build:
     name: Build
     uses: problem4j/problem4j-workflows/.github/workflows/gradle-build.yml@main
+    with:
+      codecov-enabled: true
+      codecov-files: "build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
