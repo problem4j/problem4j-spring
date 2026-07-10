@@ -29,26 +29,29 @@ flexible enough for custom exceptions and business-specific details.
 ## Why bother with Problem4J
 
 Even though Spring provides `ProblemDetail` and `ErrorResponseException` for [**RFC 7807**][rfc7807]-compliant error
-responses, they have different approach than this library offers. It resolves around throwing `ErrorResponseException`
-(or any exception that extends from it) or returning `ProblemDetail` in `@ExceptionHandler` methods for handlers of
-individual exceptions. Spring Boot includes some default exception handlers in `ResponseEntityExceptionHandler`, but
-that exceptions usually return exact `getMessage()` in `detail` field which may leak framework-internals to client
-applications.
+responses, it takes a different approach than this library offers. It revolves around throwing `ErrorResponseException`
+(or any exception that implements the `ErrorResponse` interface) or returning `ProblemDetail` from `@ExceptionHandler`
+methods for individual exceptions. Spring includes default exception handlers in `ResponseEntityExceptionHandler`, but
+those exceptions usually return the exact `getMessage()` in the `detail` field, which may leak framework internals to
+client applications.
 
-In contrast, **Problem4J** was created to:
+The **Problem4J** library was created to:
 
 - Provide a **fully immutable, fluent `Problem` model** with support for extensions.
 - Support **declarative exception mapping** via `@ProblemMapping` or **programmatic one** via `ProblemException` (as a
   base class) and `ProblemResolver` (as a library-specific way to add `Exception`-to-`Problem` transformations).
-- Interpolate exception fields and context metadata (e.g., `context.traceId`) if using declarative approach.
-- Offer **consistent error responses** across WebMVC and WebFlux, including validation and framework exceptions.
+- Interpolate exception fields and context metadata (e.g., `context.traceId`) when using the declarative approach.
+- Provide a post-processing engine, to alter final response by configured rules in a consistent way (via application
+  properties). The post-processing can integrate with tracing to inject a `traceId` (or `requestId`) to the final
+  response.
+- Offer **consistent error responses** across WebMVC and WebFlux, including validation and framework exceptions. The
+  built-in exceptions are resolved in a way that hides the internals of the framework or libraries.
 - Allow **custom extensions** without boilerplate, making structured errors easier to trace and consume.
-- Configure painlessly thanks to Spring Boot autoconfiguration.
 - Provide a predefined set of `@RestControllerAdvice` implementations to override default Spring Boot responses, so
   framework details (such as full exception messages) are not leaked to client applications.
-- Include support for built-in `ErrorResponseException` for compatibility.
-- Integrate seamlessly with existing Spring Boot applications, by possibility to enable selected components only (via
+- Integrate seamlessly with existing Spring Boot applications, with the ability to enable only selected components (via
   `@ConditionalOnMissingBean` or application properties).
+- Include support for Spring's `ErrorResponseException` for compatibility.
 
 Problem4J is designed for robust, traceable, and fully configurable REST API errors.
 
