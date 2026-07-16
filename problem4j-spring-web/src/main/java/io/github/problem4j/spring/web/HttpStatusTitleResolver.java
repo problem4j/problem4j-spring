@@ -17,6 +17,8 @@
 package io.github.problem4j.spring.web;
 
 import io.github.problem4j.core.StatusTitleResolver;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
 
@@ -25,7 +27,9 @@ import org.springframework.http.HttpStatus;
  *
  * @since 3.0.0
  */
-public class HttpStatusTitleResolver implements StatusTitleResolver {
+public class HttpStatusTitleResolver implements StatusTitleResolver, Serializable {
+
+  @Serial private static final long serialVersionUID = 1L;
 
   /**
    * The priority of this resolver. Resolvers with lower priority values will be preferred over
