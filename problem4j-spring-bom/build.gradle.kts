@@ -7,6 +7,7 @@ plugins {
 dependencies {
     constraints {
         api(libs.problem4j.core)
+        api(libs.problem4j.gson)
         api(libs.problem4j.jackson2)
         api(libs.problem4j.jackson3)
         api(project(":problem4j-spring-web"))

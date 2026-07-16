@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+### Added
+
+- Add `problem4j-gson` version `1.0.0` to `problem4j-spring-bom`.
+
 ## [3.0.0] - 2026-05-08
 
 ### Added
