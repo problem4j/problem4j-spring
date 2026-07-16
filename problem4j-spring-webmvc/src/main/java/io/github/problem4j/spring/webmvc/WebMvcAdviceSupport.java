@@ -19,11 +19,43 @@ package io.github.problem4j.spring.webmvc;
 import static io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
+import io.github.problem4j.spring.web.ProblemMediaTypeResolver;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.slf4j.Logger;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
 final class WebMvcAdviceSupport {
+
+  /**
+   * Resolves the {@code Problem} content type from the {@code Accept} header of the given request.
+   *
+   * @param request the current web request
+   * @return the resolved content type
+   */
+  static MediaType resolveContentType(WebRequest request) {
+    String[] acceptHeaders = request.getHeaderValues(HttpHeaders.ACCEPT);
+    List<MediaType> acceptedMediaTypes =
+        acceptHeaders == null ? List.of() : MediaType.parseMediaTypes(Arrays.asList(acceptHeaders));
+    return ProblemMediaTypeResolver.resolve(acceptedMediaTypes);
+  }
+
+  /**
+   * Resolves the {@code Problem} content type from the {@code Accept} header of the given request.
+   *
+   * @param request the current servlet request
+   * @return the resolved content type
+   */
+  static MediaType resolveContentType(HttpServletRequest request) {
+    List<MediaType> acceptedMediaTypes =
+        MediaType.parseMediaTypes(Collections.list(request.getHeaders(HttpHeaders.ACCEPT)));
+    return ProblemMediaTypeResolver.resolve(acceptedMediaTypes);
+  }
 
   /**
    * Logs exception that occurred while processing exception occurred within controller advices.

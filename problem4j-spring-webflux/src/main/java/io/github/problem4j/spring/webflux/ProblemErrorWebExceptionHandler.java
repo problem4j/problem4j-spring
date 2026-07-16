@@ -29,7 +29,6 @@ import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.webflux.autoconfigure.error.DefaultErrorWebExceptionHandler;
 import org.springframework.boot.webflux.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -41,7 +40,8 @@ import reactor.core.publisher.Mono;
  * HTTP problems (RFC 7807) instead of the default JSON error response.
  *
  * <p>It replaces the response body with a {@link Problem} object while preserving the original HTTP
- * status and content type {@code application/problem+json}.
+ * status and a content type negotiated from the request's {@code Accept} header ({@code
+ * application/problem+json} or {@code application/problem+xml}).
  *
  * @since 1.2.0
  */
@@ -84,7 +84,8 @@ public class ProblemErrorWebExceptionHandler extends DefaultErrorWebExceptionHan
   }
 
   /**
-   * Renders an error response as a {@link Problem} in {@code application/problem+json} format.
+   * Renders an error response as a {@link Problem}, negotiating the content type from the request's
+   * {@code Accept} header.
    *
    * @param request the current server request
    * @return a {@link Mono} emitting the problem response
@@ -114,7 +115,7 @@ public class ProblemErrorWebExceptionHandler extends DefaultErrorWebExceptionHan
     }
 
     return ServerResponse.status(problem.getStatus())
-        .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+        .contentType(WebFluxAdviceSupport.resolveContentType(request))
         .body(BodyInserters.fromValue(problem));
   }
 }

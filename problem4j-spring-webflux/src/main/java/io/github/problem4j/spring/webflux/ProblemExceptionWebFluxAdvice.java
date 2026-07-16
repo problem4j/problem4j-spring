@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -39,8 +38,9 @@ import reactor.core.publisher.Mono;
 /**
  * Handles {@link ProblemException} thrown by application code.
  *
- * <p>Converts the exception into a {@link Problem} response with the appropriate HTTP status and
- * content type {@code application/problem+json}.
+ * <p>Converts the exception into a {@link Problem} response with the appropriate HTTP status and a
+ * content type negotiated from the request's {@code Accept} header ({@code
+ * application/problem+json} or {@code application/problem+xml}).
  *
  * <p>This is intended for application-level exceptions already represented as {@link Problem}.
  *
@@ -85,7 +85,7 @@ public class ProblemExceptionWebFluxAdvice {
         exchange.getAttributeOrDefault(PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create());
 
     HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
+    headers.setContentType(WebFluxAdviceSupport.resolveContentType(exchange));
 
     Problem problem;
     try {

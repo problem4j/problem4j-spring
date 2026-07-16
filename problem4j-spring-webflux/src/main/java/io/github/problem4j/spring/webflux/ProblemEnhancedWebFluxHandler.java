@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler;
@@ -48,7 +47,8 @@ import reactor.core.publisher.Mono;
  *
  * <ul>
  *   <li>Delegates exception-to-problem mapping to {@link ProblemResolverStore}.
- *   <li>Sets content type to {@code application/problem+json}.
+ *   <li>Sets content type negotiated from the request's {@code Accept} header ({@code
+ *       application/problem+json} or {@code application/problem+xml}).
  *   <li>Falls back to {@link HttpStatus#INTERNAL_SERVER_ERROR} if mapping fails.
  * </ul>
  *
@@ -108,7 +108,7 @@ public class ProblemEnhancedWebFluxHandler extends ResponseEntityExceptionHandle
         exchange.getAttributeOrDefault(PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create());
 
     headers = headers != null ? new HttpHeaders(headers) : new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
+    headers.setContentType(WebFluxAdviceSupport.resolveContentType(exchange));
 
     Problem problem;
     try {

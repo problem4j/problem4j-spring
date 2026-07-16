@@ -48,6 +48,9 @@ public class ProblemWebFluxProperties {
   /** Configuration for {@code ProblemErrorWebExceptionHandler} replacement. */
   private final ErrorWebExceptionHandler errorWebExceptionHandler;
 
+  /** Configuration for the Problem XML codec registration. */
+  private final XmlCodec xmlCodec;
+
   /**
    * Creates a new instance.
    *
@@ -57,6 +60,7 @@ public class ProblemWebFluxProperties {
    * @param problemContextFilter configuration for {@code ProblemContextWebFluxFilter}
    * @param exceptionHandler configuration for {@code ProblemEnhancedWebFluxHandler}
    * @param errorWebExceptionHandler configuration for {@code ProblemErrorWebExceptionHandler}
+   * @param xmlCodec configuration for the Problem XML codec registration
    * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
    * @see io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice
    * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
@@ -70,7 +74,8 @@ public class ProblemWebFluxProperties {
       @Nullable ProblemExceptionAdvice problemExceptionAdvice,
       @Nullable ProblemContextFilter problemContextFilter,
       @Nullable ExceptionHandler exceptionHandler,
-      @Nullable ErrorWebExceptionHandler errorWebExceptionHandler) {
+      @Nullable ErrorWebExceptionHandler errorWebExceptionHandler,
+      @Nullable XmlCodec xmlCodec) {
     this.enabled = enabled;
     this.exceptionAdvice =
         exceptionAdvice != null ? exceptionAdvice : ExceptionAdvice.createDefault();
@@ -86,6 +91,7 @@ public class ProblemWebFluxProperties {
         errorWebExceptionHandler != null
             ? errorWebExceptionHandler
             : ErrorWebExceptionHandler.createDefault();
+    this.xmlCodec = xmlCodec != null ? xmlCodec : XmlCodec.createDefault();
   }
 
   /**
@@ -161,6 +167,18 @@ public class ProblemWebFluxProperties {
    */
   public ErrorWebExceptionHandler getErrorWebExceptionHandler() {
     return errorWebExceptionHandler;
+  }
+
+  /**
+   * Returns configuration for the Problem XML codec registration, which enables rendering {@code
+   * Problem} responses as {@code application/problem+xml}.
+   *
+   * @return the configuration for the Problem XML codec registration
+   * @see io.github.problem4j.spring.webflux.ProblemJacksonXmlEncoder
+   * @since 3.0.1
+   */
+  public XmlCodec getXmlCodec() {
+    return xmlCodec;
   }
 
   /**
@@ -427,6 +445,60 @@ public class ProblemWebFluxProperties {
      * @return {@code true} if the overwritten exception handler is enabled, otherwise {@code false}
      * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
      * @since 1.2.0
+     */
+    public boolean isEnabled() {
+      return enabled;
+    }
+  }
+
+  /**
+   * Configuration group for the Problem XML codec registration.
+   *
+   * <p>Controlled by the property {@code problem4j.webflux.xml-codec.enabled}.
+   *
+   * @see io.github.problem4j.spring.webflux.ProblemJacksonXmlEncoder
+   * @since 3.0.1
+   */
+  public static class XmlCodec {
+
+    /**
+     * Default enabled value for {@code XmlCodec} configuration group.
+     *
+     * @since 3.0.1
+     */
+    public static final boolean DEFAULT_ENABLED = true;
+
+    /**
+     * Default enabled value as a string for {@code XmlCodec} configuration group.
+     *
+     * @since 3.0.1
+     */
+    public static final String DEFAULT_ENABLED_VALUE = "true";
+
+    private static XmlCodec createDefault() {
+      return new XmlCodec(DEFAULT_ENABLED);
+    }
+
+    /** Whether the Problem XML codec customizer bean should be registered. */
+    private final boolean enabled;
+
+    /**
+     * Creates a new configuration group.
+     *
+     * @param enabled whether the Problem XML codec customizer bean should be registered
+     * @see io.github.problem4j.spring.webflux.ProblemJacksonXmlEncoder
+     * @since 3.0.1
+     */
+    public XmlCodec(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
+      this.enabled = enabled;
+    }
+
+    /**
+     * Returns whether the Problem XML codec customizer should be registered.
+     *
+     * @return {@code true} if the XML codec registration is enabled, otherwise {@code false}
+     * @see io.github.problem4j.spring.webflux.ProblemJacksonXmlEncoder
+     * @since 3.0.1
      */
     public boolean isEnabled() {
       return enabled;

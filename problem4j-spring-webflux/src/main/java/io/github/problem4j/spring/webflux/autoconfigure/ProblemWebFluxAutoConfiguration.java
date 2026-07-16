@@ -25,14 +25,17 @@ import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
 import io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler;
 import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
+import io.github.problem4j.spring.webflux.ProblemJacksonXmlEncoder;
 import java.util.List;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.http.codec.CodecCustomizer;
 import org.springframework.boot.webflux.autoconfigure.WebFluxAutoConfiguration;
 import org.springframework.boot.webflux.autoconfigure.error.ErrorWebFluxAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -40,8 +43,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.codec.CodecConfigurer;
+import org.springframework.http.codec.xml.JacksonXmlDecoder;
 import org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.server.WebFilter;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 /**
  * Spring Boot autoconfiguration for Problem4J integration with Spring WebFlux web environment.
@@ -58,7 +64,8 @@ import org.springframework.web.server.WebFilter;
  *
  * @since 1.2.0
  */
-@AutoConfiguration
+@AutoConfiguration(
+    afterName = "org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration")
 @EnableConfigurationProperties({ProblemWebFluxProperties.class})
 @ConditionalOnBooleanProperty(name = "problem4j.enabled", matchIfMissing = true)
 @ConditionalOnBooleanProperty(name = "problem4j.webflux.enabled", matchIfMissing = true)
@@ -133,6 +140,35 @@ public class ProblemWebFluxAutoConfiguration {
     @Bean
     ProblemContextWebFluxFilter problemContextWebFluxFilter(ProblemProperties properties) {
       return new ProblemContextWebFluxFilter(properties);
+    }
+  }
+
+  /**
+   * Nested configuration that registers XML codecs capable of rendering {@code Problem} responses
+   * as {@code application/problem+xml}.
+   *
+   * <p>Spring's default {@code JacksonXmlEncoder} does not support encoding response bodies of
+   * annotated controllers, and the default XML mapper lacks the Problem mix-in applied to the
+   * {@link XmlMapper} bean. This configuration replaces both codecs so that XML problem responses
+   * are serialized consistently with WebMVC.
+   */
+  @ConditionalOnBooleanProperty(name = "problem4j.webflux.xml-codec.enabled", matchIfMissing = true)
+  @ConditionalOnClass({CodecCustomizer.class, XmlMapper.class})
+  @Configuration(proxyBeanMethods = false)
+  static class ProblemXmlCodecConfiguration {
+
+    /**
+     * Registers a {@link CodecCustomizer} that configures XML codecs using the application's {@link
+     * XmlMapper} bean and a {@link ProblemJacksonXmlEncoder}.
+     */
+    @ConditionalOnBean(XmlMapper.class)
+    @Bean
+    CodecCustomizer problemXmlCodecCustomizer(XmlMapper xmlMapper) {
+      return configurer -> {
+        CodecConfigurer.DefaultCodecs defaults = configurer.defaultCodecs();
+        defaults.jacksonXmlDecoder(new JacksonXmlDecoder(xmlMapper));
+        defaults.jacksonXmlEncoder(new ProblemJacksonXmlEncoder(xmlMapper));
+      };
     }
   }
 

@@ -18,10 +18,33 @@ package io.github.problem4j.spring.webflux;
 
 import static io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE;
 
+import io.github.problem4j.spring.web.ProblemMediaTypeResolver;
 import org.slf4j.Logger;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
 
 final class WebFluxAdviceSupport {
+
+  /**
+   * Resolves the {@code Problem} content type from the {@code Accept} header of the given exchange.
+   *
+   * @param exchange the current server web exchange
+   * @return the resolved content type
+   */
+  static MediaType resolveContentType(ServerWebExchange exchange) {
+    return ProblemMediaTypeResolver.resolve(exchange.getRequest().getHeaders().getAccept());
+  }
+
+  /**
+   * Resolves the {@code Problem} content type from the {@code Accept} header of the given request.
+   *
+   * @param request the current server request
+   * @return the resolved content type
+   */
+  static MediaType resolveContentType(ServerRequest request) {
+    return ProblemMediaTypeResolver.resolve(request.headers().accept());
+  }
 
   /**
    * Logs exception that occurred while processing exception occurred within controller advices.

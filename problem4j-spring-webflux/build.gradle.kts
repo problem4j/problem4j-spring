@@ -14,6 +14,7 @@ dependencies {
     compileOnly(libs.spring.boot.autoconfigure)
     compileOnly(libs.spring.boot.webflux)
 
+    compileOnly(libs.jackson3.dataformat.xml)
     compileOnly(libs.jakarta.validation.api)
     compileOnly(libs.slf4j.api)
 
@@ -26,6 +27,7 @@ dependencies {
     testImplementation(libs.spring.boot.starter.webflux)
     testImplementation(libs.spring.boot.starter.webflux.test)
     testImplementation(libs.spring.boot.validation)
+    testImplementation(libs.jackson3.dataformat.xml)
     testImplementation(libs.jackson3.module.kotlin)
     testImplementation(libs.kotlin.reflect)
     testImplementation(libs.kotlin.stdlib)
