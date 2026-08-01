@@ -20,7 +20,6 @@ import io.github.problem4j.spring.web.PostProcessorSettings;
 import io.github.problem4j.spring.web.ProblemContextSettings;
 import org.jspecify.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 /**
  * Configuration properties for Problem Details integration.
@@ -33,40 +32,47 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class ProblemProperties implements ProblemContextSettings, PostProcessorSettings {
 
   /** Decides if Problem4J integration is enabled. */
-  private final boolean enabled;
+  private boolean enabled = true;
 
   /**
    * Defines the format for the {@code detail} field in Problem responses. Supported values are
    * {@code "lowercase"}, {@code "capitalized"}, and {@code "uppercase"}.
    */
-  private final String detailFormat;
+  private String detailFormat = DetailFormat.CAPITALIZED;
 
   /**
    * Name of the HTTP header that carries a trace ID for simple tracing provided by this library. If
    * unset, the feature is disabled.
    */
-  private final @Nullable String tracingHeaderName;
+  private @Nullable String tracingHeaderName;
 
   /**
    * Template for overriding the {@code type} field of a Problem response. May contain placeholders
    * like {@code {problem.type}} and {@code {context.<key>}}.
    */
-  private final @Nullable String typeOverride;
+  private @Nullable String typeOverride;
 
   /**
    * Template for overriding the {@code title} field of a Problem response. May contain placeholders
    * like {@code {problem.title}} and {@code {context.<key>}}.
    */
-  private final @Nullable String titleOverride;
+  private @Nullable String titleOverride;
 
   /**
    * Template for overriding the {@code instance} field of a Problem response. May contain
    * placeholders like {@code {problem.instance}} and {@code {context.<key>}} for dynamic values.
    */
-  private final @Nullable String instanceOverride;
+  private @Nullable String instanceOverride;
 
   /** Caching configuration for resolver lookups in {@code CachingProblemResolverStore}. */
-  private final ResolverCaching resolverCaching;
+  private ResolverCaching resolverCaching = new ResolverCaching();
+
+  /**
+   * Creates a new instance of {@link ProblemProperties} with default values.
+   *
+   * @since 3.1.0
+   */
+  public ProblemProperties() {}
 
   /**
    * Constructs a new {@link ProblemProperties}.
@@ -82,13 +88,16 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    * @param instanceOverride template for overriding the {@code instance} field; may contain {@code
    *     {context.<key>}} placeholders (nullable)
    * @param resolverCaching caching for resolver lookups ({@code CachingProblemResolverStore});
-   *     defaults to {@link ResolverCaching#createDefault()}
+   *     defaults to a new {@link ResolverCaching} instance
    * @see io.github.problem4j.spring.web.CachingProblemResolverStore
    * @since 1.2.0
+   * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+   *     together with the corresponding setters instead
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public ProblemProperties(
-      @DefaultValue("true") boolean enabled,
-      @DefaultValue(DetailFormat.CAPITALIZED) String detailFormat,
+      boolean enabled,
+      String detailFormat,
       @Nullable String tracingHeaderName,
       @Nullable String typeOverride,
       @Nullable String titleOverride,
@@ -100,8 +109,9 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
     this.typeOverride = typeOverride;
     this.titleOverride = titleOverride;
     this.instanceOverride = instanceOverride;
-    this.resolverCaching =
-        resolverCaching != null ? resolverCaching : ResolverCaching.createDefault();
+    if (resolverCaching != null) {
+      this.resolverCaching = resolverCaching;
+    }
   }
 
   /**
@@ -115,6 +125,16 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   }
 
   /**
+   * Sets whether problem handling is enabled.
+   *
+   * @param enabled whether problem handling is enabled
+   * @since 3.1.0
+   */
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
+
+  /**
    * Returns the configured format for the {@code "detail"} field.
    *
    * @return the detail format
@@ -122,6 +142,17 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    */
   public String getDetailFormat() {
     return detailFormat;
+  }
+
+  /**
+   * Sets the format for the {@code detail} field (one of {@link DetailFormat#LOWERCASE}, {@link
+   * DetailFormat#CAPITALIZED}, {@link DetailFormat#UPPERCASE}).
+   *
+   * @param detailFormat format for the {@code detail} field
+   * @since 3.1.0
+   */
+  public void setDetailFormat(String detailFormat) {
+    this.detailFormat = detailFormat;
   }
 
   /**
@@ -140,6 +171,17 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   @Override
   public @Nullable String getTracingHeaderName() {
     return tracingHeaderName;
+  }
+
+  /**
+   * Sets the name of the HTTP header carrying a trace ID.
+   *
+   * @param tracingHeaderName name of the HTTP header carrying a trace ID, or {@code null} to
+   *     disable tracing
+   * @since 3.1.0
+   */
+  public void setTracingHeaderName(@Nullable String tracingHeaderName) {
+    this.tracingHeaderName = tracingHeaderName;
   }
 
   /**
@@ -168,6 +210,17 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   }
 
   /**
+   * Sets the template for overriding the {@code type} field.
+   *
+   * @param typeOverride template for overriding the {@code type} field; may contain {@code
+   *     {context.<key>}} placeholders (nullable)
+   * @since 3.1.0
+   */
+  public void setTypeOverride(@Nullable String typeOverride) {
+    this.typeOverride = typeOverride;
+  }
+
+  /**
    * Returns the configured title override.
    *
    * <p>The value may include special placeholders that will be replaced at runtime:
@@ -185,6 +238,17 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   @Override
   public @Nullable String getTitleOverride() {
     return titleOverride;
+  }
+
+  /**
+   * Sets the template for overriding the {@code title} field.
+   *
+   * @param titleOverride template for overriding the {@code title} field; may contain {@code
+   *     {context.<key>}} placeholders (nullable)
+   * @since 3.1.0
+   */
+  public void setTitleOverride(@Nullable String titleOverride) {
+    this.titleOverride = titleOverride;
   }
 
   /**
@@ -214,6 +278,17 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   }
 
   /**
+   * Sets the template for overriding the {@code instance} field.
+   *
+   * @param instanceOverride template for overriding the {@code instance} field; may contain {@code
+   *     {context.<key>}} placeholders (nullable)
+   * @since 3.1.0
+   */
+  public void setInstanceOverride(@Nullable String instanceOverride) {
+    this.instanceOverride = instanceOverride;
+  }
+
+  /**
    * Returns the caching configuration.
    *
    * @return caching settings
@@ -221,6 +296,17 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    */
   public ResolverCaching getResolverCaching() {
     return resolverCaching;
+  }
+
+  /**
+   * Sets the caching configuration for resolver lookups.
+   *
+   * @param resolverCaching caching for resolver lookups ({@code CachingProblemResolverStore})
+   * @see io.github.problem4j.spring.web.CachingProblemResolverStore
+   * @since 3.1.0
+   */
+  public void setResolverCaching(ResolverCaching resolverCaching) {
+    this.resolverCaching = resolverCaching;
   }
 
   /**
@@ -240,27 +326,26 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
      */
     public static final boolean DEFAULT_ENABLED = false;
 
-    /**
-     * Default enabled value string for resolver caching.
-     *
-     * @since 1.2.0
-     */
-    public static final String DEFAULT_ENABLED_VALUE = "false";
-
-    private static ResolverCaching createDefault() {
-      return new ResolverCaching(DEFAULT_ENABLED);
-    }
-
     /** Indicates whether resolver lookup caching is enabled. */
-    private final boolean enabled;
+    private boolean enabled = DEFAULT_ENABLED;
+
+    /**
+     * Creates a new instance of {@link ResolverCaching} with default values.
+     *
+     * @since 3.1.0
+     */
+    public ResolverCaching() {}
 
     /**
      * Creates a new caching configuration.
      *
      * @param enabled whether caching is enabled
      * @since 1.2.0
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with {@link #setEnabled(boolean)} instead
      */
-    public ResolverCaching(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public ResolverCaching(boolean enabled) {
       this.enabled = enabled;
     }
 
@@ -272,6 +357,16 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
      */
     public boolean isEnabled() {
       return enabled;
+    }
+
+    /**
+     * Sets whether caching is enabled.
+     *
+     * @param enabled whether caching is enabled
+     * @since 3.1.0
+     */
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
     }
   }
 

@@ -18,7 +18,6 @@ package io.github.problem4j.spring.webflux.autoconfigure;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 /**
  * Configuration properties for Problem Details WebFlux integration.
@@ -31,22 +30,29 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class ProblemWebFluxProperties {
 
   /** Whether Problem4J integration with WebFlux is enabled. */
-  private final boolean enabled;
+  private boolean enabled = true;
 
   /** Configuration for {@code ExceptionWebFluxAdvice}. */
-  private final ExceptionAdvice exceptionAdvice;
+  private ExceptionAdvice exceptionAdvice = new ExceptionAdvice();
 
   /** Configuration for {@code ProblemExceptionWebFluxAdvice}. */
-  private final ProblemExceptionAdvice problemExceptionAdvice;
+  private ProblemExceptionAdvice problemExceptionAdvice = new ProblemExceptionAdvice();
 
   /** Configuration for {@code ProblemContextWebFluxFilter}. */
-  private final ProblemContextFilter problemContextFilter;
+  private ProblemContextFilter problemContextFilter = new ProblemContextFilter();
 
   /** Configuration for {@code ProblemEnhancedWebFluxHandler} replacement. */
-  private final ExceptionHandler exceptionHandler;
+  private ExceptionHandler exceptionHandler = new ExceptionHandler();
 
   /** Configuration for {@code ProblemErrorWebExceptionHandler} replacement. */
-  private final ErrorWebExceptionHandler errorWebExceptionHandler;
+  private ErrorWebExceptionHandler errorWebExceptionHandler = new ErrorWebExceptionHandler();
+
+  /**
+   * Creates a new instance of {@link ProblemWebFluxProperties} with default values.
+   *
+   * @since 3.1.0
+   */
+  public ProblemWebFluxProperties() {}
 
   /**
    * Creates a new instance.
@@ -63,29 +69,33 @@ public class ProblemWebFluxProperties {
    * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
    * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
    * @since 1.2.0
+   * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+   *     together with the corresponding setters instead
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public ProblemWebFluxProperties(
-      @DefaultValue("true") boolean enabled,
+      boolean enabled,
       @Nullable ExceptionAdvice exceptionAdvice,
       @Nullable ProblemExceptionAdvice problemExceptionAdvice,
       @Nullable ProblemContextFilter problemContextFilter,
       @Nullable ExceptionHandler exceptionHandler,
       @Nullable ErrorWebExceptionHandler errorWebExceptionHandler) {
     this.enabled = enabled;
-    this.exceptionAdvice =
-        exceptionAdvice != null ? exceptionAdvice : ExceptionAdvice.createDefault();
-    this.problemExceptionAdvice =
-        problemExceptionAdvice != null
-            ? problemExceptionAdvice
-            : ProblemExceptionAdvice.createDefault();
-    this.problemContextFilter =
-        problemContextFilter != null ? problemContextFilter : ProblemContextFilter.createDefault();
-    this.exceptionHandler =
-        exceptionHandler != null ? exceptionHandler : ExceptionHandler.createDefault();
-    this.errorWebExceptionHandler =
-        errorWebExceptionHandler != null
-            ? errorWebExceptionHandler
-            : ErrorWebExceptionHandler.createDefault();
+    if (exceptionAdvice != null) {
+      this.exceptionAdvice = exceptionAdvice;
+    }
+    if (problemExceptionAdvice != null) {
+      this.problemExceptionAdvice = problemExceptionAdvice;
+    }
+    if (problemContextFilter != null) {
+      this.problemContextFilter = problemContextFilter;
+    }
+    if (exceptionHandler != null) {
+      this.exceptionHandler = exceptionHandler;
+    }
+    if (errorWebExceptionHandler != null) {
+      this.errorWebExceptionHandler = errorWebExceptionHandler;
+    }
   }
 
   /**
@@ -96,6 +106,16 @@ public class ProblemWebFluxProperties {
    */
   public boolean isEnabled() {
     return enabled;
+  }
+
+  /**
+   * Sets whether Problem4J integration with WebFlux is enabled.
+   *
+   * @param enabled whether Problem4J integration with WebFlux is enabled
+   * @since 3.1.0
+   */
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
   }
 
   /**
@@ -111,6 +131,17 @@ public class ProblemWebFluxProperties {
   }
 
   /**
+   * Sets configuration for {@code ExceptionWebFluxAdvice}.
+   *
+   * @param exceptionAdvice configuration for {@code ExceptionWebFluxAdvice}
+   * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
+   * @since 3.1.0
+   */
+  public void setExceptionAdvice(ExceptionAdvice exceptionAdvice) {
+    this.exceptionAdvice = exceptionAdvice;
+  }
+
+  /**
    * Returns configuration for {@code ProblemExceptionWebFluxAdvice}, which handles exceptions of
    * type {@code ProblemException} and converts them to Problem responses.
    *
@@ -120,6 +151,17 @@ public class ProblemWebFluxProperties {
    */
   public ProblemExceptionAdvice getProblemExceptionAdvice() {
     return problemExceptionAdvice;
+  }
+
+  /**
+   * Sets configuration for {@code ProblemExceptionWebFluxAdvice}.
+   *
+   * @param problemExceptionAdvice configuration for {@code ProblemExceptionWebFluxAdvice}
+   * @see io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice
+   * @since 3.1.0
+   */
+  public void setProblemExceptionAdvice(ProblemExceptionAdvice problemExceptionAdvice) {
+    this.problemExceptionAdvice = problemExceptionAdvice;
   }
 
   /**
@@ -133,6 +175,17 @@ public class ProblemWebFluxProperties {
    */
   public ProblemContextFilter getProblemContextFilter() {
     return problemContextFilter;
+  }
+
+  /**
+   * Sets configuration for {@code ProblemContextWebFluxFilter}.
+   *
+   * @param problemContextFilter configuration for {@code ProblemContextWebFluxFilter}
+   * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
+   * @since 3.1.0
+   */
+  public void setProblemContextFilter(ProblemContextFilter problemContextFilter) {
+    this.problemContextFilter = problemContextFilter;
   }
 
   /**
@@ -150,6 +203,17 @@ public class ProblemWebFluxProperties {
   }
 
   /**
+   * Sets configuration for {@code ProblemEnhancedWebFluxHandler} replacement.
+   *
+   * @param exceptionHandler configuration for {@code ProblemEnhancedWebFluxHandler}
+   * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
+   * @since 3.1.0
+   */
+  public void setExceptionHandler(ExceptionHandler exceptionHandler) {
+    this.exceptionHandler = exceptionHandler;
+  }
+
+  /**
    * Returns configuration for {@code ProblemErrorWebExceptionHandler} replacement, which allows
    * Problem4J to take control of exception handling normally performed by Spring's {@code
    * ErrorWebExceptionHandler}.
@@ -161,6 +225,17 @@ public class ProblemWebFluxProperties {
    */
   public ErrorWebExceptionHandler getErrorWebExceptionHandler() {
     return errorWebExceptionHandler;
+  }
+
+  /**
+   * Sets configuration for {@code ProblemErrorWebExceptionHandler} replacement.
+   *
+   * @param errorWebExceptionHandler configuration for {@code ProblemErrorWebExceptionHandler}
+   * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
+   * @since 3.1.0
+   */
+  public void setErrorWebExceptionHandler(ErrorWebExceptionHandler errorWebExceptionHandler) {
+    this.errorWebExceptionHandler = errorWebExceptionHandler;
   }
 
   /**
@@ -180,19 +255,16 @@ public class ProblemWebFluxProperties {
      */
     public static final boolean DEFAULT_ENABLED = true;
 
-    /**
-     * Default enabled value as a string for {@code ExceptionAdvice} configuration group.
-     *
-     * @since 1.2.0
-     */
-    public static final String DEFAULT_ENABLED_VALUE = "true";
-
-    private static ExceptionAdvice createDefault() {
-      return new ExceptionAdvice(DEFAULT_ENABLED);
-    }
-
     /** Whether the {@code ExceptionWebFluxAdvice} bean should be registered. */
-    private final boolean enabled;
+    private boolean enabled = DEFAULT_ENABLED;
+
+    /**
+     * Creates a new configuration group with default values.
+     *
+     * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
+     * @since 3.1.0
+     */
+    public ExceptionAdvice() {}
 
     /**
      * Creates a new configuration group.
@@ -200,8 +272,11 @@ public class ProblemWebFluxProperties {
      * @param enabled whether the {@code ExceptionWebFluxAdvice} bean should be registered
      * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
      * @since 1.2.0
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
-    public ExceptionAdvice(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public ExceptionAdvice(boolean enabled) {
       this.enabled = enabled;
     }
 
@@ -214,6 +289,17 @@ public class ProblemWebFluxProperties {
      */
     public boolean isEnabled() {
       return enabled;
+    }
+
+    /**
+     * Sets whether the {@code ExceptionWebFluxAdvice} bean should be registered.
+     *
+     * @param enabled whether the {@code ExceptionWebFluxAdvice} bean should be registered
+     * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
+     * @since 3.1.0
+     */
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
     }
   }
 
@@ -234,19 +320,16 @@ public class ProblemWebFluxProperties {
      */
     public static final boolean DEFAULT_ENABLED = true;
 
-    /**
-     * Default enabled value as a string for {@code ProblemExceptionAdvice} configuration group.
-     *
-     * @since 1.2.0
-     */
-    public static final String DEFAULT_ENABLED_VALUE = "true";
-
-    private static ProblemExceptionAdvice createDefault() {
-      return new ProblemExceptionAdvice(DEFAULT_ENABLED);
-    }
-
     /** Whether the {@code ProblemExceptionWebFluxAdvice} bean should be registered. */
-    private final boolean enabled;
+    private boolean enabled = DEFAULT_ENABLED;
+
+    /**
+     * Creates a new configuration group with default values.
+     *
+     * @see io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice
+     * @since 3.1.0
+     */
+    public ProblemExceptionAdvice() {}
 
     /**
      * Creates a new configuration group.
@@ -254,8 +337,11 @@ public class ProblemWebFluxProperties {
      * @param enabled whether the {@code ProblemExceptionWebFluxAdvice} bean should be registered
      * @see io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice
      * @since 1.2.0
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
-    public ProblemExceptionAdvice(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public ProblemExceptionAdvice(boolean enabled) {
       this.enabled = enabled;
     }
 
@@ -268,6 +354,17 @@ public class ProblemWebFluxProperties {
      */
     public boolean isEnabled() {
       return enabled;
+    }
+
+    /**
+     * Sets whether the {@code ProblemExceptionWebFluxAdvice} bean should be registered.
+     *
+     * @param enabled whether the {@code ProblemExceptionWebFluxAdvice} bean should be registered
+     * @see io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice
+     * @since 3.1.0
+     */
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
     }
   }
 
@@ -288,19 +385,16 @@ public class ProblemWebFluxProperties {
      */
     public static final boolean DEFAULT_ENABLED = true;
 
-    /**
-     * Default enabled value as a string for {@code ProblemContextFilter} configuration group.
-     *
-     * @since 1.2.0
-     */
-    public static final String DEFAULT_ENABLED_VALUE = "true";
-
-    private static ProblemContextFilter createDefault() {
-      return new ProblemContextFilter(DEFAULT_ENABLED);
-    }
-
     /** Whether the {@code ProblemContextWebFluxFilter} bean should be registered. */
-    private final boolean enabled;
+    private boolean enabled = DEFAULT_ENABLED;
+
+    /**
+     * Creates a new configuration group with default values.
+     *
+     * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
+     * @since 3.1.0
+     */
+    public ProblemContextFilter() {}
 
     /**
      * Creates a new configuration group.
@@ -308,8 +402,11 @@ public class ProblemWebFluxProperties {
      * @param enabled whether the {@code ProblemContextWebFluxFilter} bean should be registered
      * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
      * @since 1.2.0
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
-    public ProblemContextFilter(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public ProblemContextFilter(boolean enabled) {
       this.enabled = enabled;
     }
 
@@ -322,6 +419,17 @@ public class ProblemWebFluxProperties {
      */
     public boolean isEnabled() {
       return enabled;
+    }
+
+    /**
+     * Sets whether the {@code ProblemContextWebFluxFilter} bean should be registered.
+     *
+     * @param enabled whether the {@code ProblemContextWebFluxFilter} bean should be registered
+     * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
+     * @since 3.1.0
+     */
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
     }
   }
 
@@ -342,19 +450,16 @@ public class ProblemWebFluxProperties {
      */
     public static final boolean DEFAULT_ENABLED = true;
 
-    /**
-     * Default enabled value as a string for {@code ExceptionHandler} configuration group.
-     *
-     * @since 1.2.0
-     */
-    public static final String DEFAULT_ENABLED_VALUE = "true";
-
-    private static ExceptionHandler createDefault() {
-      return new ExceptionHandler(DEFAULT_ENABLED);
-    }
-
     /** Whether the {@code ProblemEnhancedWebFluxHandler} should be registered. */
-    private final boolean enabled;
+    private boolean enabled = DEFAULT_ENABLED;
+
+    /**
+     * Creates a new configuration group with default values.
+     *
+     * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
+     * @since 3.1.0
+     */
+    public ExceptionHandler() {}
 
     /**
      * Creates a new configuration group.
@@ -364,8 +469,11 @@ public class ProblemWebFluxProperties {
      * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
      * @see org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler
      * @since 1.2.0
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
-    public ExceptionHandler(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public ExceptionHandler(boolean enabled) {
       this.enabled = enabled;
     }
 
@@ -378,6 +486,19 @@ public class ProblemWebFluxProperties {
      */
     public boolean isEnabled() {
       return enabled;
+    }
+
+    /**
+     * Sets whether the {@code ProblemEnhancedWebFluxHandler} should be registered.
+     *
+     * @param enabled whether the {@code ResponseEntityExceptionHandler} should be replaced with
+     *     {@code ProblemEnhancedWebFluxHandler}
+     * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
+     * @see org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler
+     * @since 3.1.0
+     */
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
     }
   }
 
@@ -396,17 +517,16 @@ public class ProblemWebFluxProperties {
     /** Default enabled value for {@code ErrorWebExceptionHandler} configuration group. */
     public static final boolean DEFAULT_ENABLED = true;
 
-    /**
-     * Default enabled value as a string for {@code ErrorWebExceptionHandler} configuration group.
-     */
-    public static final String DEFAULT_ENABLED_VALUE = "true";
-
-    private static ErrorWebExceptionHandler createDefault() {
-      return new ErrorWebExceptionHandler(DEFAULT_ENABLED);
-    }
-
     /** Whether the {@code ProblemErrorWebExceptionHandler} should be registered. */
-    private final boolean enabled;
+    private boolean enabled = DEFAULT_ENABLED;
+
+    /**
+     * Creates a new configuration group with default values.
+     *
+     * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
+     * @since 3.1.0
+     */
+    public ErrorWebExceptionHandler() {}
 
     /**
      * Creates a new configuration group.
@@ -414,10 +534,12 @@ public class ProblemWebFluxProperties {
      * @param enabled whether the {@code ErrorWebExceptionHandler} should be replaced with {@code
      *     ProblemErrorWebExceptionHandler}
      * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
-     * @see org.springframework.boot.webflux.error.ErrorWebExceptionHandler
      * @since 1.2.0
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
-    public ErrorWebExceptionHandler(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public ErrorWebExceptionHandler(boolean enabled) {
       this.enabled = enabled;
     }
 
@@ -430,6 +552,19 @@ public class ProblemWebFluxProperties {
      */
     public boolean isEnabled() {
       return enabled;
+    }
+
+    /**
+     * Sets whether the {@code ProblemErrorWebExceptionHandler} should be registered.
+     *
+     * @param enabled whether the {@code ErrorWebExceptionHandler} should be replaced with {@code
+     *     ProblemErrorWebExceptionHandler}
+     * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
+     * @see org.springframework.boot.webflux.error.ErrorWebExceptionHandler
+     * @since 3.1.0
+     */
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
     }
   }
 }

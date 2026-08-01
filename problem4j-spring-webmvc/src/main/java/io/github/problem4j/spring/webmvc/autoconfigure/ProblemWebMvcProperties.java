@@ -18,7 +18,6 @@ package io.github.problem4j.spring.webmvc.autoconfigure;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 /**
  * Configuration properties for Problem Details WebMVC integration.
@@ -31,22 +30,29 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class ProblemWebMvcProperties {
 
   /** Whether Problem4J integration with WebMVC is enabled. */
-  private final boolean enabled;
+  private boolean enabled = true;
 
   /** Configuration for {@code ExceptionWebMvcAdvice}. */
-  private final ExceptionAdvice exceptionAdvice;
+  private ExceptionAdvice exceptionAdvice = new ExceptionAdvice();
 
   /** Configuration for {@code ProblemExceptionWebMvcAdvice}. */
-  private final ProblemExceptionAdvice problemExceptionAdvice;
+  private ProblemExceptionAdvice problemExceptionAdvice = new ProblemExceptionAdvice();
 
   /** Configuration for {@code ProblemContextWebMvcFilter}. */
-  private final ProblemContextFilter problemContextFilter;
+  private ProblemContextFilter problemContextFilter = new ProblemContextFilter();
 
   /** Configuration for {@code ProblemEnhancedWebMvcHandler} replacement. */
-  private final ExceptionHandler exceptionHandler;
+  private ExceptionHandler exceptionHandler = new ExceptionHandler();
 
   /** Configuration for {@code ProblemErrorController} replacement. */
-  private final ErrorController errorController;
+  private ErrorController errorController = new ErrorController();
+
+  /**
+   * Creates a new instance of {@link ProblemWebMvcProperties} with default values.
+   *
+   * @since 3.1.0
+   */
+  public ProblemWebMvcProperties() {}
 
   /**
    * Creates a new instance.
@@ -63,27 +69,33 @@ public class ProblemWebMvcProperties {
    * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
    * @see io.github.problem4j.spring.webmvc.ProblemErrorController
    * @since 1.2.0
+   * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+   *     together with the corresponding setters instead
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public ProblemWebMvcProperties(
-      @DefaultValue("true") boolean enabled,
+      boolean enabled,
       @Nullable ExceptionAdvice exceptionAdvice,
       @Nullable ProblemExceptionAdvice problemExceptionAdvice,
       @Nullable ProblemContextFilter problemContextFilter,
       @Nullable ExceptionHandler exceptionHandler,
       @Nullable ErrorController errorController) {
     this.enabled = enabled;
-    this.exceptionAdvice =
-        exceptionAdvice != null ? exceptionAdvice : ExceptionAdvice.createDefault();
-    this.problemExceptionAdvice =
-        problemExceptionAdvice != null
-            ? problemExceptionAdvice
-            : ProblemExceptionAdvice.createDefault();
-    this.problemContextFilter =
-        problemContextFilter != null ? problemContextFilter : ProblemContextFilter.createDefault();
-    this.exceptionHandler =
-        exceptionHandler != null ? exceptionHandler : ExceptionHandler.createDefault();
-    this.errorController =
-        errorController != null ? errorController : ErrorController.createDefault();
+    if (exceptionAdvice != null) {
+      this.exceptionAdvice = exceptionAdvice;
+    }
+    if (problemExceptionAdvice != null) {
+      this.problemExceptionAdvice = problemExceptionAdvice;
+    }
+    if (problemContextFilter != null) {
+      this.problemContextFilter = problemContextFilter;
+    }
+    if (exceptionHandler != null) {
+      this.exceptionHandler = exceptionHandler;
+    }
+    if (errorController != null) {
+      this.errorController = errorController;
+    }
   }
 
   /**
@@ -94,6 +106,16 @@ public class ProblemWebMvcProperties {
    */
   public boolean isEnabled() {
     return enabled;
+  }
+
+  /**
+   * Sets whether Problem4J integration with WebMVC is enabled.
+   *
+   * @param enabled whether Problem4J integration with WebMVC is enabled
+   * @since 3.1.0
+   */
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
   }
 
   /**
@@ -109,6 +131,17 @@ public class ProblemWebMvcProperties {
   }
 
   /**
+   * Sets configuration for {@code ExceptionWebMvcAdvice}.
+   *
+   * @param exceptionAdvice configuration for {@code ExceptionWebMvcAdvice}
+   * @see io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice
+   * @since 3.1.0
+   */
+  public void setExceptionAdvice(ExceptionAdvice exceptionAdvice) {
+    this.exceptionAdvice = exceptionAdvice;
+  }
+
+  /**
    * Returns configuration for {@code ProblemExceptionWebMvcAdvice}, which handles exceptions of
    * type {@code ProblemException} and converts them to Problem responses.
    *
@@ -118,6 +151,17 @@ public class ProblemWebMvcProperties {
    */
   public ProblemExceptionAdvice getProblemExceptionAdvice() {
     return problemExceptionAdvice;
+  }
+
+  /**
+   * Sets configuration for {@code ProblemExceptionWebMvcAdvice}.
+   *
+   * @param problemExceptionAdvice configuration for {@code ProblemExceptionWebMvcAdvice}
+   * @see io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice
+   * @since 3.1.0
+   */
+  public void setProblemExceptionAdvice(ProblemExceptionAdvice problemExceptionAdvice) {
+    this.problemExceptionAdvice = problemExceptionAdvice;
   }
 
   /**
@@ -131,6 +175,17 @@ public class ProblemWebMvcProperties {
    */
   public ProblemContextFilter getProblemContextFilter() {
     return problemContextFilter;
+  }
+
+  /**
+   * Sets configuration for {@code ProblemContextWebMvcFilter}.
+   *
+   * @param problemContextFilter configuration for {@code ProblemContextWebMvcFilter}
+   * @see io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter
+   * @since 3.1.0
+   */
+  public void setProblemContextFilter(ProblemContextFilter problemContextFilter) {
+    this.problemContextFilter = problemContextFilter;
   }
 
   /**
@@ -148,6 +203,17 @@ public class ProblemWebMvcProperties {
   }
 
   /**
+   * Sets configuration for {@code ProblemEnhancedWebMvcHandler} replacement.
+   *
+   * @param exceptionHandler configuration for {@code ProblemEnhancedWebMvcHandler}
+   * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
+   * @since 3.1.0
+   */
+  public void setExceptionHandler(ExceptionHandler exceptionHandler) {
+    this.exceptionHandler = exceptionHandler;
+  }
+
+  /**
    * Returns configuration for {@code ProblemErrorController} replacement, which allows Problem4J to
    * take control of exception handling normally performed by Spring's {@code ErrorController}.
    *
@@ -158,6 +224,17 @@ public class ProblemWebMvcProperties {
    */
   public ErrorController getErrorController() {
     return errorController;
+  }
+
+  /**
+   * Sets configuration for {@code ProblemErrorController} replacement.
+   *
+   * @param errorController configuration for {@code ProblemErrorController}
+   * @see io.github.problem4j.spring.webmvc.ProblemErrorController
+   * @since 3.1.0
+   */
+  public void setErrorController(ErrorController errorController) {
+    this.errorController = errorController;
   }
 
   /**
@@ -177,19 +254,16 @@ public class ProblemWebMvcProperties {
      */
     public static final boolean DEFAULT_ENABLED = true;
 
-    /**
-     * Default enabled value string for {@code ExceptionWebMvcAdvice}.
-     *
-     * @since 1.2.0
-     */
-    public static final String DEFAULT_ENABLED_VALUE = "true";
-
-    private static ExceptionAdvice createDefault() {
-      return new ExceptionAdvice(DEFAULT_ENABLED);
-    }
-
     /** Whether the {@code ExceptionWebMvcAdvice} bean should be registered. */
-    private final boolean enabled;
+    private boolean enabled = DEFAULT_ENABLED;
+
+    /**
+     * Creates a new configuration group for {@code ExceptionWebMvcAdvice} with default values.
+     *
+     * @see io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice
+     * @since 3.1.0
+     */
+    public ExceptionAdvice() {}
 
     /**
      * Creates a new configuration group for {@code ExceptionWebMvcAdvice}.
@@ -197,8 +271,11 @@ public class ProblemWebMvcProperties {
      * @param enabled whether the {@code ExceptionWebMvcAdvice} bean should be registered
      * @see io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice
      * @since 1.2.0
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
-    public ExceptionAdvice(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public ExceptionAdvice(boolean enabled) {
       this.enabled = enabled;
     }
 
@@ -211,6 +288,17 @@ public class ProblemWebMvcProperties {
      */
     public boolean isEnabled() {
       return enabled;
+    }
+
+    /**
+     * Sets whether the {@code ExceptionWebMvcAdvice} bean should be registered.
+     *
+     * @param enabled whether the {@code ExceptionWebMvcAdvice} bean should be registered
+     * @see io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice
+     * @since 3.1.0
+     */
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
     }
   }
 
@@ -231,19 +319,17 @@ public class ProblemWebMvcProperties {
      */
     public static final boolean DEFAULT_ENABLED = true;
 
-    /**
-     * Default enabled value string for {@code ProblemExceptionWebMvcAdvice}.
-     *
-     * @since 1.2.0
-     */
-    public static final String DEFAULT_ENABLED_VALUE = "true";
-
-    private static ProblemExceptionAdvice createDefault() {
-      return new ProblemExceptionAdvice(DEFAULT_ENABLED);
-    }
-
     /** Whether the {@code ProblemExceptionWebMvcAdvice} bean should be registered. */
-    private final boolean enabled;
+    private boolean enabled = DEFAULT_ENABLED;
+
+    /**
+     * Creates a new configuration group for {@code ProblemExceptionWebMvcAdvice} with default
+     * values.
+     *
+     * @see io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice
+     * @since 3.1.0
+     */
+    public ProblemExceptionAdvice() {}
 
     /**
      * Creates a new configuration group for {@code ProblemExceptionWebMvcAdvice}.
@@ -251,8 +337,11 @@ public class ProblemWebMvcProperties {
      * @param enabled whether the {@code ProblemExceptionWebMvcAdvice} bean should be registered
      * @see io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice
      * @since 1.2.0
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
-    public ProblemExceptionAdvice(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public ProblemExceptionAdvice(boolean enabled) {
       this.enabled = enabled;
     }
 
@@ -265,6 +354,17 @@ public class ProblemWebMvcProperties {
      */
     public boolean isEnabled() {
       return enabled;
+    }
+
+    /**
+     * Sets whether the {@code ProblemExceptionWebMvcAdvice} bean should be registered.
+     *
+     * @param enabled whether the {@code ProblemExceptionWebMvcAdvice} bean should be registered
+     * @see io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice
+     * @since 3.1.0
+     */
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
     }
   }
 
@@ -285,19 +385,16 @@ public class ProblemWebMvcProperties {
      */
     public static final boolean DEFAULT_ENABLED = true;
 
-    /**
-     * Default enabled value string for {@code ProblemContextWebMvcFilter}.
-     *
-     * @since 1.2.0
-     */
-    public static final String DEFAULT_ENABLED_VALUE = "true";
-
-    private static ProblemContextFilter createDefault() {
-      return new ProblemContextFilter(DEFAULT_ENABLED);
-    }
-
     /** Whether the {@code ProblemContextWebMvcFilter} bean should be registered. */
-    private final boolean enabled;
+    private boolean enabled = DEFAULT_ENABLED;
+
+    /**
+     * Creates a new configuration group for {@code ProblemContextWebMvcFilter} with default values.
+     *
+     * @see io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter
+     * @since 3.1.0
+     */
+    public ProblemContextFilter() {}
 
     /**
      * Creates a new configuration group for {@code ProblemContextWebMvcFilter}.
@@ -305,8 +402,11 @@ public class ProblemWebMvcProperties {
      * @param enabled whether the {@code ProblemContextWebMvcFilter} bean should be registered
      * @see io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter
      * @since 1.2.0
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
-    public ProblemContextFilter(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public ProblemContextFilter(boolean enabled) {
       this.enabled = enabled;
     }
 
@@ -319,6 +419,17 @@ public class ProblemWebMvcProperties {
      */
     public boolean isEnabled() {
       return enabled;
+    }
+
+    /**
+     * Sets whether the {@code ProblemContextWebMvcFilter} bean should be registered.
+     *
+     * @param enabled whether the {@code ProblemContextWebMvcFilter} bean should be registered
+     * @see io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter
+     * @since 3.1.0
+     */
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
     }
   }
 
@@ -339,19 +450,17 @@ public class ProblemWebMvcProperties {
      */
     public static final boolean DEFAULT_ENABLED = true;
 
-    /**
-     * Default enabled value string for {@code ExceptionHandler}.
-     *
-     * @since 1.2.0
-     */
-    public static final String DEFAULT_ENABLED_VALUE = "true";
-
-    private static ExceptionHandler createDefault() {
-      return new ExceptionHandler(DEFAULT_ENABLED);
-    }
-
     /** Whether the {@code ProblemEnhancedWebMvcHandler} should be registered. */
-    private final boolean enabled;
+    private boolean enabled = DEFAULT_ENABLED;
+
+    /**
+     * Creates a new configuration group for {@code ProblemEnhancedWebMvcHandler} with default
+     * values.
+     *
+     * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
+     * @since 3.1.0
+     */
+    public ExceptionHandler() {}
 
     /**
      * Creates a new configuration group for {@code ProblemEnhancedWebMvcHandler}.
@@ -361,8 +470,11 @@ public class ProblemWebMvcProperties {
      * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
      * @see org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
      * @since 1.2.0
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
-    public ExceptionHandler(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public ExceptionHandler(boolean enabled) {
       this.enabled = enabled;
     }
 
@@ -375,6 +487,19 @@ public class ProblemWebMvcProperties {
      */
     public boolean isEnabled() {
       return enabled;
+    }
+
+    /**
+     * Sets whether the {@code ProblemEnhancedWebMvcHandler} should be registered.
+     *
+     * @param enabled whether the {@code ResponseEntityExceptionHandler} should be replaced with
+     *     {@code ProblemEnhancedWebMvcHandler}
+     * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
+     * @see org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
+     * @since 3.1.0
+     */
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
     }
   }
 
@@ -397,19 +522,16 @@ public class ProblemWebMvcProperties {
      */
     public static final boolean DEFAULT_ENABLED = true;
 
-    /**
-     * Default enabled value string for {@code ErrorController}.
-     *
-     * @since 1.2.0
-     */
-    public static final String DEFAULT_ENABLED_VALUE = "true";
-
-    private static ErrorController createDefault() {
-      return new ErrorController(DEFAULT_ENABLED);
-    }
-
     /** Whether the {@code ProblemErrorController} should be registered. */
-    private final boolean enabled;
+    private boolean enabled = DEFAULT_ENABLED;
+
+    /**
+     * Creates a new configuration group with default values.
+     *
+     * @see io.github.problem4j.spring.webmvc.ProblemErrorController
+     * @since 3.1.0
+     */
+    public ErrorController() {}
 
     /**
      * Creates a new configuration group.
@@ -417,10 +539,12 @@ public class ProblemWebMvcProperties {
      * @param enabled whether the {@code ErrorController} should be replaced with {@code
      *     ProblemErrorController}
      * @see io.github.problem4j.spring.webmvc.ProblemErrorController
-     * @see org.springframework.boot.webmvc.error.ErrorController
      * @since 1.2.0
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
-    public ErrorController(@DefaultValue(DEFAULT_ENABLED_VALUE) boolean enabled) {
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public ErrorController(boolean enabled) {
       this.enabled = enabled;
     }
 
@@ -433,6 +557,19 @@ public class ProblemWebMvcProperties {
      */
     public boolean isEnabled() {
       return enabled;
+    }
+
+    /**
+     * Sets whether the {@code ProblemErrorController} should be registered.
+     *
+     * @param enabled whether the {@code ErrorController} should be replaced with {@code
+     *     ProblemErrorController}
+     * @see io.github.problem4j.spring.webmvc.ProblemErrorController
+     * @see org.springframework.boot.webmvc.error.ErrorController
+     * @since 3.1.0
+     */
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
     }
   }
 }
