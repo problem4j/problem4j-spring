@@ -1,5 +1,5 @@
 /*
- * Copyright 2025-2026 The Problem4J Authors
+ * Copyright 2025-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,6 +118,11 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    * (templates naturally collapse). If the template is exactly {@code {problem.type}}, the original
    * {@code about:blank} value is preserved instead of becoming empty.
    *
+   * @param context the {@link ProblemContext} providing request-scoped data, or {@code null} if
+   *     none is available
+   * @param problem the {@link Problem} instance to process
+   * @return a new or modified {@link Problem} to be returned to the client; may be the same
+   *     instance if no changes are applied
    * @since 1.2.0
    */
   @Override

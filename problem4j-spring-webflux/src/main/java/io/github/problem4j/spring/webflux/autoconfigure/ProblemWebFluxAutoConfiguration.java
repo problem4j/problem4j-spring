@@ -1,5 +1,5 @@
 /*
- * Copyright 2025-2026 The Problem4J Authors
+ * Copyright 2025-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,6 +67,9 @@ import org.springframework.web.server.WebFilter;
 @Import({ProblemErrorWebFluxConfiguration.class})
 public class ProblemWebFluxAutoConfiguration {
 
+  /** Creates a new instance of this autoconfiguration. */
+  public ProblemWebFluxAutoConfiguration() {}
+
   /**
    * Creates the default {@link ExceptionWebFluxAdvice} used for handling exceptions in WebFlux
    * applications.
@@ -119,6 +122,9 @@ public class ProblemWebFluxAutoConfiguration {
   @Configuration(proxyBeanMethods = false)
   static class ProblemContextWebFluxFilterConfiguration {
 
+    /** Creates a new instance of this configuration. */
+    ProblemContextWebFluxFilterConfiguration() {}
+
     /**
      * Registers the default {@link ProblemContextWebFluxFilter}, which initializes and propagates
      * Problem4J contextual metadata throughout the request lifecycle.
@@ -140,6 +146,9 @@ public class ProblemWebFluxAutoConfiguration {
   @ConditionalOnClass(ResponseEntityExceptionHandler.class)
   @Configuration(proxyBeanMethods = false)
   static class ResponseEntityExceptionHandlerConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    ResponseEntityExceptionHandlerConfiguration() {}
 
     /**
      * Provides the Problem4J-enhanced {@link ResponseEntityExceptionHandler} implementation for

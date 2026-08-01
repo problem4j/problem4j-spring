@@ -1,5 +1,5 @@
 /*
- * Copyright 2025-2026 The Problem4J Authors
+ * Copyright 2025-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,6 +64,8 @@ public class ProblemContextWebMvcFilter extends OncePerRequestFilter {
    * @param request the current server request
    * @param response the current server response
    * @param filterChain the filter chain to continue processing
+   * @throws ServletException if the rest of the filter chain fails to process the request
+   * @throws IOException if an I/O error occurs while processing the rest of the filter chain
    * @since 1.2.0
    */
   @Override

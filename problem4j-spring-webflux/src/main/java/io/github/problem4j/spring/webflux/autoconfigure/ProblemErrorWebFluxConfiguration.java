@@ -1,5 +1,5 @@
 /*
- * Copyright 2025-2026 The Problem4J Authors
+ * Copyright 2025-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,9 @@ import org.springframework.web.reactive.result.view.ViewResolver;
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 @Configuration(proxyBeanMethods = false)
 class ProblemErrorWebFluxConfiguration {
+
+  /** Creates a new instance of this configuration. */
+  ProblemErrorWebFluxConfiguration() {}
 
   /**
    * Registers a default {@link ErrorAttributes} bean if none is already defined.

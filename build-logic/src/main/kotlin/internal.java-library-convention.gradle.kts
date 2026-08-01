@@ -1,8 +1,14 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("java-library")
+    id("org.jetbrains.kotlin.jvm")
 }
 
 // The project is built using a JDK 25 toolchain, but the main sources are compiled with --release 17.
@@ -16,6 +22,8 @@ plugins {
 // library consumers.
 //
 // Tests are NOT compiled with --release XYZ, so they may use newer Java APIs.
+//
+// The project also includes interop utilities between Java and Kotlin.
 
 java {
     toolchain {
@@ -32,6 +40,28 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.named<JavaCompile>("compileJava").configure {
     options.release = 17
+}
+
+kotlin {
+    jvmToolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+    compilerOptions {
+        apiVersion = KotlinVersion.KOTLIN_2_2
+        languageVersion = KotlinVersion.KOTLIN_2_2
+    }
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions {
+        javaParameters = true
+    }
+}
+
+tasks.named<KotlinCompile>("compileKotlin").configure {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
+    }
 }
 
 tasks.withType<Jar>().configureEach {
@@ -66,22 +96,4 @@ tasks.withType<Test>().configureEach {
 
 tasks.withType<Javadoc>().configureEach {
     javadocTool = javaToolchains.javadocToolFor { languageVersion = JavaLanguageVersion.of(17) }
-}
-
-// Usage:
-//   ./gradlew printVersion
-tasks.register<DefaultTask>("printVersion") {
-    description = "Prints the current project version to the console."
-    group = "help"
-
-    val projectName = project.name
-    val projectVersion = project.version.toString()
-
-    doLast {
-        println("$projectName version: $projectVersion")
-    }
-}
-
-tasks.withType<PublishToMavenLocal>().configureEach {
-    finalizedBy("printVersion")
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025-2026 The Problem4J Authors
+ * Copyright 2025-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,9 +84,16 @@ import org.springframework.web.server.ServerWebInputException;
 @Configuration(proxyBeanMethods = false)
 class ProblemResolverConfiguration {
 
+  /** Creates a new instance of this configuration. */
+  ProblemResolverConfiguration() {}
+
   @ConditionalOnClass(BindException.class)
   @Configuration(proxyBeanMethods = false)
   static class BindProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    BindProblemConfiguration() {}
+
     @ConditionalOnMissingBean(BindProblemResolver.class)
     @Bean
     BindProblemResolver bindProblemResolver(
@@ -98,6 +105,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(ConstraintViolationException.class)
   @Configuration(proxyBeanMethods = false)
   static class ConstraintViolationProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    ConstraintViolationProblemConfiguration() {}
+
     @ConditionalOnMissingBean(ConstraintViolationProblemResolver.class)
     @Bean
     ConstraintViolationProblemResolver constraintViolationProblemResolver(
@@ -109,6 +120,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(DecodingException.class)
   @Configuration(proxyBeanMethods = false)
   static class DecodingProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    DecodingProblemConfiguration() {}
+
     @ConditionalOnMissingBean(DecodingProblemResolver.class)
     @Bean
     DecodingProblemResolver decodingProblemResolver(ProblemFormat problemFormat) {
@@ -119,6 +134,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(ErrorResponseException.class)
   @Configuration(proxyBeanMethods = false)
   static class ErrorResponseProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    ErrorResponseProblemConfiguration() {}
+
     @ConditionalOnMissingBean(ErrorResponseProblemResolver.class)
     @Bean
     ErrorResponseProblemResolver errorResponseProblemResolver(ProblemFormat problemFormat) {
@@ -129,6 +148,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(HandlerMethodValidationException.class)
   @Configuration(proxyBeanMethods = false)
   static class HandlerMethodValidationProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    HandlerMethodValidationProblemConfiguration() {}
+
     @ConditionalOnMissingBean(HandlerMethodValidationProblemResolver.class)
     @Bean
     HandlerMethodValidationProblemResolver handlerMethodValidationProblemResolver(
@@ -141,6 +164,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(HttpMediaTypeNotAcceptableException.class)
   @Configuration(proxyBeanMethods = false)
   static class HttpMediaTypeNotAcceptableProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    HttpMediaTypeNotAcceptableProblemConfiguration() {}
+
     @ConditionalOnMissingBean(HttpMediaTypeNotAcceptableProblemResolver.class)
     @Bean
     HttpMediaTypeNotAcceptableProblemResolver httpMediaTypeNotAcceptableProblemResolver(
@@ -152,6 +179,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(HttpMediaTypeNotSupportedException.class)
   @Configuration(proxyBeanMethods = false)
   static class HttpMediaTypeNotSupportedProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    HttpMediaTypeNotSupportedProblemConfiguration() {}
+
     @ConditionalOnMissingBean(HttpMediaTypeNotSupportedProblemResolver.class)
     @Bean
     HttpMediaTypeNotSupportedProblemResolver httpMediaTypeNotSupportedProblemResolver(
@@ -163,6 +194,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(HttpMessageNotReadableException.class)
   @Configuration(proxyBeanMethods = false)
   static class HttpMessageNotReadableProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    HttpMessageNotReadableProblemConfiguration() {}
+
     @ConditionalOnMissingBean(HttpMessageNotReadableProblemResolver.class)
     @Bean
     HttpMessageNotReadableProblemResolver httpMessageNotReadableProblemResolver(
@@ -174,6 +209,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(HttpRequestMethodNotSupportedException.class)
   @Configuration(proxyBeanMethods = false)
   static class HttpRequestMethodNotSupportedProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    HttpRequestMethodNotSupportedProblemConfiguration() {}
+
     @ConditionalOnMissingBean(HttpRequestMethodNotSupportedProblemResolver.class)
     @Bean
     HttpRequestMethodNotSupportedProblemResolver httpRequestMethodNotSupportedProblemResolver(
@@ -185,6 +224,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(MaxUploadSizeExceededException.class)
   @Configuration(proxyBeanMethods = false)
   static class MaxUploadSizeExceededProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    MaxUploadSizeExceededProblemConfiguration() {}
+
     @ConditionalOnMissingBean(MaxUploadSizeExceededProblemResolver.class)
     @Bean
     MaxUploadSizeExceededProblemResolver maxUploadSizeExceededProblemResolver(
@@ -196,6 +239,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(MethodValidationException.class)
   @Configuration(proxyBeanMethods = false)
   static class MethodValidationProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    MethodValidationProblemConfiguration() {}
+
     @ConditionalOnMissingBean(MethodValidationProblemResolver.class)
     @Bean
     MethodValidationProblemResolver methodValidationProblemResolver(
@@ -207,6 +254,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(MissingRequestValueException.class)
   @Configuration(proxyBeanMethods = false)
   static class MissingRequestValueProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    MissingRequestValueProblemConfiguration() {}
+
     @ConditionalOnMissingBean(MissingRequestValueProblemResolver.class)
     @Bean
     MissingRequestValueProblemResolver missingRequestValueProblemResolver(
@@ -218,6 +269,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(MissingServletRequestPartException.class)
   @Configuration(proxyBeanMethods = false)
   static class MissingServletRequestPartProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    MissingServletRequestPartProblemConfiguration() {}
+
     @ConditionalOnMissingBean(MissingServletRequestPartProblemResolver.class)
     @Bean
     MissingServletRequestPartProblemResolver missingServletRequestPartProblemResolver(
@@ -229,6 +284,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(MultipartException.class)
   @Configuration(proxyBeanMethods = false)
   static class MultipartProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    MultipartProblemConfiguration() {}
+
     @ConditionalOnMissingBean(MultipartProblemResolver.class)
     @Bean
     MultipartProblemResolver multipartProblemResolver(ProblemFormat problemFormat) {
@@ -239,6 +298,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(ResponseStatusException.class)
   @Configuration(proxyBeanMethods = false)
   static class ResponseStatusProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    ResponseStatusProblemConfiguration() {}
+
     @ConditionalOnMissingBean(ResponseStatusProblemResolver.class)
     @Bean
     ResponseStatusProblemResolver responseStatusProblemResolver(ProblemFormat problemFormat) {
@@ -249,6 +312,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(ServerErrorException.class)
   @Configuration(proxyBeanMethods = false)
   static class ServerErrorProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    ServerErrorProblemConfiguration() {}
+
     @ConditionalOnMissingBean(ServerErrorProblemResolver.class)
     @Bean
     ServerErrorProblemResolver serverErrorProblemResolver(ProblemFormat problemFormat) {
@@ -259,6 +326,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(ServerWebInputException.class)
   @Configuration(proxyBeanMethods = false)
   static class ServerWebInputProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    ServerWebInputProblemConfiguration() {}
+
     @ConditionalOnBean(TypeMismatchProblemResolver.class)
     @ConditionalOnMissingBean(ServerWebInputProblemResolver.class)
     @Bean
@@ -278,6 +349,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(ServletRequestBindingException.class)
   @Configuration(proxyBeanMethods = false)
   static class ServletRequestBindingProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    ServletRequestBindingProblemConfiguration() {}
+
     @ConditionalOnMissingBean(ServletRequestBindingProblemResolver.class)
     @Bean
     ServletRequestBindingProblemResolver servletRequestBindingProblemResolver(
@@ -289,6 +364,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(TypeMismatchException.class)
   @Configuration(proxyBeanMethods = false)
   static class TypeMismatchProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    TypeMismatchProblemConfiguration() {}
+
     @ConditionalOnMissingBean(TypeMismatchProblemResolver.class)
     @Bean
     TypeMismatchProblemResolver typeMismatchProblemResolver(ProblemFormat problemFormat) {
@@ -299,6 +378,10 @@ class ProblemResolverConfiguration {
   @ConditionalOnClass(WebExchangeBindException.class)
   @Configuration(proxyBeanMethods = false)
   static class WebExchangeBindProblemConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    WebExchangeBindProblemConfiguration() {}
+
     @ConditionalOnMissingBean(WebExchangeBindProblemResolver.class)
     @Bean
     WebExchangeBindProblemResolver webExchangeBindProblemResolver(

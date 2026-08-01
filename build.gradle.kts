@@ -51,7 +51,6 @@ spotless {
         endWithNewline()
         lineEndings = LineEnding.UNIX
     }
-
     format("javaMisc") {
         target("**/src/**/package-info.java", "**/src/**/module-info.java")
 
@@ -68,15 +67,13 @@ spotless {
 
         licenseHeaderFile(licenseHeader, delimiter).updateYearWithLatest(updateLicenseYear)
     }
-
     kotlin {
         target("**/src/**/*.kt")
 
-        ktfmt("0.63").metaStyle()
+        ktfmt("0.64").metaStyle()
         endWithNewline()
         lineEndings = LineEnding.UNIX
     }
-
     kotlinGradle {
         target("**/*.gradle.kts")
         targetExclude("**/build/**")
@@ -85,7 +82,6 @@ spotless {
         endWithNewline()
         lineEndings = LineEnding.UNIX
     }
-
     format("yaml") {
         target("**/*.yml", "**/*.yaml")
 
@@ -94,7 +90,6 @@ spotless {
         endWithNewline()
         lineEndings = LineEnding.UNIX
     }
-
     format("misc") {
         target("**/.gitattributes", "**/.gitignore")
 

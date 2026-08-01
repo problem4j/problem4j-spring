@@ -1,5 +1,5 @@
 /*
- * Copyright 2025-2026 The Problem4J Authors
+ * Copyright 2025-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,13 @@ import tools.jackson.dataformat.xml.XmlMapper;
  * @since 2.1.0
  */
 public class ProblemXmlMapperBuilderCustomizer implements XmlMapperBuilderCustomizer {
+
+  /**
+   * Creates a new {@link ProblemXmlMapperBuilderCustomizer}.
+   *
+   * @since 2.1.0
+   */
+  public ProblemXmlMapperBuilderCustomizer() {}
 
   /**
    * Adds the {@link ProblemJacksonMixIn} to the XML mapper builder for proper serialization and

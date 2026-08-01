@@ -1,5 +1,5 @@
 /*
- * Copyright 2025-2026 The Problem4J Authors
+ * Copyright 2025-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,14 @@ import io.github.problem4j.spring.web.resolver.AbstractProblemResolver;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.util.List;
 import java.util.Optional;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
+@NullMarked
 class DefaultProblemResolverStoreTest {
 
   private static class MyBaseException extends Exception {}

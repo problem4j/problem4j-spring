@@ -1,9 +1,11 @@
-# Problem4J Spring
+<h1 align="center">Problem4J Spring</h1>
 
-[![Codecov](https://codecov.io/gh/problem4j/problem4j-spring/graph/badge.svg?token=S2DOKHIXMH)](https://codecov.io/gh/problem4j/problem4j-spring)
-[![Build Status](https://github.com/problem4j/problem4j-spring/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/problem4j/problem4j-spring/actions/workflows/gradle-build.yml)
-[![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom)][maven-central]
-[![License](https://img.shields.io/badge/license-Apache%202.0-green)](https://github.com/problem4j/problem4j-spring/blob/main/LICENSE)
+<p align="center">
+  <a href="https://codecov.io/gh/problem4j/problem4j-spring"><img src="https://codecov.io/gh/problem4j/problem4j-spring/graph/badge.svg?token=S2DOKHIXMH" alt="Codecov"></a>
+  <a href="https://github.com/problem4j/problem4j-spring/actions/workflows/gradle-build.yml"><img src="https://github.com/problem4j/problem4j-spring/actions/workflows/gradle-build.yml/badge.svg" alt="Build Status"></a>
+  <a href="https://central.sonatype.com/artifact/io.github.problem4j/problem4j-spring-bom"><img src="https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom" alt="Sonatype"></a>
+  <a href="https://github.com/problem4j/problem4j-spring/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-green" alt="License"></a>
+</p>
 
 Designing clear and consistent error responses in a REST API is often harder than it looks. Without a shared standard,
 each application ends up inventing its own ad-hoc format, which quickly leads to inconsistency and confusion.
@@ -31,15 +33,16 @@ flexible enough for custom exceptions and business-specific details.
 Even though Spring provides `ProblemDetail` and `ErrorResponseException` for [**RFC 7807**][rfc7807]-compliant error
 responses, it takes a different approach than this library offers. It revolves around throwing `ErrorResponseException`
 (or any exception that implements the `ErrorResponse` interface) or returning `ProblemDetail` from `@ExceptionHandler`
-methods for individual exceptions. Spring includes default exception handlers in `ResponseEntityExceptionHandler`, but
-those exceptions usually return the exact `getMessage()` in the `detail` field, which may leak framework internals to
-client applications.
+methods. Spring includes default exception handlers in `ResponseEntityExceptionHandler`, but those exceptions usually
+return the exact `getMessage()` in the `detail` field, which may leak framework internals to client applications.
 
 The **Problem4J** library was created to:
 
 - Provide a **fully immutable, fluent `Problem` model** with support for extensions.
-- Support **declarative exception mapping** via `@ProblemMapping` or **programmatic one** via `ProblemException` (as a
-  base class) and `ProblemResolver` (as a library-specific way to add `Exception`-to-`Problem` transformations).
+- Support **declarative exception mapping** via `@ProblemMapping` or **imperative one** via `ProblemException` (as a
+  base class).
+- Provides a lightweight `ProblemResolver`-based, `Exception`-to-`Problem` transformation framework, backed by built-in
+  `@RestControllerAdvice` components.
 - Interpolate exception fields and context metadata (e.g., `context.traceId`) when using the declarative approach.
 - Provide a post-processing engine, to alter final response by configured rules in a consistent way (via application
   properties). The post-processing can integrate with tracing to inject a `traceId` (or `requestId`) to the final

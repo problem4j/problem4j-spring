@@ -1,5 +1,5 @@
 /*
- * Copyright 2025-2026 The Problem4J Authors
+ * Copyright 2025-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,9 @@ import org.springframework.validation.method.MethodValidationResult;
 @Configuration(proxyBeanMethods = false)
 class ProblemParameterConfiguration {
 
+  /** Creates a new instance of this configuration. */
+  ProblemParameterConfiguration() {}
+
   /**
    * Provides a default {@link MethodParameterSupport} bean if none is defined by the user.
    *
@@ -51,6 +54,9 @@ class ProblemParameterConfiguration {
   @ConditionalOnClass(MethodValidationResult.class)
   @Configuration(proxyBeanMethods = false)
   static class ProblemMethodValidationConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    ProblemMethodValidationConfiguration() {}
 
     /**
      * Provides a default {@link MethodValidationResultSupport} bean if none is defined by the user.

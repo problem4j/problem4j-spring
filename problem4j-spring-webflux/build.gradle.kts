@@ -2,7 +2,6 @@ plugins {
     id("internal.errorprone-convention")
     id("internal.jacoco-convention")
     id("internal.java-library-convention")
-    id("internal.kotlin-interop-convention")
     id("internal.publishing-convention")
     alias(libs.plugins.nmcp)
 }

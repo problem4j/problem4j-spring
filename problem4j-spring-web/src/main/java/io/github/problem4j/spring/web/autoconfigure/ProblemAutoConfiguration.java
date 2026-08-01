@@ -1,5 +1,5 @@
 /*
- * Copyright 2025-2026 The Problem4J Authors
+ * Copyright 2025-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,6 +70,13 @@ import tools.jackson.dataformat.xml.XmlMapper;
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.ANY)
 @Import({ProblemParameterConfiguration.class, ProblemResolverConfiguration.class})
 public class ProblemAutoConfiguration {
+
+  /**
+   * Creates a new instance of this autoconfiguration.
+   *
+   * @since 1.2.0
+   */
+  public ProblemAutoConfiguration() {}
 
   /**
    * Provides a {@link ProblemMapper} if none is defined.
@@ -161,6 +168,9 @@ public class ProblemAutoConfiguration {
   @Configuration(proxyBeanMethods = false)
   static class ProblemJsonMapperConfiguration {
 
+    /** Creates a new instance of this configuration. */
+    ProblemJsonMapperConfiguration() {}
+
     /**
      * Creates a {@link ProblemJsonMapperBuilderCustomizer} to add the {@code ProblemJacksonMixIn}
      * to the JSON mapper for consistent Problem serialization.
@@ -179,6 +189,9 @@ public class ProblemAutoConfiguration {
   @ConditionalOnClass({XmlMapperBuilderCustomizer.class, XmlMapper.class})
   @Configuration(proxyBeanMethods = false)
   static class ProblemXmlMapperConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    ProblemXmlMapperConfiguration() {}
 
     /**
      * Creates a {@link ProblemXmlMapperBuilderCustomizer} to add the {@code ProblemJacksonMixIn} to
@@ -208,6 +221,9 @@ public class ProblemAutoConfiguration {
   @Configuration(proxyBeanMethods = false)
   @Deprecated(since = "2.0.0", forRemoval = true)
   static class ProblemJackson2ModuleConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    ProblemJackson2ModuleConfiguration() {}
 
     /**
      * Provides a {@link ProblemModule} if none is defined.

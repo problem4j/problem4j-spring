@@ -1,5 +1,5 @@
 /*
- * Copyright 2025-2026 The Problem4J Authors
+ * Copyright 2025-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,6 +68,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ProblemWebMvcAutoConfiguration {
 
   /**
+   * Creates a new instance of this autoconfiguration.
+   *
+   * @since 1.2.0
+   */
+  public ProblemWebMvcAutoConfiguration() {}
+
+  /**
    * Creates the default {@link ExceptionWebMvcAdvice} used for handling exceptions in WebMVC
    * applications.
    *
@@ -119,6 +126,9 @@ public class ProblemWebMvcAutoConfiguration {
   @Configuration(proxyBeanMethods = false)
   static class ProblemContextMvcFilterConfiguration {
 
+    /** Creates a new instance of this configuration. */
+    ProblemContextMvcFilterConfiguration() {}
+
     /**
      * Registers the default {@link ProblemContextWebMvcFilter}, which initializes and propagates
      * Problem4J contextual metadata throughout the request lifecycle.
@@ -140,6 +150,9 @@ public class ProblemWebMvcAutoConfiguration {
   @ConditionalOnClass(ResponseEntityExceptionHandler.class)
   @Configuration(proxyBeanMethods = false)
   static class ResponseEntityExceptionHandlerConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    ResponseEntityExceptionHandlerConfiguration() {}
 
     /**
      * Provides the Problem4J-enhanced {@link ResponseEntityExceptionHandler} implementation for

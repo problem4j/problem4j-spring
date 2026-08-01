@@ -1,5 +1,5 @@
 /*
- * Copyright 2025-2026 The Problem4J Authors
+ * Copyright 2025-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,13 @@ import org.jspecify.annotations.Nullable;
  * @since 1.2.7
  */
 public class SimpleTypeNameMapper implements TypeNameMapper {
+
+  /**
+   * Creates a new {@link SimpleTypeNameMapper}.
+   *
+   * @since 1.2.7
+   */
+  public SimpleTypeNameMapper() {}
 
   /**
    * Common type name for all integer types.
