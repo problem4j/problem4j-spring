@@ -1,5 +1,4 @@
 import com.diffplug.spotless.LineEnding
-import internal.getBooleanProperty
 
 plugins {
     id("internal.idea-convention")
@@ -39,11 +38,10 @@ reporting {
 
 spotless {
     val licenseHeader = "${rootProject.rootDir}/gradle/license-header.java"
-    val updateLicenseYear = project.getBooleanProperty("spotless.license-year-enabled")
 
     java {
         target("**/src/**/*.java")
-        licenseHeaderFile(licenseHeader).updateYearWithLatest(updateLicenseYear)
+        licenseHeaderFile(licenseHeader)
 
         // NOTE: decided not to upgrade Google Java Format, as versions 1.29+ require running it on Java 21
         googleJavaFormat("1.28.0")
@@ -65,7 +63,7 @@ spotless {
         // - "/**" in case of a pre-package (or pre-module) JavaDoc.
         val delimiter = "^(@|package|import|module|/\\*\\*)"
 
-        licenseHeaderFile(licenseHeader, delimiter).updateYearWithLatest(updateLicenseYear)
+        licenseHeaderFile(licenseHeader, delimiter)
     }
     kotlin {
         target("**/src/**/*.kt")

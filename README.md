@@ -255,16 +255,6 @@ task. **Note** that **building will fail** if code is not properly formatted.
 ./gradlew spotlessApply
 ```
 
-**Note** that if the year has changed, add `-Pspotless.license-year-enabled` flag to update the year in license headers.
-The [publishing GitHub Action](.github/workflows/gradle-publish-release.yml) will fail if the year is not updated, but
-for local development and builds you can choose to skip it and update the year later.
-
-```bash
-./gradlew spotlessApply -Pspotless.license-year-enabled
-```
-
----
-
 To **publish** the built artifacts to **local Maven repository**, use `publishToMavenLocal` task.
 
 ```bash
