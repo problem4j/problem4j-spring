@@ -8,10 +8,6 @@ import org.springframework.http.HttpStatusCode
 /**
  * Builds a [Problem] with the given HTTP [status] using a [ProblemBuilder] DSL.
  *
- * [block] must return the [ProblemBuilder] to use for [ProblemBuilder.build] - typically the result
- * of the last chained call - so implementations that return a new builder instance from each call
- * (instead of mutating and returning `this`) are still applied correctly.
- *
  * Example:
  * ```
  * import io.github.problem4j.spring.web.problem
@@ -29,10 +25,6 @@ public fun problem(status: Int, block: ProblemBuilder.() -> ProblemBuilder = { t
 
 /**
  * Builds a [Problem] with the given Spring [HttpStatusCode] using a [ProblemBuilder] DSL.
- *
- * [block] must return the [ProblemBuilder] to use for [ProblemBuilder.build] - typically the result
- * of the last chained call - so implementations that return a new builder instance from each call
- * (instead of mutating and returning `this`) are still applied correctly.
  *
  * Example:
  * ```
