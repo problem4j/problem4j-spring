@@ -12,7 +12,9 @@ import org.springframework.http.HttpStatusCode
  * ```
  * import io.github.problem4j.spring.web.problem
  *
- * val problem = problem(400) { title("Invalid Email").detail("invalid email") }
+ * val problem = problem(400) {
+ *   title("Invalid Email").detail("invalid email")
+ * }
  * ```
  *
  * @param status HTTP status code for the resulting [Problem]
@@ -31,7 +33,9 @@ public fun problem(status: Int, block: ProblemBuilder.() -> ProblemBuilder = { t
  * import io.github.problem4j.spring.web.problem
  * import org.springframework.http.HttpStatus
  *
- * val problem = problem(HttpStatus.BAD_REQUEST) { title("Invalid Email").detail("invalid email") }
+ * val problem = problem(HttpStatus.BAD_REQUEST) {
+ *   title("Invalid Email").detail("invalid email")
+ * }
  * ```
  *
  * @param status HTTP status code for the resulting [Problem]
@@ -53,7 +57,9 @@ public fun problem(
  * import io.github.problem4j.spring.web.status
  * import org.springframework.http.HttpStatus
  *
- * val problem = Problem.builder().status(HttpStatus.BAD_REQUEST).build()
+ * val problem = Problem.builder()
+ *     .status(HttpStatus.BAD_REQUEST)
+ *     .build()
  * ```
  *
  * @param status HTTP status code
@@ -70,7 +76,9 @@ public fun ProblemBuilder.status(status: HttpStatusCode): ProblemBuilder = statu
  * import io.github.problem4j.core.Problem
  * import io.github.problem4j.spring.web.extensions
  *
- * val problem = Problem.builder().extensions("field" to "email", "reason" to "blank").build()
+ * val problem = Problem.builder()
+ *     .extensions("field" to "email", "reason" to "blank")
+ *     .build()
  * ```
  *
  * @param extensions extension key-value pairs to add

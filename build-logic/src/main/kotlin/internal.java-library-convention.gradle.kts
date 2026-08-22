@@ -50,6 +50,7 @@ kotlin {
     }
     compilerOptions {
         explicitApi()
+        moduleName = project.name
         apiVersion = KotlinVersion.KOTLIN_2_2
         languageVersion = KotlinVersion.KOTLIN_2_2
     }

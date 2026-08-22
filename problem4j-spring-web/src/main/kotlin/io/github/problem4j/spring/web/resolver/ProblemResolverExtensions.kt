@@ -2,18 +2,8 @@ package io.github.problem4j.spring.web.resolver
 
 import io.github.problem4j.core.Problem
 import io.github.problem4j.core.ProblemContext
-import kotlin.reflect.KClass
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
-
-/**
- * Kotlin-friendly base class for [ProblemResolver], accepting a [KClass] instead of a [Class].
- *
- * @param type exception subtype this resolver is responsible for
- * @since 3.1.0
- */
-public abstract class KotlinProblemResolver(type: KClass<out Exception>) :
-    AbstractProblemResolver(type.java)
 
 /**
  * Creates a [ProblemResolver] for exception type [E] from a lambda, without subclassing
