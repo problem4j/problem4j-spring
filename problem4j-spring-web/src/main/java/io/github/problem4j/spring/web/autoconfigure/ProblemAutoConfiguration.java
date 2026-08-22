@@ -26,14 +26,25 @@ import io.github.problem4j.spring.web.DefaultProblemFormat;
 import io.github.problem4j.spring.web.DefaultProblemPostProcessor;
 import io.github.problem4j.spring.web.DefaultProblemResolverStore;
 import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.ProblemFormatAwareBeanPostProcessor;
 import io.github.problem4j.spring.web.ProblemJsonMapperBuilderCustomizer;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.ProblemXmlMapperBuilderCustomizer;
 import io.github.problem4j.spring.web.SimpleTypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapper;
+import io.github.problem4j.spring.web.TypeNameMapperAwareBeanPostProcessor;
+import io.github.problem4j.spring.web.parameter.BindingResultSupport;
+import io.github.problem4j.spring.web.parameter.BindingResultSupportAwareBeanPostProcessor;
+import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
+import io.github.problem4j.spring.web.parameter.MethodParameterSupportAwareBeanPostProcessor;
+import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
+import io.github.problem4j.spring.web.parameter.MethodValidationResultSupportAwareBeanPostProcessor;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
+import io.github.problem4j.spring.web.resolver.TypeMismatchProblemResolver;
+import io.github.problem4j.spring.web.resolver.TypeMismatchProblemResolverAwareBeanPostProcessor;
 import java.util.List;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -161,6 +172,111 @@ public class ProblemAutoConfiguration {
   @Bean
   TypeNameMapper problemTypeNameMapper() {
     return new SimpleTypeNameMapper();
+  }
+
+  /**
+   * Provides a {@link ProblemFormatAwareBeanPostProcessor} that injects the configured {@link
+   * ProblemFormat} into every {@code ProblemFormatAware} bean after construction, so resolvers no
+   * longer need {@link ProblemFormat} as a constructor argument.
+   *
+   * <p>Declared as a {@code static} {@code @Bean} method, as recommended for {@code
+   * BeanPostProcessor} beans, so this configuration class doesn't need to be fully instantiated
+   * first.
+   *
+   * @param problemFormat provider for the container's {@link ProblemFormat} bean
+   * @return a new {@link ProblemFormatAwareBeanPostProcessor}
+   */
+  @ConditionalOnMissingBean(ProblemFormatAwareBeanPostProcessor.class)
+  @Bean
+  static ProblemFormatAwareBeanPostProcessor problemFormatAwareBeanPostProcessor(
+      ObjectProvider<ProblemFormat> problemFormat) {
+    return new ProblemFormatAwareBeanPostProcessor(problemFormat);
+  }
+
+  /**
+   * Provides a {@link TypeNameMapperAwareBeanPostProcessor} that injects the configured {@link
+   * TypeNameMapper} into every {@code TypeNameMapperAware} bean after construction, so resolvers no
+   * longer need {@link TypeNameMapper} as a constructor argument.
+   *
+   * <p>Declared as a {@code static} {@code @Bean} method, as recommended for {@code
+   * BeanPostProcessor} beans, so this configuration class doesn't need to be fully instantiated
+   * first.
+   *
+   * @param typeNameMapper provider for the container's {@link TypeNameMapper} bean
+   * @return a new {@link TypeNameMapperAwareBeanPostProcessor}
+   */
+  @ConditionalOnMissingBean(TypeNameMapperAwareBeanPostProcessor.class)
+  @Bean
+  static TypeNameMapperAwareBeanPostProcessor typeNameMapperAwareBeanPostProcessor(
+      ObjectProvider<TypeNameMapper> typeNameMapper) {
+    return new TypeNameMapperAwareBeanPostProcessor(typeNameMapper);
+  }
+
+  /**
+   * Provides a {@link BindingResultSupportAwareBeanPostProcessor} that injects the configured
+   * {@link BindingResultSupport} into every {@code BindingResultSupportAware} bean after
+   * construction, so resolvers no longer need {@link BindingResultSupport} as a constructor
+   * argument.
+   *
+   * @param bindingResultSupport provider for the container's {@link BindingResultSupport} bean
+   * @return a new {@link BindingResultSupportAwareBeanPostProcessor}
+   */
+  @ConditionalOnMissingBean(BindingResultSupportAwareBeanPostProcessor.class)
+  @Bean
+  static BindingResultSupportAwareBeanPostProcessor bindingResultSupportAwareBeanPostProcessor(
+      ObjectProvider<BindingResultSupport> bindingResultSupport) {
+    return new BindingResultSupportAwareBeanPostProcessor(bindingResultSupport);
+  }
+
+  /**
+   * Provides a {@link MethodValidationResultSupportAwareBeanPostProcessor} that injects the
+   * configured {@link MethodValidationResultSupport} into every {@code
+   * MethodValidationResultSupportAware} bean after construction, so resolvers no longer need {@link
+   * MethodValidationResultSupport} as a constructor argument.
+   *
+   * @param methodValidationResultSupport provider for the container's {@link
+   *     MethodValidationResultSupport} bean
+   * @return a new {@link MethodValidationResultSupportAwareBeanPostProcessor}
+   */
+  @ConditionalOnMissingBean(MethodValidationResultSupportAwareBeanPostProcessor.class)
+  @Bean
+  static MethodValidationResultSupportAwareBeanPostProcessor
+      methodValidationResultSupportAwareBeanPostProcessor(
+          ObjectProvider<MethodValidationResultSupport> methodValidationResultSupport) {
+    return new MethodValidationResultSupportAwareBeanPostProcessor(methodValidationResultSupport);
+  }
+
+  /**
+   * Provides a {@link MethodParameterSupportAwareBeanPostProcessor} that injects the configured
+   * {@link MethodParameterSupport} into every {@code MethodParameterSupportAware} bean after
+   * construction, so resolvers no longer need {@link MethodParameterSupport} as a constructor
+   * argument.
+   *
+   * @param methodParameterSupport provider for the container's {@link MethodParameterSupport} bean
+   * @return a new {@link MethodParameterSupportAwareBeanPostProcessor}
+   */
+  @ConditionalOnMissingBean(MethodParameterSupportAwareBeanPostProcessor.class)
+  @Bean
+  static MethodParameterSupportAwareBeanPostProcessor methodParameterSupportAwareBeanPostProcessor(
+      ObjectProvider<MethodParameterSupport> methodParameterSupport) {
+    return new MethodParameterSupportAwareBeanPostProcessor(methodParameterSupport);
+  }
+
+  /**
+   * Provides a {@link TypeMismatchProblemResolverAwareBeanPostProcessor} that injects the
+   * container's {@link TypeMismatchProblemResolver} bean, if present, into every {@code
+   * TypeMismatchProblemResolverAware} bean after construction.
+   *
+   * @param typeMismatchProblemResolver provider for the container's {@link
+   *     TypeMismatchProblemResolver} bean
+   * @return a new {@link TypeMismatchProblemResolverAwareBeanPostProcessor}
+   */
+  @ConditionalOnMissingBean(TypeMismatchProblemResolverAwareBeanPostProcessor.class)
+  @Bean
+  static TypeMismatchProblemResolverAwareBeanPostProcessor
+      typeMismatchProblemResolverAwareBeanPostProcessor(
+          ObjectProvider<TypeMismatchProblemResolver> typeMismatchProblemResolver) {
+    return new TypeMismatchProblemResolverAwareBeanPostProcessor(typeMismatchProblemResolver);
   }
 
   /** Configuration for JSON support in Problem serialization. */

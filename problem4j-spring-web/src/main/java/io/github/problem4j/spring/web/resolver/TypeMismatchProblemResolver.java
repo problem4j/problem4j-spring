@@ -26,6 +26,7 @@ import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.SimpleTypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapper;
+import io.github.problem4j.spring.web.TypeNameMapperAware;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -44,9 +45,10 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  *
  * @since 1.2.0
  */
-public class TypeMismatchProblemResolver extends AbstractProblemResolver {
+public class TypeMismatchProblemResolver extends AbstractProblemResolver
+    implements TypeNameMapperAware {
 
-  private final TypeNameMapper typeNameMapper;
+  private TypeNameMapper typeNameMapper;
 
   /**
    * Creates a new {@link TypeMismatchProblemResolver} with default problem format.
@@ -77,6 +79,17 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver {
    */
   public TypeMismatchProblemResolver(ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
     super(TypeMismatchException.class, problemFormat);
+    this.typeNameMapper = typeNameMapper;
+  }
+
+  /**
+   * Replaces the {@link TypeNameMapper} used by this resolver.
+   *
+   * @param typeNameMapper the type name mapper to use
+   * @since 3.1.0
+   */
+  @Override
+  public void setTypeNameMapper(TypeNameMapper typeNameMapper) {
     this.typeNameMapper = typeNameMapper;
   }
 

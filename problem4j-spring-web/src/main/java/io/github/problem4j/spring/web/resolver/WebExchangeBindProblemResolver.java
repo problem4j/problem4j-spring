@@ -22,6 +22,7 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
+import io.github.problem4j.spring.web.parameter.BindingResultSupportAware;
 import io.github.problem4j.spring.web.parameter.DefaultBindingResultSupport;
 import io.github.problem4j.spring.web.parameter.ViolationSupport;
 import org.springframework.http.HttpHeaders;
@@ -41,9 +42,10 @@ import org.springframework.web.bind.support.WebExchangeBindException;
  *
  * @since 1.2.0
  */
-public class WebExchangeBindProblemResolver extends AbstractProblemResolver {
+public class WebExchangeBindProblemResolver extends AbstractProblemResolver
+    implements BindingResultSupportAware {
 
-  private final BindingResultSupport bindingResultSupport;
+  private BindingResultSupport bindingResultSupport;
 
   /**
    * Creates a new {@link WebExchangeBindProblemResolver} with default problem format.
@@ -65,6 +67,17 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver {
   }
 
   /**
+   * Creates a new {@link WebExchangeBindProblemResolver} with the specified binding result support
+   * and default problem format.
+   *
+   * @param bindingResultSupport the support for extracting bind results
+   * @since 3.1.0
+   */
+  public WebExchangeBindProblemResolver(BindingResultSupport bindingResultSupport) {
+    this(ProblemFormat.identity(), bindingResultSupport);
+  }
+
+  /**
    * Creates a new {@link WebExchangeBindProblemResolver} with the specified problem format and
    * binding result support.
    *
@@ -75,6 +88,17 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver {
   public WebExchangeBindProblemResolver(
       ProblemFormat problemFormat, BindingResultSupport bindingResultSupport) {
     super(WebExchangeBindException.class, problemFormat);
+    this.bindingResultSupport = bindingResultSupport;
+  }
+
+  /**
+   * Replaces the {@link BindingResultSupport} used by this resolver.
+   *
+   * @param bindingResultSupport the binding result support to use
+   * @since 3.1.0
+   */
+  @Override
+  public void setBindingResultSupport(BindingResultSupport bindingResultSupport) {
     this.bindingResultSupport = bindingResultSupport;
   }
 

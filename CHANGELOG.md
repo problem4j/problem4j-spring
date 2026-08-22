@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+### Added
+
+- Add `ProblemFormatAware`, `TypeNameMapperAware`, `BindingResultSupportAware`, `MethodValidationResultSupportAware`,
+  `MethodParameterSupportAware`, and `TypeMismatchProblemResolverAware` callback interfaces, plus a matching
+  `*AwareBeanPostProcessor` for each, so every `ProblemResolver` bean in autoconfiguration is now constructed with its
+  default (no-arg) constructor - any dependency it needs is injected after construction instead of through the
+  constructor.
+
 ### Fixed
 
 - Make `Automatic-Module-Name` stable, by adding it to `META-INF/MANIFEST.MF`.
@@ -21,14 +29,14 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Add `problem4j.title-override` property to configure `title` field override in `DefaultProblemPostProcessor`.
 - Make `DefaultProblemPostProcessor` support any fields from `ProblemContext` in value interpolation.
 - Add `@FunctionalInterface` contract to:
-  - `MethodParameterSupport`,
-  - `MethodValidationResultSupport`,
-  - `BindingResultSupport`,
-  - `ProblemResolverStore`,
-  - `ProblemPostProcessor`,
-  - `TypeNameMapper`,
-  - `AdviceWebFluxInspector`,
-  - `AdviceWebMvcInspector`.
+    - `MethodParameterSupport`,
+    - `MethodValidationResultSupport`,
+    - `BindingResultSupport`,
+    - `ProblemResolverStore`,
+    - `ProblemPostProcessor`,
+    - `TypeNameMapper`,
+    - `AdviceWebFluxInspector`,
+    - `AdviceWebMvcInspector`.
 
 ### Changed
 

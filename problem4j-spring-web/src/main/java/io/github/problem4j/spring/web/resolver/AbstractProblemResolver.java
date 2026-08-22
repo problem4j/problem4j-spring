@@ -17,6 +17,7 @@
 package io.github.problem4j.spring.web.resolver;
 
 import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.ProblemFormatAware;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -24,15 +25,16 @@ import org.jspecify.annotations.Nullable;
  *
  * @since 1.2.0
  */
-public abstract class AbstractProblemResolver implements ProblemResolver {
+public abstract class AbstractProblemResolver implements ProblemResolver, ProblemFormatAware {
 
   private final Class<? extends Exception> clazz;
 
-  private final ProblemFormat problemFormat;
+  private ProblemFormat problemFormat;
 
   /**
    * Creates a resolver for the given exception type using {@link ProblemFormat#identity()} (no
-   * detail transformation).
+   * detail transformation). The format can later be replaced via {@link
+   * #setProblemFormat(ProblemFormat)}, e.g. by {@code ProblemFormatAwareBeanPostProcessor}.
    *
    * @param clazz exception subtype this resolver is responsible for
    * @since 1.2.0
@@ -74,5 +76,16 @@ public abstract class AbstractProblemResolver implements ProblemResolver {
    */
   protected final @Nullable String formatDetail(@Nullable String detail) {
     return problemFormat.formatDetail(detail);
+  }
+
+  /**
+   * Replaces the {@link ProblemFormat} used by this resolver.
+   *
+   * @param problemFormat the problem format to use
+   * @since 3.1.0
+   */
+  @Override
+  public void setProblemFormat(ProblemFormat problemFormat) {
+    this.problemFormat = problemFormat;
   }
 }

@@ -24,6 +24,7 @@ import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.parameter.DefaultMethodValidationResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
+import io.github.problem4j.spring.web.parameter.MethodValidationResultSupportAware;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
@@ -39,9 +40,10 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
  *
  * @since 1.2.0
  */
-public class HandlerMethodValidationProblemResolver extends AbstractProblemResolver {
+public class HandlerMethodValidationProblemResolver extends AbstractProblemResolver
+    implements MethodValidationResultSupportAware {
 
-  private final MethodValidationResultSupport methodValidationResultSupport;
+  private MethodValidationResultSupport methodValidationResultSupport;
 
   /**
    * Creates a new {@link HandlerMethodValidationProblemResolver} with the default problem format
@@ -65,6 +67,18 @@ public class HandlerMethodValidationProblemResolver extends AbstractProblemResol
   }
 
   /**
+   * Creates a new {@link HandlerMethodValidationProblemResolver} with the specified method
+   * validation result support and default problem format.
+   *
+   * @param methodValidationResultSupport the support for extracting validation results
+   * @since 3.1.0
+   */
+  public HandlerMethodValidationProblemResolver(
+      MethodValidationResultSupport methodValidationResultSupport) {
+    this(ProblemFormat.identity(), methodValidationResultSupport);
+  }
+
+  /**
    * Creates a new {@link HandlerMethodValidationProblemResolver} with the specified problem format
    * and method validation result support.
    *
@@ -75,6 +89,18 @@ public class HandlerMethodValidationProblemResolver extends AbstractProblemResol
   public HandlerMethodValidationProblemResolver(
       ProblemFormat problemFormat, MethodValidationResultSupport methodValidationResultSupport) {
     super(HandlerMethodValidationException.class, problemFormat);
+    this.methodValidationResultSupport = methodValidationResultSupport;
+  }
+
+  /**
+   * Replaces the {@link MethodValidationResultSupport} used by this resolver.
+   *
+   * @param methodValidationResultSupport the support for extracting validation results
+   * @since 3.1.0
+   */
+  @Override
+  public void setMethodValidationResultSupport(
+      MethodValidationResultSupport methodValidationResultSupport) {
     this.methodValidationResultSupport = methodValidationResultSupport;
   }
 

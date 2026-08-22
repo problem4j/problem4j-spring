@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.TypeMismatchException;
@@ -39,6 +40,18 @@ class TypeMismatchProblemResolverTest {
   @Test
   void givenDefaultConstructor_whenGetExceptionClass_thenReturnsTypeMismatchException() {
     assertThat(typeMismatchMapping.getExceptionClass()).isEqualTo(TypeMismatchException.class);
+  }
+
+  @Test
+  void givenTypeNameMapperSetAfterConstruction_whenResolve_thenUsesNewMapper() {
+    typeMismatchMapping.setTypeNameMapper(type -> Optional.of("custom"));
+    TypeMismatchException ex = new TypeMismatchException("42", Integer.class);
+
+    Problem problem =
+        typeMismatchMapping.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+
+    assertThat(problem.getExtensions()).containsEntry("kind", "custom");
   }
 
   @Test

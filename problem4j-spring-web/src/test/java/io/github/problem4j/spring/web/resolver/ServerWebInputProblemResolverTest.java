@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import java.lang.reflect.Method;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.TypeMismatchException;
@@ -43,6 +44,58 @@ class ServerWebInputProblemResolverTest {
   @Test
   void givenDefaultConstructor_whenGetExceptionClass_thenReturnsServerWebInputException() {
     assertThat(serverWebInputMapping.getExceptionClass()).isEqualTo(ServerWebInputException.class);
+  }
+
+  @Test
+  void
+      givenTypeNameMapperSetAfterConstruction_whenResolvingTypeMismatch_thenCascadesToNestedResolver() {
+    serverWebInputMapping.setTypeNameMapper(type -> Optional.of("custom"));
+    TypeMismatchException cause = new TypeMismatchException("42", Boolean.class);
+    cause.initPropertyName("flag");
+    ServerWebInputException ex = new ServerWebInputException("irrelevant reason", null, cause);
+
+    Problem problem =
+        serverWebInputMapping.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+
+    assertThat(problem.getExtensions()).containsEntry("kind", "custom");
+  }
+
+  @Test
+  void
+      givenMethodParameterSupportSetAfterConstruction_whenResolvingWithoutPropertyName_thenUsesNewSupport()
+          throws NoSuchMethodException {
+    Method method = DummyController.class.getMethod("paramMethod", Boolean.class);
+    MethodParameter parameter = new MethodParameter(method, 0);
+    parameter.initParameterNameDiscovery(new DefaultParameterNameDiscoverer());
+    serverWebInputMapping.setMethodParameterSupport(mp -> Optional.of("custom-name"));
+
+    TypeMismatchException cause = new TypeMismatchException("42", Boolean.class);
+    ServerWebInputException ex = new ServerWebInputException("irrelevant reason", parameter, cause);
+
+    Problem problem =
+        serverWebInputMapping.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+
+    assertThat(problem.getExtensions()).containsEntry("property", "custom-name");
+  }
+
+  @Test
+  void
+      givenTypeMismatchProblemResolverSetAfterConstruction_whenResolvingTypeMismatch_thenUsesNewResolver() {
+    TypeMismatchProblemResolver custom = new TypeMismatchProblemResolver();
+    custom.setTypeNameMapper(type -> Optional.of("custom-resolver"));
+    serverWebInputMapping.setTypeMismatchProblemResolver(custom);
+
+    TypeMismatchException cause = new TypeMismatchException("42", Boolean.class);
+    cause.initPropertyName("flag");
+    ServerWebInputException ex = new ServerWebInputException("irrelevant reason", null, cause);
+
+    Problem problem =
+        serverWebInputMapping.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+
+    assertThat(problem.getExtensions()).containsEntry("kind", "custom-resolver");
   }
 
   @Test

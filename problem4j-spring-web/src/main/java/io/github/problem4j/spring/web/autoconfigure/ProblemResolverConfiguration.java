@@ -16,11 +16,6 @@
 
 package io.github.problem4j.spring.web.autoconfigure;
 
-import io.github.problem4j.spring.web.ProblemFormat;
-import io.github.problem4j.spring.web.TypeNameMapper;
-import io.github.problem4j.spring.web.parameter.BindingResultSupport;
-import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
-import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
 import io.github.problem4j.spring.web.resolver.BindProblemResolver;
 import io.github.problem4j.spring.web.resolver.ConstraintViolationProblemResolver;
 import io.github.problem4j.spring.web.resolver.DecodingProblemResolver;
@@ -43,7 +38,6 @@ import io.github.problem4j.spring.web.resolver.TypeMismatchProblemResolver;
 import io.github.problem4j.spring.web.resolver.WebExchangeBindProblemResolver;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.TypeMismatchException;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -78,6 +72,12 @@ import org.springframework.web.server.ServerWebInputException;
  * only resolvers for classes present on the classpath are created. This design allows the library
  * to remain compatible previous versions.
  *
+ * <p>Every resolver is constructed with its default (no-arg) constructor here; any dependency it
+ * needs ({@code ProblemFormat}, {@code TypeNameMapper}, {@code BindingResultSupport}, {@code
+ * MethodValidationResultSupport}, {@code MethodParameterSupport}, {@code
+ * TypeMismatchProblemResolver}) is injected after construction by the corresponding {@code
+ * *AwareBeanPostProcessor}.
+ *
  * @see io.github.problem4j.spring.web.resolver.ProblemResolver
  */
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.ANY)
@@ -96,9 +96,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(BindProblemResolver.class)
     @Bean
-    BindProblemResolver bindProblemResolver(
-        ProblemFormat problemFormat, BindingResultSupport bindingResultSupport) {
-      return new BindProblemResolver(problemFormat, bindingResultSupport);
+    BindProblemResolver bindProblemResolver() {
+      return new BindProblemResolver();
     }
   }
 
@@ -111,9 +110,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(ConstraintViolationProblemResolver.class)
     @Bean
-    ConstraintViolationProblemResolver constraintViolationProblemResolver(
-        ProblemFormat problemFormat) {
-      return new ConstraintViolationProblemResolver(problemFormat);
+    ConstraintViolationProblemResolver constraintViolationProblemResolver() {
+      return new ConstraintViolationProblemResolver();
     }
   }
 
@@ -126,8 +124,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(DecodingProblemResolver.class)
     @Bean
-    DecodingProblemResolver decodingProblemResolver(ProblemFormat problemFormat) {
-      return new DecodingProblemResolver(problemFormat);
+    DecodingProblemResolver decodingProblemResolver() {
+      return new DecodingProblemResolver();
     }
   }
 
@@ -140,8 +138,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(ErrorResponseProblemResolver.class)
     @Bean
-    ErrorResponseProblemResolver errorResponseProblemResolver(ProblemFormat problemFormat) {
-      return new ErrorResponseProblemResolver(problemFormat);
+    ErrorResponseProblemResolver errorResponseProblemResolver() {
+      return new ErrorResponseProblemResolver();
     }
   }
 
@@ -154,10 +152,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(HandlerMethodValidationProblemResolver.class)
     @Bean
-    HandlerMethodValidationProblemResolver handlerMethodValidationProblemResolver(
-        ProblemFormat problemFormat, MethodValidationResultSupport methodValidationResultSupport) {
-      return new HandlerMethodValidationProblemResolver(
-          problemFormat, methodValidationResultSupport);
+    HandlerMethodValidationProblemResolver handlerMethodValidationProblemResolver() {
+      return new HandlerMethodValidationProblemResolver();
     }
   }
 
@@ -170,9 +166,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(HttpMediaTypeNotAcceptableProblemResolver.class)
     @Bean
-    HttpMediaTypeNotAcceptableProblemResolver httpMediaTypeNotAcceptableProblemResolver(
-        ProblemFormat problemFormat) {
-      return new HttpMediaTypeNotAcceptableProblemResolver(problemFormat);
+    HttpMediaTypeNotAcceptableProblemResolver httpMediaTypeNotAcceptableProblemResolver() {
+      return new HttpMediaTypeNotAcceptableProblemResolver();
     }
   }
 
@@ -185,9 +180,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(HttpMediaTypeNotSupportedProblemResolver.class)
     @Bean
-    HttpMediaTypeNotSupportedProblemResolver httpMediaTypeNotSupportedProblemResolver(
-        ProblemFormat problemFormat) {
-      return new HttpMediaTypeNotSupportedProblemResolver(problemFormat);
+    HttpMediaTypeNotSupportedProblemResolver httpMediaTypeNotSupportedProblemResolver() {
+      return new HttpMediaTypeNotSupportedProblemResolver();
     }
   }
 
@@ -200,9 +194,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(HttpMessageNotReadableProblemResolver.class)
     @Bean
-    HttpMessageNotReadableProblemResolver httpMessageNotReadableProblemResolver(
-        ProblemFormat problemFormat, TypeNameMapper problemTypeNameMapper) {
-      return new HttpMessageNotReadableProblemResolver(problemFormat, problemTypeNameMapper);
+    HttpMessageNotReadableProblemResolver httpMessageNotReadableProblemResolver() {
+      return new HttpMessageNotReadableProblemResolver();
     }
   }
 
@@ -215,9 +208,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(HttpRequestMethodNotSupportedProblemResolver.class)
     @Bean
-    HttpRequestMethodNotSupportedProblemResolver httpRequestMethodNotSupportedProblemResolver(
-        ProblemFormat problemFormat) {
-      return new HttpRequestMethodNotSupportedProblemResolver(problemFormat);
+    HttpRequestMethodNotSupportedProblemResolver httpRequestMethodNotSupportedProblemResolver() {
+      return new HttpRequestMethodNotSupportedProblemResolver();
     }
   }
 
@@ -230,9 +222,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(MaxUploadSizeExceededProblemResolver.class)
     @Bean
-    MaxUploadSizeExceededProblemResolver maxUploadSizeExceededProblemResolver(
-        ProblemFormat problemFormat) {
-      return new MaxUploadSizeExceededProblemResolver(problemFormat);
+    MaxUploadSizeExceededProblemResolver maxUploadSizeExceededProblemResolver() {
+      return new MaxUploadSizeExceededProblemResolver();
     }
   }
 
@@ -245,9 +236,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(MethodValidationProblemResolver.class)
     @Bean
-    MethodValidationProblemResolver methodValidationProblemResolver(
-        ProblemFormat problemFormat, MethodValidationResultSupport methodValidationResultSupport) {
-      return new MethodValidationProblemResolver(problemFormat, methodValidationResultSupport);
+    MethodValidationProblemResolver methodValidationProblemResolver() {
+      return new MethodValidationProblemResolver();
     }
   }
 
@@ -260,9 +250,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(MissingRequestValueProblemResolver.class)
     @Bean
-    MissingRequestValueProblemResolver missingRequestValueProblemResolver(
-        ProblemFormat problemFormat) {
-      return new MissingRequestValueProblemResolver(problemFormat);
+    MissingRequestValueProblemResolver missingRequestValueProblemResolver() {
+      return new MissingRequestValueProblemResolver();
     }
   }
 
@@ -275,9 +264,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(MissingServletRequestPartProblemResolver.class)
     @Bean
-    MissingServletRequestPartProblemResolver missingServletRequestPartProblemResolver(
-        ProblemFormat problemFormat) {
-      return new MissingServletRequestPartProblemResolver(problemFormat);
+    MissingServletRequestPartProblemResolver missingServletRequestPartProblemResolver() {
+      return new MissingServletRequestPartProblemResolver();
     }
   }
 
@@ -290,8 +278,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(MultipartProblemResolver.class)
     @Bean
-    MultipartProblemResolver multipartProblemResolver(ProblemFormat problemFormat) {
-      return new MultipartProblemResolver(problemFormat);
+    MultipartProblemResolver multipartProblemResolver() {
+      return new MultipartProblemResolver();
     }
   }
 
@@ -304,8 +292,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(ResponseStatusProblemResolver.class)
     @Bean
-    ResponseStatusProblemResolver responseStatusProblemResolver(ProblemFormat problemFormat) {
-      return new ResponseStatusProblemResolver(problemFormat);
+    ResponseStatusProblemResolver responseStatusProblemResolver() {
+      return new ResponseStatusProblemResolver();
     }
   }
 
@@ -318,8 +306,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(ServerErrorProblemResolver.class)
     @Bean
-    ServerErrorProblemResolver serverErrorProblemResolver(ProblemFormat problemFormat) {
-      return new ServerErrorProblemResolver(problemFormat);
+    ServerErrorProblemResolver serverErrorProblemResolver() {
+      return new ServerErrorProblemResolver();
     }
   }
 
@@ -330,19 +318,10 @@ class ProblemResolverConfiguration {
     /** Creates a new instance of this configuration. */
     ServerWebInputProblemConfiguration() {}
 
-    @ConditionalOnBean(TypeMismatchProblemResolver.class)
     @ConditionalOnMissingBean(ServerWebInputProblemResolver.class)
     @Bean
-    ServerWebInputProblemResolver serverWebInputProblemResolver(
-        ProblemFormat problemFormat,
-        TypeMismatchProblemResolver typeMismatchProblemResolver,
-        MethodParameterSupport methodParameterSupport,
-        TypeNameMapper problemTypeNameMapper) {
-      return new ServerWebInputProblemResolver(
-          problemFormat,
-          typeMismatchProblemResolver,
-          methodParameterSupport,
-          problemTypeNameMapper);
+    ServerWebInputProblemResolver serverWebInputProblemResolver() {
+      return new ServerWebInputProblemResolver();
     }
   }
 
@@ -355,9 +334,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(ServletRequestBindingProblemResolver.class)
     @Bean
-    ServletRequestBindingProblemResolver servletRequestBindingProblemResolver(
-        ProblemFormat problemFormat) {
-      return new ServletRequestBindingProblemResolver(problemFormat);
+    ServletRequestBindingProblemResolver servletRequestBindingProblemResolver() {
+      return new ServletRequestBindingProblemResolver();
     }
   }
 
@@ -370,8 +348,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(TypeMismatchProblemResolver.class)
     @Bean
-    TypeMismatchProblemResolver typeMismatchProblemResolver(ProblemFormat problemFormat) {
-      return new TypeMismatchProblemResolver(problemFormat);
+    TypeMismatchProblemResolver typeMismatchProblemResolver() {
+      return new TypeMismatchProblemResolver();
     }
   }
 
@@ -384,9 +362,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(WebExchangeBindProblemResolver.class)
     @Bean
-    WebExchangeBindProblemResolver webExchangeBindProblemResolver(
-        ProblemFormat problemFormat, BindingResultSupport bindingResultSupport) {
-      return new WebExchangeBindProblemResolver(problemFormat, bindingResultSupport);
+    WebExchangeBindProblemResolver webExchangeBindProblemResolver() {
+      return new WebExchangeBindProblemResolver();
     }
   }
 }

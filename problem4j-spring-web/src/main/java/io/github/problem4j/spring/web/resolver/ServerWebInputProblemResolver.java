@@ -23,8 +23,10 @@ import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.SimpleTypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapper;
+import io.github.problem4j.spring.web.TypeNameMapperAware;
 import io.github.problem4j.spring.web.parameter.DefaultMethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
+import io.github.problem4j.spring.web.parameter.MethodParameterSupportAware;
 import java.util.Optional;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.codec.DecodingException;
@@ -46,10 +48,11 @@ import tools.jackson.databind.exc.MismatchedInputException;
  *
  * @since 1.2.0
  */
-public class ServerWebInputProblemResolver extends AbstractProblemResolver {
+public class ServerWebInputProblemResolver extends AbstractProblemResolver
+    implements TypeNameMapperAware, MethodParameterSupportAware, TypeMismatchProblemResolverAware {
 
-  private final TypeMismatchProblemResolver typeMismatchProblemResolver;
-  private final MethodParameterSupport methodParameterSupport;
+  private TypeMismatchProblemResolver typeMismatchProblemResolver;
+  private MethodParameterSupport methodParameterSupport;
   private final JacksonErrorHelper jacksonErrorHelper;
 
   /**
@@ -89,6 +92,24 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
   }
 
   /**
+   * Creates a new {@link ServerWebInputProblemResolver} with the specified type mismatch resolver
+   * and method parameter support, and default problem format.
+   *
+   * @param typeMismatchProblemResolver the resolver to use
+   * @param methodParameterSupport the support for extracting parameter names
+   * @since 3.1.0
+   */
+  public ServerWebInputProblemResolver(
+      TypeMismatchProblemResolver typeMismatchProblemResolver,
+      MethodParameterSupport methodParameterSupport) {
+    this(
+        ProblemFormat.identity(),
+        typeMismatchProblemResolver,
+        methodParameterSupport,
+        new SimpleTypeNameMapper());
+  }
+
+  /**
    * Creates a new {@link ServerWebInputProblemResolver} with the specified problem format, type
    * mismatch resolver, and method parameter support.
    *
@@ -106,7 +127,57 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
     super(ServerWebInputException.class, problemFormat);
     this.typeMismatchProblemResolver = typeMismatchProblemResolver;
     this.methodParameterSupport = methodParameterSupport;
-    jacksonErrorHelper = new JacksonErrorHelper(problemFormat, typeNameMapper);
+    this.jacksonErrorHelper = new JacksonErrorHelper(problemFormat, typeNameMapper);
+  }
+
+  /**
+   * Replaces the {@link ProblemFormat} used by this resolver, cascading it into the internal type
+   * mismatch resolver and Jackson error helper.
+   *
+   * @param problemFormat the problem format to use
+   * @since 3.1.0
+   */
+  @Override
+  public void setProblemFormat(ProblemFormat problemFormat) {
+    super.setProblemFormat(problemFormat);
+    typeMismatchProblemResolver.setProblemFormat(problemFormat);
+    jacksonErrorHelper.setProblemFormat(problemFormat);
+  }
+
+  /**
+   * Replaces the {@link TypeNameMapper} used by this resolver, cascading it into the internal type
+   * mismatch resolver and Jackson error helper.
+   *
+   * @param typeNameMapper the type name mapper to use
+   * @since 3.1.0
+   */
+  @Override
+  public void setTypeNameMapper(TypeNameMapper typeNameMapper) {
+    typeMismatchProblemResolver.setTypeNameMapper(typeNameMapper);
+    jacksonErrorHelper.setTypeNameMapper(typeNameMapper);
+  }
+
+  /**
+   * Replaces the {@link MethodParameterSupport} used by this resolver.
+   *
+   * @param methodParameterSupport the support for extracting parameter names
+   * @since 3.1.0
+   */
+  @Override
+  public void setMethodParameterSupport(MethodParameterSupport methodParameterSupport) {
+    this.methodParameterSupport = methodParameterSupport;
+  }
+
+  /**
+   * Replaces the {@link TypeMismatchProblemResolver} used by this resolver.
+   *
+   * @param typeMismatchProblemResolver the resolver to use
+   * @since 3.1.0
+   */
+  @Override
+  public void setTypeMismatchProblemResolver(
+      TypeMismatchProblemResolver typeMismatchProblemResolver) {
+    this.typeMismatchProblemResolver = typeMismatchProblemResolver;
   }
 
   /**

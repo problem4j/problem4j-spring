@@ -36,11 +36,19 @@ import tools.jackson.databind.exc.MismatchedInputException;
  */
 final class JacksonErrorHelper {
 
-  private final ProblemFormat problemFormat;
-  private final TypeNameMapper typeNameMapper;
+  private ProblemFormat problemFormat;
+  private TypeNameMapper typeNameMapper;
 
   JacksonErrorHelper(ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
     this.problemFormat = problemFormat;
+    this.typeNameMapper = typeNameMapper;
+  }
+
+  void setProblemFormat(ProblemFormat problemFormat) {
+    this.problemFormat = problemFormat;
+  }
+
+  void setTypeNameMapper(TypeNameMapper typeNameMapper) {
     this.typeNameMapper = typeNameMapper;
   }
 
