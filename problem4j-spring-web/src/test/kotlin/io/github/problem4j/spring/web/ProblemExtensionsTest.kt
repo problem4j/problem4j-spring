@@ -16,6 +16,14 @@ class ProblemExtensionsTest {
   }
 
   @Test
+  fun givenHttpStatusCodeAndNoDetail_whenConvertingToProblem_thenDetailIsNull() {
+    val result = HttpStatus.BAD_REQUEST.toProblem()
+
+    assertThat(result.status).isEqualTo(400)
+    assertThat(result.detail).isNull()
+  }
+
+  @Test
   fun givenProblem_whenConvertingToException_thenExceptionWrapsProblem() {
     val problem = Problem.of("Not Found", 404)
 
