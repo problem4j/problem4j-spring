@@ -35,7 +35,7 @@ import org.springframework.http.HttpStatusCode
  * @Bean
  * fun illegalStateProblemResolver(): ProblemResolver =
  *     problemResolver<IllegalStateException> { _, ex, _, status ->
- *       problem(500) { detail(ex.message) }
+ *         problem(500) { detail(ex.message) }
  *     }
  * ```
  *

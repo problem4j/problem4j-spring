@@ -17,6 +17,7 @@
 package io.github.problem4j.spring.web
 
 import io.github.problem4j.core.Problem
+import io.github.problem4j.core.ProblemContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -37,25 +38,6 @@ class ProblemExtensionsTest {
 
     assertThat(result.status).isEqualTo(400)
     assertThat(result.detail).isNull()
-  }
-
-  @Test
-  fun givenProblem_whenConvertingToException_thenExceptionWrapsProblem() {
-    val problem = Problem.of("Not Found", 404)
-
-    val result = problem.toException()
-
-    assertThat(result.problem).isEqualTo(problem)
-  }
-
-  @Test
-  fun givenProblemAndMessage_whenConvertingToException_thenExceptionUsesCustomMessage() {
-    val problem = Problem.of("Not Found", 404)
-
-    val result = problem.toException(message = "custom message")
-
-    assertThat(result.message).isEqualTo("custom message")
-    assertThat(result.problem).isEqualTo(problem)
   }
 
   @Test
@@ -110,5 +92,31 @@ class ProblemExtensionsTest {
     val result = problem(400) { extensions("field" to "email", "reason" to "blank") }
 
     assertThat(result.extensions).containsEntry("field", "email").containsEntry("reason", "blank")
+  }
+
+  @Test
+  fun givenExtension_whenDestructuring_thenComponentsMatchNameAndValue() {
+    val extension = Problem.extension("field", "email")
+
+    val (name, value) = extension
+
+    assertThat(name).isEqualTo("field")
+    assertThat(value).isEqualTo("email")
+  }
+
+  @Test
+  fun givenVarargPairEntries_whenPuttingAllIntoContext_thenAllEntriesArePresent() {
+    val context = ProblemContext.create().putAll("userId" to "12345", "traceId" to "abcde")
+
+    assertThat(context.toMap()).containsEntry("userId", "12345").containsEntry("traceId", "abcde")
+  }
+
+  @Test
+  fun givenVarargPairEntriesWithNullValue_whenPuttingAllIntoContext_thenExistingValueIsRemoved() {
+    val context = ProblemContext.create().put("userId", "12345")
+
+    context.putAll("userId" to null, "traceId" to "abcde")
+
+    assertThat(context.toMap()).doesNotContainKey("userId").containsEntry("traceId", "abcde")
   }
 }
