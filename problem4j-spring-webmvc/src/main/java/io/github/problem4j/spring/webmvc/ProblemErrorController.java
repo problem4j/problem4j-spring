@@ -17,6 +17,7 @@
 package io.github.problem4j.spring.webmvc;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
+import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.resolveContentType;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
@@ -83,7 +84,7 @@ public class ProblemErrorController extends AbstractErrorController {
     problem = problemPostProcessor.process(context, problem);
 
     HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(WebMvcAdviceSupport.resolveContentType(request));
+    headers.setContentType(resolveContentType(request));
 
     return new ResponseEntity<>(problem, headers, status);
   }

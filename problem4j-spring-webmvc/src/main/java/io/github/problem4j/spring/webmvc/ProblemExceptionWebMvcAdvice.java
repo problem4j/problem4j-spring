@@ -18,6 +18,7 @@ package io.github.problem4j.spring.webmvc;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.logAdviceException;
+import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.resolveContentType;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
 import io.github.problem4j.core.Problem;
@@ -88,7 +89,7 @@ public class ProblemExceptionWebMvcAdvice {
     }
 
     HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(WebMvcAdviceSupport.resolveContentType(request));
+    headers.setContentType(resolveContentType(request));
 
     Problem problem;
     try {

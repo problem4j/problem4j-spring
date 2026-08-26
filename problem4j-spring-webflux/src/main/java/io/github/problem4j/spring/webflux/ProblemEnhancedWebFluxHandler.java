@@ -18,6 +18,7 @@ package io.github.problem4j.spring.webflux;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.logAdviceException;
+import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.resolveContentType;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
@@ -108,7 +109,7 @@ public class ProblemEnhancedWebFluxHandler extends ResponseEntityExceptionHandle
         exchange.getAttributeOrDefault(PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create());
 
     headers = headers != null ? new HttpHeaders(headers) : new HttpHeaders();
-    headers.setContentType(WebFluxAdviceSupport.resolveContentType(exchange));
+    headers.setContentType(resolveContentType(exchange));
 
     Problem problem;
     try {

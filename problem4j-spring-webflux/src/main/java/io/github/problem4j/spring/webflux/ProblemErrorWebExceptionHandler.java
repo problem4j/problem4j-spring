@@ -17,6 +17,7 @@
 package io.github.problem4j.spring.webflux;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
+import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.resolveContentType;
 import static org.springframework.web.reactive.function.server.RequestPredicates.all;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -115,7 +116,7 @@ public class ProblemErrorWebExceptionHandler extends DefaultErrorWebExceptionHan
     }
 
     return ServerResponse.status(problem.getStatus())
-        .contentType(WebFluxAdviceSupport.resolveContentType(request))
+        .contentType(resolveContentType(request))
         .body(BodyInserters.fromValue(problem));
   }
 }
