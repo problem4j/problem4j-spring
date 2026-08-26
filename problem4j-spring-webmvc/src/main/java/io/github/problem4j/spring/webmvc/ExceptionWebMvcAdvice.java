@@ -18,6 +18,7 @@ package io.github.problem4j.spring.webmvc;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.logAdviceException;
+import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.resolveContentType;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
 import io.github.problem4j.core.Problem;
@@ -34,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -51,7 +51,8 @@ import org.springframework.web.context.request.WebRequest;
  * <ul>
  *   <li>HTTP status: {@link HttpStatus#INTERNAL_SERVER_ERROR}
  *   <li>Response body: a {@link Problem} object containing the status code and reason phrase
- *   <li>Content type: {@code application/problem+json}
+ *   <li>Content type: negotiated from the request's {@code Accept} header ({@code
+ *       application/problem+json} or {@code application/problem+xml})
  * </ul>
  *
  * <p>Intended as a <b>generic fallback</b>, it ensures that unexpected exceptions still produce a
@@ -110,7 +111,7 @@ public class ExceptionWebMvcAdvice {
     }
 
     HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
+    headers.setContentType(resolveContentType(request));
 
     Problem problem;
     try {

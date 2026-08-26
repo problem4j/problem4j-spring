@@ -18,6 +18,7 @@ package io.github.problem4j.spring.webmvc;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.logAdviceException;
+import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.resolveContentType;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
 import io.github.problem4j.core.Problem;
@@ -32,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -48,7 +48,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  *
  * <ul>
  *   <li>Delegates exception-to-problem mapping to {@link ProblemResolverStore}.
- *   <li>Sets content type to {@code application/problem+json}.
+ *   <li>Sets content type negotiated from the request's {@code Accept} header ({@code
+ *       application/problem+json} or {@code application/problem+xml}).
  *   <li>Falls back to {@link HttpStatus#INTERNAL_SERVER_ERROR} if mapping fails.
  * </ul>
  *
@@ -109,7 +110,7 @@ public class ProblemEnhancedWebMvcHandler extends ResponseEntityExceptionHandler
     }
 
     headers = headers != null ? new HttpHeaders(headers) : new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
+    headers.setContentType(resolveContentType(request));
 
     Problem problem;
     try {
