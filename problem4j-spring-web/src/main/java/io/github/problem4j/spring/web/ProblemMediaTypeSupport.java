@@ -28,10 +28,11 @@ import org.springframework.util.MimeTypeUtils;
  * <p>Resolution rules, evaluated in the client's preference order:
  *
  * <ul>
- *   <li>{@code application/json} (or any {@code +json} problem type) resolves to {@code
- *       application/problem+json}.
- *   <li>{@code application/xml} (or any {@code +xml} problem/text-xml type) resolves to {@code
+ *   <li>Any subtype named {@code xml} or ending in {@code +xml} (e.g. {@code application/xml},
+ *       {@code text/xml}, {@code application/soap+xml}) resolves to {@code
  *       application/problem+xml}.
+ *   <li>Any subtype named {@code json} or ending in {@code +json} (e.g. {@code application/json},
+ *       {@code application/vnd.api+json}) resolves to {@code application/problem+json}.
  *   <li>Anything else, including wildcards such as {@code * / *}, or no match at all, falls back to
  *       {@code application/problem+json}.
  * </ul>
@@ -39,12 +40,6 @@ import org.springframework.util.MimeTypeUtils;
  * @since 3.0.1
  */
 public final class ProblemMediaTypeSupport {
-
-  private static final List<MediaType> XML_MEDIA_TYPES =
-      List.of(MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_PROBLEM_XML);
-
-  private static final List<MediaType> JSON_MEDIA_TYPES =
-      List.of(MediaType.APPLICATION_JSON, MediaType.APPLICATION_PROBLEM_JSON);
 
   /**
    * Resolves the {@code Problem} content type from the client's accepted media types.
@@ -86,26 +81,31 @@ public final class ProblemMediaTypeSupport {
     MimeTypeUtils.sortBySpecificity(sorted);
 
     for (MediaType acceptedMediaType : sorted) {
-      if (acceptedMediaType.isWildcardType() || acceptedMediaType.isWildcardSubtype()) {
+      if (isWildcard(acceptedMediaType)) {
         continue;
       }
-      if (matchesAny(acceptedMediaType, XML_MEDIA_TYPES)) {
+      if (isXml(acceptedMediaType)) {
         return MediaType.APPLICATION_PROBLEM_XML;
       }
-      if (matchesAny(acceptedMediaType, JSON_MEDIA_TYPES)) {
+      if (isJson(acceptedMediaType)) {
         return MediaType.APPLICATION_PROBLEM_JSON;
       }
     }
     return MediaType.APPLICATION_PROBLEM_JSON;
   }
 
-  private static boolean matchesAny(MediaType candidate, List<MediaType> targets) {
-    for (MediaType target : targets) {
-      if (candidate.isCompatibleWith(target)) {
-        return true;
-      }
-    }
-    return false;
+  private static boolean isWildcard(MediaType acceptedMediaType) {
+    return acceptedMediaType.isWildcardType() || acceptedMediaType.isWildcardSubtype();
+  }
+
+  private static boolean isXml(MediaType mediaType) {
+    String subtype = mediaType.getSubtype();
+    return subtype.equals("xml") || subtype.endsWith("+xml");
+  }
+
+  private static boolean isJson(MediaType mediaType) {
+    String subtype = mediaType.getSubtype();
+    return subtype.equals("json") || subtype.endsWith("+json");
   }
 
   private ProblemMediaTypeSupport() {}

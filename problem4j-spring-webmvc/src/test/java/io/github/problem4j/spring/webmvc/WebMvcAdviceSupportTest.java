@@ -20,6 +20,8 @@ import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.resolveConte
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -67,9 +69,64 @@ class WebMvcAdviceSupportTest {
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
 
+  @ParameterizedTest
+  @CsvSource({
+    "text/xml, application/problem+xml",
+    "application/xml, application/problem+xml",
+    "application/problem+xml, application/problem+xml",
+    "application/soap+xml, application/problem+xml",
+    "application/atom+xml, application/problem+xml",
+    "application/rss+xml, application/problem+xml",
+    "application/json, application/problem+json",
+    "application/problem+json, application/problem+json",
+    "application/vnd.api+json, application/problem+json",
+    "application/ld+json, application/problem+json",
+    "application/hal+json, application/problem+json",
+    "text/html, application/problem+json"
+  })
+  void givenVariousAcceptHeaders_whenResolveContentTypeFromWebRequest_thenReturnsExpectedType(
+      String accept, String expected) {
+    WebRequest request = webRequest(accept);
+
+    MediaType resolved = resolveContentType(request);
+
+    assertThat(resolved).isEqualTo(MediaType.valueOf(expected));
+  }
+
+  @ParameterizedTest
+  @CsvSource({
+    "text/xml, application/problem+xml",
+    "application/xml, application/problem+xml",
+    "application/problem+xml, application/problem+xml",
+    "application/soap+xml, application/problem+xml",
+    "application/atom+xml, application/problem+xml",
+    "application/rss+xml, application/problem+xml",
+    "application/json, application/problem+json",
+    "application/problem+json, application/problem+json",
+    "application/vnd.api+json, application/problem+json",
+    "application/ld+json, application/problem+json",
+    "application/hal+json, application/problem+json",
+    "text/html, application/problem+json"
+  })
+  void givenVariousAcceptHeaders_whenResolveContentTypeFromServletRequest_thenReturnsExpectedType(
+      String accept, String expected) {
+    MockHttpServletRequest request = new MockHttpServletRequest("GET", "/test");
+    request.addHeader("Accept", accept);
+
+    MediaType resolved = resolveContentType(request);
+
+    assertThat(resolved).isEqualTo(MediaType.valueOf(expected));
+  }
+
   private static WebRequest webRequest(MediaType accept) {
     MockHttpServletRequest request = new MockHttpServletRequest("GET", "/test");
     request.addHeader("Accept", accept.toString());
+    return new ServletWebRequest(request, new MockHttpServletResponse());
+  }
+
+  private static WebRequest webRequest(String accept) {
+    MockHttpServletRequest request = new MockHttpServletRequest("GET", "/test");
+    request.addHeader("Accept", accept);
     return new ServletWebRequest(request, new MockHttpServletResponse());
   }
 }

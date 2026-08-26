@@ -20,6 +20,9 @@ import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.resolveCon
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
@@ -67,8 +70,61 @@ class WebFluxAdviceSupportTest {
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
 
+  @ParameterizedTest
+  @CsvSource({
+    "text/xml, application/problem+xml",
+    "application/xml, application/problem+xml",
+    "application/problem+xml, application/problem+xml",
+    "application/soap+xml, application/problem+xml",
+    "application/atom+xml, application/problem+xml",
+    "application/rss+xml, application/problem+xml",
+    "application/json, application/problem+json",
+    "application/problem+json, application/problem+json",
+    "application/vnd.api+json, application/problem+json",
+    "application/ld+json, application/problem+json",
+    "application/hal+json, application/problem+json",
+    "text/html, application/problem+json"
+  })
+  void givenVariousAcceptHeaders_whenResolveContentTypeFromExchange_thenReturnsExpectedType(
+      String accept, String expected) {
+    ServerWebExchange exchange = exchange(accept);
+
+    MediaType resolved = resolveContentType(exchange);
+
+    assertThat(resolved).isEqualTo(MediaType.valueOf(expected));
+  }
+
+  @ParameterizedTest
+  @CsvSource({
+    "text/xml, application/problem+xml",
+    "application/xml, application/problem+xml",
+    "application/problem+xml, application/problem+xml",
+    "application/soap+xml, application/problem+xml",
+    "application/atom+xml, application/problem+xml",
+    "application/rss+xml, application/problem+xml",
+    "application/json, application/problem+json",
+    "application/problem+json, application/problem+json",
+    "application/vnd.api+json, application/problem+json",
+    "application/ld+json, application/problem+json",
+    "application/hal+json, application/problem+json",
+    "text/html, application/problem+json"
+  })
+  void givenVariousAcceptHeaders_whenResolveContentTypeFromServerRequest_thenReturnsExpectedType(
+      String accept, String expected) {
+    ServerRequest request = serverRequest(exchange(accept));
+
+    MediaType resolved = resolveContentType(request);
+
+    assertThat(resolved).isEqualTo(MediaType.valueOf(expected));
+  }
+
   private static MockServerWebExchange exchange(MediaType accept) {
     return MockServerWebExchange.from(MockServerHttpRequest.get("/test").accept(accept).build());
+  }
+
+  private static MockServerWebExchange exchange(String accept) {
+    return MockServerWebExchange.from(
+        MockServerHttpRequest.get("/test").header(HttpHeaders.ACCEPT, accept).build());
   }
 
   private static ServerRequest serverRequest(ServerWebExchange exchange) {

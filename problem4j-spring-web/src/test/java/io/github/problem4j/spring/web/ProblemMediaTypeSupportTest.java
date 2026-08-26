@@ -20,6 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.http.MediaType;
 
 class ProblemMediaTypeSupportTest {
@@ -141,5 +143,49 @@ class ProblemMediaTypeSupportTest {
     MediaType resolved = ProblemMediaTypeSupport.resolveAccepted();
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
+  }
+
+  @ParameterizedTest
+  @CsvSource({
+    "application/xml, application/problem+xml",
+    "text/xml, application/problem+xml",
+    "application/problem+xml, application/problem+xml",
+    "application/soap+xml, application/problem+xml",
+    "application/atom+xml, application/problem+xml",
+    "application/rss+xml, application/problem+xml",
+    "application/xhtml+xml, application/problem+xml"
+  })
+  void givenAnyXmlSubtype_whenResolve_thenReturnsProblemXml(String accept, String expected) {
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(MediaType.valueOf(accept));
+
+    assertThat(resolved).isEqualTo(MediaType.valueOf(expected));
+  }
+
+  @ParameterizedTest
+  @CsvSource({
+    "application/json, application/problem+json",
+    "application/problem+json, application/problem+json",
+    "application/vnd.api+json, application/problem+json",
+    "application/ld+json, application/problem+json",
+    "application/hal+json, application/problem+json",
+    "application/merge-patch+json, application/problem+json"
+  })
+  void givenAnyJsonSubtype_whenResolve_thenReturnsProblemJson(String accept, String expected) {
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(MediaType.valueOf(accept));
+
+    assertThat(resolved).isEqualTo(MediaType.valueOf(expected));
+  }
+
+  @ParameterizedTest
+  @CsvSource({
+    "APPLICATION/XML, application/problem+xml",
+    "Application/Soap+Xml, application/problem+xml",
+    "APPLICATION/JSON, application/problem+json",
+    "Application/Vnd.Api+Json, application/problem+json"
+  })
+  void givenMixedCaseSubtype_whenResolve_thenReturnsExpectedType(String accept, String expected) {
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(MediaType.valueOf(accept));
+
+    assertThat(resolved).isEqualTo(MediaType.valueOf(expected));
   }
 }
