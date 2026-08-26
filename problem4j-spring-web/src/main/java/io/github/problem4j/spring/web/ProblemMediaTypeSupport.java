@@ -50,8 +50,8 @@ public final class ProblemMediaTypeSupport {
    *     MediaType#APPLICATION_PROBLEM_JSON} otherwise
    * @since 3.0.1
    */
-  public static MediaType resolveAccepted(MediaType acceptedMediaType) {
-    return resolveAccepted(List.of(acceptedMediaType));
+  public static MediaType resolveAccept(MediaType acceptedMediaType) {
+    return resolveAccept(List.of(acceptedMediaType));
   }
 
   /**
@@ -63,8 +63,8 @@ public final class ProblemMediaTypeSupport {
    *     MediaType#APPLICATION_PROBLEM_JSON} otherwise
    * @since 3.0.1
    */
-  public static MediaType resolveAccepted(MediaType... acceptedMediaTypes) {
-    return resolveAccepted(List.of(acceptedMediaTypes));
+  public static MediaType resolveAccept(MediaType... acceptedMediaTypes) {
+    return resolveAccept(List.of(acceptedMediaTypes));
   }
 
   /**
@@ -76,7 +76,7 @@ public final class ProblemMediaTypeSupport {
    *     MediaType#APPLICATION_PROBLEM_JSON} otherwise
    * @since 3.0.1
    */
-  public static MediaType resolveAccepted(List<MediaType> acceptedMediaTypes) {
+  public static MediaType resolveAccept(List<MediaType> acceptedMediaTypes) {
     List<MediaType> sorted = new ArrayList<>(acceptedMediaTypes);
     MimeTypeUtils.sortBySpecificity(sorted);
 

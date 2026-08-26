@@ -17,7 +17,7 @@
 package io.github.problem4j.spring.webflux;
 
 import static io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE;
-import static io.github.problem4j.spring.web.ProblemMediaTypeSupport.resolveAccepted;
+import static io.github.problem4j.spring.web.ProblemMediaTypeSupport.resolveAccept;
 
 import org.slf4j.Logger;
 import org.springframework.http.MediaType;
@@ -40,7 +40,7 @@ public final class WebFluxAdviceSupport {
    * @since 3.0.1
    */
   public static MediaType resolveContentType(ServerWebExchange exchange) {
-    return resolveAccepted(exchange.getRequest().getHeaders().getAccept());
+    return resolveAccept(exchange.getRequest().getHeaders().getAccept());
   }
 
   /**
@@ -51,7 +51,7 @@ public final class WebFluxAdviceSupport {
    * @since 3.0.1
    */
   public static MediaType resolveContentType(ServerRequest request) {
-    return resolveAccepted(request.headers().accept());
+    return resolveAccept(request.headers().accept());
   }
 
   /**

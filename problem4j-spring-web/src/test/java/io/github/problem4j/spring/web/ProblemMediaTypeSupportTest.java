@@ -28,23 +28,21 @@ class ProblemMediaTypeSupportTest {
 
   @Test
   void givenAcceptJson_whenResolve_thenReturnsProblemJson() {
-    MediaType resolved =
-        ProblemMediaTypeSupport.resolveAccepted(List.of(MediaType.APPLICATION_JSON));
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccept(List.of(MediaType.APPLICATION_JSON));
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
 
   @Test
   void givenAcceptXml_whenResolve_thenReturnsProblemXml() {
-    MediaType resolved =
-        ProblemMediaTypeSupport.resolveAccepted(List.of(MediaType.APPLICATION_XML));
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccept(List.of(MediaType.APPLICATION_XML));
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
   }
 
   @Test
   void givenAcceptTextXml_whenResolve_thenReturnsProblemXml() {
-    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(List.of(MediaType.TEXT_XML));
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccept(List.of(MediaType.TEXT_XML));
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
   }
@@ -52,7 +50,7 @@ class ProblemMediaTypeSupportTest {
   @Test
   void givenAcceptProblemJson_whenResolve_thenReturnsProblemJson() {
     MediaType resolved =
-        ProblemMediaTypeSupport.resolveAccepted(List.of(MediaType.APPLICATION_PROBLEM_JSON));
+        ProblemMediaTypeSupport.resolveAccept(List.of(MediaType.APPLICATION_PROBLEM_JSON));
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
@@ -60,28 +58,28 @@ class ProblemMediaTypeSupportTest {
   @Test
   void givenAcceptProblemXml_whenResolve_thenReturnsProblemXml() {
     MediaType resolved =
-        ProblemMediaTypeSupport.resolveAccepted(List.of(MediaType.APPLICATION_PROBLEM_XML));
+        ProblemMediaTypeSupport.resolveAccept(List.of(MediaType.APPLICATION_PROBLEM_XML));
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
   }
 
   @Test
   void givenEmptyAccept_whenResolve_thenReturnsProblemJson() {
-    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(List.of());
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccept(List.of());
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
 
   @Test
   void givenAcceptAll_whenResolve_thenReturnsProblemJson() {
-    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(List.of(MediaType.ALL));
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccept(List.of(MediaType.ALL));
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
 
   @Test
   void givenAcceptUnrelatedType_whenResolve_thenReturnsProblemJson() {
-    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(List.of(MediaType.TEXT_HTML));
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccept(List.of(MediaType.TEXT_HTML));
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
@@ -91,7 +89,7 @@ class ProblemMediaTypeSupportTest {
     List<MediaType> accepted =
         MediaType.parseMediaTypes("application/xml;q=0.5, application/json;q=0.9");
 
-    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(accepted);
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccept(accepted);
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
@@ -101,7 +99,7 @@ class ProblemMediaTypeSupportTest {
     List<MediaType> accepted =
         MediaType.parseMediaTypes("application/json;q=0.5, application/xml;q=0.9");
 
-    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(accepted);
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccept(accepted);
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
   }
@@ -110,7 +108,7 @@ class ProblemMediaTypeSupportTest {
   void givenAcceptXmlBeforeWildcard_whenResolve_thenReturnsProblemXml() {
     List<MediaType> accepted = MediaType.parseMediaTypes("application/xml, */*;q=0.8");
 
-    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(accepted);
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccept(accepted);
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
   }
@@ -118,14 +116,14 @@ class ProblemMediaTypeSupportTest {
   @Test
   void givenWildcardSubtype_whenResolve_thenReturnsProblemJson() {
     MediaType resolved =
-        ProblemMediaTypeSupport.resolveAccepted(List.of(new MediaType("application")));
+        ProblemMediaTypeSupport.resolveAccept(List.of(new MediaType("application")));
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
 
   @Test
   void givenSingleAcceptedMediaTypeArgument_whenResolve_thenReturnsProblemXml() {
-    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(MediaType.APPLICATION_XML);
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccept(MediaType.APPLICATION_XML);
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
   }
@@ -133,14 +131,14 @@ class ProblemMediaTypeSupportTest {
   @Test
   void givenVarargsAcceptedMediaTypes_whenResolve_thenReturnsProblemXml() {
     MediaType resolved =
-        ProblemMediaTypeSupport.resolveAccepted(MediaType.TEXT_HTML, MediaType.APPLICATION_XML);
+        ProblemMediaTypeSupport.resolveAccept(MediaType.TEXT_HTML, MediaType.APPLICATION_XML);
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
   }
 
   @Test
   void givenNoVarargsAcceptedMediaTypes_whenResolve_thenReturnsProblemJson() {
-    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted();
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccept();
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
@@ -156,7 +154,7 @@ class ProblemMediaTypeSupportTest {
     "application/xhtml+xml, application/problem+xml"
   })
   void givenAnyXmlSubtype_whenResolve_thenReturnsProblemXml(String accept, String expected) {
-    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(MediaType.valueOf(accept));
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccept(MediaType.valueOf(accept));
 
     assertThat(resolved).isEqualTo(MediaType.valueOf(expected));
   }
@@ -171,7 +169,7 @@ class ProblemMediaTypeSupportTest {
     "application/merge-patch+json, application/problem+json"
   })
   void givenAnyJsonSubtype_whenResolve_thenReturnsProblemJson(String accept, String expected) {
-    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(MediaType.valueOf(accept));
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccept(MediaType.valueOf(accept));
 
     assertThat(resolved).isEqualTo(MediaType.valueOf(expected));
   }
@@ -184,7 +182,7 @@ class ProblemMediaTypeSupportTest {
     "Application/Vnd.Api+Json, application/problem+json"
   })
   void givenMixedCaseSubtype_whenResolve_thenReturnsExpectedType(String accept, String expected) {
-    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(MediaType.valueOf(accept));
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccept(MediaType.valueOf(accept));
 
     assertThat(resolved).isEqualTo(MediaType.valueOf(expected));
   }

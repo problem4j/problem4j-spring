@@ -17,7 +17,7 @@
 package io.github.problem4j.spring.webmvc;
 
 import static io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE;
-import static io.github.problem4j.spring.web.ProblemMediaTypeSupport.resolveAccepted;
+import static io.github.problem4j.spring.web.ProblemMediaTypeSupport.resolveAccept;
 import static java.util.Collections.list;
 import static org.springframework.http.MediaType.parseMediaTypes;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
@@ -50,7 +50,7 @@ public final class WebMvcAdviceSupport {
     String[] acceptHeaders = request.getHeaderValues(HttpHeaders.ACCEPT);
     List<MediaType> acceptedMediaTypes =
         acceptHeaders == null ? List.of() : parseMediaTypes(Arrays.asList(acceptHeaders));
-    return resolveAccepted(acceptedMediaTypes);
+    return resolveAccept(acceptedMediaTypes);
   }
 
   /**
@@ -63,7 +63,7 @@ public final class WebMvcAdviceSupport {
   public static MediaType resolveContentType(HttpServletRequest request) {
     List<MediaType> acceptedMediaTypes =
         parseMediaTypes(list(request.getHeaders(HttpHeaders.ACCEPT)));
-    return resolveAccepted(acceptedMediaTypes);
+    return resolveAccept(acceptedMediaTypes);
   }
 
   /**
