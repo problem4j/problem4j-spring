@@ -17,23 +17,30 @@
 package io.github.problem4j.spring.webflux;
 
 import static io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE;
+import static io.github.problem4j.spring.web.ProblemMediaTypeSupport.resolveAccepted;
 
-import io.github.problem4j.spring.web.ProblemMediaTypeResolver;
 import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
 
-final class WebFluxAdviceSupport {
+/**
+ * Shared helpers used by Problem4J's WebFlux advices to resolve the response content type and log
+ * exceptions encountered while handling other exceptions.
+ *
+ * @since 3.0.1
+ */
+public final class WebFluxAdviceSupport {
 
   /**
    * Resolves the {@code Problem} content type from the {@code Accept} header of the given exchange.
    *
    * @param exchange the current server web exchange
    * @return the resolved content type
+   * @since 3.0.1
    */
-  static MediaType resolveContentType(ServerWebExchange exchange) {
-    return ProblemMediaTypeResolver.resolve(exchange.getRequest().getHeaders().getAccept());
+  public static MediaType resolveContentType(ServerWebExchange exchange) {
+    return resolveAccepted(exchange.getRequest().getHeaders().getAccept());
   }
 
   /**
@@ -41,9 +48,10 @@ final class WebFluxAdviceSupport {
    *
    * @param request the current server request
    * @return the resolved content type
+   * @since 3.0.1
    */
-  static MediaType resolveContentType(ServerRequest request) {
-    return ProblemMediaTypeResolver.resolve(request.headers().accept());
+  public static MediaType resolveContentType(ServerRequest request) {
+    return resolveAccepted(request.headers().accept());
   }
 
   /**

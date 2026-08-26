@@ -38,7 +38,7 @@ import org.springframework.util.MimeTypeUtils;
  *
  * @since 3.0.1
  */
-public final class ProblemMediaTypeResolver {
+public final class ProblemMediaTypeSupport {
 
   private static final List<MediaType> XML_MEDIA_TYPES =
       List.of(MediaType.APPLICATION_XML, MediaType.TEXT_XML, MediaType.APPLICATION_PROBLEM_XML);
@@ -49,13 +49,39 @@ public final class ProblemMediaTypeResolver {
   /**
    * Resolves the {@code Problem} content type from the client's accepted media types.
    *
+   * @param acceptedMediaType the media type accepted by the client, as parsed from the {@code
+   *     Accept} header; order is assumed to reflect client preference
+   * @return {@link MediaType#APPLICATION_PROBLEM_XML} if the client prefers XML, {@link
+   *     MediaType#APPLICATION_PROBLEM_JSON} otherwise
+   * @since 3.0.1
+   */
+  public static MediaType resolveAccepted(MediaType acceptedMediaType) {
+    return resolveAccepted(List.of(acceptedMediaType));
+  }
+
+  /**
+   * Resolves the {@code Problem} content type from the client's accepted media types.
+   *
    * @param acceptedMediaTypes the media types accepted by the client, as parsed from the {@code
    *     Accept} header; order is assumed to reflect client preference
    * @return {@link MediaType#APPLICATION_PROBLEM_XML} if the client prefers XML, {@link
    *     MediaType#APPLICATION_PROBLEM_JSON} otherwise
    * @since 3.0.1
    */
-  public static MediaType resolve(List<MediaType> acceptedMediaTypes) {
+  public static MediaType resolveAccepted(MediaType... acceptedMediaTypes) {
+    return resolveAccepted(List.of(acceptedMediaTypes));
+  }
+
+  /**
+   * Resolves the {@code Problem} content type from the client's accepted media types.
+   *
+   * @param acceptedMediaTypes the media types accepted by the client, as parsed from the {@code
+   *     Accept} header; order is assumed to reflect client preference
+   * @return {@link MediaType#APPLICATION_PROBLEM_XML} if the client prefers XML, {@link
+   *     MediaType#APPLICATION_PROBLEM_JSON} otherwise
+   * @since 3.0.1
+   */
+  public static MediaType resolveAccepted(List<MediaType> acceptedMediaTypes) {
     List<MediaType> sorted = new ArrayList<>(acceptedMediaTypes);
     MimeTypeUtils.sortBySpecificity(sorted);
 
@@ -82,5 +108,5 @@ public final class ProblemMediaTypeResolver {
     return false;
   }
 
-  private ProblemMediaTypeResolver() {}
+  private ProblemMediaTypeSupport() {}
 }

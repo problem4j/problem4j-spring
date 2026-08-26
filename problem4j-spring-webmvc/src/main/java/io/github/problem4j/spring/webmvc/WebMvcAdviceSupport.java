@@ -17,12 +17,13 @@
 package io.github.problem4j.spring.webmvc;
 
 import static io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE;
+import static io.github.problem4j.spring.web.ProblemMediaTypeSupport.resolveAccepted;
+import static java.util.Collections.list;
+import static org.springframework.http.MediaType.parseMediaTypes;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 
-import io.github.problem4j.spring.web.ProblemMediaTypeResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.springframework.http.HttpHeaders;
@@ -30,19 +31,26 @@ import org.springframework.http.MediaType;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
-final class WebMvcAdviceSupport {
+/**
+ * Shared helpers used by Problem4J's WebMvc advices to resolve the response content type and log
+ * exceptions encountered while handling other exceptions.
+ *
+ * @since 3.0.1
+ */
+public final class WebMvcAdviceSupport {
 
   /**
    * Resolves the {@code Problem} content type from the {@code Accept} header of the given request.
    *
    * @param request the current web request
    * @return the resolved content type
+   * @since 3.0.1
    */
-  static MediaType resolveContentType(WebRequest request) {
+  public static MediaType resolveContentType(WebRequest request) {
     String[] acceptHeaders = request.getHeaderValues(HttpHeaders.ACCEPT);
     List<MediaType> acceptedMediaTypes =
-        acceptHeaders == null ? List.of() : MediaType.parseMediaTypes(Arrays.asList(acceptHeaders));
-    return ProblemMediaTypeResolver.resolve(acceptedMediaTypes);
+        acceptHeaders == null ? List.of() : parseMediaTypes(Arrays.asList(acceptHeaders));
+    return resolveAccepted(acceptedMediaTypes);
   }
 
   /**
@@ -50,11 +58,12 @@ final class WebMvcAdviceSupport {
    *
    * @param request the current servlet request
    * @return the resolved content type
+   * @since 3.0.1
    */
-  static MediaType resolveContentType(HttpServletRequest request) {
+  public static MediaType resolveContentType(HttpServletRequest request) {
     List<MediaType> acceptedMediaTypes =
-        MediaType.parseMediaTypes(Collections.list(request.getHeaders(HttpHeaders.ACCEPT)));
-    return ProblemMediaTypeResolver.resolve(acceptedMediaTypes);
+        parseMediaTypes(list(request.getHeaders(HttpHeaders.ACCEPT)));
+    return resolveAccepted(acceptedMediaTypes);
   }
 
   /**

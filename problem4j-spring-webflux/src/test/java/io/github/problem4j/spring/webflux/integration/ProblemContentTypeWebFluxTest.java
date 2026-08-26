@@ -20,11 +20,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
+import io.github.problem4j.spring.webflux.app.XmlCodecTestConfiguration;
 import io.github.problem4j.spring.webflux.app.problem.ResolvableException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -34,6 +36,7 @@ import tools.jackson.dataformat.xml.XmlMapper;
     classes = {WebFluxTestApp.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
+@Import(XmlCodecTestConfiguration.class)
 class ProblemContentTypeWebFluxTest {
 
   private static final Problem RESOLVABLE_PROBLEM =

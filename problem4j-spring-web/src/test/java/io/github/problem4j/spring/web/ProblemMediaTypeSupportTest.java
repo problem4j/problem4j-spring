@@ -22,25 +22,27 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-class ProblemMediaTypeResolverTest {
+class ProblemMediaTypeSupportTest {
 
   @Test
   void givenAcceptJson_whenResolve_thenReturnsProblemJson() {
-    MediaType resolved = ProblemMediaTypeResolver.resolve(List.of(MediaType.APPLICATION_JSON));
+    MediaType resolved =
+        ProblemMediaTypeSupport.resolveAccepted(List.of(MediaType.APPLICATION_JSON));
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
 
   @Test
   void givenAcceptXml_whenResolve_thenReturnsProblemXml() {
-    MediaType resolved = ProblemMediaTypeResolver.resolve(List.of(MediaType.APPLICATION_XML));
+    MediaType resolved =
+        ProblemMediaTypeSupport.resolveAccepted(List.of(MediaType.APPLICATION_XML));
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
   }
 
   @Test
   void givenAcceptTextXml_whenResolve_thenReturnsProblemXml() {
-    MediaType resolved = ProblemMediaTypeResolver.resolve(List.of(MediaType.TEXT_XML));
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(List.of(MediaType.TEXT_XML));
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
   }
@@ -48,7 +50,7 @@ class ProblemMediaTypeResolverTest {
   @Test
   void givenAcceptProblemJson_whenResolve_thenReturnsProblemJson() {
     MediaType resolved =
-        ProblemMediaTypeResolver.resolve(List.of(MediaType.APPLICATION_PROBLEM_JSON));
+        ProblemMediaTypeSupport.resolveAccepted(List.of(MediaType.APPLICATION_PROBLEM_JSON));
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
@@ -56,28 +58,28 @@ class ProblemMediaTypeResolverTest {
   @Test
   void givenAcceptProblemXml_whenResolve_thenReturnsProblemXml() {
     MediaType resolved =
-        ProblemMediaTypeResolver.resolve(List.of(MediaType.APPLICATION_PROBLEM_XML));
+        ProblemMediaTypeSupport.resolveAccepted(List.of(MediaType.APPLICATION_PROBLEM_XML));
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
   }
 
   @Test
   void givenEmptyAccept_whenResolve_thenReturnsProblemJson() {
-    MediaType resolved = ProblemMediaTypeResolver.resolve(List.of());
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(List.of());
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
 
   @Test
   void givenAcceptAll_whenResolve_thenReturnsProblemJson() {
-    MediaType resolved = ProblemMediaTypeResolver.resolve(List.of(MediaType.ALL));
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(List.of(MediaType.ALL));
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
 
   @Test
   void givenAcceptUnrelatedType_whenResolve_thenReturnsProblemJson() {
-    MediaType resolved = ProblemMediaTypeResolver.resolve(List.of(MediaType.TEXT_HTML));
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(List.of(MediaType.TEXT_HTML));
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
@@ -87,7 +89,7 @@ class ProblemMediaTypeResolverTest {
     List<MediaType> accepted =
         MediaType.parseMediaTypes("application/xml;q=0.5, application/json;q=0.9");
 
-    MediaType resolved = ProblemMediaTypeResolver.resolve(accepted);
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(accepted);
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
@@ -97,7 +99,7 @@ class ProblemMediaTypeResolverTest {
     List<MediaType> accepted =
         MediaType.parseMediaTypes("application/json;q=0.5, application/xml;q=0.9");
 
-    MediaType resolved = ProblemMediaTypeResolver.resolve(accepted);
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(accepted);
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
   }
@@ -106,8 +108,38 @@ class ProblemMediaTypeResolverTest {
   void givenAcceptXmlBeforeWildcard_whenResolve_thenReturnsProblemXml() {
     List<MediaType> accepted = MediaType.parseMediaTypes("application/xml, */*;q=0.8");
 
-    MediaType resolved = ProblemMediaTypeResolver.resolve(accepted);
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(accepted);
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
+  }
+
+  @Test
+  void givenWildcardSubtype_whenResolve_thenReturnsProblemJson() {
+    MediaType resolved =
+        ProblemMediaTypeSupport.resolveAccepted(List.of(new MediaType("application")));
+
+    assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
+  }
+
+  @Test
+  void givenSingleAcceptedMediaTypeArgument_whenResolve_thenReturnsProblemXml() {
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted(MediaType.APPLICATION_XML);
+
+    assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
+  }
+
+  @Test
+  void givenVarargsAcceptedMediaTypes_whenResolve_thenReturnsProblemXml() {
+    MediaType resolved =
+        ProblemMediaTypeSupport.resolveAccepted(MediaType.TEXT_HTML, MediaType.APPLICATION_XML);
+
+    assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
+  }
+
+  @Test
+  void givenNoVarargsAcceptedMediaTypes_whenResolve_thenReturnsProblemJson() {
+    MediaType resolved = ProblemMediaTypeSupport.resolveAccepted();
+
+    assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
 }
