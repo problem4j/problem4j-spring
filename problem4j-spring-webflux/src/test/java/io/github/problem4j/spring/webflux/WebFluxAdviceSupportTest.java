@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webflux;
 
+import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.resolveContentType;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class WebFluxAdviceSupportTest {
   void givenAcceptXml_whenResolveContentTypeFromExchange_thenReturnsProblemXml() {
     ServerWebExchange exchange = exchange(MediaType.APPLICATION_XML);
 
-    MediaType resolved = WebFluxAdviceSupport.resolveContentType(exchange);
+    MediaType resolved = resolveContentType(exchange);
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
   }
@@ -42,7 +43,7 @@ class WebFluxAdviceSupportTest {
     ServerWebExchange exchange =
         MockServerWebExchange.from(MockServerHttpRequest.get("/test").build());
 
-    MediaType resolved = WebFluxAdviceSupport.resolveContentType(exchange);
+    MediaType resolved = resolveContentType(exchange);
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
@@ -51,7 +52,7 @@ class WebFluxAdviceSupportTest {
   void givenAcceptXml_whenResolveContentTypeFromServerRequest_thenReturnsProblemXml() {
     ServerRequest request = serverRequest(exchange(MediaType.APPLICATION_XML));
 
-    MediaType resolved = WebFluxAdviceSupport.resolveContentType(request);
+    MediaType resolved = resolveContentType(request);
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
   }
@@ -61,7 +62,7 @@ class WebFluxAdviceSupportTest {
     ServerRequest request =
         serverRequest(MockServerWebExchange.from(MockServerHttpRequest.get("/test").build()));
 
-    MediaType resolved = WebFluxAdviceSupport.resolveContentType(request);
+    MediaType resolved = resolveContentType(request);
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }

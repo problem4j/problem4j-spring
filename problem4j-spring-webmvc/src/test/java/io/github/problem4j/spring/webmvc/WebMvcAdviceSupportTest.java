@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webmvc;
 
+import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.resolveContentType;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ class WebMvcAdviceSupportTest {
   void givenAcceptXml_whenResolveContentTypeFromWebRequest_thenReturnsProblemXml() {
     WebRequest request = webRequest(MediaType.APPLICATION_XML);
 
-    MediaType resolved = WebMvcAdviceSupport.resolveContentType(request);
+    MediaType resolved = resolveContentType(request);
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
   }
@@ -42,7 +43,7 @@ class WebMvcAdviceSupportTest {
         new ServletWebRequest(
             new MockHttpServletRequest("GET", "/test"), new MockHttpServletResponse());
 
-    MediaType resolved = WebMvcAdviceSupport.resolveContentType(request);
+    MediaType resolved = resolveContentType(request);
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
@@ -52,7 +53,7 @@ class WebMvcAdviceSupportTest {
     MockHttpServletRequest request = new MockHttpServletRequest("GET", "/test");
     request.addHeader("Accept", MediaType.APPLICATION_XML_VALUE);
 
-    MediaType resolved = WebMvcAdviceSupport.resolveContentType(request);
+    MediaType resolved = resolveContentType(request);
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
   }
@@ -61,7 +62,7 @@ class WebMvcAdviceSupportTest {
   void givenNoAcceptHeader_whenResolveContentTypeFromServletRequest_thenReturnsProblemJson() {
     MockHttpServletRequest request = new MockHttpServletRequest("GET", "/test");
 
-    MediaType resolved = WebMvcAdviceSupport.resolveContentType(request);
+    MediaType resolved = resolveContentType(request);
 
     assertThat(resolved).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
