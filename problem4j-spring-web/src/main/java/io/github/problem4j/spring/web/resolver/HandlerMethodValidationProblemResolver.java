@@ -58,7 +58,8 @@ public class HandlerMethodValidationProblemResolver extends AbstractProblemResol
    * @since 1.2.0
    */
   public HandlerMethodValidationProblemResolver() {
-    this(ProblemFormat.identity());
+    super(HandlerMethodValidationException.class);
+    this.methodValidationResultSupport = new DefaultMethodValidationResultSupport();
   }
 
   /**
@@ -67,7 +68,12 @@ public class HandlerMethodValidationProblemResolver extends AbstractProblemResol
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link
+   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+   *     now assigns collaborators after construction; use {@link
+   *     #HandlerMethodValidationProblemResolver()}
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public HandlerMethodValidationProblemResolver(ProblemFormat problemFormat) {
     this(problemFormat, new DefaultMethodValidationResultSupport());
   }
@@ -79,7 +85,13 @@ public class HandlerMethodValidationProblemResolver extends AbstractProblemResol
    * @param problemFormat the problem format to use
    * @param methodValidationResultSupport the support for extracting validation results
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link
+   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+   *     now assigns collaborators after construction; use {@link
+   *     #HandlerMethodValidationProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public HandlerMethodValidationProblemResolver(
       ProblemFormat problemFormat, MethodValidationResultSupport methodValidationResultSupport) {
     super(HandlerMethodValidationException.class, problemFormat);

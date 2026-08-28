@@ -51,7 +51,7 @@ public class ConstraintViolationProblemResolver extends AbstractProblemResolver 
    * @since 1.2.0
    */
   public ConstraintViolationProblemResolver() {
-    this(ProblemFormat.identity());
+    super(ConstraintViolationException.class);
   }
 
   /**
@@ -59,7 +59,13 @@ public class ConstraintViolationProblemResolver extends AbstractProblemResolver 
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link
+   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+   *     now assigns the {@link ProblemFormat} after construction; use {@link
+   *     #ConstraintViolationProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public ConstraintViolationProblemResolver(ProblemFormat problemFormat) {
     super(ConstraintViolationException.class, problemFormat);
   }

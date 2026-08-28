@@ -11,6 +11,13 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Make `ProblemResolver` instances provided by Problem4J Spring library take additional arguments via
   `BeanPostProcessor` for easier overrides.
 
+### Deprecated
+
+- Deprecate non-default constructors of `AbstractProblemResolver` and its subclasses (those taking `ProblemFormat` or
+  other collaborators), including `AbstractProblemResolver(Class, ProblemFormat)`. Collaborators are now injected after
+  construction by `ProblemBeanPostProcessor`; use the no-arg constructor (`AbstractProblemResolver(Class)` for custom
+  subclasses).
+
 ### Fixed
 
 - Make `Automatic-Module-Name` stable, by adding it to `META-INF/MANIFEST.MF`.

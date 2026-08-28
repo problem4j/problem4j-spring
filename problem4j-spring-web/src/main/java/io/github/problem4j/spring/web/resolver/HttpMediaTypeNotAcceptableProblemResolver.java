@@ -44,7 +44,7 @@ public class HttpMediaTypeNotAcceptableProblemResolver extends AbstractProblemRe
    * @since 1.2.0
    */
   public HttpMediaTypeNotAcceptableProblemResolver() {
-    this(ProblemFormat.identity());
+    super(HttpMediaTypeNotAcceptableException.class);
   }
 
   /**
@@ -53,7 +53,13 @@ public class HttpMediaTypeNotAcceptableProblemResolver extends AbstractProblemRe
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link
+   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+   *     now assigns the {@link ProblemFormat} after construction; use {@link
+   *     #HttpMediaTypeNotAcceptableProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public HttpMediaTypeNotAcceptableProblemResolver(ProblemFormat problemFormat) {
     super(HttpMediaTypeNotAcceptableException.class, problemFormat);
   }

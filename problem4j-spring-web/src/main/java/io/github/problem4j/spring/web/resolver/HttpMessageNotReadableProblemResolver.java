@@ -57,7 +57,9 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
    * @since 1.2.0
    */
   public HttpMessageNotReadableProblemResolver() {
-    this(ProblemFormat.identity());
+    super(HttpMessageNotReadableException.class);
+    this.jacksonErrorHelper =
+        new JacksonErrorHelper(ProblemFormat.identity(), new SimpleTypeNameMapper());
   }
 
   /**
@@ -65,7 +67,12 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link
+   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+   *     now assigns collaborators after construction; use {@link
+   *     #HttpMessageNotReadableProblemResolver()}
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public HttpMessageNotReadableProblemResolver(ProblemFormat problemFormat) {
     this(problemFormat, new SimpleTypeNameMapper());
   }
@@ -77,7 +84,13 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
    * @param problemFormat the problem format to use
    * @param typeNameMapper the type mapper to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link
+   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+   *     now assigns collaborators after construction; use {@link
+   *     #HttpMessageNotReadableProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public HttpMessageNotReadableProblemResolver(
       ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
     super(HttpMessageNotReadableException.class, problemFormat);

@@ -41,7 +41,7 @@ public class DecodingProblemResolver extends AbstractProblemResolver {
    * @since 1.2.0
    */
   public DecodingProblemResolver() {
-    this(ProblemFormat.identity());
+    super(DecodingException.class);
   }
 
   /**
@@ -49,7 +49,13 @@ public class DecodingProblemResolver extends AbstractProblemResolver {
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link
+   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+   *     now assigns the {@link ProblemFormat} after construction; use {@link
+   *     #DecodingProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public DecodingProblemResolver(ProblemFormat problemFormat) {
     super(DecodingException.class, problemFormat);
   }

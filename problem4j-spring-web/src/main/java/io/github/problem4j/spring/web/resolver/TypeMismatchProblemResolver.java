@@ -56,7 +56,9 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
    * @since 1.2.0
    */
   public TypeMismatchProblemResolver() {
-    this(ProblemFormat.identity());
+    super(TypeMismatchException.class);
+    this.typeMismatchHelper =
+        new TypeMismatchHelper(ProblemFormat.identity(), new SimpleTypeNameMapper());
   }
 
   /**
@@ -64,7 +66,11 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link
+   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+   *     now assigns collaborators after construction; use {@link #TypeMismatchProblemResolver()}
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public TypeMismatchProblemResolver(ProblemFormat problemFormat) {
     this(problemFormat, new SimpleTypeNameMapper());
   }
@@ -76,7 +82,12 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
    * @param problemFormat the problem format to use
    * @param typeNameMapper the type name mapper to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link
+   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+   *     now assigns collaborators after construction; use {@link #TypeMismatchProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public TypeMismatchProblemResolver(ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
     super(TypeMismatchException.class, problemFormat);
     this.typeMismatchHelper = new TypeMismatchHelper(problemFormat, typeNameMapper);

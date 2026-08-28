@@ -70,7 +70,8 @@ public class BindProblemResolver extends AbstractProblemResolver
    * @since 1.2.0
    */
   public BindProblemResolver() {
-    this(ProblemFormat.identity());
+    super(BindException.class);
+    this.bindingResultSupport = new DefaultBindingResultSupport();
   }
 
   /**
@@ -78,7 +79,11 @@ public class BindProblemResolver extends AbstractProblemResolver
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link
+   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+   *     now assigns collaborators after construction; use {@link #BindProblemResolver()}
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public BindProblemResolver(ProblemFormat problemFormat) {
     this(problemFormat, new DefaultBindingResultSupport());
   }
@@ -90,7 +95,12 @@ public class BindProblemResolver extends AbstractProblemResolver
    * @param problemFormat the problem format to use
    * @param bindingResultSupport the binding result support to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link
+   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+   *     now assigns collaborators after construction; use {@link #BindProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public BindProblemResolver(
       ProblemFormat problemFormat, BindingResultSupport bindingResultSupport) {
     super(BindException.class, problemFormat);

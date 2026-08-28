@@ -45,7 +45,7 @@ public class ErrorResponseProblemResolver extends AbstractProblemResolver {
    * @since 1.2.0
    */
   public ErrorResponseProblemResolver() {
-    this(ProblemFormat.identity());
+    super(ErrorResponseException.class);
   }
 
   /**
@@ -53,7 +53,13 @@ public class ErrorResponseProblemResolver extends AbstractProblemResolver {
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link
+   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+   *     now assigns the {@link ProblemFormat} after construction; use {@link
+   *     #ErrorResponseProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public ErrorResponseProblemResolver(ProblemFormat problemFormat) {
     super(ErrorResponseException.class, problemFormat);
   }

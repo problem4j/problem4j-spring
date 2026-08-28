@@ -45,7 +45,8 @@ public abstract class AbstractProblemResolver implements ProblemResolver, Proble
    * @since 1.2.0
    */
   public AbstractProblemResolver(Class<? extends Exception> clazz) {
-    this(clazz, ProblemFormat.identity());
+    this.clazz = clazz;
+    this.problemFormat = ProblemFormat.identity();
   }
 
   /**
@@ -55,7 +56,12 @@ public abstract class AbstractProblemResolver implements ProblemResolver, Proble
    * @param clazz exception subtype this resolver is responsible for
    * @param problemFormat formatting strategy for detail (must not be {@code null})
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link
+   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+   *     now assigns the {@link ProblemFormat} after construction; use {@link
+   *     #AbstractProblemResolver(Class)} and rely on {@link #setProblemFormat(ProblemFormat)}
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public AbstractProblemResolver(Class<? extends Exception> clazz, ProblemFormat problemFormat) {
     this.clazz = clazz;
     this.problemFormat = problemFormat;

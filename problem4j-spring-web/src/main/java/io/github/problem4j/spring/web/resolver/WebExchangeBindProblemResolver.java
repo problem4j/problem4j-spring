@@ -58,7 +58,8 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver
    * @since 1.2.0
    */
   public WebExchangeBindProblemResolver() {
-    this(ProblemFormat.identity());
+    super(WebExchangeBindException.class);
+    this.bindingResultSupport = new DefaultBindingResultSupport();
   }
 
   /**
@@ -66,7 +67,11 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link
+   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+   *     now assigns collaborators after construction; use {@link #WebExchangeBindProblemResolver()}
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public WebExchangeBindProblemResolver(ProblemFormat problemFormat) {
     this(problemFormat, new DefaultBindingResultSupport());
   }
@@ -78,7 +83,12 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver
    * @param problemFormat the problem format to use
    * @param bindingResultSupport the support for extracting bind results
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link
+   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+   *     now assigns collaborators after construction; use {@link #WebExchangeBindProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public WebExchangeBindProblemResolver(
       ProblemFormat problemFormat, BindingResultSupport bindingResultSupport) {
     super(WebExchangeBindException.class, problemFormat);

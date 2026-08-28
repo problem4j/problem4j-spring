@@ -21,12 +21,14 @@ package io.github.problem4j.spring.web;
  * construction, instead of requiring it as a constructor argument.
  *
  * <p>When {@code problem4j-spring-web} autoconfiguration is active, any bean implementing this
- * interface is detected by {@link io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor ProblemBeanPostProcessor} and
- * configured with the container's {@link TypeNameMapper} bean.
+ * interface is detected by {@link
+ * io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor ProblemBeanPostProcessor}
+ * and configured with the container's {@link TypeNameMapper} bean.
  *
  * <p>When {@code problem4j-spring-web} autoconfiguration is active, any bean implementing this
- * interface is detected by {@link io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor ProblemBeanPostProcessor} and
- * configured with the container's {@link TypeNameMapper} bean.
+ * interface is detected by {@link
+ * io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor ProblemBeanPostProcessor}
+ * and configured with the container's {@link TypeNameMapper} bean.
  *
  * @see TypeNameMapper
  * @since 3.1.0

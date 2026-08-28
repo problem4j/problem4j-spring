@@ -88,7 +88,7 @@ public class ServletRequestBindingProblemResolver extends AbstractProblemResolve
    * @since 1.2.0
    */
   public ServletRequestBindingProblemResolver() {
-    this(ProblemFormat.identity());
+    super(ServletRequestBindingException.class);
   }
 
   /**
@@ -96,7 +96,13 @@ public class ServletRequestBindingProblemResolver extends AbstractProblemResolve
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link
+   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+   *     now assigns the {@link ProblemFormat} after construction; use {@link
+   *     #ServletRequestBindingProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public ServletRequestBindingProblemResolver(ProblemFormat problemFormat) {
     super(ServletRequestBindingException.class, problemFormat);
   }

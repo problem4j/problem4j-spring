@@ -70,7 +70,11 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
    * @since 1.2.0
    */
   public ServerWebInputProblemResolver() {
-    this(ProblemFormat.identity());
+    super(ServerWebInputException.class);
+    TypeNameMapper typeNameMapper = new SimpleTypeNameMapper();
+    this.methodParameterSupport = new DefaultMethodParameterSupport();
+    this.typeMismatchHelper = new TypeMismatchHelper(ProblemFormat.identity(), typeNameMapper);
+    this.jacksonErrorHelper = new JacksonErrorHelper(ProblemFormat.identity(), typeNameMapper);
   }
 
   /**
@@ -78,7 +82,10 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link DefaultProblemBeanPostProcessor ProblemBeanPostProcessor} now
+   *     assigns collaborators after construction; use {@link #ServerWebInputProblemResolver()}
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public ServerWebInputProblemResolver(ProblemFormat problemFormat) {
     this(problemFormat, new DefaultMethodParameterSupport());
   }
@@ -90,7 +97,10 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
    * @param problemFormat the problem format to use
    * @param methodParameterSupport the support for extracting parameter names
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link DefaultProblemBeanPostProcessor ProblemBeanPostProcessor} now
+   *     assigns collaborators after construction; use {@link #ServerWebInputProblemResolver()}
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public ServerWebInputProblemResolver(
       ProblemFormat problemFormat, MethodParameterSupport methodParameterSupport) {
     this(problemFormat, new SimpleTypeNameMapper(), methodParameterSupport);
@@ -104,7 +114,11 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
    * @param typeNameMapper the type name mapper to use
    * @param methodParameterSupport the support for extracting parameter names
    * @since 3.1.0
+   * @deprecated since 3.1.0 as {@link DefaultProblemBeanPostProcessor ProblemBeanPostProcessor} now
+   *     assigns collaborators after construction; use {@link #ServerWebInputProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public ServerWebInputProblemResolver(
       ProblemFormat problemFormat,
       TypeNameMapper typeNameMapper,
@@ -125,7 +139,6 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
    * @deprecated since 3.1.0 as other constructors and {@link DefaultProblemBeanPostProcessor
    *     ProblemBeanPostProcessor} should be used to apply components of this class
    */
-  @SuppressWarnings("InlineMeSuggester")
   @Deprecated(since = "3.1.0", forRemoval = true)
   public ServerWebInputProblemResolver(
       TypeMismatchProblemResolver typeMismatchProblemResolver,
@@ -145,6 +158,7 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
    * @deprecated since 3.1.0 as other constructors and {@link DefaultProblemBeanPostProcessor
    *     ProblemBeanPostProcessor} should be used to apply components of this class
    */
+  @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)
   public ServerWebInputProblemResolver(
       ProblemFormat problemFormat,
