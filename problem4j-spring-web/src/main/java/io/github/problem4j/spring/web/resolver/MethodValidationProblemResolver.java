@@ -50,7 +50,7 @@ import org.springframework.validation.method.MethodValidationException;
  *
  * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
  * AbstractProblemResolver}, the {@link MethodValidationResultSupport} is assigned after
- * construction by {@link io.github.problem4j.spring.web.config.ProblemBeanPostProcessor
+ * construction by {@link io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor
  * ProblemBeanPostProcessor} through {@link
  * #setMethodValidationResultSupport(MethodValidationResultSupport)}.
  *
@@ -78,8 +78,8 @@ public class MethodValidationProblemResolver extends AbstractProblemResolver
    * @param problemFormat the problem format to use
    * @since 1.2.0
    * @deprecated since 3.1.0 as {@link
-   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
-   *     now assigns collaborators after construction; use {@link
+   *     io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor
+   *     ProblemBeanPostProcessor} now assigns collaborators after construction; use {@link
    *     #MethodValidationProblemResolver()}
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
@@ -95,8 +95,8 @@ public class MethodValidationProblemResolver extends AbstractProblemResolver
    * @param methodValidationResultSupport the support for extracting validation results
    * @since 1.2.0
    * @deprecated since 3.1.0 as {@link
-   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
-   *     now assigns collaborators after construction; use {@link
+   *     io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor
+   *     ProblemBeanPostProcessor} now assigns collaborators after construction; use {@link
    *     #MethodValidationProblemResolver()}
    */
   @SuppressWarnings("removal")

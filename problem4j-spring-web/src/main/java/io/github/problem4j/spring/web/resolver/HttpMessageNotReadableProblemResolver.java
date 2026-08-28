@@ -40,8 +40,8 @@ import tools.jackson.databind.exc.MismatchedInputException;
  *
  * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
  * AbstractProblemResolver}, the {@link TypeNameMapper} is assigned after construction by {@link
- * io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor} through
- * {@link #setTypeNameMapper(TypeNameMapper)}.
+ * io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor ProblemBeanPostProcessor}
+ * through {@link #setTypeNameMapper(TypeNameMapper)}.
  *
  * @see org.springframework.http.converter.HttpMessageConverter
  * @since 1.2.0
@@ -68,8 +68,8 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
    * @param problemFormat the problem format to use
    * @since 1.2.0
    * @deprecated since 3.1.0 as {@link
-   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
-   *     now assigns collaborators after construction; use {@link
+   *     io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor
+   *     ProblemBeanPostProcessor} now assigns collaborators after construction; use {@link
    *     #HttpMessageNotReadableProblemResolver()}
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
@@ -85,8 +85,8 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
    * @param typeNameMapper the type mapper to use
    * @since 1.2.0
    * @deprecated since 3.1.0 as {@link
-   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
-   *     now assigns collaborators after construction; use {@link
+   *     io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor
+   *     ProblemBeanPostProcessor} now assigns collaborators after construction; use {@link
    *     #HttpMessageNotReadableProblemResolver()}
    */
   @SuppressWarnings("removal")

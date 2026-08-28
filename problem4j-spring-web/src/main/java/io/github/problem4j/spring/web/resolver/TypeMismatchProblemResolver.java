@@ -40,8 +40,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  *
  * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
  * AbstractProblemResolver}, the {@link TypeNameMapper} is assigned after construction by {@link
- * io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor} through
- * {@link #setTypeNameMapper(TypeNameMapper)}.
+ * io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor ProblemBeanPostProcessor}
+ * through {@link #setTypeNameMapper(TypeNameMapper)}.
  *
  * @since 1.2.0
  */
@@ -67,8 +67,9 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
    * @param problemFormat the problem format to use
    * @since 1.2.0
    * @deprecated since 3.1.0 as {@link
-   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
-   *     now assigns collaborators after construction; use {@link #TypeMismatchProblemResolver()}
+   *     io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor
+   *     ProblemBeanPostProcessor} now assigns collaborators after construction; use {@link
+   *     #TypeMismatchProblemResolver()}
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
   public TypeMismatchProblemResolver(ProblemFormat problemFormat) {
@@ -83,8 +84,9 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
    * @param typeNameMapper the type name mapper to use
    * @since 1.2.0
    * @deprecated since 3.1.0 as {@link
-   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
-   *     now assigns collaborators after construction; use {@link #TypeMismatchProblemResolver()}
+   *     io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor
+   *     ProblemBeanPostProcessor} now assigns collaborators after construction; use {@link
+   *     #TypeMismatchProblemResolver()}
    */
   @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)

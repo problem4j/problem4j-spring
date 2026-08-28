@@ -25,8 +25,8 @@ import org.jspecify.annotations.Nullable;
  *
  * <p>When used as a Spring bean under {@code problem4j-spring-web} autoconfiguration, the {@link
  * ProblemFormat} held by this resolver is (re)assigned after construction by {@link
- * io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor} through
- * {@link #setProblemFormat(ProblemFormat)}, overriding whatever the constructor received.
+ * io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor ProblemBeanPostProcessor}
+ * through {@link #setProblemFormat(ProblemFormat)}, overriding whatever the constructor received.
  * Subclasses may have further collaborators injected the same way; each documents its own.
  *
  * @since 1.2.0
@@ -57,9 +57,10 @@ public abstract class AbstractProblemResolver implements ProblemResolver, Proble
    * @param problemFormat formatting strategy for detail (must not be {@code null})
    * @since 1.2.0
    * @deprecated since 3.1.0 as {@link
-   *     io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
-   *     now assigns the {@link ProblemFormat} after construction; use {@link
-   *     #AbstractProblemResolver(Class)} and rely on {@link #setProblemFormat(ProblemFormat)}
+   *     io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor
+   *     ProblemBeanPostProcessor} now assigns the {@link ProblemFormat} after construction; use
+   *     {@link #AbstractProblemResolver(Class)} and rely on {@link
+   *     #setProblemFormat(ProblemFormat)}
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
   public AbstractProblemResolver(Class<? extends Exception> clazz, ProblemFormat problemFormat) {

@@ -50,8 +50,8 @@ import tools.jackson.databind.exc.MismatchedInputException;
  * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
  * AbstractProblemResolver}, the {@link TypeNameMapper} and {@link MethodParameterSupport} are
  * assigned after construction by {@link
- * io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor} through
- * {@link #setTypeNameMapper(TypeNameMapper)} and {@link
+ * io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor ProblemBeanPostProcessor}
+ * through {@link #setTypeNameMapper(TypeNameMapper)} and {@link
  * #setMethodParameterSupport(MethodParameterSupport)}.
  *
  * @since 1.2.0
