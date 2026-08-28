@@ -81,24 +81,6 @@ class ServerWebInputProblemResolverTest {
   }
 
   @Test
-  void
-      givenTypeMismatchProblemResolverSetAfterConstruction_whenResolvingTypeMismatch_thenUsesNewResolver() {
-    TypeMismatchProblemResolver custom = new TypeMismatchProblemResolver();
-    custom.setTypeNameMapper(type -> Optional.of("custom-resolver"));
-    serverWebInputMapping.setTypeMismatchProblemResolver(custom);
-
-    TypeMismatchException cause = new TypeMismatchException("42", Boolean.class);
-    cause.initPropertyName("flag");
-    ServerWebInputException ex = new ServerWebInputException("irrelevant reason", null, cause);
-
-    Problem problem =
-        serverWebInputMapping.resolve(
-            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
-
-    assertThat(problem.getExtensions()).containsEntry("kind", "custom-resolver");
-  }
-
-  @Test
   void givenExceptionWithCauseAndWithoutPropertyName_shouldDelegateAndIncludeMethodParameter()
       throws NoSuchMethodException {
     Method method = DummyController.class.getMethod("paramMethod", Boolean.class);

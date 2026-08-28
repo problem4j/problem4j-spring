@@ -33,8 +33,7 @@ public abstract class AbstractProblemResolver implements ProblemResolver, Proble
 
   /**
    * Creates a resolver for the given exception type using {@link ProblemFormat#identity()} (no
-   * detail transformation). The format can later be replaced via {@link
-   * #setProblemFormat(ProblemFormat)}, e.g. by {@code ProblemFormatAwareBeanPostProcessor}.
+   * detail transformation).
    *
    * @param clazz exception subtype this resolver is responsible for
    * @since 1.2.0

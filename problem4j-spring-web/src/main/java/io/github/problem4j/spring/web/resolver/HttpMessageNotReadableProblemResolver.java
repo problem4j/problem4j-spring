@@ -66,17 +66,6 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
   }
 
   /**
-   * Creates a new {@link HttpMessageNotReadableProblemResolver} with the specified type name mapper
-   * and default problem format.
-   *
-   * @param typeNameMapper the type mapper to use
-   * @since 3.1.0
-   */
-  public HttpMessageNotReadableProblemResolver(TypeNameMapper typeNameMapper) {
-    this(ProblemFormat.identity(), typeNameMapper);
-  }
-
-  /**
    * Creates a new {@link HttpMessageNotReadableProblemResolver} with the specified problem format
    * and type name mapper.
    *
@@ -91,8 +80,7 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
   }
 
   /**
-   * Replaces the {@link ProblemFormat} used by this resolver, cascading it into the internal
-   * Jackson error helper.
+   * Replaces the {@link ProblemFormat} used by this resolver.
    *
    * @param problemFormat the problem format to use
    * @since 3.1.0

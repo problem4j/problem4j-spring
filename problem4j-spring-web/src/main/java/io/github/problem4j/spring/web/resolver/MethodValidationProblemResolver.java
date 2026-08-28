@@ -76,18 +76,6 @@ public class MethodValidationProblemResolver extends AbstractProblemResolver
   }
 
   /**
-   * Creates a new {@link MethodValidationProblemResolver} with the specified method validation
-   * result support and default problem format.
-   *
-   * @param methodValidationResultSupport the support for extracting validation results
-   * @since 3.1.0
-   */
-  public MethodValidationProblemResolver(
-      MethodValidationResultSupport methodValidationResultSupport) {
-    this(ProblemFormat.identity(), methodValidationResultSupport);
-  }
-
-  /**
    * Creates a new {@link MethodValidationProblemResolver} with the specified problem format and
    * method validation result support.
    *
@@ -104,7 +92,7 @@ public class MethodValidationProblemResolver extends AbstractProblemResolver
   /**
    * Replaces the {@link MethodValidationResultSupport} used by this resolver.
    *
-   * @param methodValidationResultSupport the support for extracting validation results
+   * @param methodValidationResultSupport the method validation result support to use
    * @since 3.1.0
    */
   @Override

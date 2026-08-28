@@ -9,10 +9,16 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 ### Added
 
 - Add `ProblemFormatAware`, `TypeNameMapperAware`, `BindingResultSupportAware`, `MethodValidationResultSupportAware`,
-  `MethodParameterSupportAware`, and `TypeMismatchProblemResolverAware` callback interfaces, plus a matching
-  `*AwareBeanPostProcessor` for each, so every `ProblemResolver` bean in autoconfiguration is now constructed with its
-  default (no-arg) constructor - any dependency it needs is injected after construction instead of through the
-  constructor.
+  and `MethodParameterSupportAware` callback interfaces, plus a single `DefaultProblemBeanPostProcessor` (in the new
+  `io.github.problem4j.spring.web.config` package) that injects the matching collaborator into every bean implementing
+  one of them, so every `ProblemResolver` bean in autoconfiguration is now constructed with its default (no-arg)
+  constructor - any dependency it needs is injected after construction instead of through the constructor.
+
+### Deprecated
+
+- Deprecate the `ServerWebInputProblemResolver` constructors that take a `TypeMismatchProblemResolver` argument - type
+  mismatch handling is now internal and the argument is ignored. Use the `ProblemFormat` / `MethodParameterSupport` /
+  `TypeNameMapper` constructors instead.
 
 ### Fixed
 

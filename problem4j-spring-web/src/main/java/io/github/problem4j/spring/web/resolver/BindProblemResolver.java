@@ -79,17 +79,6 @@ public class BindProblemResolver extends AbstractProblemResolver
   }
 
   /**
-   * Constructs a new {@link BindProblemResolver} with the specified binding result support and
-   * default problem format.
-   *
-   * @param bindingResultSupport the binding result support to use
-   * @since 3.1.0
-   */
-  public BindProblemResolver(BindingResultSupport bindingResultSupport) {
-    this(ProblemFormat.identity(), bindingResultSupport);
-  }
-
-  /**
    * Constructs a new {@link BindProblemResolver} with the specified problem format and binding
    * result support.
    *

@@ -16,13 +16,15 @@
 
 package io.github.problem4j.spring.web.parameter;
 
+import io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor;
+
 /**
  * Callback interface for components that want to be configured with a {@link BindingResultSupport}
  * after construction, instead of requiring it as a constructor argument.
  *
  * <p>When {@code problem4j-spring-web} autoconfiguration is active, any bean implementing this
- * interface is detected by {@link BindingResultSupportAwareBeanPostProcessor} and configured with
- * the container's {@link BindingResultSupport} bean.
+ * interface is detected by {@link DefaultProblemBeanPostProcessor ProblemBeanPostProcessor} and
+ * configured with the container's {@link BindingResultSupport} bean.
  *
  * @see BindingResultSupport
  * @since 3.1.0
@@ -31,8 +33,7 @@ package io.github.problem4j.spring.web.parameter;
 public interface BindingResultSupportAware {
 
   /**
-   * Called with the container's configured {@link BindingResultSupport} after this bean has been
-   * constructed.
+   * Replaces the {@link BindingResultSupport} used by this resolver.
    *
    * @param bindingResultSupport the binding result support to use
    * @since 3.1.0

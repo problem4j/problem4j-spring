@@ -16,12 +16,7 @@
 
 package io.github.problem4j.spring.web.resolver;
 
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.KIND_EXTENSION;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.PROPERTY_EXTENSION;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.TYPE_MISMATCH_DETAIL;
-
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.SimpleTypeNameMapper;
@@ -48,7 +43,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 public class TypeMismatchProblemResolver extends AbstractProblemResolver
     implements TypeNameMapperAware {
 
-  private TypeNameMapper typeNameMapper;
+  private final TypeMismatchHelper typeMismatchHelper;
 
   /**
    * Creates a new {@link TypeMismatchProblemResolver} with default problem format.
@@ -79,7 +74,7 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
    */
   public TypeMismatchProblemResolver(ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
     super(TypeMismatchException.class, problemFormat);
-    this.typeNameMapper = typeNameMapper;
+    this.typeMismatchHelper = new TypeMismatchHelper(problemFormat, typeNameMapper);
   }
 
   /**
@@ -90,7 +85,19 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
    */
   @Override
   public void setTypeNameMapper(TypeNameMapper typeNameMapper) {
-    this.typeNameMapper = typeNameMapper;
+    typeMismatchHelper.setTypeNameMapper(typeNameMapper);
+  }
+
+  /**
+   * Replaces the {@link ProblemFormat} used by this resolver.
+   *
+   * @param problemFormat the problem format to use
+   * @since 3.1.0
+   */
+  @Override
+  public void setProblemFormat(ProblemFormat problemFormat) {
+    super.setProblemFormat(problemFormat);
+    typeMismatchHelper.setProblemFormat(problemFormat);
   }
 
   /**
@@ -120,22 +127,6 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
   @Override
   public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    ProblemBuilder builder =
-        Problem.builder()
-            .status(HttpStatus.BAD_REQUEST.value())
-            .detail(formatDetail(TYPE_MISMATCH_DETAIL));
-
-    TypeMismatchException e = (TypeMismatchException) ex;
-
-    String property = e.getPropertyName();
-    String kind = typeNameMapper.map(e.getRequiredType()).orElse(null);
-
-    if (property != null) {
-      builder = builder.extension(PROPERTY_EXTENSION, property);
-    }
-    if (kind != null) {
-      builder = builder.extension(KIND_EXTENSION, kind);
-    }
-    return builder.build();
+    return typeMismatchHelper.toProblem((TypeMismatchException) ex);
   }
 }
