@@ -23,6 +23,12 @@ import org.jspecify.annotations.Nullable;
 /**
  * Convenience base class for {@link ProblemResolver}-s.
  *
+ * <p>When used as a Spring bean under {@code problem4j-spring-web} autoconfiguration, the {@link
+ * ProblemFormat} held by this resolver is (re)assigned after construction by {@link
+ * io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor} through
+ * {@link #setProblemFormat(ProblemFormat)}, overriding whatever the constructor received.
+ * Subclasses may have further collaborators injected the same way; each documents its own.
+ *
  * @since 1.2.0
  */
 public abstract class AbstractProblemResolver implements ProblemResolver, ProblemFormatAware {

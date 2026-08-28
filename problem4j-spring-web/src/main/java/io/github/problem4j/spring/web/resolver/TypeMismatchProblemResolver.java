@@ -38,6 +38,11 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to
  * indicate that the provided input has an invalid type.
  *
+ * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
+ * AbstractProblemResolver}, the {@link TypeNameMapper} is assigned after construction by {@link
+ * io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor} through
+ * {@link #setTypeNameMapper(TypeNameMapper)}.
+ *
  * @since 1.2.0
  */
 public class TypeMismatchProblemResolver extends AbstractProblemResolver

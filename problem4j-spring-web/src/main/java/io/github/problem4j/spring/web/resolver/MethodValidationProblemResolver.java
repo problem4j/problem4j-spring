@@ -48,6 +48,12 @@ import org.springframework.validation.method.MethodValidationException;
  * extension populated via {@link MethodValidationResultSupport} (one entry per violated parameter /
  * return value).
  *
+ * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
+ * AbstractProblemResolver}, the {@link MethodValidationResultSupport} is assigned after
+ * construction by {@link io.github.problem4j.spring.web.config.ProblemBeanPostProcessor
+ * ProblemBeanPostProcessor} through {@link
+ * #setMethodValidationResultSupport(MethodValidationResultSupport)}.
+ *
  * @see jakarta.validation.ConstraintViolationException
  * @since 1.2.0
  */

@@ -38,6 +38,12 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
  * only a basic problem with the resolved status, avoiding leaking validation details when the
  * server indicates an internal failure.
  *
+ * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
+ * AbstractProblemResolver}, the {@link MethodValidationResultSupport} is assigned after
+ * construction by {@link io.github.problem4j.spring.web.config.ProblemBeanPostProcessor
+ * ProblemBeanPostProcessor} through {@link
+ * #setMethodValidationResultSupport(MethodValidationResultSupport)}.
+ *
  * @since 1.2.0
  */
 public class HandlerMethodValidationProblemResolver extends AbstractProblemResolver

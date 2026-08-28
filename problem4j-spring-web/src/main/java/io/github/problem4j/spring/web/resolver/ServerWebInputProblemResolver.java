@@ -47,6 +47,13 @@ import tools.jackson.databind.exc.MismatchedInputException;
  * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to
  * indicate that the client sent invalid or unreadable input.
  *
+ * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
+ * AbstractProblemResolver}, the {@link TypeNameMapper} and {@link MethodParameterSupport} are
+ * assigned after construction by {@link
+ * io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor} through
+ * {@link #setTypeNameMapper(TypeNameMapper)} and {@link
+ * #setMethodParameterSupport(MethodParameterSupport)}.
+ *
  * @since 1.2.0
  */
 public class ServerWebInputProblemResolver extends AbstractProblemResolver
@@ -90,13 +97,13 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
   }
 
   /**
-   * Creates a new {@link ServerWebInputProblemResolver} with the specified problem format and
-   * method parameter support.
+   * Creates a new {@link ServerWebInputProblemResolver} with the specified problem format, type
+   * name mapper, and method parameter support.
    *
    * @param problemFormat the problem format to use
-   * @param typeNameMapper the type name mappre to use
+   * @param typeNameMapper the type name mapper to use
    * @param methodParameterSupport the support for extracting parameter names
-   * @since 1.2.0
+   * @since 3.1.0
    */
   public ServerWebInputProblemResolver(
       ProblemFormat problemFormat,

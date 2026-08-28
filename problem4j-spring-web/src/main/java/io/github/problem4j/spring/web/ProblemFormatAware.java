@@ -26,10 +26,9 @@ import io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor;
  * interface is detected by {@link DefaultProblemBeanPostProcessor ProblemBeanPostProcessor} and
  * configured with the container's {@link ProblemFormat} bean.
  *
- * <p>Implementations that received their {@link ProblemFormat} explicitly (e.g. via a constructor
- * argument) should ignore this callback, so that explicit configuration always takes precedence
- * over container-wide defaults. {@code AbstractProblemResolver} in {@code problem4j-spring-web}
- * follows this rule.
+ * <p>When {@code problem4j-spring-web} autoconfiguration is active, any bean implementing this
+ * interface is detected by {@link DefaultProblemBeanPostProcessor ProblemBeanPostProcessor} and
+ * configured with the container's {@link ProblemFormat} bean.
  *
  * @see ProblemFormat
  * @since 3.1.0

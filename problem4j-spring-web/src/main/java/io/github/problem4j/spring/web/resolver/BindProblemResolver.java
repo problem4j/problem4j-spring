@@ -48,6 +48,11 @@ import org.springframework.validation.BindException;
  *       {@code @RequestBody} or {@code @ModelAttribute} method arguments.
  * </ul>
  *
+ * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
+ * AbstractProblemResolver}, the {@link BindingResultSupport} is assigned after construction by
+ * {@link io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor}
+ * through {@link #setBindingResultSupport(BindingResultSupport)}.
+ *
  * @see org.springframework.web.bind.MethodArgumentNotValidException
  * @see org.springframework.web.bind.annotation.ModelAttribute
  * @see org.springframework.web.bind.annotation.RequestBody

@@ -192,7 +192,7 @@ public class ProblemAutoConfiguration {
    * @return a new {@link DefaultProblemBeanPostProcessor}
    */
   @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-  @ConditionalOnMissingBean(DefaultProblemBeanPostProcessor.class)
+  @ConditionalOnMissingBean(ProblemBeanPostProcessor.class)
   @Bean
   static ProblemBeanPostProcessor problemBeanPostProcessor(
       ObjectProvider<ProblemFormat> problemFormat,
