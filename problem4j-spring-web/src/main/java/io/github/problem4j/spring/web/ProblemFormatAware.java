@@ -16,19 +16,19 @@
 
 package io.github.problem4j.spring.web;
 
-import io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor;
-
 /**
  * Callback interface for components that want to be configured with a {@link ProblemFormat} after
  * construction, instead of requiring it as a constructor argument.
  *
  * <p>When {@code problem4j-spring-web} autoconfiguration is active, any bean implementing this
- * interface is detected by {@link DefaultProblemBeanPostProcessor ProblemBeanPostProcessor} and
- * configured with the container's {@link ProblemFormat} bean.
+ * interface is detected by {@link
+ * io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor ProblemBeanPostProcessor}
+ * and configured with the container's {@link ProblemFormat} bean.
  *
  * <p>When {@code problem4j-spring-web} autoconfiguration is active, any bean implementing this
- * interface is detected by {@link DefaultProblemBeanPostProcessor ProblemBeanPostProcessor} and
- * configured with the container's {@link ProblemFormat} bean.
+ * interface is detected by {@link
+ * io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor ProblemBeanPostProcessor}
+ * and configured with the container's {@link ProblemFormat} bean.
  *
  * @see ProblemFormat
  * @since 3.1.0

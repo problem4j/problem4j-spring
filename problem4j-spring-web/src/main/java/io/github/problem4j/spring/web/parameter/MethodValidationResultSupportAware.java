@@ -16,16 +16,15 @@
 
 package io.github.problem4j.spring.web.parameter;
 
-import io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor;
-
 /**
  * Callback interface for components that want to be configured with a {@link
  * MethodValidationResultSupport} after construction, instead of requiring it as a constructor
  * argument.
  *
  * <p>When {@code problem4j-spring-web} autoconfiguration is active, any bean implementing this
- * interface is detected by {@link DefaultProblemBeanPostProcessor ProblemBeanPostProcessor} and
- * configured with the container's {@link MethodValidationResultSupport} bean.
+ * interface is detected by {@link
+ * io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor ProblemBeanPostProcessor}
+ * and configured with the container's {@link MethodValidationResultSupport} bean.
  *
  * @see MethodValidationResultSupport
  * @since 3.1.0

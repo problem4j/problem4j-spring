@@ -72,17 +72,6 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver
   }
 
   /**
-   * Creates a new {@link WebExchangeBindProblemResolver} with the specified binding result support
-   * and default problem format.
-   *
-   * @param bindingResultSupport the support for extracting bind results
-   * @since 3.1.0
-   */
-  public WebExchangeBindProblemResolver(BindingResultSupport bindingResultSupport) {
-    this(ProblemFormat.identity(), bindingResultSupport);
-  }
-
-  /**
    * Creates a new {@link WebExchangeBindProblemResolver} with the specified problem format and
    * binding result support.
    *
