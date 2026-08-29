@@ -20,12 +20,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
+import java.io.IOException;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.mock.http.MockHttpInputMessage;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.exc.MismatchedInputException;
+import tools.jackson.databind.json.JsonMapper;
 
 class HttpMessageNotReadableProblemResolverTest {
 
@@ -50,6 +55,31 @@ class HttpMessageNotReadableProblemResolverTest {
         resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+  }
+
+  @Test
+  void
+      givenProblemFormatAndTypeNameMapperSetAfterConstruction_whenResolvingMismatchedInput_thenAppliesBoth()
+          throws IOException {
+    resolver.setProblemFormat(detail -> detail == null ? null : detail.toUpperCase());
+    resolver.setTypeNameMapper(type -> Optional.of("custom-int"));
+
+    MismatchedInputException cause;
+    try (JsonParser parser = JsonMapper.builder().build().createParser("{}")) {
+      parser.nextToken();
+      cause = MismatchedInputException.from(parser, Integer.class, "msg");
+      cause.prependPath(HttpMessageNotReadableProblemResolverTest.class, "age");
+    }
+    HttpMessageNotReadableException ex =
+        new HttpMessageNotReadableException("msg", cause, new MockHttpInputMessage(new byte[0]));
+
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+
+    assertThat(problem.getDetail()).isEqualTo("TYPE MISMATCH");
+    assertThat(problem.getExtensions())
+        .containsEntry("property", "age")
+        .containsEntry("kind", "custom-int");
   }
 
   @Test

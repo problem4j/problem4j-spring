@@ -24,52 +24,35 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.TypeNameMapper;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.StringUtils;
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.exc.MismatchedInputException;
 
-/**
- * Utility for Jackson exceptions used in situations where these exceptions are the {@code cause} of
- * the exception that is being resolved.
- */
-final class JacksonErrorHelper {
+final class TypeMismatchHelper {
 
   private ProblemFormat problemFormat;
   private TypeNameMapper typeNameMapper;
 
-  JacksonErrorHelper(ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
+  TypeMismatchHelper(ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
     this.problemFormat = problemFormat;
     this.typeNameMapper = typeNameMapper;
   }
 
-  Problem resolveMismatchedInput(MismatchedInputException e) {
-    Optional<String> optionalProperty = resolvePropertyPath(e);
+  Problem toProblem(TypeMismatchException e) {
+    ProblemBuilder builder =
+        Problem.builder()
+            .status(HttpStatus.BAD_REQUEST.value())
+            .detail(problemFormat.formatDetail(TYPE_MISMATCH_DETAIL));
 
-    ProblemBuilder builder = Problem.builder().status(HttpStatus.BAD_REQUEST.value());
+    String property = e.getPropertyName();
+    String kind = typeNameMapper.map(e.getRequiredType()).orElse(null);
 
-    optionalProperty.ifPresent(
-        property -> {
-          String kind = typeNameMapper.map(e.getTargetType()).orElse(null);
-
-          builder.detail(problemFormat.formatDetail(TYPE_MISMATCH_DETAIL));
-          builder.extension(PROPERTY_EXTENSION, property);
-          builder.extension(KIND_EXTENSION, kind);
-        });
-
+    if (property != null) {
+      builder = builder.extension(PROPERTY_EXTENSION, property);
+    }
+    if (kind != null) {
+      builder = builder.extension(KIND_EXTENSION, kind);
+    }
     return builder.build();
-  }
-
-  private Optional<String> resolvePropertyPath(MismatchedInputException e) {
-    String property =
-        e.getPath().stream()
-            .map(JacksonException.Reference::getPropertyName)
-            .filter(StringUtils::hasLength)
-            .collect(Collectors.joining("."));
-
-    return StringUtils.hasLength(property) ? Optional.of(property) : Optional.empty();
   }
 
   void setProblemFormat(ProblemFormat problemFormat) {

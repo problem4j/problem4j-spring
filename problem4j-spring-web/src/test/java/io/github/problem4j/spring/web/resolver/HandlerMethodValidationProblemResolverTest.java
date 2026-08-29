@@ -16,12 +16,15 @@
 
 package io.github.problem4j.spring.web.resolver;
 
+import static io.github.problem4j.spring.web.parameter.ViolationSupport.ERRORS_EXTENSION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
+import io.github.problem4j.spring.web.parameter.Violation;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -60,5 +63,19 @@ class HandlerMethodValidationProblemResolverTest {
     assertEquals(Problem.BLANK_TYPE, problem.getType());
     assertEquals(HttpStatus.BAD_REQUEST.getReasonPhrase(), problem.getTitle());
     assertEquals(HttpStatus.BAD_REQUEST.value(), problem.getStatus());
+  }
+
+  @Test
+  void givenMethodValidationResultSupportSetAfterConstruction_whenResolve_thenUsesNewSupport() {
+    List<Violation> violations = List.of(new Violation("field", "custom"));
+    handlerMethodValidationProblemResolver.setMethodValidationResultSupport(result -> violations);
+    HandlerMethodValidationException ex =
+        new HandlerMethodValidationException(mock(MethodValidationResult.class));
+
+    Problem problem =
+        handlerMethodValidationProblemResolver.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), ex.getStatusCode());
+
+    assertThat(problem.getExtensions()).containsEntry(ERRORS_EXTENSION, violations);
   }
 }

@@ -32,19 +32,27 @@ import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.ProblemXmlMapperBuilderCustomizer;
 import io.github.problem4j.spring.web.SimpleTypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapper;
+import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
+import io.github.problem4j.spring.web.parameter.BindingResultSupport;
+import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
+import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.util.List;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
 import org.springframework.boot.jackson.autoconfigure.XmlMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Role;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.dataformat.xml.XmlMapper;
 
@@ -161,6 +169,38 @@ public class ProblemAutoConfiguration {
   @Bean
   TypeNameMapper problemTypeNameMapper() {
     return new SimpleTypeNameMapper();
+  }
+
+  /**
+   * Provides the single {@link ProblemBeanPostProcessor} that injects the container's Problem4J
+   * collaborators ({@link ProblemFormat}, {@link TypeNameMapper}, {@link BindingResultSupport},
+   * {@link MethodValidationResultSupport}, {@link MethodParameterSupport}) into every bean that
+   * opts in through one of the {@code *Aware} callback interfaces, so overriding built-in resolvers
+   * can be simplified.
+   *
+   * @param problemFormat provider for the container's {@link ProblemFormat} bean
+   * @param typeNameMapper provider for the container's {@link TypeNameMapper} bean
+   * @param bindingResultSupport provider for the container's {@link BindingResultSupport} bean
+   * @param methodValidationResultSupport provider for the container's {@link
+   *     MethodValidationResultSupport} bean
+   * @param methodParameterSupport provider for the container's {@link MethodParameterSupport} bean
+   * @return a new {@link ProblemBeanPostProcessor}
+   */
+  @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+  @ConditionalOnMissingBean(search = SearchStrategy.CURRENT)
+  @Bean
+  static ProblemBeanPostProcessor problemBeanPostProcessor(
+      ObjectProvider<ProblemFormat> problemFormat,
+      ObjectProvider<TypeNameMapper> typeNameMapper,
+      ObjectProvider<BindingResultSupport> bindingResultSupport,
+      ObjectProvider<MethodValidationResultSupport> methodValidationResultSupport,
+      ObjectProvider<MethodParameterSupport> methodParameterSupport) {
+    return new ProblemBeanPostProcessor(
+        problemFormat,
+        typeNameMapper,
+        bindingResultSupport,
+        methodValidationResultSupport,
+        methodParameterSupport);
   }
 
   /** Configuration for JSON support in Problem serialization. */

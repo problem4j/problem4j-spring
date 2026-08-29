@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+### Added
+
+- Make `AbstractProblemResolver` and its subclasses take additional arguments via `BeanPostProcessor` for easier
+  overrides.
+  > [!IMPORTANT]
+  > When a resolver is registered as a bean, its `ProblemFormat` is replaced after construction by the container's
+  > `ProblemFormat` bean, regardless of what was passed to a constructor. Do not rely on a per-resolver `ProblemFormat`
+  > that differs from the container one.
+- Add `*Aware` callback interfaces (`ProblemFormatAware`, `TypeNameMapperAware`, `BindingResultSupportAware`,
+  `MethodValidationResultSupportAware`, `MethodParameterSupportAware`) that any bean can implement to receive the
+  corresponding Problem4J collaborator from `ProblemBeanPostProcessor` after construction.
+
+### Changed
+
+- `ServerWebInputProblemResolver` no longer delegates type-mismatch handling to the `TypeMismatchProblemResolver` bean.
+
+### Deprecated
+
+- Deprecate non-default constructors of `AbstractProblemResolver` and its subclasses (those taking `ProblemFormat` or
+  other collaborators), including `AbstractProblemResolver(Class, ProblemFormat)`. Collaborators are now injected after
+  construction by `ProblemBeanPostProcessor`; use the no-arg constructor (`AbstractProblemResolver(Class)` for custom
+  subclasses).
+
 ### Fixed
 
 - Make `Automatic-Module-Name` stable, by adding it to `META-INF/MANIFEST.MF`.

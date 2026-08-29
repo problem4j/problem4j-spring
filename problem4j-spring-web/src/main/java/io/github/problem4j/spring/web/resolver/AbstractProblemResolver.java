@@ -17,18 +17,26 @@
 package io.github.problem4j.spring.web.resolver;
 
 import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.ProblemFormatAware;
+import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Convenience base class for {@link ProblemResolver}-s.
  *
+ * <p>When used as a Spring bean under {@code problem4j-spring-web} autoconfiguration, the {@link
+ * ProblemFormat} held by this resolver is (re)assigned after construction by {@link
+ * ProblemBeanPostProcessor} through {@link #setProblemFormat(ProblemFormat)}, overriding whatever
+ * the constructor received. Subclasses may have further collaborators injected the same way; each
+ * documents its own.
+ *
  * @since 1.2.0
  */
-public abstract class AbstractProblemResolver implements ProblemResolver {
+public abstract class AbstractProblemResolver implements ProblemResolver, ProblemFormatAware {
 
   private final Class<? extends Exception> clazz;
 
-  private final ProblemFormat problemFormat;
+  private ProblemFormat problemFormat;
 
   /**
    * Creates a resolver for the given exception type using {@link ProblemFormat#identity()} (no
@@ -38,7 +46,8 @@ public abstract class AbstractProblemResolver implements ProblemResolver {
    * @since 1.2.0
    */
   public AbstractProblemResolver(Class<? extends Exception> clazz) {
-    this(clazz, ProblemFormat.identity());
+    this.clazz = clazz;
+    this.problemFormat = ProblemFormat.identity();
   }
 
   /**
@@ -48,7 +57,11 @@ public abstract class AbstractProblemResolver implements ProblemResolver {
    * @param clazz exception subtype this resolver is responsible for
    * @param problemFormat formatting strategy for detail (must not be {@code null})
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link
+   *     ProblemFormat} after construction; use {@link #AbstractProblemResolver(Class)} and rely on
+   *     {@link #setProblemFormat(ProblemFormat)}
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public AbstractProblemResolver(Class<? extends Exception> clazz, ProblemFormat problemFormat) {
     this.clazz = clazz;
     this.problemFormat = problemFormat;
@@ -74,5 +87,16 @@ public abstract class AbstractProblemResolver implements ProblemResolver {
    */
   protected final @Nullable String formatDetail(@Nullable String detail) {
     return problemFormat.formatDetail(detail);
+  }
+
+  /**
+   * Replaces the {@link ProblemFormat} used by this resolver.
+   *
+   * @param problemFormat the problem format to use
+   * @since 3.1.0
+   */
+  @Override
+  public void setProblemFormat(ProblemFormat problemFormat) {
+    this.problemFormat = problemFormat;
   }
 }

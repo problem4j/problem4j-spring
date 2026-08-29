@@ -23,6 +23,7 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -48,7 +49,7 @@ public class MaxUploadSizeExceededProblemResolver extends AbstractProblemResolve
    * @since 1.2.0
    */
   public MaxUploadSizeExceededProblemResolver() {
-    this(ProblemFormat.identity());
+    super(MaxUploadSizeExceededException.class);
   }
 
   /**
@@ -56,7 +57,11 @@ public class MaxUploadSizeExceededProblemResolver extends AbstractProblemResolve
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link
+   *     ProblemFormat} after construction; use {@link #MaxUploadSizeExceededProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public MaxUploadSizeExceededProblemResolver(ProblemFormat problemFormat) {
     super(MaxUploadSizeExceededException.class, problemFormat);
   }
