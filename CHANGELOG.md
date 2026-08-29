@@ -11,7 +11,6 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Make `Automatic-Module-Name` stable, by adding it to `META-INF/MANIFEST.MF`.
 - Generate `META-INF/spring-autoconfigure-metadata.properties` file with `spring-boot-autoconfigure-processor`.
 - Make `HttpStatusTitleResolver` implement `Serializable` as it is used in a field of `ProblemBuilder`.
-- Resolve response `Content-Type` based on `Accept` header, defaulting to `application/problem+json`.
 
 ## [3.0.0] - 2026-05-08
 
