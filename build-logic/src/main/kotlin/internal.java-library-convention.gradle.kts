@@ -25,42 +25,41 @@ plugins {
 //
 // The project also includes interop utilities between Java and Kotlin.
 
+val javaToolchainVersion = 25
+val javaTargetVersion = 17
+
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(25)
+        languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
     }
     withSourcesJar()
     withJavadocJar()
 }
-
 tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.add("-parameters")
     options.encoding = "UTF-8"
 }
-
 tasks.named<JavaCompile>("compileJava").configure {
-    options.release = 17
+    options.release = javaTargetVersion
 }
 
 kotlin {
     jvmToolchain {
-        languageVersion = JavaLanguageVersion.of(25)
+        languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
     }
     compilerOptions {
         apiVersion = KotlinVersion.KOTLIN_2_2
         languageVersion = KotlinVersion.KOTLIN_2_2
     }
 }
-
 tasks.withType<KotlinCompile>().configureEach {
     compilerOptions {
         javaParameters = true
     }
 }
-
 tasks.named<KotlinCompile>("compileKotlin").configure {
     compilerOptions {
-        jvmTarget = JvmTarget.JVM_17
+        jvmTarget = JvmTarget.fromTarget(javaTargetVersion.toString())
     }
 }
 
@@ -68,7 +67,7 @@ tasks.withType<Jar>().configureEach {
     manifest {
         attributes["Implementation-Title"] = project.name
         attributes["Implementation-Version"] = project.version
-        attributes["Build-Jdk-Spec"] = java.toolchain.languageVersion.get().toString()
+        attributes["Build-Jdk-Spec"] = javaTargetVersion
         attributes["Created-By"] = "Gradle ${gradle.gradleVersion}"
         attributes["Automatic-Module-Name"] = project.name.replace('-', '.')
     }
