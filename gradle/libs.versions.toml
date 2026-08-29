@@ -8,6 +8,7 @@ kotlin = "2.4.10"
 nmcp = "1.6.1"
 nullaway = "0.13.8"
 problem4j-core = "2.0.0"
+problem4j-gson = "1.0.0"
 problem4j-jackson2 = "2.0.0"
 problem4j-jackson3 = "2.0.0"
 spotless = "8.9.0"
@@ -33,6 +34,7 @@ kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref =
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 nullaway = { module = "com.uber.nullaway:nullaway", version.ref = "nullaway" }
 problem4j-core = { module = "io.github.problem4j:problem4j-core", version.ref = "problem4j-core" }
+problem4j-gson = { module = "io.github.problem4j:problem4j-gson", version.ref = "problem4j-gson" }
 problem4j-jackson2 = { module = "io.github.problem4j:problem4j-jackson2", version.ref = "problem4j-jackson2" }
 problem4j-jackson3 = { module = "io.github.problem4j:problem4j-jackson3", version.ref = "problem4j-jackson3" }
 

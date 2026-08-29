@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Add `*Aware` callback interfaces (`ProblemFormatAware`, `TypeNameMapperAware`, `BindingResultSupportAware`,
   `MethodValidationResultSupportAware`, `MethodParameterSupportAware`) that any bean can implement to receive the
   corresponding Problem4J collaborator from `ProblemBeanPostProcessor` after construction.
+- Add `problem4j-gson` version `1.0.0` to `problem4j-spring-bom`.
 
 ### Changed
 
