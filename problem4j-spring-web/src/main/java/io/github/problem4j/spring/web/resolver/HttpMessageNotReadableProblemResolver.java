@@ -22,6 +22,7 @@ import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.SimpleTypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapperAware;
+import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -40,8 +41,7 @@ import tools.jackson.databind.exc.MismatchedInputException;
  *
  * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
  * AbstractProblemResolver}, the {@link TypeNameMapper} is assigned after construction by {@link
- * io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor ProblemBeanPostProcessor}
- * through {@link #setTypeNameMapper(TypeNameMapper)}.
+ * ProblemBeanPostProcessor} through {@link #setTypeNameMapper(TypeNameMapper)}.
  *
  * @see org.springframework.http.converter.HttpMessageConverter
  * @since 1.2.0
@@ -67,10 +67,8 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link
-   *     io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor
-   *     ProblemBeanPostProcessor} now assigns collaborators after construction; use {@link
-   *     #HttpMessageNotReadableProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
+   *     construction; use {@link #HttpMessageNotReadableProblemResolver()}
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
   public HttpMessageNotReadableProblemResolver(ProblemFormat problemFormat) {
@@ -84,10 +82,8 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
    * @param problemFormat the problem format to use
    * @param typeNameMapper the type mapper to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link
-   *     io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor
-   *     ProblemBeanPostProcessor} now assigns collaborators after construction; use {@link
-   *     #HttpMessageNotReadableProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
+   *     construction; use {@link #HttpMessageNotReadableProblemResolver()}
    */
   @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)

@@ -24,7 +24,7 @@ import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.SimpleTypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapperAware;
-import io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor;
+import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import io.github.problem4j.spring.web.parameter.DefaultMethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupportAware;
@@ -49,9 +49,8 @@ import tools.jackson.databind.exc.MismatchedInputException;
  *
  * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
  * AbstractProblemResolver}, the {@link TypeNameMapper} and {@link MethodParameterSupport} are
- * assigned after construction by {@link
- * io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor ProblemBeanPostProcessor}
- * through {@link #setTypeNameMapper(TypeNameMapper)} and {@link
+ * assigned after construction by {@link ProblemBeanPostProcessor} through {@link
+ * #setTypeNameMapper(TypeNameMapper)} and {@link
  * #setMethodParameterSupport(MethodParameterSupport)}.
  *
  * @since 1.2.0
@@ -82,8 +81,8 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link DefaultProblemBeanPostProcessor ProblemBeanPostProcessor} now
-   *     assigns collaborators after construction; use {@link #ServerWebInputProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
+   *     construction; use {@link #ServerWebInputProblemResolver()}
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
   public ServerWebInputProblemResolver(ProblemFormat problemFormat) {
@@ -97,8 +96,8 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
    * @param problemFormat the problem format to use
    * @param methodParameterSupport the support for extracting parameter names
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link DefaultProblemBeanPostProcessor ProblemBeanPostProcessor} now
-   *     assigns collaborators after construction; use {@link #ServerWebInputProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
+   *     construction; use {@link #ServerWebInputProblemResolver()}
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
   public ServerWebInputProblemResolver(
@@ -114,8 +113,8 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
    * @param typeNameMapper the type name mapper to use
    * @param methodParameterSupport the support for extracting parameter names
    * @since 3.1.0
-   * @deprecated since 3.1.0 as {@link DefaultProblemBeanPostProcessor ProblemBeanPostProcessor} now
-   *     assigns collaborators after construction; use {@link #ServerWebInputProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
+   *     construction; use {@link #ServerWebInputProblemResolver()}
    */
   @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)
@@ -136,7 +135,7 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
    * @param typeMismatchProblemResolver the resolver to use, ignored since 3.1.0
    * @param methodParameterSupport the support for extracting parameter names
    * @since 3.1.0
-   * @deprecated since 3.1.0 as other constructors and {@link DefaultProblemBeanPostProcessor
+   * @deprecated since 3.1.0 as other constructors and {@link ProblemBeanPostProcessor
    *     ProblemBeanPostProcessor} should be used to apply components of this class
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
@@ -155,7 +154,7 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
    * @param methodParameterSupport the support for extracting parameter names
    * @param typeNameMapper the type name mapper to use for decoding exceptions
    * @since 1.2.0
-   * @deprecated since 3.1.0 as other constructors and {@link DefaultProblemBeanPostProcessor
+   * @deprecated since 3.1.0 as other constructors and {@link ProblemBeanPostProcessor
    *     ProblemBeanPostProcessor} should be used to apply components of this class
    */
   @SuppressWarnings("removal")

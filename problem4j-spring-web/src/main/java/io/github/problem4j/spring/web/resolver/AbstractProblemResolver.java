@@ -18,6 +18,7 @@ package io.github.problem4j.spring.web.resolver;
 
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormatAware;
+import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -25,9 +26,9 @@ import org.jspecify.annotations.Nullable;
  *
  * <p>When used as a Spring bean under {@code problem4j-spring-web} autoconfiguration, the {@link
  * ProblemFormat} held by this resolver is (re)assigned after construction by {@link
- * io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor ProblemBeanPostProcessor}
- * through {@link #setProblemFormat(ProblemFormat)}, overriding whatever the constructor received.
- * Subclasses may have further collaborators injected the same way; each documents its own.
+ * ProblemBeanPostProcessor} through {@link #setProblemFormat(ProblemFormat)}, overriding whatever
+ * the constructor received. Subclasses may have further collaborators injected the same way; each
+ * documents its own.
  *
  * @since 1.2.0
  */
@@ -56,11 +57,9 @@ public abstract class AbstractProblemResolver implements ProblemResolver, Proble
    * @param clazz exception subtype this resolver is responsible for
    * @param problemFormat formatting strategy for detail (must not be {@code null})
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link
-   *     io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor
-   *     ProblemBeanPostProcessor} now assigns the {@link ProblemFormat} after construction; use
-   *     {@link #AbstractProblemResolver(Class)} and rely on {@link
-   *     #setProblemFormat(ProblemFormat)}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link
+   *     ProblemFormat} after construction; use {@link #AbstractProblemResolver(Class)} and rely on
+   *     {@link #setProblemFormat(ProblemFormat)}
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
   public AbstractProblemResolver(Class<? extends Exception> clazz, ProblemFormat problemFormat) {

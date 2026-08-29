@@ -39,8 +39,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 @SpringBootTest(classes = {TestApp.class})
-@Import(DefaultProblemBeanPostProcessorIntegrationTest.AllAwareConfiguration.class)
-class DefaultProblemBeanPostProcessorIntegrationTest {
+@Import(ProblemBeanPostProcessorIntegrationTest.AllAwareConfiguration.class)
+class ProblemBeanPostProcessorIntegrationTest {
 
   @Autowired private AllAwareComponent component;
 

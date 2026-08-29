@@ -19,6 +19,7 @@ package io.github.problem4j.spring.webmvc.resolver;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import io.github.problem4j.spring.web.resolver.AbstractProblemResolver;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -53,10 +54,8 @@ public class NoHandlerFoundProblemResolver extends AbstractProblemResolver {
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link
-   *     io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor
-   *     ProblemBeanPostProcessor} now assigns the {@link ProblemFormat} after construction; use
-   *     {@link #NoHandlerFoundProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link
+   *     ProblemFormat} after construction; use {@link #NoHandlerFoundProblemResolver()}
    */
   @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)

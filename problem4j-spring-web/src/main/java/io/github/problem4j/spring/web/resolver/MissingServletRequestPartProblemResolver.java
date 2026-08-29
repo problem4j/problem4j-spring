@@ -22,6 +22,7 @@ import static io.github.problem4j.spring.web.parameter.ViolationSupport.PARAM_EX
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -63,10 +64,8 @@ public class MissingServletRequestPartProblemResolver extends AbstractProblemRes
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link
-   *     io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor
-   *     ProblemBeanPostProcessor} now assigns the {@link ProblemFormat} after construction; use
-   *     {@link #MissingServletRequestPartProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link
+   *     ProblemFormat} after construction; use {@link #MissingServletRequestPartProblemResolver()}
    */
   @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)

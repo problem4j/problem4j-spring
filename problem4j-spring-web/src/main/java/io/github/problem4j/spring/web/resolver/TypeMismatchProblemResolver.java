@@ -22,6 +22,7 @@ import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.SimpleTypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapperAware;
+import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,8 +41,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  *
  * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
  * AbstractProblemResolver}, the {@link TypeNameMapper} is assigned after construction by {@link
- * io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor ProblemBeanPostProcessor}
- * through {@link #setTypeNameMapper(TypeNameMapper)}.
+ * ProblemBeanPostProcessor} through {@link #setTypeNameMapper(TypeNameMapper)}.
  *
  * @since 1.2.0
  */
@@ -66,10 +66,8 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link
-   *     io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor
-   *     ProblemBeanPostProcessor} now assigns collaborators after construction; use {@link
-   *     #TypeMismatchProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
+   *     construction; use {@link #TypeMismatchProblemResolver()}
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
   public TypeMismatchProblemResolver(ProblemFormat problemFormat) {
@@ -83,10 +81,8 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
    * @param problemFormat the problem format to use
    * @param typeNameMapper the type name mapper to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link
-   *     io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor
-   *     ProblemBeanPostProcessor} now assigns collaborators after construction; use {@link
-   *     #TypeMismatchProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
+   *     construction; use {@link #TypeMismatchProblemResolver()}
    */
   @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)

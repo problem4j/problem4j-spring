@@ -16,7 +16,7 @@
 
 package io.github.problem4j.spring.web.autoconfigure;
 
-import io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor;
+import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import io.github.problem4j.spring.web.resolver.BindProblemResolver;
 import io.github.problem4j.spring.web.resolver.ConstraintViolationProblemResolver;
 import io.github.problem4j.spring.web.resolver.DecodingProblemResolver;
@@ -76,7 +76,7 @@ import org.springframework.web.server.ServerWebInputException;
  * <p>Every resolver is constructed with its default (no-arg) constructor here; any dependency it
  * needs ({@code ProblemFormat}, {@code TypeNameMapper}, {@code BindingResultSupport}, {@code
  * MethodValidationResultSupport}, {@code MethodParameterSupport}) is injected after construction by
- * the single {@link DefaultProblemBeanPostProcessor}.
+ * the single {@link ProblemBeanPostProcessor}.
  *
  * @see io.github.problem4j.spring.web.resolver.ProblemResolver
  */

@@ -36,7 +36,7 @@ import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 
-class DefaultProblemBeanPostProcessorTest {
+class ProblemBeanPostProcessorTest {
 
   private final ProblemFormat problemFormat =
       detail -> detail == null ? null : detail.toUpperCase();
@@ -45,8 +45,8 @@ class DefaultProblemBeanPostProcessorTest {
   private final MethodValidationResultSupport methodValidationResultSupport = result -> List.of();
   private final MethodParameterSupport methodParameterSupport = parameter -> Optional.empty();
 
-  private final DefaultProblemBeanPostProcessor processor =
-      new DefaultProblemBeanPostProcessor(
+  private final ProblemBeanPostProcessor processor =
+      new ProblemBeanPostProcessor(
           objectProvider(problemFormat),
           objectProvider(typeNameMapper),
           objectProvider(bindingResultSupport),
@@ -89,8 +89,8 @@ class DefaultProblemBeanPostProcessorTest {
 
   @Test
   void givenAwareBeanForAbsentCollaborator_whenPostProcess_thenProviderForPresentOnesUntouched() {
-    DefaultProblemBeanPostProcessor partial =
-        new DefaultProblemBeanPostProcessor(
+    ProblemBeanPostProcessor partial =
+        new ProblemBeanPostProcessor(
             objectProvider(problemFormat),
             failingProvider(),
             failingProvider(),

@@ -32,7 +32,6 @@ import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.ProblemXmlMapperBuilderCustomizer;
 import io.github.problem4j.spring.web.SimpleTypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapper;
-import io.github.problem4j.spring.web.config.DefaultProblemBeanPostProcessor;
 import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
@@ -172,11 +171,11 @@ public class ProblemAutoConfiguration {
   }
 
   /**
-   * Provides the single {@link DefaultProblemBeanPostProcessor} that injects the container's
-   * Problem4J collaborators ({@link ProblemFormat}, {@link TypeNameMapper}, {@link
-   * BindingResultSupport}, {@link MethodValidationResultSupport}, {@link MethodParameterSupport})
-   * into every bean that opts in through one of the {@code *Aware} callback interfaces, so
-   * overriding built-in resolvers can be simplified.
+   * Provides the single {@link ProblemBeanPostProcessor} that injects the container's Problem4J
+   * collaborators ({@link ProblemFormat}, {@link TypeNameMapper}, {@link BindingResultSupport},
+   * {@link MethodValidationResultSupport}, {@link MethodParameterSupport}) into every bean that
+   * opts in through one of the {@code *Aware} callback interfaces, so overriding built-in resolvers
+   * can be simplified.
    *
    * @param problemFormat provider for the container's {@link ProblemFormat} bean
    * @param typeNameMapper provider for the container's {@link TypeNameMapper} bean
@@ -184,7 +183,7 @@ public class ProblemAutoConfiguration {
    * @param methodValidationResultSupport provider for the container's {@link
    *     MethodValidationResultSupport} bean
    * @param methodParameterSupport provider for the container's {@link MethodParameterSupport} bean
-   * @return a new {@link DefaultProblemBeanPostProcessor}
+   * @return a new {@link ProblemBeanPostProcessor}
    */
   @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
   @ConditionalOnMissingBean(ProblemBeanPostProcessor.class)
@@ -195,7 +194,7 @@ public class ProblemAutoConfiguration {
       ObjectProvider<BindingResultSupport> bindingResultSupport,
       ObjectProvider<MethodValidationResultSupport> methodValidationResultSupport,
       ObjectProvider<MethodParameterSupport> methodParameterSupport) {
-    return new DefaultProblemBeanPostProcessor(
+    return new ProblemBeanPostProcessor(
         problemFormat,
         typeNameMapper,
         bindingResultSupport,
