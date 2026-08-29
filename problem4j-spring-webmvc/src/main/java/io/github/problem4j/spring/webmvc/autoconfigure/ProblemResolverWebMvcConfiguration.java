@@ -16,7 +16,6 @@
 
 package io.github.problem4j.spring.webmvc.autoconfigure;
 
-import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.webmvc.resolver.NoHandlerFoundProblemResolver;
 import io.github.problem4j.spring.webmvc.resolver.NoResourceFoundProblemResolver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -48,8 +47,8 @@ class ProblemResolverWebMvcConfiguration {
 
     @ConditionalOnMissingBean(NoHandlerFoundProblemResolver.class)
     @Bean
-    NoHandlerFoundProblemResolver noHandlerFoundProblemResolver(ProblemFormat problemFormat) {
-      return new NoHandlerFoundProblemResolver(problemFormat);
+    NoHandlerFoundProblemResolver noHandlerFoundProblemResolver() {
+      return new NoHandlerFoundProblemResolver();
     }
   }
 
@@ -62,8 +61,8 @@ class ProblemResolverWebMvcConfiguration {
 
     @ConditionalOnMissingBean(NoResourceFoundProblemResolver.class)
     @Bean
-    NoResourceFoundProblemResolver noResourceFoundProblemResolver(ProblemFormat problemFormat) {
-      return new NoResourceFoundProblemResolver(problemFormat);
+    NoResourceFoundProblemResolver noResourceFoundProblemResolver() {
+      return new NoResourceFoundProblemResolver();
     }
   }
 }

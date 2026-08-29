@@ -21,7 +21,9 @@ import static io.github.problem4j.spring.web.parameter.ViolationSupport.VALIDATI
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
+import io.github.problem4j.spring.web.parameter.BindingResultSupportAware;
 import io.github.problem4j.spring.web.parameter.DefaultBindingResultSupport;
 import io.github.problem4j.spring.web.parameter.ViolationSupport;
 import org.springframework.http.HttpHeaders;
@@ -39,11 +41,16 @@ import org.springframework.web.bind.support.WebExchangeBindException;
  * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response, often
  * including details about which fields failed binding or validation.
  *
+ * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
+ * AbstractProblemResolver}, the {@link BindingResultSupport} is assigned after construction by
+ * {@link ProblemBeanPostProcessor} through {@link #setBindingResultSupport(BindingResultSupport)}.
+ *
  * @since 1.2.0
  */
-public class WebExchangeBindProblemResolver extends AbstractProblemResolver {
+public class WebExchangeBindProblemResolver extends AbstractProblemResolver
+    implements BindingResultSupportAware {
 
-  private final BindingResultSupport bindingResultSupport;
+  private BindingResultSupport bindingResultSupport;
 
   /**
    * Creates a new {@link WebExchangeBindProblemResolver} with default problem format.
@@ -51,7 +58,8 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver {
    * @since 1.2.0
    */
   public WebExchangeBindProblemResolver() {
-    this(ProblemFormat.identity());
+    super(WebExchangeBindException.class);
+    this.bindingResultSupport = new DefaultBindingResultSupport();
   }
 
   /**
@@ -59,7 +67,10 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver {
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
+   *     construction; use {@link #WebExchangeBindProblemResolver()}
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public WebExchangeBindProblemResolver(ProblemFormat problemFormat) {
     this(problemFormat, new DefaultBindingResultSupport());
   }
@@ -71,10 +82,25 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver {
    * @param problemFormat the problem format to use
    * @param bindingResultSupport the support for extracting bind results
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
+   *     construction; use {@link #WebExchangeBindProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public WebExchangeBindProblemResolver(
       ProblemFormat problemFormat, BindingResultSupport bindingResultSupport) {
     super(WebExchangeBindException.class, problemFormat);
+    this.bindingResultSupport = bindingResultSupport;
+  }
+
+  /**
+   * Replaces the {@link BindingResultSupport} used by this resolver.
+   *
+   * @param bindingResultSupport the binding result support to use
+   * @since 3.1.0
+   */
+  @Override
+  public void setBindingResultSupport(BindingResultSupport bindingResultSupport) {
     this.bindingResultSupport = bindingResultSupport;
   }
 

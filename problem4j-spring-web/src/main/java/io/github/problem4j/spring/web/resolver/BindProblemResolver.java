@@ -21,7 +21,9 @@ import static io.github.problem4j.spring.web.parameter.ViolationSupport.VALIDATI
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
+import io.github.problem4j.spring.web.parameter.BindingResultSupportAware;
 import io.github.problem4j.spring.web.parameter.DefaultBindingResultSupport;
 import io.github.problem4j.spring.web.parameter.ViolationSupport;
 import org.springframework.http.HttpHeaders;
@@ -47,14 +49,19 @@ import org.springframework.validation.BindException;
  *       {@code @RequestBody} or {@code @ModelAttribute} method arguments.
  * </ul>
  *
+ * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
+ * AbstractProblemResolver}, the {@link BindingResultSupport} is assigned after construction by
+ * {@link ProblemBeanPostProcessor} through {@link #setBindingResultSupport(BindingResultSupport)}.
+ *
  * @see org.springframework.web.bind.MethodArgumentNotValidException
  * @see org.springframework.web.bind.annotation.ModelAttribute
  * @see org.springframework.web.bind.annotation.RequestBody
  * @since 1.2.0
  */
-public class BindProblemResolver extends AbstractProblemResolver {
+public class BindProblemResolver extends AbstractProblemResolver
+    implements BindingResultSupportAware {
 
-  private final BindingResultSupport bindingResultSupport;
+  private BindingResultSupport bindingResultSupport;
 
   /**
    * Constructs a new {@link BindProblemResolver} with the default problem format and binding result
@@ -63,7 +70,8 @@ public class BindProblemResolver extends AbstractProblemResolver {
    * @since 1.2.0
    */
   public BindProblemResolver() {
-    this(ProblemFormat.identity());
+    super(BindException.class);
+    this.bindingResultSupport = new DefaultBindingResultSupport();
   }
 
   /**
@@ -71,7 +79,10 @@ public class BindProblemResolver extends AbstractProblemResolver {
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
+   *     construction; use {@link #BindProblemResolver()}
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public BindProblemResolver(ProblemFormat problemFormat) {
     this(problemFormat, new DefaultBindingResultSupport());
   }
@@ -83,10 +94,25 @@ public class BindProblemResolver extends AbstractProblemResolver {
    * @param problemFormat the problem format to use
    * @param bindingResultSupport the binding result support to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
+   *     construction; use {@link #BindProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public BindProblemResolver(
       ProblemFormat problemFormat, BindingResultSupport bindingResultSupport) {
     super(BindException.class, problemFormat);
+    this.bindingResultSupport = bindingResultSupport;
+  }
+
+  /**
+   * Replaces the {@link BindingResultSupport} used by this resolver.
+   *
+   * @param bindingResultSupport the binding result support to use
+   * @since 3.1.0
+   */
+  @Override
+  public void setBindingResultSupport(BindingResultSupport bindingResultSupport) {
     this.bindingResultSupport = bindingResultSupport;
   }
 

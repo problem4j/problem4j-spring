@@ -21,6 +21,7 @@ dependencies {
     compileOnly(libs.jakarta.servlet.api)
     compileOnly(libs.jakarta.validation.api)
     compileOnly(libs.kotlin.stdlib)
+    compileOnly(libs.slf4j.api)
 
     // for backwards compatibility with jackson-databind v2
     compileOnly(libs.jackson2.databind)

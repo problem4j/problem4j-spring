@@ -19,6 +19,7 @@ package io.github.problem4j.spring.web.resolver;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ResponseStatusException;
@@ -44,7 +45,7 @@ public class ResponseStatusProblemResolver extends AbstractProblemResolver {
    * @since 1.2.0
    */
   public ResponseStatusProblemResolver() {
-    this(ProblemFormat.identity());
+    super(ResponseStatusException.class);
   }
 
   /**
@@ -52,7 +53,11 @@ public class ResponseStatusProblemResolver extends AbstractProblemResolver {
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link
+   *     ProblemFormat} after construction; use {@link #ResponseStatusProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public ResponseStatusProblemResolver(ProblemFormat problemFormat) {
     super(ResponseStatusException.class, problemFormat);
   }

@@ -76,7 +76,7 @@ spotless {
         target("**/*.gradle.kts")
         targetExclude("**/build/**")
 
-        ktlint("1.8.0").editorConfigOverride(mapOf("max_line_length" to "120"))
+        ktlint().editorConfigOverride(mapOf("max_line_length" to "120"))
         endWithNewline()
         lineEndings = LineEnding.UNIX
     }

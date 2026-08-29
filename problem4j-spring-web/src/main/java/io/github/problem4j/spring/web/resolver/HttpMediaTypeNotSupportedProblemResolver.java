@@ -19,6 +19,7 @@ package io.github.problem4j.spring.web.resolver;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -44,7 +45,7 @@ public class HttpMediaTypeNotSupportedProblemResolver extends AbstractProblemRes
    * @since 1.2.0
    */
   public HttpMediaTypeNotSupportedProblemResolver() {
-    this(ProblemFormat.identity());
+    super(HttpMediaTypeNotSupportedException.class);
   }
 
   /**
@@ -53,7 +54,11 @@ public class HttpMediaTypeNotSupportedProblemResolver extends AbstractProblemRes
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link
+   *     ProblemFormat} after construction; use {@link #HttpMediaTypeNotSupportedProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public HttpMediaTypeNotSupportedProblemResolver(ProblemFormat problemFormat) {
     super(HttpMediaTypeNotSupportedException.class, problemFormat);
   }

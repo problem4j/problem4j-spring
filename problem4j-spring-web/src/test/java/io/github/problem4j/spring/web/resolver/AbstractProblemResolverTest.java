@@ -53,6 +53,29 @@ class AbstractProblemResolverTest {
   }
 
   @Test
+  void givenSetProblemFormat_whenResolve_thenUsesNewFormat() {
+    AbstractProblemResolver resolver =
+        new AbstractProblemResolver(RuntimeException.class) {
+          @Override
+          public Problem resolve(
+              ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+            return Problem.builder().status(500).detail(formatDetail("detail")).build();
+          }
+        };
+
+    resolver.setProblemFormat(detail -> detail == null ? null : detail.toUpperCase());
+
+    Problem problem =
+        resolver.resolve(
+            ProblemContext.create(),
+            new RuntimeException("boom"),
+            new HttpHeaders(),
+            HttpStatusCode.valueOf(500));
+
+    assertThat(problem.getDetail()).isEqualTo("DETAIL");
+  }
+
+  @Test
   void givenNoResolveProblemOverride_whenResolve_thenReturnsInternalServerError() {
     AbstractProblemResolver resolver =
         new AbstractProblemResolver(RuntimeException.class) {

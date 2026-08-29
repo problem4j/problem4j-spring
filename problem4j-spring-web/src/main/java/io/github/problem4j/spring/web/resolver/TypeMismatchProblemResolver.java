@@ -16,16 +16,13 @@
 
 package io.github.problem4j.spring.web.resolver;
 
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.KIND_EXTENSION;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.PROPERTY_EXTENSION;
-import static io.github.problem4j.spring.web.parameter.ViolationSupport.TYPE_MISMATCH_DETAIL;
-
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.SimpleTypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapper;
+import io.github.problem4j.spring.web.TypeNameMapperAware;
+import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -42,11 +39,16 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to
  * indicate that the provided input has an invalid type.
  *
+ * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
+ * AbstractProblemResolver}, the {@link TypeNameMapper} is assigned after construction by {@link
+ * ProblemBeanPostProcessor} through {@link #setTypeNameMapper(TypeNameMapper)}.
+ *
  * @since 1.2.0
  */
-public class TypeMismatchProblemResolver extends AbstractProblemResolver {
+public class TypeMismatchProblemResolver extends AbstractProblemResolver
+    implements TypeNameMapperAware {
 
-  private final TypeNameMapper typeNameMapper;
+  private final TypeMismatchHelper typeMismatchHelper;
 
   /**
    * Creates a new {@link TypeMismatchProblemResolver} with default problem format.
@@ -54,7 +56,9 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver {
    * @since 1.2.0
    */
   public TypeMismatchProblemResolver() {
-    this(ProblemFormat.identity());
+    super(TypeMismatchException.class);
+    this.typeMismatchHelper =
+        new TypeMismatchHelper(ProblemFormat.identity(), new SimpleTypeNameMapper());
   }
 
   /**
@@ -62,7 +66,10 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver {
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
+   *     construction; use {@link #TypeMismatchProblemResolver()}
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public TypeMismatchProblemResolver(ProblemFormat problemFormat) {
     this(problemFormat, new SimpleTypeNameMapper());
   }
@@ -74,10 +81,37 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver {
    * @param problemFormat the problem format to use
    * @param typeNameMapper the type name mapper to use
    * @since 1.2.0
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
+   *     construction; use {@link #TypeMismatchProblemResolver()}
    */
+  @SuppressWarnings("removal")
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public TypeMismatchProblemResolver(ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
     super(TypeMismatchException.class, problemFormat);
-    this.typeNameMapper = typeNameMapper;
+    this.typeMismatchHelper = new TypeMismatchHelper(problemFormat, typeNameMapper);
+  }
+
+  /**
+   * Replaces the {@link TypeNameMapper} used by this resolver.
+   *
+   * @param typeNameMapper the type name mapper to use
+   * @since 3.1.0
+   */
+  @Override
+  public void setTypeNameMapper(TypeNameMapper typeNameMapper) {
+    typeMismatchHelper.setTypeNameMapper(typeNameMapper);
+  }
+
+  /**
+   * Replaces the {@link ProblemFormat} used by this resolver.
+   *
+   * @param problemFormat the problem format to use
+   * @since 3.1.0
+   */
+  @Override
+  public void setProblemFormat(ProblemFormat problemFormat) {
+    super.setProblemFormat(problemFormat);
+    typeMismatchHelper.setProblemFormat(problemFormat);
   }
 
   /**
@@ -107,22 +141,6 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver {
   @Override
   public Problem resolve(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    ProblemBuilder builder =
-        Problem.builder()
-            .status(HttpStatus.BAD_REQUEST.value())
-            .detail(formatDetail(TYPE_MISMATCH_DETAIL));
-
-    TypeMismatchException e = (TypeMismatchException) ex;
-
-    String property = e.getPropertyName();
-    String kind = typeNameMapper.map(e.getRequiredType()).orElse(null);
-
-    if (property != null) {
-      builder = builder.extension(PROPERTY_EXTENSION, property);
-    }
-    if (kind != null) {
-      builder = builder.extension(KIND_EXTENSION, kind);
-    }
-    return builder.build();
+    return typeMismatchHelper.toProblem((TypeMismatchException) ex);
   }
 }
