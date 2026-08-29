@@ -26,8 +26,13 @@ import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupportAware;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupportAware;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -59,6 +64,8 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
  * @since 3.1.0
  */
 public class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor {
+
+  private static final Logger log = LoggerFactory.getLogger(DefaultProblemBeanPostProcessor.class);
 
   private final ObjectProvider<ProblemFormat> problemFormat;
   private final ObjectProvider<TypeNameMapper> typeNameMapper;
@@ -103,24 +110,88 @@ public class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor
   @Override
   public @Nullable Object postProcessBeforeInitialization(Object bean, String beanName)
       throws BeansException {
-    if (bean instanceof ProblemFormatAware aware) {
-      Optional.ofNullable(problemFormat.getIfAvailable()).ifPresent(aware::setProblemFormat);
-    }
-    if (bean instanceof TypeNameMapperAware aware) {
-      Optional.ofNullable(typeNameMapper.getIfAvailable()).ifPresent(aware::setTypeNameMapper);
-    }
-    if (bean instanceof BindingResultSupportAware aware) {
-      Optional.ofNullable(bindingResultSupport.getIfAvailable())
-          .ifPresent(aware::setBindingResultSupport);
-    }
-    if (bean instanceof MethodValidationResultSupportAware aware) {
-      Optional.ofNullable(methodValidationResultSupport.getIfAvailable())
-          .ifPresent(aware::setMethodValidationResultSupport);
-    }
-    if (bean instanceof MethodParameterSupportAware aware) {
-      Optional.ofNullable(methodParameterSupport.getIfAvailable())
-          .ifPresent(aware::setMethodParameterSupport);
+    List<String> auditLog = new ArrayList<>();
+    maybeAddProblemFormatAware(bean, auditLog);
+    maybeAddTypeNameMapper(bean, auditLog);
+    maybeAddBindingResultSupport(bean, auditLog);
+    maybeAddMethodValidationResultSupport(bean, auditLog);
+    maybeAddMethodParameterSupport(bean, auditLog);
+
+    if (!auditLog.isEmpty() && log.isDebugEnabled()) {
+      log.debug("Enhanced {} bean with {}", beanName, asLogLine(auditLog));
     }
     return bean;
+  }
+
+  private void maybeAddProblemFormatAware(Object bean, List<String> auditLog) {
+    if (bean instanceof ProblemFormatAware aware) {
+      Optional.ofNullable(problemFormat.getIfAvailable())
+          .ifPresent(
+              object -> {
+                register(auditLog, object);
+                aware.setProblemFormat(object);
+              });
+    }
+  }
+
+  private void maybeAddTypeNameMapper(Object bean, List<String> auditLog) {
+    if (bean instanceof TypeNameMapperAware aware) {
+      Optional.ofNullable(typeNameMapper.getIfAvailable())
+          .ifPresent(
+              object -> {
+                register(auditLog, object);
+                aware.setTypeNameMapper(object);
+              });
+    }
+  }
+
+  private void maybeAddBindingResultSupport(Object bean, List<String> auditLog) {
+    if (bean instanceof BindingResultSupportAware aware) {
+      Optional.ofNullable(bindingResultSupport.getIfAvailable())
+          .ifPresent(
+              object -> {
+                register(auditLog, object);
+                aware.setBindingResultSupport(object);
+              });
+    }
+  }
+
+  private void maybeAddMethodValidationResultSupport(Object bean, List<String> auditLog) {
+    if (bean instanceof MethodValidationResultSupportAware aware) {
+      Optional.ofNullable(methodValidationResultSupport.getIfAvailable())
+          .ifPresent(
+              object -> {
+                register(auditLog, object);
+                aware.setMethodValidationResultSupport(object);
+              });
+    }
+  }
+
+  private void maybeAddMethodParameterSupport(Object bean, List<String> auditLog) {
+    if (bean instanceof MethodParameterSupportAware aware) {
+      Optional.ofNullable(methodParameterSupport.getIfAvailable())
+          .ifPresent(
+              object -> {
+                register(auditLog, object);
+                aware.setMethodParameterSupport(object);
+              });
+    }
+  }
+
+  private void register(List<String> auditLog, Object bean) {
+    if (log.isDebugEnabled()) {
+      auditLog.add(AopUtils.getTargetClass(bean).getSimpleName());
+    }
+  }
+
+  private String asLogLine(List<String> auditLog) {
+    return switch (auditLog.size()) {
+      case 1 -> auditLog.get(0);
+      case 2 -> String.join(" and ", auditLog);
+      default ->
+          String.join(", ", auditLog.subList(0, auditLog.size() - 1))
+              + " and "
+              + auditLog.get(auditLog.size() - 1);
+    };
   }
 }

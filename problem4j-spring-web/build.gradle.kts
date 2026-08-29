@@ -20,6 +20,7 @@ dependencies {
     compileOnly(libs.jackson3.dataformat.xml)
     compileOnly(libs.jakarta.servlet.api)
     compileOnly(libs.jakarta.validation.api)
+    compileOnly(libs.slf4j.api)
 
     // for backwards compatibility with jackson-databind v2
     compileOnly(libs.jackson2.databind)
