@@ -45,8 +45,7 @@ spotless {
         target("**/src/**/*.java")
         licenseHeaderFile(licenseHeader).updateYearWithLatest(updateLicenseYear)
 
-        // NOTE: decided not to upgrade Google Java Format, as versions 1.29+ require running it on Java 21
-        googleJavaFormat("1.28.0")
+        googleJavaFormat()
         forbidWildcardImports()
         endWithNewline()
         lineEndings = LineEnding.UNIX
@@ -66,7 +65,7 @@ spotless {
     kotlin {
         target("**/src/**/*.kt")
 
-        ktfmt("0.63").metaStyle()
+        ktfmt().metaStyle()
         endWithNewline()
         lineEndings = LineEnding.UNIX
     }
@@ -75,7 +74,7 @@ spotless {
         target("**/*.gradle.kts")
         targetExclude("**/build/**")
 
-        ktlint("1.8.0").editorConfigOverride(mapOf("max_line_length" to "120"))
+        ktlint().editorConfigOverride(mapOf("max_line_length" to "120"))
         endWithNewline()
         lineEndings = LineEnding.UNIX
     }
