@@ -17,7 +17,6 @@
 package io.github.problem4j.spring.webmvc;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
-import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.resolveContentType;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
@@ -27,6 +26,7 @@ import org.springframework.boot.webmvc.autoconfigure.error.AbstractErrorControll
 import org.springframework.boot.webmvc.error.ErrorAttributes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,8 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * returns HTTP problems (RFC 7807) instead of HTML error pages.
  *
  * <p>It converts generic servlet errors into {@link Problem} responses with the appropriate HTTP
- * status and a content type negotiated from the request's {@code Accept} header ({@code
- * application/problem+json} or {@code application/problem+xml}).
+ * status and content type {@code application/problem+json}.
  *
  * @since 1.2.0
  */
@@ -84,7 +83,7 @@ public class ProblemErrorController extends AbstractErrorController {
     problem = problemPostProcessor.process(context, problem);
 
     HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(resolveContentType(request));
+    headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
 
     return new ResponseEntity<>(problem, headers, status);
   }
