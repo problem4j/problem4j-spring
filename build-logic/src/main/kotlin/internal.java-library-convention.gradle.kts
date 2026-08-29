@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("java-library")
     id("org.jetbrains.kotlin.jvm")
+    id("io.github.malczuuu.nullmarked")
 }
 
 // The project is built using a JDK 25 toolchain, but the main sources are compiled with --release 17.
@@ -102,4 +103,12 @@ tasks.withType<Test>().configureEach {
 
 tasks.withType<Javadoc>().configureEach {
     javadocTool = javaToolchains.javadocToolFor { languageVersion = JavaLanguageVersion.of(17) }
+}
+
+// Assert that each package has a package-info.java with @NullMarked annotation on it.
+nullmarked {
+    verifyOnly = true
+    verify {
+        strict()
+    }
 }
