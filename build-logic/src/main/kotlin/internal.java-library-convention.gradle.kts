@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("java-library")
     id("org.jetbrains.kotlin.jvm")
-    id("org.jetbrains.kotlin.kapt")
 }
 
 // The project is built using a JDK 25 toolchain, but the main sources are compiled with --release 17.
