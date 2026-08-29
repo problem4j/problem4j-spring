@@ -176,12 +176,7 @@ public class ProblemAutoConfiguration {
    * Problem4J collaborators ({@link ProblemFormat}, {@link TypeNameMapper}, {@link
    * BindingResultSupport}, {@link MethodValidationResultSupport}, {@link MethodParameterSupport})
    * into every bean that opts in through one of the {@code *Aware} callback interfaces, so
-   * resolvers no longer need those collaborators as constructor arguments.
-   *
-   * <p>Declared as a {@code static} {@code @Bean} method, as recommended for {@code
-   * BeanPostProcessor} beans, so this configuration class doesn't need to be fully instantiated
-   * first. Each collaborator is taken via an {@link ObjectProvider} so registering this processor
-   * does not force early instantiation of the collaborator beans.
+   * overriding built-in resolvers can be simplified.
    *
    * @param problemFormat provider for the container's {@link ProblemFormat} bean
    * @param typeNameMapper provider for the container's {@link TypeNameMapper} bean
