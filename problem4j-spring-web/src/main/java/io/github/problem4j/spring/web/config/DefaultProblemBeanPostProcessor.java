@@ -26,6 +26,7 @@ import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupportAware;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupportAware;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -99,7 +100,7 @@ public class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor
    * @since 3.1.0
    */
   @Override
-  public Object postProcessBeforeInitialization(Object bean, String beanName)
+  public @Nullable Object postProcessBeforeInitialization(Object bean, String beanName)
       throws BeansException {
     if (bean instanceof ProblemFormatAware aware) {
       aware.setProblemFormat(problemFormat.getObject());

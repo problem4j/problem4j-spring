@@ -21,6 +21,7 @@ import static io.github.problem4j.spring.web.parameter.ViolationSupport.PROPERTY
 import static io.github.problem4j.spring.web.parameter.ViolationSupport.TYPE_MISMATCH_DETAIL;
 
 import io.github.problem4j.core.Problem;
+import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.TypeNameMapper;
 import java.util.Optional;
@@ -47,7 +48,7 @@ final class JacksonErrorHelper {
   Problem resolveMismatchedInput(MismatchedInputException e) {
     Optional<String> optionalProperty = resolvePropertyPath(e);
 
-    var builder = Problem.builder().status(HttpStatus.BAD_REQUEST.value());
+    ProblemBuilder builder = Problem.builder().status(HttpStatus.BAD_REQUEST.value());
 
     optionalProperty.ifPresent(
         property -> {
