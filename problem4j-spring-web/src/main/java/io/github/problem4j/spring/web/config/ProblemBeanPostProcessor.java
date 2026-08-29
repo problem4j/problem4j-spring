@@ -136,7 +136,7 @@ public class ProblemBeanPostProcessor implements BeanPostProcessor {
       Optional.ofNullable(problemFormat.getIfAvailable())
           .ifPresent(
               object -> {
-                register(auditLog, object);
+                saveAuditLog(auditLog, object);
                 aware.setProblemFormat(object);
               });
     }
@@ -147,7 +147,7 @@ public class ProblemBeanPostProcessor implements BeanPostProcessor {
       Optional.ofNullable(typeNameMapper.getIfAvailable())
           .ifPresent(
               object -> {
-                register(auditLog, object);
+                saveAuditLog(auditLog, object);
                 aware.setTypeNameMapper(object);
               });
     }
@@ -158,7 +158,7 @@ public class ProblemBeanPostProcessor implements BeanPostProcessor {
       Optional.ofNullable(bindingResultSupport.getIfAvailable())
           .ifPresent(
               object -> {
-                register(auditLog, object);
+                saveAuditLog(auditLog, object);
                 aware.setBindingResultSupport(object);
               });
     }
@@ -169,7 +169,7 @@ public class ProblemBeanPostProcessor implements BeanPostProcessor {
       Optional.ofNullable(methodValidationResultSupport.getIfAvailable())
           .ifPresent(
               object -> {
-                register(auditLog, object);
+                saveAuditLog(auditLog, object);
                 aware.setMethodValidationResultSupport(object);
               });
     }
@@ -180,16 +180,14 @@ public class ProblemBeanPostProcessor implements BeanPostProcessor {
       Optional.ofNullable(methodParameterSupport.getIfAvailable())
           .ifPresent(
               object -> {
-                register(auditLog, object);
+                saveAuditLog(auditLog, object);
                 aware.setMethodParameterSupport(object);
               });
     }
   }
 
-  private void register(List<String> auditLog, Object bean) {
-    if (log.isDebugEnabled()) {
-      auditLog.add(AopUtils.getTargetClass(bean).getSimpleName());
-    }
+  private void saveAuditLog(List<String> auditLog, Object bean) {
+    auditLog.add(AopUtils.getTargetClass(bean).getSimpleName());
   }
 
   private String asLogLine(List<String> auditLog) {
