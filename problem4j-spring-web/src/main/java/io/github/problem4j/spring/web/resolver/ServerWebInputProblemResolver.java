@@ -105,20 +105,8 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
     this(problemFormat, new SimpleTypeNameMapper(), methodParameterSupport);
   }
 
-  /**
-   * Creates a new {@link ServerWebInputProblemResolver} with the specified problem format, type
-   * name mapper, and method parameter support.
-   *
-   * @param problemFormat the problem format to use
-   * @param typeNameMapper the type name mapper to use
-   * @param methodParameterSupport the support for extracting parameter names
-   * @since 3.1.0
-   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
-   *     construction; use {@link #ServerWebInputProblemResolver()}
-   */
   @SuppressWarnings("removal")
-  @Deprecated(since = "3.1.0", forRemoval = true)
-  public ServerWebInputProblemResolver(
+  private ServerWebInputProblemResolver(
       ProblemFormat problemFormat,
       TypeNameMapper typeNameMapper,
       MethodParameterSupport methodParameterSupport) {

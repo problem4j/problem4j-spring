@@ -26,10 +26,6 @@ import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
  * interface is detected by {@link ProblemBeanPostProcessor} and configured with the container's
  * {@link ProblemFormat} bean.
  *
- * <p>When {@code problem4j-spring-web} autoconfiguration is active, any bean implementing this
- * interface is detected by {@link ProblemBeanPostProcessor} and configured with the container's
- * {@link ProblemFormat} bean.
- *
  * @see ProblemFormat
  * @since 3.1.0
  */
