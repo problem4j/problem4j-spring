@@ -17,6 +17,7 @@
 package io.github.problem4j.spring.web.parameter;
 
 import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
+import org.springframework.beans.factory.Aware;
 
 /**
  * Callback interface for components that want to be configured with a {@link
@@ -29,8 +30,7 @@ import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
  * @see MethodParameterSupport
  * @since 3.1.0
  */
-@FunctionalInterface
-public interface MethodParameterSupportAware {
+public interface MethodParameterSupportAware extends Aware {
 
   /**
    * Replaces the {@link MethodParameterSupport} used by this resolver.

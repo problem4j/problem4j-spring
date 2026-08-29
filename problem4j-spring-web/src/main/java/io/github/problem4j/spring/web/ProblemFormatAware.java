@@ -17,6 +17,7 @@
 package io.github.problem4j.spring.web;
 
 import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
+import org.springframework.beans.factory.Aware;
 
 /**
  * Callback interface for components that want to be configured with a {@link ProblemFormat} after
@@ -29,8 +30,7 @@ import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
  * @see ProblemFormat
  * @since 3.1.0
  */
-@FunctionalInterface
-public interface ProblemFormatAware {
+public interface ProblemFormatAware extends Aware {
 
   /**
    * Replaces the {@link ProblemFormat} used by this resolver.

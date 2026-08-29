@@ -123,7 +123,6 @@ class ServerWebInputProblemResolverTest {
         List.of(
             new ServerWebInputProblemResolver(ProblemFormat.identity()),
             new ServerWebInputProblemResolver(ProblemFormat.identity(), support),
-            new ServerWebInputProblemResolver(new TypeMismatchProblemResolver(), support),
             new ServerWebInputProblemResolver(
                 ProblemFormat.identity(),
                 new TypeMismatchProblemResolver(),

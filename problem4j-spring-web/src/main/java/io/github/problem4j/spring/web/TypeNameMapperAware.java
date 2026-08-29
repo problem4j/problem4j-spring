@@ -17,6 +17,7 @@
 package io.github.problem4j.spring.web;
 
 import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
+import org.springframework.beans.factory.Aware;
 
 /**
  * Callback interface for components that want to be configured with a {@link TypeNameMapper} after
@@ -29,8 +30,7 @@ import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
  * @see TypeNameMapper
  * @since 3.1.0
  */
-@FunctionalInterface
-public interface TypeNameMapperAware {
+public interface TypeNameMapperAware extends Aware {
 
   /**
    * Replaces the {@link TypeNameMapper} used by this resolver.

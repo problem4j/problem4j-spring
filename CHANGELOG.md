@@ -8,8 +8,19 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ### Added
 
-- Make `ProblemResolver` instances provided by Problem4J Spring library take additional arguments via
-  `BeanPostProcessor` for easier overrides.
+- Make `AbstractProblemResolver` and its subclasses take additional arguments via `BeanPostProcessor` for easier
+  overrides.
+  > [!IMPORTANT]
+  > When a resolver is registered as a bean, its `ProblemFormat` is replaced after construction by the container's
+  > `ProblemFormat` bean, regardless of what was passed to a constructor. Do not rely on a per-resolver `ProblemFormat`
+  > that differs from the container one.
+- Add `*Aware` callback interfaces (`ProblemFormatAware`, `TypeNameMapperAware`, `BindingResultSupportAware`,
+  `MethodValidationResultSupportAware`, `MethodParameterSupportAware`) that any bean can implement to receive the
+  corresponding Problem4J collaborator from `ProblemBeanPostProcessor` after construction.
+
+### Changed
+
+- `ServerWebInputProblemResolver` no longer delegates type-mismatch handling to the `TypeMismatchProblemResolver` bean.
 
 ### Deprecated
 
@@ -33,14 +44,14 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Add `problem4j.title-override` property to configure `title` field override in `DefaultProblemPostProcessor`.
 - Make `DefaultProblemPostProcessor` support any fields from `ProblemContext` in value interpolation.
 - Add `@FunctionalInterface` contract to:
-  - `MethodParameterSupport`,
-  - `MethodValidationResultSupport`,
-  - `BindingResultSupport`,
-  - `ProblemResolverStore`,
-  - `ProblemPostProcessor`,
-  - `TypeNameMapper`,
-  - `AdviceWebFluxInspector`,
-  - `AdviceWebMvcInspector`.
+    - `MethodParameterSupport`,
+    - `MethodValidationResultSupport`,
+    - `BindingResultSupport`,
+    - `ProblemResolverStore`,
+    - `ProblemPostProcessor`,
+    - `TypeNameMapper`,
+    - `AdviceWebFluxInspector`,
+    - `AdviceWebMvcInspector`.
 
 ### Changed
 

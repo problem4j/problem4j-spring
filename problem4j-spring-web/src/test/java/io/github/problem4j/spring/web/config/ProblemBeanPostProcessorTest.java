@@ -234,6 +234,7 @@ class ProblemBeanPostProcessorTest {
     };
   }
 
+  @NullMarked
   private static final class NamedProblemFormat implements ProblemFormat {
     @Override
     public @Nullable String formatDetail(@Nullable String detail) {
@@ -241,6 +242,7 @@ class ProblemBeanPostProcessorTest {
     }
   }
 
+  @NullMarked
   private static final class NamedTypeNameMapper implements TypeNameMapper {
     @Override
     public Optional<String> map(@Nullable Class<?> type) {
@@ -248,6 +250,7 @@ class ProblemBeanPostProcessorTest {
     }
   }
 
+  @NullMarked
   private static final class NamedBindingResultSupport implements BindingResultSupport {
     @Override
     public List<Violation> fetchViolations(BindingResult result) {
@@ -255,6 +258,7 @@ class ProblemBeanPostProcessorTest {
     }
   }
 
+  @NullMarked
   private static final class NamedMethodValidationResultSupport
       implements MethodValidationResultSupport {
     @Override
@@ -263,6 +267,7 @@ class ProblemBeanPostProcessorTest {
     }
   }
 
+  @NullMarked
   private static final class NamedMethodParameterSupport implements MethodParameterSupport {
     @Override
     public Optional<String> findParameterName(@Nullable MethodParameter parameter) {

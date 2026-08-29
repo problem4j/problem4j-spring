@@ -117,23 +117,6 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
   }
 
   /**
-   * Creates a new {@link ServerWebInputProblemResolver} with the specified type mismatch resolver
-   * and method parameter support, and default problem format.
-   *
-   * @param typeMismatchProblemResolver the resolver to use, ignored since 3.1.0
-   * @param methodParameterSupport the support for extracting parameter names
-   * @since 3.1.0
-   * @deprecated since 3.1.0 as other constructors and {@link ProblemBeanPostProcessor
-   *     ProblemBeanPostProcessor} should be used to apply components of this class
-   */
-  @Deprecated(since = "3.1.0", forRemoval = true)
-  public ServerWebInputProblemResolver(
-      TypeMismatchProblemResolver typeMismatchProblemResolver,
-      MethodParameterSupport methodParameterSupport) {
-    this(ProblemFormat.identity(), new SimpleTypeNameMapper(), methodParameterSupport);
-  }
-
-  /**
    * Creates a new {@link ServerWebInputProblemResolver} with the specified problem format, type
    * mismatch resolver, and method parameter support.
    *
