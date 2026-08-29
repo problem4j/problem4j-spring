@@ -20,17 +20,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
+import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.SimpleTypeNameMapper;
+import io.github.problem4j.spring.web.parameter.DefaultMethodParameterSupport;
+import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.codec.DecodingException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ServerWebInputException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.exc.MismatchedInputException;
+import tools.jackson.databind.json.JsonMapper;
 
 class ServerWebInputProblemResolverTest {
 
@@ -78,6 +88,56 @@ class ServerWebInputProblemResolverTest {
             ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
 
     assertThat(problem.getExtensions()).containsEntry("property", "custom-name");
+  }
+
+  @Test
+  void givenProblemFormatSetAfterConstruction_whenResolvingTypeMismatch_thenUsesNewFormat() {
+    serverWebInputMapping.setProblemFormat(detail -> detail == null ? null : detail.toUpperCase());
+    TypeMismatchException cause = new TypeMismatchException("42", Boolean.class);
+    cause.initPropertyName("flag");
+    ServerWebInputException ex = new ServerWebInputException("irrelevant reason", null, cause);
+
+    Problem problem =
+        serverWebInputMapping.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+
+    assertThat(problem.getDetail()).isEqualTo("TYPE MISMATCH");
+  }
+
+  @Test
+  @SuppressWarnings("removal")
+  void givenDeprecatedConstructors_whenResolvingTypeMismatch_thenProduceSameProblem() {
+    TypeMismatchException cause = new TypeMismatchException("42", Boolean.class);
+    cause.initPropertyName("flag");
+    ServerWebInputException ex = new ServerWebInputException("irrelevant reason", null, cause);
+    Problem expected =
+        Problem.builder()
+            .status(HttpStatus.BAD_REQUEST.value())
+            .detail("Type mismatch")
+            .extension("property", "flag")
+            .extension("kind", "boolean")
+            .build();
+    MethodParameterSupport support = new DefaultMethodParameterSupport();
+
+    List<ServerWebInputProblemResolver> resolvers =
+        List.of(
+            new ServerWebInputProblemResolver(ProblemFormat.identity()),
+            new ServerWebInputProblemResolver(ProblemFormat.identity(), support),
+            new ServerWebInputProblemResolver(
+                ProblemFormat.identity(), new SimpleTypeNameMapper(), support),
+            new ServerWebInputProblemResolver(new TypeMismatchProblemResolver(), support),
+            new ServerWebInputProblemResolver(
+                ProblemFormat.identity(),
+                new TypeMismatchProblemResolver(),
+                support,
+                new SimpleTypeNameMapper()));
+
+    for (ServerWebInputProblemResolver resolver : resolvers) {
+      Problem problem =
+          resolver.resolve(
+              ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+      assertThat(problem).isEqualTo(expected);
+    }
   }
 
   @Test
@@ -130,6 +190,43 @@ class ServerWebInputProblemResolverTest {
                 .extension("property", "flag")
                 .extension("kind", "boolean")
                 .build());
+  }
+
+  @Test
+  void givenDecodingExceptionWithMismatchedInputCause_whenResolve_thenResolvesMismatchedInput()
+      throws IOException {
+    serverWebInputMapping.setTypeNameMapper(type -> Optional.of("custom-int"));
+    MismatchedInputException cause;
+    try (JsonParser parser = JsonMapper.builder().build().createParser("{}")) {
+      parser.nextToken();
+      cause = MismatchedInputException.from(parser, Integer.class, "msg");
+      cause.prependPath(ServerWebInputProblemResolverTest.class, "age");
+    }
+    ServerWebInputException ex =
+        new ServerWebInputException(
+            "irrelevant reason", null, new DecodingException("decoding failed", cause));
+
+    Problem problem =
+        serverWebInputMapping.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+
+    assertThat(problem.getExtensions())
+        .containsEntry("property", "age")
+        .containsEntry("kind", "custom-int");
+  }
+
+  @Test
+  void
+      givenDecodingExceptionWithoutMismatchedInputCause_whenResolve_thenReturnsBadRequestProblem() {
+    ServerWebInputException ex =
+        new ServerWebInputException(
+            "irrelevant reason", null, new DecodingException("decoding failed"));
+
+    Problem problem =
+        serverWebInputMapping.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+
+    assertThat(problem).isEqualTo(Problem.of(HttpStatus.BAD_REQUEST.value()));
   }
 
   @Test

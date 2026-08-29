@@ -20,6 +20,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
+import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.SimpleTypeNameMapper;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,6 +55,44 @@ class TypeMismatchProblemResolverTest {
             ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
 
     assertThat(problem.getExtensions()).containsEntry("kind", "custom");
+  }
+
+  @Test
+  void givenProblemFormatSetAfterConstruction_whenResolve_thenUsesNewFormat() {
+    typeMismatchMapping.setProblemFormat(detail -> detail == null ? null : detail.toUpperCase());
+    TypeMismatchException ex = new TypeMismatchException("42", Integer.class);
+
+    Problem problem =
+        typeMismatchMapping.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+
+    assertThat(problem.getDetail()).isEqualTo("TYPE MISMATCH");
+  }
+
+  @Test
+  @SuppressWarnings("removal")
+  void givenDeprecatedConstructors_whenResolve_thenProduceSameProblem() {
+    TypeMismatchException ex = new TypeMismatchException("42", Integer.class);
+    ex.initPropertyName("age");
+    Problem expected =
+        Problem.builder()
+            .status(HttpStatus.BAD_REQUEST.value())
+            .detail("Type mismatch")
+            .extension("property", "age")
+            .extension("kind", "integer")
+            .build();
+
+    List<TypeMismatchProblemResolver> resolvers =
+        List.of(
+            new TypeMismatchProblemResolver(ProblemFormat.identity()),
+            new TypeMismatchProblemResolver(ProblemFormat.identity(), new SimpleTypeNameMapper()));
+
+    for (TypeMismatchProblemResolver resolver : resolvers) {
+      Problem problem =
+          resolver.resolve(
+              ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+      assertThat(problem).isEqualTo(expected);
+    }
   }
 
   @Test
