@@ -26,6 +26,7 @@ import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupportAware;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupportAware;
+import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
@@ -103,19 +104,22 @@ public class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor
   public @Nullable Object postProcessBeforeInitialization(Object bean, String beanName)
       throws BeansException {
     if (bean instanceof ProblemFormatAware aware) {
-      aware.setProblemFormat(problemFormat.getObject());
+      Optional.ofNullable(problemFormat.getIfAvailable()).ifPresent(aware::setProblemFormat);
     }
     if (bean instanceof TypeNameMapperAware aware) {
-      aware.setTypeNameMapper(typeNameMapper.getObject());
+      Optional.ofNullable(typeNameMapper.getIfAvailable()).ifPresent(aware::setTypeNameMapper);
     }
     if (bean instanceof BindingResultSupportAware aware) {
-      aware.setBindingResultSupport(bindingResultSupport.getObject());
+      Optional.ofNullable(bindingResultSupport.getIfAvailable())
+          .ifPresent(aware::setBindingResultSupport);
     }
     if (bean instanceof MethodValidationResultSupportAware aware) {
-      aware.setMethodValidationResultSupport(methodValidationResultSupport.getObject());
+      Optional.ofNullable(methodValidationResultSupport.getIfAvailable())
+          .ifPresent(aware::setMethodValidationResultSupport);
     }
     if (bean instanceof MethodParameterSupportAware aware) {
-      aware.setMethodParameterSupport(methodParameterSupport.getObject());
+      Optional.ofNullable(methodParameterSupport.getIfAvailable())
+          .ifPresent(aware::setMethodParameterSupport);
     }
     return bean;
   }
