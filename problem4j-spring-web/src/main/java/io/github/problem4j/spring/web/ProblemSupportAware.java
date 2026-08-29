@@ -19,23 +19,17 @@ package io.github.problem4j.spring.web;
 import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 
 /**
- * Callback interface for components that want to be configured with a {@link ProblemFormat} after
- * construction, instead of requiring it as a constructor argument.
+ * Common super-interface of every {@code *Aware} callback that {@link ProblemBeanPostProcessor}
+ * honours ({@link ProblemFormatAware}, {@link TypeNameMapperAware}, {@link
+ * io.github.problem4j.spring.web.parameter.BindingResultSupportAware BindingResultSupportAware},
+ * {@link io.github.problem4j.spring.web.parameter.MethodValidationResultSupportAware
+ * MethodValidationResultSupportAware}, {@link
+ * io.github.problem4j.spring.web.parameter.MethodParameterSupportAware
+ * MethodParameterSupportAware}).
  *
- * <p>When {@code problem4j-spring-web} autoconfiguration is active, any bean implementing this
- * interface is detected by {@link ProblemBeanPostProcessor} and configured with the container's
- * {@link ProblemFormat} bean.
+ * <p>It carries no methods; it lets {@link ProblemBeanPostProcessor} skip any bean that opts into
+ * none of the callbacks with a single {@code instanceof} check.
  *
- * @see ProblemFormat
  * @since 3.1.0
  */
-public interface ProblemFormatAware extends ProblemSupportAware {
-
-  /**
-   * Replaces the {@link ProblemFormat} used by this resolver.
-   *
-   * @param problemFormat the problem format to use
-   * @since 3.1.0
-   */
-  void setProblemFormat(ProblemFormat problemFormat);
-}
+public interface ProblemSupportAware {}

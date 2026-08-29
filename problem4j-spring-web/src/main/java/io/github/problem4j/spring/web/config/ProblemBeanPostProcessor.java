@@ -18,6 +18,7 @@ package io.github.problem4j.spring.web.config;
 
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormatAware;
+import io.github.problem4j.spring.web.ProblemSupportAware;
 import io.github.problem4j.spring.web.TypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapperAware;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
@@ -60,6 +61,9 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
  * rather than direct constructor injection, so that registering this processor as a bean does not
  * force early instantiation of the collaborator beans. A provider is only queried when a bean
  * actually implements the matching callback interface.
+ *
+ * <p>Beans that implement none of the callbacks are skipped with a single {@link
+ * ProblemSupportAware} {@code instanceof} check, since every callback extends it.
  *
  * @since 3.1.0
  */
@@ -110,6 +114,10 @@ public class ProblemBeanPostProcessor implements BeanPostProcessor {
   @Override
   public @Nullable Object postProcessBeforeInitialization(Object bean, String beanName)
       throws BeansException {
+    if (!(bean instanceof ProblemSupportAware)) {
+      return bean;
+    }
+
     List<String> auditLog = new ArrayList<>(5);
     maybeAddProblemFormatAware(bean, auditLog);
     maybeAddTypeNameMapper(bean, auditLog);

@@ -29,7 +29,7 @@ import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
  * @see TypeNameMapper
  * @since 3.1.0
  */
-public interface TypeNameMapperAware {
+public interface TypeNameMapperAware extends ProblemSupportAware {
 
   /**
    * Replaces the {@link TypeNameMapper} used by this resolver.

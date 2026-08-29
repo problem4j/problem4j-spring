@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.web.parameter;
 
+import io.github.problem4j.spring.web.ProblemSupportAware;
 import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 
 /**
@@ -29,7 +30,7 @@ import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
  * @see MethodParameterSupport
  * @since 3.1.0
  */
-public interface MethodParameterSupportAware {
+public interface MethodParameterSupportAware extends ProblemSupportAware {
 
   /**
    * Replaces the {@link MethodParameterSupport} used by this resolver.

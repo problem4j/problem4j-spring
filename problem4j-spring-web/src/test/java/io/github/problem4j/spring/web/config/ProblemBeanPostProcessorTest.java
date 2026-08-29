@@ -24,6 +24,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormatAware;
+import io.github.problem4j.spring.web.ProblemSupportAware;
 import io.github.problem4j.spring.web.TypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapperAware;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
@@ -95,6 +96,22 @@ class ProblemBeanPostProcessorTest {
     Object bean = new Object();
 
     Object result = processor.postProcessBeforeInitialization(bean, "bean");
+
+    assertThat(result).isSameAs(bean);
+  }
+
+  @Test
+  void givenNonAwareBean_whenPostProcess_thenNoCollaboratorProviderQueried() {
+    ProblemBeanPostProcessor failing =
+        new ProblemBeanPostProcessor(
+            failingProvider(),
+            failingProvider(),
+            failingProvider(),
+            failingProvider(),
+            failingProvider());
+    Object bean = new Object();
+
+    Object result = failing.postProcessBeforeInitialization(bean, "bean");
 
     assertThat(result).isSameAs(bean);
   }
@@ -303,6 +320,8 @@ class ProblemBeanPostProcessorTest {
       this.problemFormat = problemFormat;
     }
   }
+
+  private static final class StubBareSupportAware implements ProblemSupportAware {}
 
   @NullMarked
   private static final class StubAware
