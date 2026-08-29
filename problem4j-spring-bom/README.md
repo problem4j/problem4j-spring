@@ -22,6 +22,7 @@ dependencies {
     implementation(platform("io.github.problem4j:problem4j-spring-bom:{version}"))
 
     implementation("io.github.problem4j:problem4j-core")
+    implementation("io.github.problem4j:problem4j-gson")
     implementation("io.github.problem4j:problem4j-jackson2")
     implementation("io.github.problem4j:problem4j-jackson3")
     implementation("io.github.problem4j:problem4j-spring-web")
@@ -35,7 +36,6 @@ dependencies {
 Add the BOM to `<dependencyManagement>` with `import` scope, then declare modules without versions.
 
 ```xml
-
 <dependencyManagement>
     <dependencies>
         <dependency>
@@ -52,6 +52,10 @@ Add the BOM to `<dependencyManagement>` with `import` scope, then declare module
 <dependency>
     <groupId>io.github.problem4j</groupId>
     <artifactId>problem4j-core</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.github.problem4j</groupId>
+    <artifactId>problem4j-gson</artifactId>
 </dependency>
 <dependency>
     <groupId>io.github.problem4j</groupId>
