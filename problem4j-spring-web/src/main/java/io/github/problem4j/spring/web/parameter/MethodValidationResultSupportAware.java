@@ -17,7 +17,6 @@
 package io.github.problem4j.spring.web.parameter;
 
 import io.github.problem4j.spring.web.ProblemSupportAware;
-import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 
 /**
  * Callback interface for components that want to be configured with a {@link
@@ -25,8 +24,9 @@ import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
  * argument.
  *
  * <p>When {@code problem4j-spring-web} autoconfiguration is active, any bean implementing this
- * interface is detected by {@link ProblemBeanPostProcessor} and configured with the container's
- * {@link MethodValidationResultSupport} bean.
+ * interface is detected by {@link io.github.problem4j.spring.web.config.ProblemBeanPostProcessor
+ * ProblemBeanPostProcessor} and configured with the container's {@link
+ * MethodValidationResultSupport} bean.
  *
  * @see MethodValidationResultSupport
  * @since 3.1.0

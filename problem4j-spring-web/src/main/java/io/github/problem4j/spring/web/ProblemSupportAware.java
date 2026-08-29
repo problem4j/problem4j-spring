@@ -16,18 +16,11 @@
 
 package io.github.problem4j.spring.web;
 
-import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
-
 /**
- * Common super-interface of every {@code *Aware} callback that {@link ProblemBeanPostProcessor}
- * honours ({@link ProblemFormatAware}, {@link TypeNameMapperAware}, {@link
- * io.github.problem4j.spring.web.parameter.BindingResultSupportAware BindingResultSupportAware},
- * {@link io.github.problem4j.spring.web.parameter.MethodValidationResultSupportAware
- * MethodValidationResultSupportAware}, {@link
- * io.github.problem4j.spring.web.parameter.MethodParameterSupportAware
- * MethodParameterSupportAware}).
+ * Common super-interface of every {@code *Aware} callback that {@link
+ * io.github.problem4j.spring.web.config.ProblemBeanPostProcessor ProblemBeanPostProcessor} honours.
  *
- * <p>It carries no methods; it lets {@link ProblemBeanPostProcessor} skip any bean that opts into
+ * <p>It carries no methods; it lets {@code ProblemBeanPostProcessor} skip any bean that opts into
  * none of the callbacks with a single {@code instanceof} check.
  *
  * @since 3.1.0
