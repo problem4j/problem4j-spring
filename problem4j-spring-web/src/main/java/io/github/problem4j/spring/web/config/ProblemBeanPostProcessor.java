@@ -27,7 +27,6 @@ import io.github.problem4j.spring.web.parameter.MethodParameterSupportAware;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupportAware;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.jspecify.annotations.Nullable;
@@ -111,14 +110,14 @@ public class ProblemBeanPostProcessor implements BeanPostProcessor {
   @Override
   public @Nullable Object postProcessBeforeInitialization(Object bean, String beanName)
       throws BeansException {
-    List<String> auditLog = log.isDebugEnabled() ? new ArrayList<>() : Collections.emptyList();
+    List<String> auditLog = new ArrayList<>(5);
     maybeAddProblemFormatAware(bean, auditLog);
     maybeAddTypeNameMapper(bean, auditLog);
     maybeAddBindingResultSupport(bean, auditLog);
     maybeAddMethodValidationResultSupport(bean, auditLog);
     maybeAddMethodParameterSupport(bean, auditLog);
 
-    if (!auditLog.isEmpty() && log.isDebugEnabled()) {
+    if (log.isDebugEnabled() && !auditLog.isEmpty()) {
       log.debug("Enhanced {} bean with {}", beanName, asLogLine(auditLog));
     }
     return bean;

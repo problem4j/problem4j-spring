@@ -44,14 +44,14 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Add `problem4j.title-override` property to configure `title` field override in `DefaultProblemPostProcessor`.
 - Make `DefaultProblemPostProcessor` support any fields from `ProblemContext` in value interpolation.
 - Add `@FunctionalInterface` contract to:
-    - `MethodParameterSupport`,
-    - `MethodValidationResultSupport`,
-    - `BindingResultSupport`,
-    - `ProblemResolverStore`,
-    - `ProblemPostProcessor`,
-    - `TypeNameMapper`,
-    - `AdviceWebFluxInspector`,
-    - `AdviceWebMvcInspector`.
+  - `MethodParameterSupport`,
+  - `MethodValidationResultSupport`,
+  - `BindingResultSupport`,
+  - `ProblemResolverStore`,
+  - `ProblemPostProcessor`,
+  - `TypeNameMapper`,
+  - `AdviceWebFluxInspector`,
+  - `AdviceWebMvcInspector`.
 
 ### Changed
 

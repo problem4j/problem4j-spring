@@ -17,7 +17,6 @@
 package io.github.problem4j.spring.web.parameter;
 
 import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
-import org.springframework.beans.factory.Aware;
 
 /**
  * Callback interface for components that want to be configured with a {@link
@@ -31,7 +30,7 @@ import org.springframework.beans.factory.Aware;
  * @see MethodValidationResultSupport
  * @since 3.1.0
  */
-public interface MethodValidationResultSupportAware extends Aware {
+public interface MethodValidationResultSupportAware {
 
   /**
    * Replaces the {@link MethodValidationResultSupport} used by this resolver.
