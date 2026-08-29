@@ -18,6 +18,10 @@ package io.github.problem4j.spring.web.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormatAware;
 import io.github.problem4j.spring.web.TypeNameMapper;
@@ -29,12 +33,20 @@ import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupportAware;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupportAware;
+import io.github.problem4j.spring.web.parameter.Violation;
 import java.util.List;
 import java.util.Optional;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.core.MethodParameter;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.method.MethodValidationResult;
 
 class ProblemBeanPostProcessorTest {
 
@@ -103,6 +115,93 @@ class ProblemBeanPostProcessorTest {
     assertThat(bean.problemFormat).isSameAs(problemFormat);
   }
 
+  @Test
+  void givenAllCollaboratorProvidersEmpty_whenPostProcess_thenNoCollaboratorInjected() {
+    ProblemBeanPostProcessor empty =
+        new ProblemBeanPostProcessor(
+            emptyProvider(), emptyProvider(), emptyProvider(), emptyProvider(), emptyProvider());
+    StubAware bean = new StubAware();
+
+    Object result = empty.postProcessBeforeInitialization(bean, "bean");
+
+    assertThat(result).isSameAs(bean);
+    assertThat(bean.problemFormat).isNull();
+    assertThat(bean.typeNameMapper).isNull();
+    assertThat(bean.bindingResultSupport).isNull();
+    assertThat(bean.methodValidationResultSupport).isNull();
+    assertThat(bean.methodParameterSupport).isNull();
+  }
+
+  @Nested
+  class DebugLogging {
+
+    private final Logger logger = (Logger) LoggerFactory.getLogger(ProblemBeanPostProcessor.class);
+    private final ListAppender<ILoggingEvent> appender = new ListAppender<>();
+
+    private final ProblemBeanPostProcessor debugProcessor =
+        new ProblemBeanPostProcessor(
+            objectProvider(new NamedProblemFormat()),
+            objectProvider(new NamedTypeNameMapper()),
+            objectProvider(new NamedBindingResultSupport()),
+            objectProvider(new NamedMethodValidationResultSupport()),
+            objectProvider(new NamedMethodParameterSupport()));
+
+    @BeforeEach
+    void attachAppender() {
+      appender.start();
+      logger.addAppender(appender);
+      logger.setLevel(Level.DEBUG);
+    }
+
+    @AfterEach
+    void detachAppender() {
+      logger.setLevel(null);
+      logger.detachAppender(appender);
+      appender.stop();
+    }
+
+    @Test
+    void givenSingleCollaborator_whenPostProcess_thenLogsSingleName() {
+      debugProcessor.postProcessBeforeInitialization(new StubProblemFormatAware(), "bean");
+
+      assertThat(appender.list)
+          .singleElement()
+          .extracting(ILoggingEvent::getFormattedMessage)
+          .isEqualTo("Enhanced bean bean with NamedProblemFormat");
+    }
+
+    @Test
+    void givenTwoCollaborators_whenPostProcess_thenJoinsNamesWithAnd() {
+      debugProcessor.postProcessBeforeInitialization(
+          new StubProblemFormatAndTypeNameAware(), "bean");
+
+      assertThat(appender.list)
+          .singleElement()
+          .extracting(ILoggingEvent::getFormattedMessage)
+          .isEqualTo("Enhanced bean bean with NamedProblemFormat and NamedTypeNameMapper");
+    }
+
+    @Test
+    void givenThreeOrMoreCollaborators_whenPostProcess_thenJoinsNamesWithCommasAndTrailingAnd() {
+      debugProcessor.postProcessBeforeInitialization(new StubAware(), "bean");
+
+      assertThat(appender.list)
+          .singleElement()
+          .extracting(ILoggingEvent::getFormattedMessage)
+          .isEqualTo(
+              "Enhanced bean bean with NamedProblemFormat, NamedTypeNameMapper,"
+                  + " NamedBindingResultSupport, NamedMethodValidationResultSupport and"
+                  + " NamedMethodParameterSupport");
+    }
+
+    @Test
+    void givenNonAwareBean_whenPostProcess_thenLogsNothing() {
+      debugProcessor.postProcessBeforeInitialization(new Object(), "bean");
+
+      assertThat(appender.list).isEmpty();
+    }
+  }
+
   private static <T> ObjectProvider<T> objectProvider(T value) {
     return new ObjectProvider<>() {
       @Override
@@ -119,6 +218,74 @@ class ProblemBeanPostProcessorTest {
         throw new AssertionError("collaborator should not be queried");
       }
     };
+  }
+
+  private static <T> ObjectProvider<T> emptyProvider() {
+    return new ObjectProvider<>() {
+      @Override
+      public T getObject() {
+        throw new AssertionError("collaborator should not be queried");
+      }
+
+      @Override
+      public @Nullable T getIfAvailable() {
+        return null;
+      }
+    };
+  }
+
+  private static final class NamedProblemFormat implements ProblemFormat {
+    @Override
+    public @Nullable String formatDetail(@Nullable String detail) {
+      return detail;
+    }
+  }
+
+  private static final class NamedTypeNameMapper implements TypeNameMapper {
+    @Override
+    public Optional<String> map(@Nullable Class<?> type) {
+      return Optional.empty();
+    }
+  }
+
+  private static final class NamedBindingResultSupport implements BindingResultSupport {
+    @Override
+    public List<Violation> fetchViolations(BindingResult result) {
+      return List.of();
+    }
+  }
+
+  private static final class NamedMethodValidationResultSupport
+      implements MethodValidationResultSupport {
+    @Override
+    public List<Violation> fetchViolations(MethodValidationResult result) {
+      return List.of();
+    }
+  }
+
+  private static final class NamedMethodParameterSupport implements MethodParameterSupport {
+    @Override
+    public Optional<String> findParameterName(@Nullable MethodParameter parameter) {
+      return Optional.empty();
+    }
+  }
+
+  @NullMarked
+  private static final class StubProblemFormatAndTypeNameAware
+      implements ProblemFormatAware, TypeNameMapperAware {
+
+    private @Nullable ProblemFormat problemFormat;
+    private @Nullable TypeNameMapper typeNameMapper;
+
+    @Override
+    public void setProblemFormat(ProblemFormat problemFormat) {
+      this.problemFormat = problemFormat;
+    }
+
+    @Override
+    public void setTypeNameMapper(TypeNameMapper typeNameMapper) {
+      this.typeNameMapper = typeNameMapper;
+    }
   }
 
   @NullMarked
