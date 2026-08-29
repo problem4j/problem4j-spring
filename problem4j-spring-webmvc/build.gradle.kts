@@ -33,6 +33,7 @@ dependencies {
     testImplementation(libs.jspecify)
     testImplementation(libs.kotlin.reflect)
     testImplementation(libs.kotlin.stdlib)
+    testImplementation(libs.kotlin.test)
 
     // Included because TestRestTemplate requires it if used with actual web environment in tests. Not migrating to
     // WebTestClient either for easier merges with 1.x versions.

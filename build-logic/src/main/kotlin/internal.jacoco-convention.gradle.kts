@@ -11,6 +11,10 @@ tasks.named<JacocoReport>("jacocoTestReport").configure {
         html.required = true
         csv.required = false
     }
+
+    classDirectories.setFrom(
+        classDirectories.files.map { fileTree(it) { exclude("**/*Kt.class") } },
+    )
 }
 
 tasks.named<Task>("check").configure {

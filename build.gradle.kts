@@ -68,6 +68,7 @@ spotless {
         target("**/src/**/*.kt")
 
         ktfmt().metaStyle()
+        licenseHeaderFile(licenseHeader)
         endWithNewline()
         lineEndings = LineEnding.UNIX
     }
@@ -99,6 +100,12 @@ spotless {
 
 tasks.named<Task>("check").configure {
     dependsOn(tasks.named<JacocoReport>("testCodeCoverageReport"))
+}
+
+tasks.named<JacocoReport>("testCodeCoverageReport").configure {
+    classDirectories.setFrom(
+        classDirectories.files.map { fileTree(it) { exclude("**/*Kt.class") } },
+    )
 }
 
 defaultTasks("spotlessApply", "build")

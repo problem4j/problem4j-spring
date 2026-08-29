@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("java-library")
     id("org.jetbrains.kotlin.jvm")
+    id("org.jetbrains.kotlin.kapt")
 }
 
 // The project is built using a JDK 25 toolchain, but the main sources are compiled with --release 17.
@@ -48,6 +49,8 @@ kotlin {
         languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
     }
     compilerOptions {
+        explicitApi()
+        moduleName = project.name
         apiVersion = KotlinVersion.KOTLIN_2_2
         languageVersion = KotlinVersion.KOTLIN_2_2
     }
