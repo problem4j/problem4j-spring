@@ -1,4 +1,5 @@
 [versions]
+archunit = "1.5.0"
 errorprone = "2.50.0"
 errorprone-plugin = "5.1.0"
 idea-ext = "1.4.1"
@@ -25,6 +26,7 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
 
 # direct versions
+archunit-junit5 = { module = "com.tngtech.archunit:archunit-junit5", version.ref = "archunit" }
 errorprone-core = { module = "com.google.errorprone:error_prone_core", version.ref = "errorprone" }
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
