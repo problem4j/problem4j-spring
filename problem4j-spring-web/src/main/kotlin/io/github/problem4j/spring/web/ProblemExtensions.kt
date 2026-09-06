@@ -198,20 +198,3 @@ public operator fun Problem.Extension.component2(): Any? = value
  */
 public fun ProblemContext.putAll(vararg entries: Pair<String, String?>): ProblemContext =
     putAll(mapOf(*entries))
-
-/**
- * Creates a [Problem] from this HTTP status code.
- *
- * @return a new [Problem] instance
- * @since 3.1.0
- */
-public fun HttpStatusCode.toProblem(): Problem = Problem.of(value())
-
-/**
- * Creates a [Problem] from this HTTP status code with the given detail message.
- *
- * @param detail detail message
- * @return a new [Problem] instance
- * @since 3.1.0
- */
-public fun HttpStatusCode.toProblem(detail: String?): Problem = Problem.of(value(), detail)

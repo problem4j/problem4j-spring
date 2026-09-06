@@ -17,14 +17,14 @@
 package io.github.problem4j.spring.web;
 
 import static io.github.problem4j.spring.web.HierarchyTraversalMode.SUPERCLASS;
+import static java.util.Comparator.comparingInt;
+import static java.util.Objects.requireNonNull;
 
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -66,7 +66,7 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
       List<ProblemResolver> problemResolvers, ClassDistanceEvaluation classDistanceEvaluation) {
     Map<Class<? extends Exception>, ProblemResolver> copy = new HashMap<>(problemResolvers.size());
     problemResolvers.forEach(
-        resolver -> copy.put(resolver.getExceptionClass(), Objects.requireNonNull(resolver)));
+        resolver -> copy.put(resolver.getExceptionClass(), requireNonNull(resolver)));
     this.resolvers = Map.copyOf(copy);
     this.classDistanceEvaluation = classDistanceEvaluation;
   }
@@ -89,8 +89,7 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
         candidates.add(entry.getValue());
       }
     }
-
-    return candidates.stream().min(Comparator.comparingInt(r -> calculateDistance(r, clazz)));
+    return candidates.stream().min(comparingInt(r -> calculateDistance(r, clazz)));
   }
 
   private int calculateDistance(ProblemResolver resolver, Class<? extends Exception> clazz) {

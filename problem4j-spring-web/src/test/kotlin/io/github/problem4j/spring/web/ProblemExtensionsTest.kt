@@ -25,22 +25,6 @@ import org.springframework.http.HttpStatus
 class ProblemExtensionsTest {
 
   @Test
-  fun givenHttpStatusCode_whenConvertingToProblem_thenStatusAndDetailAreSet() {
-    val result = HttpStatus.BAD_REQUEST.toProblem("invalid input")
-
-    assertThat(result.status).isEqualTo(400)
-    assertThat(result.detail).isEqualTo("invalid input")
-  }
-
-  @Test
-  fun givenHttpStatusCodeAndNoDetail_whenConvertingToProblem_thenDetailIsNull() {
-    val result = HttpStatus.BAD_REQUEST.toProblem()
-
-    assertThat(result.status).isEqualTo(400)
-    assertThat(result.detail).isNull()
-  }
-
-  @Test
   fun givenStatusAndBlock_whenBuildingProblem_thenPropertiesAreApplied() {
     val result = problem(400) { detail("bad input") }
 
