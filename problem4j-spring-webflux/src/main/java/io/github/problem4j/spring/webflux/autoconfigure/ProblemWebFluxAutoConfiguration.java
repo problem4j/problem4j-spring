@@ -87,7 +87,7 @@ public class ProblemWebFluxAutoConfiguration {
       ProblemMapper problemMapper,
       ProblemResolverStore problemResolverStore,
       ProblemPostProcessor problemPostProcessor,
-      List<AdviceWebFluxInspector> adviceWebFluxInspectors) {
+      List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
     return new ExceptionWebFluxAdvice(
         problemMapper, problemResolverStore, problemPostProcessor, adviceWebFluxInspectors);
   }

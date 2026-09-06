@@ -91,7 +91,7 @@ public class ProblemWebMvcAutoConfiguration {
       ProblemMapper problemMapper,
       ProblemResolverStore problemResolverStore,
       ProblemPostProcessor problemPostProcessor,
-      List<AdviceWebMvcInspector> adviceWebMvcInspectors) {
+      List<? extends AdviceWebMvcInspector> adviceWebMvcInspectors) {
     return new ExceptionWebMvcAdvice(
         problemMapper, problemResolverStore, problemPostProcessor, adviceWebMvcInspectors);
   }

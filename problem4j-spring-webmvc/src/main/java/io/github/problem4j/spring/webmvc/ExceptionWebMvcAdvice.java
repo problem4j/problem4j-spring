@@ -27,6 +27,7 @@ import io.github.problem4j.core.ProblemMapper;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -84,11 +85,11 @@ public class ExceptionWebMvcAdvice {
       ProblemMapper problemMapper,
       ProblemResolverStore problemResolverStore,
       ProblemPostProcessor problemPostProcessor,
-      List<AdviceWebMvcInspector> adviceWebMvcInspectors) {
+      List<? extends AdviceWebMvcInspector> adviceWebMvcInspectors) {
     this.problemMapper = problemMapper;
     this.problemResolverStore = problemResolverStore;
     this.problemPostProcessor = problemPostProcessor;
-    this.adviceWebMvcInspectors = adviceWebMvcInspectors;
+    this.adviceWebMvcInspectors = new ArrayList<>(adviceWebMvcInspectors);
   }
 
   /**

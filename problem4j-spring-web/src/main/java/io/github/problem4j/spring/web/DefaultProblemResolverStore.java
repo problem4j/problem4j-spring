@@ -48,7 +48,7 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
    * @throws NullPointerException if any resolver or its exception class is {@code null}
    * @since 1.2.0
    */
-  public DefaultProblemResolverStore(List<ProblemResolver> problemResolvers) {
+  public DefaultProblemResolverStore(List<? extends ProblemResolver> problemResolvers) {
     this(problemResolvers, new GraphClassDistanceEvaluation(SUPERCLASS));
   }
 
@@ -63,7 +63,8 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
    * @since 1.2.0
    */
   public DefaultProblemResolverStore(
-      List<ProblemResolver> problemResolvers, ClassDistanceEvaluation classDistanceEvaluation) {
+      List<? extends ProblemResolver> problemResolvers,
+      ClassDistanceEvaluation classDistanceEvaluation) {
     Map<Class<? extends Exception>, ProblemResolver> copy = new HashMap<>(problemResolvers.size());
     problemResolvers.forEach(
         resolver -> copy.put(resolver.getExceptionClass(), requireNonNull(resolver)));

@@ -148,7 +148,7 @@ public class ProblemAutoConfiguration {
   @ConditionalOnMissingBean(ProblemResolverStore.class)
   @Bean
   ProblemResolverStore problemResolverStore(
-      List<ProblemResolver> problemResolvers, ProblemProperties properties) {
+      List<? extends ProblemResolver> problemResolvers, ProblemProperties properties) {
     ProblemResolverStore problemResolverStore = new DefaultProblemResolverStore(problemResolvers);
 
     if (properties.getResolverCaching().isEnabled()) {
