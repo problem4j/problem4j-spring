@@ -18,6 +18,7 @@ package io.github.problem4j.spring.web
 
 import io.github.problem4j.core.Problem
 import io.github.problem4j.core.ProblemContext
+import java.net.URI
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -41,8 +42,12 @@ class ProblemExtensionsTest {
   }
 
   @Test
-  fun givenChainedBuilderCalls_whenBuildingProblem_thenLastReturnedBuilderIsUsed() {
-    val result = problem(400) { title("Bad Request").detail("bad input") }
+  fun givenMultipleStatements_whenBuildingProblem_thenAllPropertiesAreApplied() {
+    val result =
+        problem(400) {
+          title("Bad Request")
+          detail("bad input")
+        }
 
     assertThat(result.title).isEqualTo("Bad Request")
     assertThat(result.detail).isEqualTo("bad input")
@@ -76,6 +81,69 @@ class ProblemExtensionsTest {
     val result = problem(400) { extensions("field" to "email", "reason" to "blank") }
 
     assertThat(result.extensions).containsEntry("field", "email").containsEntry("reason", "blank")
+  }
+
+  @Test
+  fun givenStringTypeAndInstance_whenBuildingProblem_thenUrisAreApplied() {
+    val result =
+        problem(400) {
+          type("https://example.org/invalid")
+          instance("/users/1")
+        }
+
+    assertThat(result.type).isEqualTo(URI.create("https://example.org/invalid"))
+    assertThat(result.instance).isEqualTo(URI.create("/users/1"))
+  }
+
+  @Test
+  fun givenUriTypeAndInstance_whenBuildingProblem_thenUrisAreApplied() {
+    val result =
+        problem(400) {
+          type(URI.create("https://example.org/invalid"))
+          instance(URI.create("/users/1"))
+        }
+
+    assertThat(result.type).isEqualTo(URI.create("https://example.org/invalid"))
+    assertThat(result.instance).isEqualTo(URI.create("/users/1"))
+  }
+
+  @Test
+  fun givenNullTypeAndInstance_whenBuildingProblem_thenDefaultsAreKept() {
+    val result =
+        problem(400) {
+          type(null as String?)
+          instance(null as String?)
+        }
+
+    assertThat(result.type).isEqualTo(Problem.BLANK_TYPE)
+    assertThat(result.instance).isNull()
+  }
+
+  @Test
+  fun givenIntStatusInBlock_whenBuildingProblem_thenStatusIsOverridden() {
+    val result = problem(400) { status(409) }
+
+    assertThat(result.status).isEqualTo(409)
+  }
+
+  @Test
+  fun givenAllExtensionVariants_whenBuildingProblem_thenAllExtensionsArePresent() {
+    val result =
+        problem(400) {
+          extension("a", 1)
+          extension(Problem.extension("b", 2))
+          extensions(mapOf("c" to 3))
+          extensions(Problem.extension("d", 4), Problem.extension("e", 5))
+          extensions(listOf(Problem.extension("f", 6)))
+        }
+
+    assertThat(result.extensions)
+        .containsEntry("a", 1)
+        .containsEntry("b", 2)
+        .containsEntry("c", 3)
+        .containsEntry("d", 4)
+        .containsEntry("e", 5)
+        .containsEntry("f", 6)
   }
 
   @Test
