@@ -58,6 +58,8 @@ spring-web = { module = "org.springframework:spring-web" }
 jackson2-databind = { module = "com.fasterxml.jackson.core:jackson-databind" }
 jackson3-dataformat-xml = { module = "tools.jackson.dataformat:jackson-dataformat-xml" }
 jackson3-module-kotlin = { module = "tools.jackson.module:jackson-module-kotlin" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core" }
+kotlinx-coroutines-reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor" }
 jakarta-servlet-api = { module = "jakarta.servlet:jakarta.servlet-api" }
 jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }

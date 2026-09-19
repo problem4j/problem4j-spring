@@ -43,4 +43,59 @@ class ProblemResolverExtensionsTest {
     assertThat(result.detail).isEqualTo("boom")
     assertThat(result.status).isEqualTo(500)
   }
+
+  @Test
+  fun givenDslResolver_whenResolving_thenBlockIsAppliedOverPassedStatus() {
+    val resolver =
+        problemResolver<IllegalStateException> { ex ->
+          title("Conflict")
+          detail(ex.message)
+        }
+
+    assertThat(resolver.exceptionClass).isEqualTo(IllegalStateException::class.java)
+
+    val result =
+        resolver.resolve(
+            ProblemContext.create(),
+            IllegalStateException("boom"),
+            HttpHeaders.EMPTY,
+            HttpStatus.CONFLICT,
+        )
+
+    assertThat(result.status).isEqualTo(409)
+    assertThat(result.title).isEqualTo("Conflict")
+    assertThat(result.detail).isEqualTo("boom")
+  }
+
+  @Test
+  fun givenDslResolverOverridingStatus_whenResolving_thenStatusFromBlockIsUsed() {
+    val resolver = problemResolver<IllegalStateException> { status(HttpStatus.BAD_REQUEST) }
+
+    val result =
+        resolver.resolve(
+            ProblemContext.create(),
+            IllegalStateException("boom"),
+            HttpHeaders.EMPTY,
+            HttpStatus.INTERNAL_SERVER_ERROR,
+        )
+
+    assertThat(result.status).isEqualTo(400)
+    assertThat(result.detail).isNull()
+  }
+
+  @Test
+  fun givenDslResolverUsingImplicitParameter_whenResolving_thenTypedExceptionIsPassed() {
+    val resolver = problemResolver<IllegalArgumentException> { extension("message", it.message) }
+
+    val result =
+        resolver.resolve(
+            ProblemContext.create(),
+            IllegalArgumentException("boom"),
+            HttpHeaders.EMPTY,
+            HttpStatus.BAD_REQUEST,
+        )
+
+    assertThat(result.status).isEqualTo(400)
+    assertThat(result.extensions).containsEntry("message", "boom")
+  }
 }
