@@ -67,6 +67,7 @@ The primary ways to produce a `Problem` response are:
 1. Throwing a `ProblemException` with a manually built `Problem`.
 2. Annotating an exception class with `@ProblemMapping`.
 3. Implementing a custom `ProblemResolver`.
+4. Registering a `ProblemResolver` via the Kotlin DSL.
 
 ### 1. Throwing a `ProblemException`
 
@@ -155,6 +156,28 @@ It would produce following response with `application/problem+json`.
     "userId": "u-456"
 }
 ```
+
+### 4. Registering a `ProblemResolver` via the Kotlin DSL
+
+> Available **since 3.1.0**.
+
+```kotlin
+@Configuration
+class ExampleExceptionResolverConfiguration {
+
+  @Bean
+  fun exampleProblemResolver(): ProblemResolver =
+      problemResolver<ExampleException> { ex ->
+        type("errors/invalid-request")
+        title("Invalid Request")
+        status(400)
+        detail("bad input for user ${ex.userId}")
+        extension("userId", ex.userId)
+      }
+}
+```
+
+It would produce the same response as the resolver above.
 
 ## Maven Dependency
 
