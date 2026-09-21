@@ -2,7 +2,7 @@ import com.diffplug.spotless.LineEnding
 
 plugins {
     id("internal.idea-convention")
-    id("jacoco-report-aggregation")
+    alias(libs.plugins.kover)
     alias(libs.plugins.nmcp).apply(false)
     alias(libs.plugins.nmcp.aggregation)
     alias(libs.plugins.spotless)
@@ -14,9 +14,9 @@ dependencies {
     nmcpAggregation(project(":problem4j-spring-webflux"))
     nmcpAggregation(project(":problem4j-spring-webmvc"))
 
-    jacocoAggregation(project(":problem4j-spring-web"))
-    jacocoAggregation(project(":problem4j-spring-webflux"))
-    jacocoAggregation(project(":problem4j-spring-webmvc"))
+    kover(project(":problem4j-spring-web"))
+    kover(project(":problem4j-spring-webflux"))
+    kover(project(":problem4j-spring-webmvc"))
 }
 
 nmcpAggregation {
@@ -25,14 +25,6 @@ nmcpAggregation {
         password = System.getenv("PUBLISHING_PASSWORD")
 
         publishingType = "USER_MANAGED"
-    }
-}
-
-reporting {
-    reports {
-        register<JacocoCoverageReport>("testCodeCoverageReport") {
-            testSuiteName = "test"
-        }
     }
 }
 
@@ -98,14 +90,9 @@ spotless {
     }
 }
 
+// Aggregated coverage of all modules, merged by Kover into `build/reports/kover` - uploaded to Codecov from CI.
 tasks.named<Task>("check").configure {
-    dependsOn(tasks.named<JacocoReport>("testCodeCoverageReport"))
-}
-
-tasks.named<JacocoReport>("testCodeCoverageReport").configure {
-    classDirectories.setFrom(
-        classDirectories.files.map { fileTree(it) { exclude("**/*Kt.class") } },
-    )
+    finalizedBy(tasks.named("koverHtmlReport"), tasks.named("koverXmlReport"))
 }
 
 defaultTasks("spotlessApply", "build")

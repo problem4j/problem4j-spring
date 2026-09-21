@@ -26,7 +26,7 @@ import io.github.problem4j.spring.webmvc.autoconfigure.ProblemWebMvcProperties.P
 import org.junit.jupiter.api.Test;
 
 // These tests exist only to play with getters/setters and the deprecated constructors so they are
-// not reported as uncovered while playing with JaCoCo test coverage.
+// not reported as uncovered while playing with test coverage.
 @SuppressWarnings("removal")
 class ProblemWebMvcPropertiesTest {
 

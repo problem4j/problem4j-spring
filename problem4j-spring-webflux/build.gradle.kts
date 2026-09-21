@@ -1,7 +1,7 @@
 plugins {
     id("internal.errorprone-convention")
-    id("internal.jacoco-convention")
     id("internal.java-library-convention")
+    id("internal.kover-convention")
     id("internal.publishing-convention")
     alias(libs.plugins.nmcp)
 }
@@ -23,12 +23,12 @@ dependencies {
 
     // Test
     testImplementation(platform(libs.spring.boot.dependencies))
+    testImplementation(platform(libs.kotlin.bom))
     testImplementation(libs.spring.boot.starter.webflux)
     testImplementation(libs.spring.boot.starter.webflux.test)
     testImplementation(libs.spring.boot.validation)
-    testImplementation(libs.archunit.junit5)
+    testImplementation(libs.archunit.junit6)
     testImplementation(libs.jackson3.module.kotlin)
-    testImplementation(libs.jspecify)
     testImplementation(libs.kotlin.reflect)
     testImplementation(libs.kotlin.stdlib)
     testImplementation(libs.kotlin.test)

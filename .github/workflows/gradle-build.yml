@@ -32,6 +32,6 @@ jobs:
     with:
       java-version: ${{ matrix.java }}
       codecov-enabled: ${{ matrix.java == 25 }}
-      codecov-files: "build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+      codecov-files: "build/reports/kover/report.xml"
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
