@@ -23,6 +23,7 @@ import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemMapper;
 import io.github.problem4j.spring.web.CachingProblemResolverStore;
 import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.ProblemHandler;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.TypeNameMapper;
@@ -39,7 +40,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 class ProblemWebAutoConfigurationTest {
 
@@ -228,4 +231,107 @@ class ProblemWebAutoConfigurationTest {
   static class PrioritizedResolver extends DuplicatedResolver {}
 
   static class DuplicatedException extends RuntimeException {}
+
+  @Test
+  void givenProblemHandlerForBuiltInException_whenContextStarts_thenOverridesBuiltInResolver() {
+    new WebApplicationContextRunner()
+        .withConfiguration(autoConfigurations)
+        .withUserConfiguration(MaxUploadSizeHandlerConfiguration.class)
+        .run(
+            context -> {
+              ProblemResolver resolver =
+                  context
+                      .getBean(ProblemResolverStore.class)
+                      .findResolver(MaxUploadSizeExceededException.class)
+                      .orElseThrow();
+
+              assertThat(
+                      resolver.resolve(
+                          ProblemContext.create(),
+                          new MaxUploadSizeExceededException(1),
+                          new HttpHeaders(),
+                          HttpStatus.PAYLOAD_TOO_LARGE))
+                  .isEqualTo(Problem.builder().status(413).title("custom").build());
+            });
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  static class MaxUploadSizeHandlerConfiguration {
+
+    @Bean
+    MaxUploadSizeHandlers maxUploadSizeHandlers() {
+      return new MaxUploadSizeHandlers();
+    }
+  }
+
+  static class MaxUploadSizeHandlers {
+
+    @Order(0)
+    @ProblemHandler
+    Problem maxUploadSizeExceeded(MaxUploadSizeExceededException ex) {
+      return Problem.builder().status(413).title("custom").build();
+    }
+  }
+
+  @Test
+  void givenProblemHandlerAndResolverBeanForSameException_whenContextStarts_thenLowerOrderWins() {
+    new WebApplicationContextRunner()
+        .withConfiguration(autoConfigurations)
+        .withUserConfiguration(CompetingResolversConfiguration.class)
+        .run(
+            context -> {
+              ProblemResolverStore store = context.getBean(ProblemResolverStore.class);
+
+              assertThat(
+                      store
+                          .findResolver(CompetingException.class)
+                          .orElseThrow()
+                          .resolve(
+                              ProblemContext.create(),
+                              new CompetingException(),
+                              new HttpHeaders(),
+                              HttpStatus.INTERNAL_SERVER_ERROR))
+                  .isEqualTo(Problem.builder().status(400).title("resolver bean").build());
+            });
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  static class CompetingResolversConfiguration {
+
+    @Bean
+    CompetingHandlers competingHandlers() {
+      return new CompetingHandlers();
+    }
+
+    @Bean
+    CompetingResolver competingResolver() {
+      return new CompetingResolver();
+    }
+  }
+
+  static class CompetingHandlers {
+
+    @Order(10)
+    @ProblemHandler
+    Problem competing(CompetingException ex) {
+      return Problem.builder().status(400).title("handler method").build();
+    }
+  }
+
+  @Order(5)
+  static class CompetingResolver implements ProblemResolver {
+
+    @Override
+    public Class<? extends Exception> getExceptionClass() {
+      return CompetingException.class;
+    }
+
+    @Override
+    public Problem resolve(
+        ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+      return Problem.builder().status(400).title("resolver bean").build();
+    }
+  }
+
+  static class CompetingException extends RuntimeException {}
 }

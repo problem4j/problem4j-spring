@@ -20,6 +20,7 @@ import io.github.problem4j.spring.web.CachingProblemResolverStore;
 import io.github.problem4j.spring.web.DefaultProblemResolverStore;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DuplicateResolverPolicy;
+import io.github.problem4j.spring.web.config.ProblemHandlerMethodProcessor;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
 import io.github.problem4j.spring.web.parameter.DefaultBindingResultSupport;
 import io.github.problem4j.spring.web.parameter.DefaultMethodParameterSupport;
@@ -29,15 +30,18 @@ import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.util.ArrayList;
 import java.util.Map;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Role;
 import org.springframework.validation.method.MethodValidationResult;
 
 /**
@@ -95,6 +99,19 @@ public class ProblemWebAutoConfiguration {
     }
 
     return problemResolverStore;
+  }
+
+  /**
+   * Provides the {@link ProblemHandlerMethodProcessor} registering methods annotated with {@code
+   * ProblemHandler} as {@link ProblemResolver} beans.
+   *
+   * @return a new {@link ProblemHandlerMethodProcessor}
+   */
+  @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+  @ConditionalOnMissingBean(search = SearchStrategy.CURRENT)
+  @Bean
+  static ProblemHandlerMethodProcessor problemHandlerMethodProcessor() {
+    return new ProblemHandlerMethodProcessor();
   }
 
   /**
