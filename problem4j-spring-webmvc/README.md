@@ -1,15 +1,18 @@
-# Overrides for Spring WebMVC
+# Problem4J Spring WebMVC
 
-This module extends `problem4j-spring-web` overrides of responses for many framework exceptions and produces structured
-RFC 7807 `Problem` objects, with exceptions that are specific to `spring-webmvc`.
+Spring WebMVC integration, for the servlet stack. It builds on[`problem4j-spring-web`](../problem4j-spring-web), which
+resolves the framework and validation exceptions shared by both stacks, and adds the handling that only applies to
+`spring-webmvc`.
+
+This is the module to depend on in a WebMVC application.
 
 ## Override `404 Not Found`
 
 - `NoHandlerFoundException`
 - `NoResourceFoundException`
 
-Makes both `404 Not Found` responses exactly the same so information about what is a static resource and what is a
-controller never leaks.
+Both resolve to the same response, so nothing reveals whether a path was meant to be a static resource or a controller
+mapping.
 
 ```json
 {
@@ -20,11 +23,12 @@ controller never leaks.
 
 ## Override `ProblemErrorController`
 
-[`ProblemErrorController`][ProblemErrorController] overrides default error fallback for `spring-webmvc`. Default one
-distinguishes between `Accept` header to display a formatted page or JSON with build-in `ErrorAttributes`.
+[`ProblemErrorController`][ProblemErrorController] replaces the default `spring-webmvc` error fallback, which inspects
+the `Accept` header to decide between a formatted error page and JSON built from `ErrorAttributes`. The override always
+produces a `Problem` instead.
 
-- It can be overwritten further by declaring a custom `ErrorController` component.
-- Exclude [`ProblemErrorMvcConfiguration`][ProblemErrorMvcConfiguration] do disable this override.
+- Declare your own `ErrorController` bean to override it further.
+- Exclude [`ProblemErrorMvcConfiguration`][ProblemErrorMvcConfiguration] to disable the override.
 
 [ProblemErrorController]: src/main/java/io/github/problem4j/spring/webmvc/ProblemErrorController.java
 

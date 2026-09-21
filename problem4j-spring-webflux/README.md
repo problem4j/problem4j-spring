@@ -1,16 +1,19 @@
-# Overrides for Spring WebFlux
+# Problem4J Spring WebFlux
 
-This module extends `problem4j-spring-web` overrides of responses for many framework exceptions and produces structured
-RFC 7807 `Problem` objects, with exceptions that are specific to `spring-webflux`.
+Spring WebFlux integration, for the reactive stack. It builds on [`problem4j-spring-web`](../problem4j-spring-web),
+which resolves the framework and validation exceptions shared by both stacks, and adds the handling that only applies to
+`spring-webflux`.
+
+This is the module to depend on in a WebFlux application.
 
 ## Override `ProblemErrorWebExceptionHandler`
 
-[`ProblemErrorWebExceptionHandler`][ProblemErrorWebExceptionHandler] overrides default error fallback for
-`spring-webflux`. Default one distinguishes between `Accept` header to display a formatted page or JSON with build-in
-`ErrorAttributes`.
+[`ProblemErrorWebExceptionHandler`][ProblemErrorWebExceptionHandler] replaces the default `spring-webflux` error
+fallback, which inspects the `Accept` header to decide between a formatted error page and JSON built from
+`ErrorAttributes`. The override always produces a `Problem` instead.
 
-- It can be overwritten further by declaring a custom `ErrorWebExceptionHandler` component.
-- Exclude [`ProblemErrorWebFluxConfiguration`][ProblemErrorWebFluxConfiguration] do disable this override.
+- Declare your own `ErrorWebExceptionHandler` bean to override it further.
+- Exclude [`ProblemErrorWebFluxConfiguration`][ProblemErrorWebFluxConfiguration] to disable the override.
 
 [ProblemErrorWebExceptionHandler]: src/main/java/io/github/problem4j/spring/webflux/ProblemErrorWebExceptionHandler.java
 
