@@ -19,6 +19,7 @@ package io.github.problem4j.spring.web.autoconfigure;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DetailFormat;
+import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DuplicateResolverPolicy;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ResolverCaching;
 import org.junit.jupiter.api.Test;
 
@@ -38,6 +39,7 @@ class ProblemPropertiesTest {
     assertThat(properties.getTitleOverride()).isNull();
     assertThat(properties.getInstanceOverride()).isNull();
     assertThat(properties.getResolverCaching()).isNotNull();
+    assertThat(properties.getDuplicateResolverPolicy()).isEqualTo(DuplicateResolverPolicy.FAIL);
     assertThat(properties.getResolverCaching().isEnabled())
         .isEqualTo(ResolverCaching.DEFAULT_ENABLED);
   }
@@ -54,6 +56,7 @@ class ProblemPropertiesTest {
     properties.setTypeOverride("type");
     properties.setTitleOverride("title");
     properties.setInstanceOverride("instance");
+    properties.setDuplicateResolverPolicy(DuplicateResolverPolicy.FIRST);
     properties.setResolverCaching(caching);
 
     assertThat(properties.isEnabled()).isFalse();
@@ -63,6 +66,7 @@ class ProblemPropertiesTest {
     assertThat(properties.getTitleOverride()).isEqualTo("title");
     assertThat(properties.getInstanceOverride()).isEqualTo("instance");
     assertThat(properties.getResolverCaching()).isSameAs(caching);
+    assertThat(properties.getDuplicateResolverPolicy()).isEqualTo(DuplicateResolverPolicy.FIRST);
     assertThat(properties.getResolverCaching().isEnabled()).isTrue();
   }
 

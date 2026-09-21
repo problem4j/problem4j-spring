@@ -26,6 +26,10 @@ import org.springframework.http.HttpStatusCode;
  *
  * <p>Implementations are supposed to be stateless.
  *
+ * <p>If multiple resolvers support the same exception class, the one with the highest precedence is
+ * used, as determined by {@link org.springframework.core.Ordered} or {@link
+ * org.springframework.core.annotation.Order @Order} on the implementation class (lower value wins).
+ *
  * @since 1.2.0
  */
 public interface ProblemResolver {

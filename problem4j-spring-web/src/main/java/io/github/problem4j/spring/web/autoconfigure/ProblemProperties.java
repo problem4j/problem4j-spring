@@ -64,6 +64,13 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    */
   private @Nullable String instanceOverride;
 
+  /**
+   * Policy for multiple {@code ProblemResolver}-s supporting the same exception class with equal
+   * order. {@code first} uses the first one registered in the application context, {@code fail}
+   * fails application startup.
+   */
+  private DuplicateResolverPolicy duplicateResolverPolicy = DuplicateResolverPolicy.FAIL;
+
   /** Caching configuration for resolver lookups in {@code CachingProblemResolverStore}. */
   private ResolverCaching resolverCaching = new ResolverCaching();
 
@@ -289,6 +296,26 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   }
 
   /**
+   * Returns the policy for resolvers supporting the same exception class with equal order.
+   *
+   * @return the duplicate resolver policy
+   * @since 3.1.0
+   */
+  public DuplicateResolverPolicy getDuplicateResolverPolicy() {
+    return duplicateResolverPolicy;
+  }
+
+  /**
+   * Sets the policy for resolvers supporting the same exception class with equal order.
+   *
+   * @param duplicateResolverPolicy the duplicate resolver policy
+   * @since 3.1.0
+   */
+  public void setDuplicateResolverPolicy(DuplicateResolverPolicy duplicateResolverPolicy) {
+    this.duplicateResolverPolicy = duplicateResolverPolicy;
+  }
+
+  /**
    * Returns the caching configuration.
    *
    * @return caching settings
@@ -373,6 +400,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   /**
    * Supported values for {@code detailFormat}.
    *
+   * @see #getDetailFormat()
    * @since 1.2.0
    */
   public static class DetailFormat {
@@ -399,5 +427,29 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
     public static final String UPPERCASE = "uppercase";
 
     private DetailFormat() {}
+  }
+
+  /**
+   * Policy for handling multiple {@link io.github.problem4j.spring.web.resolver.ProblemResolver
+   * ProblemResolver} beans supporting the same exception class with equal order.
+   *
+   * @see #getDuplicateResolverPolicy()
+   * @since 3.1.0
+   */
+  public enum DuplicateResolverPolicy {
+
+    /**
+     * The first of the resolvers with equal order, in bean registration order, is used.
+     *
+     * @since 3.1.0
+     */
+    FIRST,
+
+    /**
+     * Application startup fails with an {@link IllegalStateException} naming the conflicting beans.
+     *
+     * @since 3.1.0
+     */
+    FAIL
   }
 }
