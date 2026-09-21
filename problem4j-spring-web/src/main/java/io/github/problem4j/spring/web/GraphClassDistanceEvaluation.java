@@ -30,9 +30,7 @@ import java.util.Set;
 public class GraphClassDistanceEvaluation implements ClassDistanceEvaluation {
 
   private final int defaultMaxDepth;
-
-  private final boolean superclassIncluded;
-  private final boolean interfacesIncluded;
+  private final TraversalStrategy traversal;
 
   /**
    * Creates a {@link GraphClassDistanceEvaluation} using the default maximum depth and the given
@@ -93,9 +91,7 @@ public class GraphClassDistanceEvaluation implements ClassDistanceEvaluation {
   public GraphClassDistanceEvaluation(
       int defaultMaxDepth, Collection<HierarchyTraversalMode> modes) {
     this.defaultMaxDepth = defaultMaxDepth;
-
-    superclassIncluded = modes.isEmpty() || modes.contains(HierarchyTraversalMode.SUPERCLASS);
-    interfacesIncluded = modes.isEmpty() || modes.contains(HierarchyTraversalMode.INTERFACES);
+    this.traversal = resolveTraversal(modes);
   }
 
   /**
@@ -139,27 +135,53 @@ public class GraphClassDistanceEvaluation implements ClassDistanceEvaluation {
       return Integer.MAX_VALUE;
     }
 
-    int minDistance = Integer.MAX_VALUE;
+    return traversal.minDistance(target, base, currentDepth + 1, maxDepth);
+  }
 
+  private TraversalStrategy resolveTraversal(Collection<HierarchyTraversalMode> modes) {
+    boolean superclassIncluded =
+        modes.isEmpty() || modes.contains(HierarchyTraversalMode.SUPERCLASS);
+    boolean interfacesIncluded =
+        modes.isEmpty() || modes.contains(HierarchyTraversalMode.INTERFACES);
+
+    if (superclassIncluded && interfacesIncluded) {
+      return (target, base, nextDepth, maxDepth) ->
+          Math.min(
+              viaSuperclass(target, base, nextDepth, maxDepth),
+              viaInterfaces(target, base, nextDepth, maxDepth));
+    }
     if (superclassIncluded) {
-      Class<?> superclass = target.getSuperclass();
-      if (superclass != null) {
-        int distance = calculateInternal(superclass, base, currentDepth + 1, maxDepth);
-        if (distance != Integer.MAX_VALUE) {
-          minDistance = distance + 1;
-        }
-      }
+      return this::viaSuperclass;
     }
-
     if (interfacesIncluded) {
-      for (Class<?> iface : target.getInterfaces()) {
-        int distance = calculateInternal(iface, base, currentDepth + 1, maxDepth);
-        if (distance != Integer.MAX_VALUE) {
-          minDistance = Math.min(minDistance, distance + 1);
-        }
+      return this::viaInterfaces;
+    }
+    return (target, base, nextDepth, maxDepth) -> Integer.MAX_VALUE;
+  }
+
+  private int viaSuperclass(Class<?> target, Class<?> base, int nextDepth, int maxDepth) {
+    Class<?> superclass = target.getSuperclass();
+    if (superclass == null) {
+      return Integer.MAX_VALUE;
+    }
+    int distance = calculateInternal(superclass, base, nextDepth, maxDepth);
+    return distance != Integer.MAX_VALUE ? distance + 1 : Integer.MAX_VALUE;
+  }
+
+  private int viaInterfaces(Class<?> target, Class<?> base, int nextDepth, int maxDepth) {
+    int minDistance = Integer.MAX_VALUE;
+    for (Class<?> iface : target.getInterfaces()) {
+      int distance = calculateInternal(iface, base, nextDepth, maxDepth);
+      if (distance != Integer.MAX_VALUE) {
+        minDistance = Math.min(minDistance, distance + 1);
       }
     }
-
     return minDistance;
+  }
+
+  @FunctionalInterface
+  private interface TraversalStrategy {
+
+    int minDistance(Class<?> target, Class<?> base, int nextDepth, int maxDepth);
   }
 }
