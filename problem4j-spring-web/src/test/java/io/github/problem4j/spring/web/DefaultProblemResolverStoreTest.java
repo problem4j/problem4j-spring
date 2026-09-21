@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.web;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -28,6 +29,8 @@ import java.util.Optional;
 import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -94,5 +97,96 @@ class DefaultProblemResolverStoreTest {
     Optional<ProblemResolver> result = store.findResolver(Exception.class);
 
     assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void givenResolversWithOrderAnnotation_whenFindingResolver_thenLowerOrderWins() {
+    ProblemResolver high = new HighPriorityResolver();
+    ProblemResolver low = new LowPriorityResolver();
+
+    assertThat(
+            new DefaultProblemResolverStore(List.of(low, high)).findResolver(MyBaseException.class))
+        .containsSame(high);
+    assertThat(
+            new DefaultProblemResolverStore(List.of(high, low)).findResolver(MyBaseException.class))
+        .containsSame(high);
+  }
+
+  @Test
+  void givenResolversImplementingOrdered_whenFindingResolver_thenLowerOrderWins() {
+    ProblemResolver high = new OrderedResolver(1);
+    ProblemResolver low = new OrderedResolver(2);
+
+    assertThat(
+            new DefaultProblemResolverStore(List.of(low, high)).findResolver(MyBaseException.class))
+        .containsSame(high);
+    assertThat(
+            new DefaultProblemResolverStore(List.of(high, low)).findResolver(MyBaseException.class))
+        .containsSame(high);
+  }
+
+  @Test
+  void givenOrderedAndUnorderedResolver_whenFindingResolver_thenOrderedWins() {
+    ProblemResolver ordered = new OrderedResolver(0);
+    ProblemResolver unordered = new TestResolver(MyBaseException.class);
+
+    assertThat(
+            new DefaultProblemResolverStore(List.of(unordered, ordered))
+                .findResolver(MyBaseException.class))
+        .containsSame(ordered);
+    assertThat(
+            new DefaultProblemResolverStore(List.of(ordered, unordered))
+                .findResolver(MyBaseException.class))
+        .containsSame(ordered);
+  }
+
+  @Test
+  void
+      givenOrderedResolversForDifferentExceptions_whenFindingResolver_thenOrderDoesNotAffectMatching() {
+    ProblemResolver base = new OrderedResolver(0);
+    ProblemResolver sub = new TestResolver(MySubException.class);
+
+    assertThat(
+            new DefaultProblemResolverStore(List.of(base, sub)).findResolver(MySubException.class))
+        .containsSame(sub);
+  }
+
+  @Test
+  void givenResolversWithEqualOrder_whenCreatingStore_thenPicksOne() {
+    ProblemResolver first = new TestResolver(MyBaseException.class);
+    ProblemResolver second = new TestResolver(MyBaseException.class);
+
+    ProblemResolverStore store = new DefaultProblemResolverStore(List.of(first, second));
+
+    assertThat(store.findResolver(MyBaseException.class)).get().isIn(first, second);
+  }
+
+  @Order(1)
+  private static class HighPriorityResolver extends TestResolver {
+    HighPriorityResolver() {
+      super(MyBaseException.class);
+    }
+  }
+
+  @Order(2)
+  private static class LowPriorityResolver extends TestResolver {
+    LowPriorityResolver() {
+      super(MyBaseException.class);
+    }
+  }
+
+  private static class OrderedResolver extends TestResolver implements Ordered {
+
+    private final int order;
+
+    OrderedResolver(int order) {
+      super(MyBaseException.class);
+      this.order = order;
+    }
+
+    @Override
+    public int getOrder() {
+      return order;
+    }
   }
 }

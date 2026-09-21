@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   corresponding Problem4J collaborator from `ProblemBeanPostProcessor` after construction.
 - Add `problem4j-gson` and register `ProblemTypeAdapterFactory` if present on the classpath.
 - Add Kotlin extensions and DSL functions for common Problem4J classes.
+- Add `problem4j.duplicate-resolver-policy` property to fail application startup if multiple `ProblemResolver` instances
+  for the same exception class have equal order.
 
 ### Changed
 
@@ -28,6 +30,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   `ProblemJacksonAutoConfiguration` (Jackson 3 JSON, Jackson 3 XML, Jackson 2) and `ProblemGsonAutoConfiguration`, which
   also no longer require a web application, so `Problem` serialization is configured in non-web applications too (e.g.
   ones consuming Problem responses via HTTP client).
+- `ProblemResolver` instances for the same exception class are picked based on `@Order` or `Ordered` (lower value wins).
+  If multiple candidates are present with the same order, the startup fails with an error.
 
 ### Deprecated
 

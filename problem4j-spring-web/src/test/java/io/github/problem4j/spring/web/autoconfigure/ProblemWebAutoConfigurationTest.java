@@ -18,7 +18,10 @@ package io.github.problem4j.spring.web.autoconfigure;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.github.problem4j.core.Problem;
+import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemMapper;
+import io.github.problem4j.spring.web.CachingProblemResolverStore;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
@@ -32,6 +35,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 
 class ProblemWebAutoConfigurationTest {
 
@@ -91,4 +99,133 @@ class ProblemWebAutoConfigurationTest {
               assertThat(context).doesNotHaveBean(ProblemResolverStore.class);
             });
   }
+
+  @Test
+  void givenAnyPolicyAndResolversWithEqualOrder_whenContextStarts_thenStartsSuccessfully() {
+    new WebApplicationContextRunner()
+        .withConfiguration(autoConfigurations)
+        .withUserConfiguration(EqualOrderResolversConfiguration.class)
+        .withPropertyValues("problem4j.duplicate-resolver-policy=any")
+        .run(
+            context -> {
+              assertThat(context).hasNotFailed();
+              assertThat(
+                      context
+                          .getBean(ProblemResolverStore.class)
+                          .findResolver(DuplicatedException.class))
+                  .isPresent();
+            });
+  }
+
+  @Test
+  void givenDefaultPolicyAndResolversWithEqualOrder_whenContextStarts_thenFails() {
+    new WebApplicationContextRunner()
+        .withConfiguration(autoConfigurations)
+        .withUserConfiguration(EqualOrderResolversConfiguration.class)
+        .run(
+            context ->
+                assertThat(context)
+                    .getFailure()
+                    .rootCause()
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining(DuplicatedException.class.getName()));
+  }
+
+  @Test
+  void givenFailPolicyAndResolversWithEqualOrder_whenContextStarts_thenFails() {
+    new WebApplicationContextRunner()
+        .withConfiguration(autoConfigurations)
+        .withUserConfiguration(EqualOrderResolversConfiguration.class)
+        .withPropertyValues("problem4j.duplicate-resolver-policy=fail")
+        .run(
+            context ->
+                assertThat(context)
+                    .getFailure()
+                    .rootCause()
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining(DuplicatedException.class.getName())
+                    .hasMessageContaining("'firstDuplicatedResolver'")
+                    .hasMessageContaining("'secondDuplicatedResolver'"));
+  }
+
+  @Test
+  void givenFailPolicyAndResolversWithDifferentOrder_whenContextStarts_thenLowerOrderWins() {
+    new WebApplicationContextRunner()
+        .withConfiguration(autoConfigurations)
+        .withUserConfiguration(DifferentOrderResolversConfiguration.class)
+        .withPropertyValues("problem4j.duplicate-resolver-policy=fail")
+        .run(
+            context ->
+                assertThat(
+                        context
+                            .getBean(ProblemResolverStore.class)
+                            .findResolver(DuplicatedException.class))
+                    .get()
+                    .isInstanceOf(PrioritizedResolver.class));
+  }
+
+  @Test
+  void givenFailPolicyAndResolverCaching_whenContextStarts_thenCachingStoreResolves() {
+    new WebApplicationContextRunner()
+        .withConfiguration(autoConfigurations)
+        .withUserConfiguration(DifferentOrderResolversConfiguration.class)
+        .withPropertyValues(
+            "problem4j.duplicate-resolver-policy=fail", "problem4j.resolver-caching.enabled=true")
+        .run(
+            context -> {
+              ProblemResolverStore store = context.getBean(ProblemResolverStore.class);
+
+              assertThat(store).isInstanceOf(CachingProblemResolverStore.class);
+              assertThat(store.findResolver(DuplicatedException.class))
+                  .get()
+                  .isInstanceOf(PrioritizedResolver.class);
+            });
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  static class EqualOrderResolversConfiguration {
+
+    @Bean
+    DuplicatedResolver firstDuplicatedResolver() {
+      return new DuplicatedResolver();
+    }
+
+    @Bean
+    DuplicatedResolver secondDuplicatedResolver() {
+      return new DuplicatedResolver();
+    }
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  static class DifferentOrderResolversConfiguration {
+
+    @Bean
+    DuplicatedResolver duplicatedResolver() {
+      return new DuplicatedResolver();
+    }
+
+    @Bean
+    PrioritizedResolver prioritizedResolver() {
+      return new PrioritizedResolver();
+    }
+  }
+
+  static class DuplicatedResolver implements ProblemResolver {
+
+    @Override
+    public Class<? extends Exception> getExceptionClass() {
+      return DuplicatedException.class;
+    }
+
+    @Override
+    public Problem resolve(
+        ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+      return Problem.builder().status(400).build();
+    }
+  }
+
+  @Order(0)
+  static class PrioritizedResolver extends DuplicatedResolver {}
+
+  static class DuplicatedException extends RuntimeException {}
 }

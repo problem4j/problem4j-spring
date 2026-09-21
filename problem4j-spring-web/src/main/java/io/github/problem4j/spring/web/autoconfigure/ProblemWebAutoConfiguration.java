@@ -19,6 +19,7 @@ package io.github.problem4j.spring.web.autoconfigure;
 import io.github.problem4j.spring.web.CachingProblemResolverStore;
 import io.github.problem4j.spring.web.DefaultProblemResolverStore;
 import io.github.problem4j.spring.web.ProblemResolverStore;
+import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DuplicateResolverPolicy;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
 import io.github.problem4j.spring.web.parameter.DefaultBindingResultSupport;
 import io.github.problem4j.spring.web.parameter.DefaultMethodParameterSupport;
@@ -26,7 +27,8 @@ import io.github.problem4j.spring.web.parameter.DefaultMethodValidationResultSup
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -67,17 +69,26 @@ public class ProblemWebAutoConfiguration {
    * Provides a {@link ProblemResolverStore} that aggregates all {@link ProblemResolver}
    * implementations.
    *
-   * @param problemResolvers all available {@link ProblemResolver} declared as components
+   * @param problemResolvers all available {@link ProblemResolver} declared as components, by bean
+   *     name
    * @param properties the configuration properties, used to decide whether resolver lookups are
-   *     cached
+   *     cached and how resolvers with equal order are handled
    * @return {@link DefaultProblemResolverStore}, wrapped in {@link CachingProblemResolverStore} if
    *     caching is enabled
+   * @throws IllegalStateException if {@link ProblemProperties#getDuplicateResolverPolicy()} is
+   *     {@link DuplicateResolverPolicy#FAIL} and resolvers supporting the same exception class have
+   *     equal order
    */
   @ConditionalOnMissingBean(ProblemResolverStore.class)
   @Bean
   ProblemResolverStore problemResolverStore(
-      List<? extends ProblemResolver> problemResolvers, ProblemProperties properties) {
-    ProblemResolverStore problemResolverStore = new DefaultProblemResolverStore(problemResolvers);
+      Map<String, ? extends ProblemResolver> problemResolvers, ProblemProperties properties) {
+    if (properties.getDuplicateResolverPolicy() == DuplicateResolverPolicy.FAIL) {
+      ResolverValidator.validate(problemResolvers);
+    }
+
+    ProblemResolverStore problemResolverStore =
+        new DefaultProblemResolverStore(new ArrayList<>(problemResolvers.values()));
 
     if (properties.getResolverCaching().isEnabled()) {
       problemResolverStore = new CachingProblemResolverStore(problemResolverStore);

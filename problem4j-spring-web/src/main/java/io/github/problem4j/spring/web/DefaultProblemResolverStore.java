@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 /**
  * {@link ProblemResolverStore} implementation evaluates resolved based on class and its
@@ -44,6 +45,11 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
   /**
    * Creates a new store initialized with the given resolvers.
    *
+   * <p>If multiple resolvers support the same exception class, the one with the highest precedence
+   * is used, as determined by {@link org.springframework.core.Ordered} or {@link
+   * org.springframework.core.annotation.Order @Order} (lower value wins). On tie, any of them may
+   * be used.
+   *
    * @param problemResolvers list of available {@link ProblemResolver} instances
    * @throws NullPointerException if any resolver or its exception class is {@code null}
    * @since 1.2.0
@@ -56,6 +62,11 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
    * Creates a new store initialized with the given resolvers and a specific class distance
    * evaluation strategy.
    *
+   * <p>If multiple resolvers support the same exception class, the one with the highest precedence
+   * is used, as determined by {@link org.springframework.core.Ordered} or {@link
+   * org.springframework.core.annotation.Order @Order} (lower value wins). On tie, any of them may
+   * be used.
+   *
    * @param problemResolvers list of available {@link ProblemResolver} instances
    * @param classDistanceEvaluation the strategy used to evaluate the distance between exception
    *     classes (e.g., when finding the best resolver for a specific exception type).
@@ -65,9 +76,12 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
   public DefaultProblemResolverStore(
       List<? extends ProblemResolver> problemResolvers,
       ClassDistanceEvaluation classDistanceEvaluation) {
-    Map<Class<? extends Exception>, ProblemResolver> copy = new HashMap<>(problemResolvers.size());
-    problemResolvers.forEach(
-        resolver -> copy.put(resolver.getExceptionClass(), requireNonNull(resolver)));
+    List<ProblemResolver> sorted = new ArrayList<>(problemResolvers);
+    AnnotationAwareOrderComparator.sort(sorted);
+
+    Map<Class<? extends Exception>, ProblemResolver> copy = new HashMap<>(sorted.size());
+    sorted.forEach(
+        resolver -> copy.putIfAbsent(resolver.getExceptionClass(), requireNonNull(resolver)));
     this.resolvers = Map.copyOf(copy);
     this.classDistanceEvaluation = classDistanceEvaluation;
   }
