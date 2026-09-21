@@ -33,6 +33,7 @@ dependencies {
     annotationProcessor(libs.spring.boot.configuration.processor)
 
     // Test
+    testImplementation(platform(libs.junit.bom))
     testImplementation(platform(libs.kotlin.bom))
     testImplementation(platform(libs.spring.boot.dependencies))
     testImplementation(libs.spring.boot.starter.test)
