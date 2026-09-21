@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.web;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -147,5 +148,74 @@ class CachingProblemResolverStoreTest {
     }
 
     assertEquals(1, computeCounter.get(), "computeResolver() should run exactly once");
+  }
+
+  @Test
+  void givenAnonymousInnerException_whenFindingResolverTwice_thenDelegateIsCalledOnce() {
+    AtomicInteger computeCounter = new AtomicInteger(0);
+    ProblemResolver resolver = new DummyResolver(RuntimeException.class);
+    ProblemResolverStore delegate = new DefaultProblemResolverStore(List.of(resolver));
+    Exception anonymous = new RuntimeException() {};
+
+    CachingProblemResolverStore store =
+        new CachingProblemResolverStore(
+            clazz -> {
+              computeCounter.incrementAndGet();
+              return delegate.findResolver(clazz);
+            });
+
+    Optional<ProblemResolver> first = store.findResolver(anonymous.getClass());
+    Optional<ProblemResolver> second = store.findResolver(anonymous.getClass());
+
+    assertThat(anonymous.getClass().isAnonymousClass()).isTrue();
+    assertThat(first).containsSame(resolver);
+    assertThat(second).containsSame(resolver);
+    assertThat(computeCounter).hasValue(1);
+  }
+
+  @Test
+  void givenDistinctAnonymousInnerExceptions_whenFindingResolver_thenEachClassIsCachedSeparately() {
+    AtomicInteger computeCounter = new AtomicInteger(0);
+    ProblemResolver resolver = new DummyResolver(RuntimeException.class);
+    Exception firstAnonymous = new RuntimeException() {};
+    Exception secondAnonymous = new RuntimeException() {};
+
+    CachingProblemResolverStore store =
+        new CachingProblemResolverStore(
+            clazz -> {
+              computeCounter.incrementAndGet();
+              return Optional.of(resolver);
+            });
+
+    store.findResolver(firstAnonymous.getClass());
+    store.findResolver(secondAnonymous.getClass());
+    store.findResolver(firstAnonymous.getClass());
+    store.findResolver(secondAnonymous.getClass());
+
+    assertThat(firstAnonymous.getClass()).isNotEqualTo(secondAnonymous.getClass());
+    assertThat(computeCounter).hasValue(2);
+  }
+
+  @Test
+  void
+      givenAnonymousInnerExceptionWithoutMatchingResolver_whenFindingResolverTwice_thenEmptyResultIsCached() {
+    AtomicInteger computeCounter = new AtomicInteger(0);
+    Exception anonymous = new IllegalStateException() {};
+
+    CachingProblemResolverStore store =
+        new CachingProblemResolverStore(
+            clazz -> {
+              computeCounter.incrementAndGet();
+              return new DefaultProblemResolverStore(
+                      List.of(new DummyResolver(IllegalArgumentException.class)))
+                  .findResolver(clazz);
+            });
+
+    Optional<ProblemResolver> first = store.findResolver(anonymous.getClass());
+    Optional<ProblemResolver> second = store.findResolver(anonymous.getClass());
+
+    assertThat(first).isEmpty();
+    assertThat(second).isEmpty();
+    assertThat(computeCounter).hasValue(1);
   }
 }
