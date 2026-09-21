@@ -15,6 +15,7 @@ dependencies {
     compileOnly(platform(libs.kotlin.bom))
     compileOnly(platform(libs.spring.boot.dependencies))
     compileOnly(libs.spring.boot.autoconfigure)
+    compileOnly(libs.spring.boot.gson)
     compileOnly(libs.spring.boot.jackson)
     compileOnly(libs.spring.web)
 
@@ -22,6 +23,7 @@ dependencies {
     compileOnly(libs.jakarta.servlet.api)
     compileOnly(libs.jakarta.validation.api)
     compileOnly(libs.kotlin.stdlib)
+    compileOnly(libs.problem4j.gson)
     compileOnly(libs.slf4j.api)
 
     // for backwards compatibility with jackson-databind v2
@@ -37,6 +39,7 @@ dependencies {
     testImplementation(platform(libs.kotlin.bom))
     testImplementation(platform(libs.spring.boot.dependencies))
     testImplementation(libs.spring.boot.starter.test)
+    testImplementation(libs.spring.boot.gson)
     testImplementation(libs.spring.boot.jackson)
     testImplementation(libs.spring.boot.web.server)
     testImplementation(libs.spring.boot.validation)
@@ -45,6 +48,11 @@ dependencies {
     testImplementation(libs.kotlin.reflect)
     testImplementation(libs.kotlin.stdlib)
     testImplementation(libs.kotlin.test)
+    testImplementation(libs.problem4j.gson)
+
+    testImplementation(libs.jackson3.dataformat.xml)
+    testImplementation(libs.jackson2.databind)
+    testImplementation(libs.problem4j.jackson2)
 
     testRuntimeOnly(libs.junit.platform.launcher)
 

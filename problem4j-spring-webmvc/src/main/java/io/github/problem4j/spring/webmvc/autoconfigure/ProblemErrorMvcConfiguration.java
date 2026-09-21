@@ -21,7 +21,6 @@ import io.github.problem4j.spring.webmvc.ProblemErrorController;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.webmvc.error.DefaultErrorAttributes;
 import org.springframework.boot.webmvc.error.ErrorAttributes;
 import org.springframework.boot.webmvc.error.ErrorController;
@@ -42,7 +41,6 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnBooleanProperty(
     name = "problem4j.webmvc.error-controller.enabled",
     matchIfMissing = true)
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ConditionalOnClass(ErrorController.class)
 @Configuration(proxyBeanMethods = false)
 class ProblemErrorMvcConfiguration {

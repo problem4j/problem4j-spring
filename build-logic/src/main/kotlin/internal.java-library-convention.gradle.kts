@@ -94,6 +94,7 @@ tasks.withType<Test>().configureEach {
 
     systemProperty("user.language", "en")
     systemProperty("user.country", "US")
+    systemProperty("spring.test.context.cache.maxSize", 5)
 }
 
 tasks.withType<Javadoc>().configureEach {

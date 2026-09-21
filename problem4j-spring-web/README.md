@@ -17,7 +17,10 @@ it transitively.
   [`PostProcessorSettings`][PostProcessorSettings], applying configured rules to the final response.
 - **Output shaping** - [`ProblemFormat`][ProblemFormat], [`TypeNameMapper`][TypeNameMapper] and
   [`HttpStatusTitleResolver`][HttpStatusTitleResolver].
-- **Auto-configuration** - [`ProblemAutoConfiguration`][ProblemAutoConfiguration], the Spring Boot entry point.
+- **Auto-configuration** - [`ProblemAutoConfiguration`][ProblemAutoConfiguration] for generic beans,
+  [`ProblemWebAutoConfiguration`][ProblemWebAutoConfiguration] for web-related beans (web applications only), and
+  [`ProblemJacksonAutoConfiguration`][ProblemJacksonAutoConfiguration] and
+  [`ProblemGsonAutoConfiguration`][ProblemGsonAutoConfiguration] for serialization support.
 
 The module ships a set of built-in `ProblemResolver` implementations covering the framework and validation exceptions
 that are common to both stacks - binding and constraint violations, type mismatches, unreadable or undecodable request
@@ -44,6 +47,9 @@ See the [full documentation][github-pages] for the property reference and usage 
 [PostProcessorSettings]: src/main/java/io/github/problem4j/spring/web/PostProcessorSettings.java
 
 [ProblemAutoConfiguration]: src/main/java/io/github/problem4j/spring/web/autoconfigure/ProblemAutoConfiguration.java
+[ProblemGsonAutoConfiguration]: src/main/java/io/github/problem4j/spring/web/autoconfigure/ProblemGsonAutoConfiguration.java
+[ProblemJacksonAutoConfiguration]: src/main/java/io/github/problem4j/spring/web/autoconfigure/ProblemJacksonAutoConfiguration.java
+[ProblemWebAutoConfiguration]: src/main/java/io/github/problem4j/spring/web/autoconfigure/ProblemWebAutoConfiguration.java
 
 [ProblemFormat]: src/main/java/io/github/problem4j/spring/web/ProblemFormat.java
 

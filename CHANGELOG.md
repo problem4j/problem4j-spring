@@ -15,12 +15,19 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Add `*Aware` callback interfaces (`ProblemFormatAware`, `TypeNameMapperAware`, `BindingResultSupportAware`,
   `MethodValidationResultSupportAware`, `MethodParameterSupportAware`) that any bean can implement to receive the
   corresponding Problem4J collaborator from `ProblemBeanPostProcessor` after construction.
-- Add `problem4j-gson` version `1.0.0` to `problem4j-spring-bom`.
+- Add `problem4j-gson` and register `ProblemTypeAdapterFactory` if present on the classpath.
 - Add Kotlin extensions and DSL functions for common Problem4J classes.
 
 ### Changed
 
 - `ServerWebInputProblemResolver` no longer delegates type-mismatch handling to the `TypeMismatchProblemResolver` bean.
+- Split `ProblemAutoConfiguration` into several auto-configurations. `ProblemAutoConfiguration` now keeps only generic
+  beans (`ProblemMapper`, `ProblemFormat`, `ProblemPostProcessor`, `TypeNameMapper`, `ProblemBeanPostProcessor`) and no
+  longer requires a web application. Web-related beans (`ProblemResolverStore`, built-in `ProblemResolver`s and
+  parameter supports) moved to `ProblemWebAutoConfiguration`. Serialization beans moved to
+  `ProblemJacksonAutoConfiguration` (Jackson 3 JSON, Jackson 3 XML, Jackson 2) and `ProblemGsonAutoConfiguration`, which
+  also no longer require a web application, so `Problem` serialization is configured in non-web applications too (e.g.
+  ones consuming Problem responses via HTTP client).
 
 ### Deprecated
 

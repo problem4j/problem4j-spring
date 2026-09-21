@@ -53,6 +53,7 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 spring-boot-autoconfigure = { module = "org.springframework.boot:spring-boot-autoconfigure" }
 spring-boot-autoconfigure-processor = { module = "org.springframework.boot:spring-boot-autoconfigure-processor" }
 spring-boot-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor" }
+spring-boot-gson = { module = "org.springframework.boot:spring-boot-gson" }
 spring-boot-jackson = { module = "org.springframework.boot:spring-boot-jackson" }
 spring-boot-validation = { module = "org.springframework.boot:spring-boot-validation" }
 spring-boot-web-server = { module = "org.springframework.boot:spring-boot-web-server" }

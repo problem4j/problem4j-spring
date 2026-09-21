@@ -20,7 +20,6 @@ import io.github.problem4j.spring.webmvc.resolver.NoHandlerFoundProblemResolver;
 import io.github.problem4j.spring.webmvc.resolver.NoResourceFoundProblemResolver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -31,7 +30,6 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
  * resolvers for classes present on the classpath are created. This design allows the library to
  * remain compatible previous versions.
  */
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @Configuration(proxyBeanMethods = false)
 class ProblemResolverWebMvcConfiguration {
 

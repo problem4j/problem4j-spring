@@ -16,58 +16,35 @@
 
 package io.github.problem4j.spring.web.autoconfigure;
 
-import com.fasterxml.jackson.databind.Module;
 import io.github.problem4j.core.DefaultProblemMapper;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemMapper;
-import io.github.problem4j.jackson2.ProblemModule;
-import io.github.problem4j.spring.web.CachingProblemResolverStore;
 import io.github.problem4j.spring.web.DefaultProblemFormat;
 import io.github.problem4j.spring.web.DefaultProblemPostProcessor;
-import io.github.problem4j.spring.web.DefaultProblemResolverStore;
 import io.github.problem4j.spring.web.ProblemFormat;
-import io.github.problem4j.spring.web.ProblemJsonMapperBuilderCustomizer;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
-import io.github.problem4j.spring.web.ProblemResolverStore;
-import io.github.problem4j.spring.web.ProblemXmlMapperBuilderCustomizer;
 import io.github.problem4j.spring.web.SimpleTypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapper;
 import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
-import io.github.problem4j.spring.web.resolver.ProblemResolver;
-import java.util.List;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
-import org.springframework.boot.jackson.autoconfigure.XmlMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Role;
-import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.dataformat.xml.XmlMapper;
 
 /**
  * Spring Boot autoconfiguration for Problem4J integration.
  *
- * <p>This class wires all necessary beans for producing standardized {@code Problem} responses from
- * Spring controllers. It includes:
- *
- * <p>Beans are conditional:
- *
- * <ul>
- *   <li>{@link ConditionalOnMissingBean} ensures user-defined beans override defaults.
- *   <li>{@link ConditionalOnClass} ensures compatibility with optional framework classes.
- * </ul>
+ * <p>This class wires generic beans for creating and post-processing {@code Problem} objects, which
+ * do not depend on HTTP nor require a web application. Web-related beans are wired by {@link
+ * ProblemWebAutoConfiguration}.
  *
  * @see io.github.problem4j.core.Problem
  * @since 1.2.0
@@ -75,8 +52,6 @@ import tools.jackson.dataformat.xml.XmlMapper;
 @AutoConfiguration
 @EnableConfigurationProperties({ProblemProperties.class})
 @ConditionalOnBooleanProperty(name = "problem4j.enabled", matchIfMissing = true)
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.ANY)
-@Import({ProblemParameterConfiguration.class, ProblemResolverConfiguration.class})
 public class ProblemAutoConfiguration {
 
   /**
@@ -111,7 +86,7 @@ public class ProblemAutoConfiguration {
 
   /**
    * Provides a {@link ProblemPostProcessor} that applies post-processing rules to {@code Problem}
-   * instances before they are returned in HTTP responses.
+   * instances before they are returned.
    *
    * <p>The default implementation, {@link DefaultProblemPostProcessor}, supports configurable
    * overrides for problem fields such as {@code type} and {@code instance}, based on the properties
@@ -135,27 +110,6 @@ public class ProblemAutoConfiguration {
   @Bean
   ProblemPostProcessor problemPostProcessor(ProblemProperties properties) {
     return new DefaultProblemPostProcessor(properties);
-  }
-
-  /**
-   * Provides a {@link ProblemResolverStore} that aggregates all {@link ProblemResolver}
-   * implementations.
-   *
-   * @param problemResolvers all available {@link ProblemResolver} declared as components
-   * @return {@link DefaultProblemResolverStore}, wrapped in {@link CachingProblemResolverStore} if
-   *     caching is enabled
-   */
-  @ConditionalOnMissingBean(ProblemResolverStore.class)
-  @Bean
-  ProblemResolverStore problemResolverStore(
-      List<? extends ProblemResolver> problemResolvers, ProblemProperties properties) {
-    ProblemResolverStore problemResolverStore = new DefaultProblemResolverStore(problemResolvers);
-
-    if (properties.getResolverCaching().isEnabled()) {
-      problemResolverStore = new CachingProblemResolverStore(problemResolverStore);
-    }
-
-    return problemResolverStore;
   }
 
   /**
@@ -202,79 +156,5 @@ public class ProblemAutoConfiguration {
         .methodValidationResultSupport(methodValidationResultSupport::getIfAvailable)
         .methodParameterSupport(methodParameterSupport::getIfAvailable)
         .build();
-  }
-
-  /** Configuration for JSON support in Problem serialization. */
-  @ConditionalOnClass({JsonMapperBuilderCustomizer.class, JsonMapper.class})
-  @Configuration(proxyBeanMethods = false)
-  static class ProblemJsonMapperConfiguration {
-
-    /** Creates a new instance of this configuration. */
-    ProblemJsonMapperConfiguration() {}
-
-    /**
-     * Creates a {@link ProblemJsonMapperBuilderCustomizer} to add the {@code ProblemJacksonMixIn}
-     * to the JSON mapper for consistent Problem serialization.
-     *
-     * @return a new ProblemJsonMapperBuilderCustomizer bean
-     * @see io.github.problem4j.jackson3.ProblemJacksonMixIn
-     */
-    @ConditionalOnMissingBean(ProblemJsonMapperBuilderCustomizer.class)
-    @Bean
-    ProblemJsonMapperBuilderCustomizer problemJsonMapperBuilderCustomizer() {
-      return new ProblemJsonMapperBuilderCustomizer();
-    }
-  }
-
-  /** Configuration for XML support in Problem serialization. */
-  @ConditionalOnClass({XmlMapperBuilderCustomizer.class, XmlMapper.class})
-  @Configuration(proxyBeanMethods = false)
-  static class ProblemXmlMapperConfiguration {
-
-    /** Creates a new instance of this configuration. */
-    ProblemXmlMapperConfiguration() {}
-
-    /**
-     * Creates a {@link ProblemXmlMapperBuilderCustomizer} to add the {@code ProblemJacksonMixIn} to
-     * the XML mapper for consistent Problem serialization.
-     *
-     * @return a new ProblemJsonMapperBuilderCustomizer bean
-     * @see io.github.problem4j.jackson3.ProblemJacksonMixIn
-     */
-    @ConditionalOnMissingBean(ProblemXmlMapperBuilderCustomizer.class)
-    @Bean
-    ProblemXmlMapperBuilderCustomizer problemXmlMapperBuilderCustomizer() {
-      return new ProblemXmlMapperBuilderCustomizer();
-    }
-  }
-
-  /**
-   * If Jackson2 is present on the classpath, configures a {@link ProblemModule} bean. Note that
-   * Spring Boot 4 does not include Jackson2 by default. To make it work, add {@code
-   * spring-boot-jackson2} dependency manually.
-   *
-   * @see <a
-   *     href="https://github.com/spring-projects/spring-boot/blob/v4.0.0/module/spring-boot-jackson2/src/main/java/org/springframework/boot/jackson2/autoconfigure/Jackson2AutoConfiguration.java#L86">
-   *     <code>Jackson2AutoConfiguration</code></a>
-   * @deprecated since 2.0.0 as Spring Boot team plans to remove Jackson 2 legacy support in 4.2.0
-   */
-  @ConditionalOnClass({ProblemModule.class, Module.class})
-  @Configuration(proxyBeanMethods = false)
-  @Deprecated(since = "2.0.0", forRemoval = true)
-  static class ProblemJackson2ModuleConfiguration {
-
-    /** Creates a new instance of this configuration. */
-    ProblemJackson2ModuleConfiguration() {}
-
-    /**
-     * Provides a {@link ProblemModule} if none is defined.
-     *
-     * @return a new {@link ProblemModule}
-     */
-    @ConditionalOnMissingBean(ProblemModule.class)
-    @Bean
-    ProblemModule problemJackson2Module() {
-      return new ProblemModule();
-    }
   }
 }

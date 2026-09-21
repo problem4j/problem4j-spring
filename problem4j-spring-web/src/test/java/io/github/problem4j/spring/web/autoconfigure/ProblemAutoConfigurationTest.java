@@ -35,7 +35,7 @@ class ProblemAutoConfigurationTest {
     private ProblemAutoConfiguration problemAutoConfiguration;
 
     @Autowired(required = false)
-    private ProblemParameterConfiguration problemParameterConfiguration;
+    private ProblemWebAutoConfiguration problemWebAutoConfiguration;
 
     @Autowired(required = false)
     private ProblemResolverConfiguration problemResolverConfiguration;
@@ -46,7 +46,7 @@ class ProblemAutoConfigurationTest {
     @Test
     void contextLoads() {
       assertThat(problemAutoConfiguration).isNotNull();
-      assertThat(problemParameterConfiguration).isNotNull();
+      assertThat(problemWebAutoConfiguration).isNotNull();
       assertThat(problemResolverConfiguration).isNotNull();
 
       assertThat(properties).isNotNull();
@@ -64,7 +64,7 @@ class ProblemAutoConfigurationTest {
     private ProblemAutoConfiguration problemAutoConfiguration;
 
     @Autowired(required = false)
-    private ProblemParameterConfiguration problemParameterConfiguration;
+    private ProblemWebAutoConfiguration problemWebAutoConfiguration;
 
     @Autowired(required = false)
     private ProblemResolverConfiguration problemResolverConfiguration;
@@ -75,7 +75,7 @@ class ProblemAutoConfigurationTest {
     @Test
     void contextLoadsWithoutProblemConfiguration() {
       assertThat(problemAutoConfiguration).isNull();
-      assertThat(problemParameterConfiguration).isNull();
+      assertThat(problemWebAutoConfiguration).isNull();
       assertThat(problemResolverConfiguration).isNull();
 
       assertThat(properties).isNull();

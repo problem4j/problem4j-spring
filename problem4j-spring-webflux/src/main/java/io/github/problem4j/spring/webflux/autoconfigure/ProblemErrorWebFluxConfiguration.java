@@ -21,7 +21,6 @@ import io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.webflux.error.DefaultErrorAttributes;
 import org.springframework.boot.webflux.error.ErrorAttributes;
@@ -45,7 +44,6 @@ import org.springframework.web.reactive.result.view.ViewResolver;
 @ConditionalOnBooleanProperty(
     name = "problem4j.webflux.error-web-exception-handler.enabled",
     matchIfMissing = true)
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 @Configuration(proxyBeanMethods = false)
 class ProblemErrorWebFluxConfiguration {
 
