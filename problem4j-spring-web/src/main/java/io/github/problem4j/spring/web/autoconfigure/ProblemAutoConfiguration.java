@@ -195,12 +195,13 @@ public class ProblemAutoConfiguration {
       ObjectProvider<BindingResultSupport> bindingResultSupport,
       ObjectProvider<MethodValidationResultSupport> methodValidationResultSupport,
       ObjectProvider<MethodParameterSupport> methodParameterSupport) {
-    return new ProblemBeanPostProcessor(
-        problemFormat,
-        typeNameMapper,
-        bindingResultSupport,
-        methodValidationResultSupport,
-        methodParameterSupport);
+    return ProblemBeanPostProcessor.builder()
+        .problemFormat(problemFormat::getIfAvailable)
+        .typeNameMapper(typeNameMapper::getIfAvailable)
+        .bindingResultSupport(bindingResultSupport::getIfAvailable)
+        .methodValidationResultSupport(methodValidationResultSupport::getIfAvailable)
+        .methodParameterSupport(methodParameterSupport::getIfAvailable)
+        .build();
   }
 
   /** Configuration for JSON support in Problem serialization. */

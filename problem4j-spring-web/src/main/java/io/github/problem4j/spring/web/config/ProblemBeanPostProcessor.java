@@ -27,15 +27,8 @@ import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupportAware;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupportAware;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.function.Supplier;
 import org.jspecify.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.aop.support.AopUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
@@ -44,8 +37,8 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
  * construction.
  *
  * <p>This lets each {@code ProblemResolver} be created with its default (no-arg) constructor - the
- * dependencies it needs are pushed in afterwards instead of being threaded through constructors.
- * The following callbacks are handled:
+ * dependencies it needs are pushed in afterward instead of being threaded through constructors. The
+ * following callbacks are handled:
  *
  * <ul>
  *   <li>{@link ProblemFormatAware} - configured with the {@link ProblemFormat} bean
@@ -57,147 +50,109 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
  *       bean
  * </ul>
  *
- * <p>Every collaborator is taken via an {@link ObjectProvider} (resolved lazily, on first use)
- * rather than direct constructor injection, so that registering this processor as a bean does not
- * force early instantiation of the collaborator beans. A provider is only queried when a bean
- * actually implements the matching callback interface.
+ * <p>Every collaborator is taken via a {@link Supplier} (resolved lazily, on first use, e.g. {@code
+ * ObjectProvider::getIfAvailable}) rather than direct constructor injection, so that registering
+ * this processor as a bean does not force early instantiation of the collaborator beans. A supplier
+ * is only queried when a bean actually implements the matching callback interface, and a {@code
+ * null} result leaves the bean untouched.
  *
  * <p>Beans that implement none of the callbacks are skipped with a single {@link
  * ProblemSupportAware} {@code instanceof} check, since every callback extends it.
  *
  * @since 3.1.0
  */
-public class ProblemBeanPostProcessor implements BeanPostProcessor {
-
-  private static final Logger log = LoggerFactory.getLogger(ProblemBeanPostProcessor.class);
-
-  private final ObjectProvider<ProblemFormat> problemFormat;
-  private final ObjectProvider<TypeNameMapper> typeNameMapper;
-  private final ObjectProvider<BindingResultSupport> bindingResultSupport;
-  private final ObjectProvider<MethodValidationResultSupport> methodValidationResultSupport;
-  private final ObjectProvider<MethodParameterSupport> methodParameterSupport;
+public interface ProblemBeanPostProcessor extends BeanPostProcessor {
 
   /**
-   * Creates a new {@link ProblemBeanPostProcessor}.
+   * Creates a new {@link Builder} for {@link ProblemBeanPostProcessor}. Every collaborator supplier
+   * defaults to one returning {@code null}, so a bean implementing the matching callback is left
+   * untouched unless the supplier is set.
    *
-   * @param problemFormat provider for the container's {@link ProblemFormat} bean
-   * @param typeNameMapper provider for the container's {@link TypeNameMapper} bean
-   * @param bindingResultSupport provider for the container's {@link BindingResultSupport} bean
-   * @param methodValidationResultSupport provider for the container's {@link
-   *     MethodValidationResultSupport} bean
-   * @param methodParameterSupport provider for the container's {@link MethodParameterSupport} bean
+   * @return a new {@link Builder}
    * @since 3.1.0
    */
-  public ProblemBeanPostProcessor(
-      ObjectProvider<ProblemFormat> problemFormat,
-      ObjectProvider<TypeNameMapper> typeNameMapper,
-      ObjectProvider<BindingResultSupport> bindingResultSupport,
-      ObjectProvider<MethodValidationResultSupport> methodValidationResultSupport,
-      ObjectProvider<MethodParameterSupport> methodParameterSupport) {
-    this.problemFormat = problemFormat;
-    this.typeNameMapper = typeNameMapper;
-    this.bindingResultSupport = bindingResultSupport;
-    this.methodValidationResultSupport = methodValidationResultSupport;
-    this.methodParameterSupport = methodParameterSupport;
+  static Builder builder() {
+    return new DefaultProblemBeanPostProcessor.DefaultBuilder();
   }
 
   /**
-   * Invokes every {@code *Aware} callback the given bean implements with the corresponding
-   * container bean.
+   * Apply this {@link ProblemBeanPostProcessor} to the given new bean instance.
    *
-   * @param bean the newly constructed bean
+   * @param bean the new bean instance
    * @param beanName the name of the bean
-   * @return {@code bean}, unchanged
-   * @throws BeansException never thrown by this implementation
+   * @return the bean instance to use, either the original or a modified one
    * @since 3.1.0
    */
   @Override
-  public @Nullable Object postProcessBeforeInitialization(Object bean, String beanName)
-      throws BeansException {
-    if (!(bean instanceof ProblemSupportAware)) {
-      return bean;
-    }
+  Object postProcessBeforeInitialization(Object bean, String beanName);
 
-    List<String> auditLog = new ArrayList<>(5);
-    maybeAddProblemFormatAware(bean, auditLog);
-    maybeAddTypeNameMapper(bean, auditLog);
-    maybeAddBindingResultSupport(bean, auditLog);
-    maybeAddMethodValidationResultSupport(bean, auditLog);
-    maybeAddMethodParameterSupport(bean, auditLog);
+  /**
+   * Builder for {@link ProblemBeanPostProcessor}. Every collaborator supplier not set explicitly
+   * returns {@code null}.
+   *
+   * @since 3.1.0
+   */
+  interface Builder {
 
-    if (log.isDebugEnabled() && !auditLog.isEmpty()) {
-      log.debug("Enhanced {} bean with {}", beanName, asLogLine(auditLog));
-    }
-    return bean;
-  }
+    /**
+     * Sets the supplier of the {@link ProblemFormat} bean.
+     *
+     * @param problemFormat supplier of the {@link ProblemFormat} bean
+     * @return this builder
+     * @throws NullPointerException if {@code problemFormat} is {@code null}
+     * @since 3.1.0
+     */
+    Builder problemFormat(Supplier<@Nullable ProblemFormat> problemFormat);
 
-  private void maybeAddProblemFormatAware(Object bean, List<String> auditLog) {
-    if (bean instanceof ProblemFormatAware aware) {
-      Optional.ofNullable(problemFormat.getIfAvailable())
-          .ifPresent(
-              object -> {
-                saveAuditLog(auditLog, object);
-                aware.setProblemFormat(object);
-              });
-    }
-  }
+    /**
+     * Sets the supplier of the {@link TypeNameMapper} bean.
+     *
+     * @param typeNameMapper supplier of the {@link TypeNameMapper} bean
+     * @return this builder
+     * @throws NullPointerException if {@code typeNameMapper} is {@code null}
+     * @since 3.1.0
+     */
+    Builder typeNameMapper(Supplier<@Nullable TypeNameMapper> typeNameMapper);
 
-  private void maybeAddTypeNameMapper(Object bean, List<String> auditLog) {
-    if (bean instanceof TypeNameMapperAware aware) {
-      Optional.ofNullable(typeNameMapper.getIfAvailable())
-          .ifPresent(
-              object -> {
-                saveAuditLog(auditLog, object);
-                aware.setTypeNameMapper(object);
-              });
-    }
-  }
+    /**
+     * Sets the supplier of the {@link BindingResultSupport} bean.
+     *
+     * @param bindingResultSupport supplier of the {@link BindingResultSupport} bean
+     * @return this builder
+     * @throws NullPointerException if {@code bindingResultSupport} is {@code null}
+     * @since 3.1.0
+     */
+    Builder bindingResultSupport(Supplier<@Nullable BindingResultSupport> bindingResultSupport);
 
-  private void maybeAddBindingResultSupport(Object bean, List<String> auditLog) {
-    if (bean instanceof BindingResultSupportAware aware) {
-      Optional.ofNullable(bindingResultSupport.getIfAvailable())
-          .ifPresent(
-              object -> {
-                saveAuditLog(auditLog, object);
-                aware.setBindingResultSupport(object);
-              });
-    }
-  }
+    /**
+     * Sets the supplier of the {@link MethodValidationResultSupport} bean.
+     *
+     * @param methodValidationResultSupport supplier of the {@link MethodValidationResultSupport}
+     *     bean
+     * @return this builder
+     * @throws NullPointerException if {@code methodValidationResultSupport} is {@code null}
+     * @since 3.1.0
+     */
+    Builder methodValidationResultSupport(
+        Supplier<@Nullable MethodValidationResultSupport> methodValidationResultSupport);
 
-  private void maybeAddMethodValidationResultSupport(Object bean, List<String> auditLog) {
-    if (bean instanceof MethodValidationResultSupportAware aware) {
-      Optional.ofNullable(methodValidationResultSupport.getIfAvailable())
-          .ifPresent(
-              object -> {
-                saveAuditLog(auditLog, object);
-                aware.setMethodValidationResultSupport(object);
-              });
-    }
-  }
+    /**
+     * Sets the supplier of the {@link MethodParameterSupport} bean.
+     *
+     * @param methodParameterSupport supplier of the {@link MethodParameterSupport} bean
+     * @return this builder
+     * @throws NullPointerException if {@code methodParameterSupport} is {@code null}
+     * @since 3.1.0
+     */
+    Builder methodParameterSupport(
+        Supplier<@Nullable MethodParameterSupport> methodParameterSupport);
 
-  private void maybeAddMethodParameterSupport(Object bean, List<String> auditLog) {
-    if (bean instanceof MethodParameterSupportAware aware) {
-      Optional.ofNullable(methodParameterSupport.getIfAvailable())
-          .ifPresent(
-              object -> {
-                saveAuditLog(auditLog, object);
-                aware.setMethodParameterSupport(object);
-              });
-    }
-  }
-
-  private void saveAuditLog(List<String> auditLog, Object bean) {
-    auditLog.add(AopUtils.getTargetClass(bean).getSimpleName());
-  }
-
-  private String asLogLine(List<String> auditLog) {
-    return switch (auditLog.size()) {
-      case 1 -> auditLog.get(0);
-      case 2 -> String.join(" and ", auditLog);
-      default ->
-          String.join(", ", auditLog.subList(0, auditLog.size() - 1))
-              + " and "
-              + auditLog.get(auditLog.size() - 1);
-    };
+    /**
+     * Builds a new {@link ProblemBeanPostProcessor} from the configured suppliers.
+     *
+     * @return a new {@link ProblemBeanPostProcessor}
+     * @since 3.1.0
+     */
+    ProblemBeanPostProcessor build();
   }
 }

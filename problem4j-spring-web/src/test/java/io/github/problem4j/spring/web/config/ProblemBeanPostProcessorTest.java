@@ -17,6 +17,7 @@
 package io.github.problem4j.spring.web.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -37,6 +38,7 @@ import io.github.problem4j.spring.web.parameter.MethodValidationResultSupportAwa
 import io.github.problem4j.spring.web.parameter.Violation;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
@@ -44,7 +46,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.MethodParameter;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.method.MethodValidationResult;
@@ -59,12 +60,13 @@ class ProblemBeanPostProcessorTest {
   private final MethodParameterSupport methodParameterSupport = parameter -> Optional.empty();
 
   private final ProblemBeanPostProcessor processor =
-      new ProblemBeanPostProcessor(
-          objectProvider(problemFormat),
-          objectProvider(typeNameMapper),
-          objectProvider(bindingResultSupport),
-          objectProvider(methodValidationResultSupport),
-          objectProvider(methodParameterSupport));
+      ProblemBeanPostProcessor.builder()
+          .problemFormat(supplier(problemFormat))
+          .typeNameMapper(supplier(typeNameMapper))
+          .bindingResultSupport(supplier(bindingResultSupport))
+          .methodValidationResultSupport(supplier(methodValidationResultSupport))
+          .methodParameterSupport(supplier(methodParameterSupport))
+          .build();
 
   @Test
   void givenBeanImplementingEveryAwareInterface_whenPostProcess_thenInjectsEveryCollaborator() {
@@ -101,14 +103,15 @@ class ProblemBeanPostProcessorTest {
   }
 
   @Test
-  void givenNonAwareBean_whenPostProcess_thenNoCollaboratorProviderQueried() {
+  void givenNonAwareBean_whenPostProcess_thenNoCollaboratorSupplierQueried() {
     ProblemBeanPostProcessor failing =
-        new ProblemBeanPostProcessor(
-            failingProvider(),
-            failingProvider(),
-            failingProvider(),
-            failingProvider(),
-            failingProvider());
+        ProblemBeanPostProcessor.builder()
+            .problemFormat(failingSupplier())
+            .typeNameMapper(failingSupplier())
+            .bindingResultSupport(failingSupplier())
+            .methodValidationResultSupport(failingSupplier())
+            .methodParameterSupport(failingSupplier())
+            .build();
     Object bean = new Object();
 
     Object result = failing.postProcessBeforeInitialization(bean, "bean");
@@ -117,14 +120,15 @@ class ProblemBeanPostProcessorTest {
   }
 
   @Test
-  void givenAwareBeanForAbsentCollaborator_whenPostProcess_thenProviderForPresentOnesUntouched() {
+  void givenAwareBeanForAbsentCollaborator_whenPostProcess_thenOtherSuppliersNotQueried() {
     ProblemBeanPostProcessor partial =
-        new ProblemBeanPostProcessor(
-            objectProvider(problemFormat),
-            failingProvider(),
-            failingProvider(),
-            failingProvider(),
-            failingProvider());
+        ProblemBeanPostProcessor.builder()
+            .problemFormat(supplier(problemFormat))
+            .typeNameMapper(failingSupplier())
+            .bindingResultSupport(failingSupplier())
+            .methodValidationResultSupport(failingSupplier())
+            .methodParameterSupport(failingSupplier())
+            .build();
     StubProblemFormatAware bean = new StubProblemFormatAware();
 
     partial.postProcessBeforeInitialization(bean, "bean");
@@ -133,10 +137,15 @@ class ProblemBeanPostProcessorTest {
   }
 
   @Test
-  void givenAllCollaboratorProvidersEmpty_whenPostProcess_thenNoCollaboratorInjected() {
+  void givenAllCollaboratorSuppliersEmpty_whenPostProcess_thenNoCollaboratorInjected() {
     ProblemBeanPostProcessor empty =
-        new ProblemBeanPostProcessor(
-            emptyProvider(), emptyProvider(), emptyProvider(), emptyProvider(), emptyProvider());
+        ProblemBeanPostProcessor.builder()
+            .problemFormat(emptySupplier())
+            .typeNameMapper(emptySupplier())
+            .bindingResultSupport(emptySupplier())
+            .methodValidationResultSupport(emptySupplier())
+            .methodParameterSupport(emptySupplier())
+            .build();
     StubAware bean = new StubAware();
 
     Object result = empty.postProcessBeforeInitialization(bean, "bean");
@@ -149,19 +158,66 @@ class ProblemBeanPostProcessorTest {
     assertThat(bean.methodParameterSupport).isNull();
   }
 
+  @Test
+  void givenBuilderWithoutSuppliers_whenPostProcess_thenNoCollaboratorInjected() {
+    ProblemBeanPostProcessor defaults = ProblemBeanPostProcessor.builder().build();
+    StubAware bean = new StubAware();
+
+    Object result = defaults.postProcessBeforeInitialization(bean, "bean");
+
+    assertThat(result).isSameAs(bean);
+    assertThat(bean.problemFormat).isNull();
+    assertThat(bean.typeNameMapper).isNull();
+    assertThat(bean.bindingResultSupport).isNull();
+    assertThat(bean.methodValidationResultSupport).isNull();
+    assertThat(bean.methodParameterSupport).isNull();
+  }
+
+  @Test
+  void givenBuilderWithOnlyOneSupplier_whenPostProcess_thenInjectsOnlyThatCollaborator() {
+    ProblemBeanPostProcessor partial =
+        ProblemBeanPostProcessor.builder().typeNameMapper(supplier(typeNameMapper)).build();
+    StubAware bean = new StubAware();
+
+    partial.postProcessBeforeInitialization(bean, "bean");
+
+    assertThat(bean.typeNameMapper).isSameAs(typeNameMapper);
+    assertThat(bean.problemFormat).isNull();
+    assertThat(bean.bindingResultSupport).isNull();
+    assertThat(bean.methodValidationResultSupport).isNull();
+    assertThat(bean.methodParameterSupport).isNull();
+  }
+
+  @SuppressWarnings("NullAway")
+  @Test
+  void givenNullSupplier_whenSetOnBuilder_thenThrowsNullPointerException() {
+    ProblemBeanPostProcessor.Builder builder = ProblemBeanPostProcessor.builder();
+
+    assertThatThrownBy(() -> builder.problemFormat(null)).isInstanceOf(NullPointerException.class);
+    assertThatThrownBy(() -> builder.typeNameMapper(null)).isInstanceOf(NullPointerException.class);
+    assertThatThrownBy(() -> builder.bindingResultSupport(null))
+        .isInstanceOf(NullPointerException.class);
+    assertThatThrownBy(() -> builder.methodValidationResultSupport(null))
+        .isInstanceOf(NullPointerException.class);
+    assertThatThrownBy(() -> builder.methodParameterSupport(null))
+        .isInstanceOf(NullPointerException.class);
+  }
+
   @Nested
   class DebugLogging {
 
-    private final Logger logger = (Logger) LoggerFactory.getLogger(ProblemBeanPostProcessor.class);
+    private final Logger logger =
+        (Logger) LoggerFactory.getLogger(DefaultProblemBeanPostProcessor.class);
     private final ListAppender<ILoggingEvent> appender = new ListAppender<>();
 
     private final ProblemBeanPostProcessor debugProcessor =
-        new ProblemBeanPostProcessor(
-            objectProvider(new NamedProblemFormat()),
-            objectProvider(new NamedTypeNameMapper()),
-            objectProvider(new NamedBindingResultSupport()),
-            objectProvider(new NamedMethodValidationResultSupport()),
-            objectProvider(new NamedMethodParameterSupport()));
+        ProblemBeanPostProcessor.builder()
+            .problemFormat(supplier(new NamedProblemFormat()))
+            .typeNameMapper(supplier(new NamedTypeNameMapper()))
+            .bindingResultSupport(supplier(new NamedBindingResultSupport()))
+            .methodValidationResultSupport(supplier(new NamedMethodValidationResultSupport()))
+            .methodParameterSupport(supplier(new NamedMethodParameterSupport()))
+            .build();
 
     @BeforeEach
     void attachAppender() {
@@ -219,36 +275,18 @@ class ProblemBeanPostProcessorTest {
     }
   }
 
-  private static <T> ObjectProvider<T> objectProvider(T value) {
-    return new ObjectProvider<>() {
-      @Override
-      public T getObject() {
-        return value;
-      }
+  private static <T> Supplier<@Nullable T> supplier(T value) {
+    return () -> value;
+  }
+
+  private static <T> Supplier<@Nullable T> failingSupplier() {
+    return () -> {
+      throw new AssertionError("collaborator should not be queried");
     };
   }
 
-  private static <T> ObjectProvider<T> failingProvider() {
-    return new ObjectProvider<>() {
-      @Override
-      public T getObject() {
-        throw new AssertionError("collaborator should not be queried");
-      }
-    };
-  }
-
-  private static <T> ObjectProvider<T> emptyProvider() {
-    return new ObjectProvider<>() {
-      @Override
-      public T getObject() {
-        throw new AssertionError("collaborator should not be queried");
-      }
-
-      @Override
-      public @Nullable T getIfAvailable() {
-        return null;
-      }
-    };
+  private static <T> Supplier<@Nullable T> emptySupplier() {
+    return () -> null;
   }
 
   @NullMarked
