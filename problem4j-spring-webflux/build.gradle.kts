@@ -10,11 +10,13 @@ dependencies {
     // Main
     api(project(":problem4j-spring-web"))
 
+    compileOnly(platform(libs.kotlin.bom))
     compileOnly(platform(libs.spring.boot.dependencies))
     compileOnly(libs.spring.boot.autoconfigure)
     compileOnly(libs.spring.boot.webflux)
 
     compileOnly(libs.jakarta.validation.api)
+    compileOnly(libs.kotlin.stdlib)
     compileOnly(libs.slf4j.api)
 
     annotationProcessor(platform(libs.spring.boot.dependencies))
@@ -22,8 +24,8 @@ dependencies {
     annotationProcessor(libs.spring.boot.configuration.processor)
 
     // Test
-    testImplementation(platform(libs.spring.boot.dependencies))
     testImplementation(platform(libs.kotlin.bom))
+    testImplementation(platform(libs.spring.boot.dependencies))
     testImplementation(libs.spring.boot.starter.webflux)
     testImplementation(libs.spring.boot.starter.webflux.test)
     testImplementation(libs.spring.boot.validation)

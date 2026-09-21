@@ -12,6 +12,7 @@ dependencies {
     api(libs.problem4j.core)
     api(libs.problem4j.jackson3)
 
+    compileOnly(platform(libs.kotlin.bom))
     compileOnly(platform(libs.spring.boot.dependencies))
     compileOnly(libs.spring.boot.autoconfigure)
     compileOnly(libs.spring.boot.jackson)
@@ -32,8 +33,8 @@ dependencies {
     annotationProcessor(libs.spring.boot.configuration.processor)
 
     // Test
-    testImplementation(platform(libs.spring.boot.dependencies))
     testImplementation(platform(libs.kotlin.bom))
+    testImplementation(platform(libs.spring.boot.dependencies))
     testImplementation(libs.spring.boot.starter.test)
     testImplementation(libs.spring.boot.jackson)
     testImplementation(libs.spring.boot.web.server)

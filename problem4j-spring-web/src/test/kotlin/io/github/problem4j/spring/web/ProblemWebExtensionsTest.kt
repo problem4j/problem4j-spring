@@ -23,7 +23,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 
-class ProblemExtensionsTest {
+class ProblemWebExtensionsTest {
 
   @Test
   fun givenBlock_whenBuildingProblem_thenPropertiesAreApplied() {

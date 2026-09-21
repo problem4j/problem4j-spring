@@ -47,7 +47,7 @@ import org.springframework.http.HttpStatusCode
  * @since 3.1.0
  */
 public inline fun <reified E : Exception> problemResolver(
-    noinline resolve: ProblemBuilderSpec.(ProblemContext, E) -> Unit,
+    crossinline resolve: ProblemBuilderSpec.(ProblemContext, E) -> Unit,
 ): ProblemResolver =
     object : AbstractProblemResolver(E::class.java) {
       override fun resolve(
@@ -55,7 +55,7 @@ public inline fun <reified E : Exception> problemResolver(
           ex: Exception,
           headers: HttpHeaders,
           status: HttpStatusCode,
-      ) = Problem.builder().status(status.value()).build { resolve(context, ex as E) }
+      ): Problem = Problem.builder().status(status.value()).build { resolve(context, ex as E) }
     }
 
 /**
@@ -81,7 +81,7 @@ public inline fun <reified E : Exception> problemResolver(
  * @since 3.1.0
  */
 public inline fun <reified E : Exception> problemResolver(
-    noinline resolve: ProblemBuilderSpec.(E) -> Unit,
+    crossinline resolve: ProblemBuilderSpec.(E) -> Unit,
 ): ProblemResolver =
     object : AbstractProblemResolver(E::class.java) {
       override fun resolve(
@@ -89,5 +89,5 @@ public inline fun <reified E : Exception> problemResolver(
           ex: Exception,
           headers: HttpHeaders,
           status: HttpStatusCode,
-      ) = Problem.builder().status(status.value()).build { resolve(ex as E) }
+      ): Problem = Problem.builder().status(status.value()).build { resolve(ex as E) }
     }
