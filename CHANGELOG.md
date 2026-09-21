@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   corresponding Problem4J collaborator from `ProblemBeanPostProcessor` after construction.
 - Add `problem4j-gson` version `1.0.0` to `problem4j-spring-bom`.
 - Add Kotlin extensions and DSL functions for common Problem4J classes.
+- Add Kotlin `Problem.copy { ... }` extension, creating a modified copy of a `Problem` through a builder DSL.
 
 ### Changed
 

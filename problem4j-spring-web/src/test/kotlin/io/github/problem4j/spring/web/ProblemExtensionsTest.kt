@@ -20,76 +20,72 @@ import io.github.problem4j.core.Problem
 import io.github.problem4j.core.ProblemContext
 import java.net.URI
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 
 class ProblemExtensionsTest {
 
   @Test
-  fun givenStatusAndBlock_whenBuildingProblem_thenPropertiesAreApplied() {
-    val result = problem(400) { detail("bad input") }
+  fun givenBlock_whenBuildingProblem_thenPropertiesAreApplied() {
+    val result = buildProblem {
+      status(400)
+      detail("bad input")
+    }
 
     assertThat(result.status).isEqualTo(400)
     assertThat(result.detail).isEqualTo("bad input")
   }
 
   @Test
-  fun givenNoBlock_whenBuildingProblem_thenOnlyStatusIsSet() {
-    val result = problem(400)
+  fun givenEmptyBlock_whenBuildingProblem_thenNoPropertiesAreSet() {
+    val result = buildProblem {}
 
-    assertThat(result.status).isEqualTo(400)
+    assertThat(result.status).isZero()
     assertThat(result.detail).isNull()
+    assertThat(result.extensions).isEmpty()
   }
 
   @Test
   fun givenMultipleStatements_whenBuildingProblem_thenAllPropertiesAreApplied() {
-    val result =
-        problem(400) {
-          title("Bad Request")
-          detail("bad input")
-        }
+    val result = buildProblem {
+      title("Bad Request")
+      status(400)
+      detail("bad input")
+    }
 
     assertThat(result.title).isEqualTo("Bad Request")
     assertThat(result.detail).isEqualTo("bad input")
   }
 
   @Test
-  fun givenHttpStatusCode_whenBuildingProblem_thenPropertiesAreApplied() {
-    val result = problem(HttpStatus.BAD_REQUEST) { detail("bad input") }
+  fun givenHttpStatusCodeInBlock_whenBuildingProblem_thenNumericStatusIsUsed() {
+    val result = buildProblem {
+      status(HttpStatus.BAD_REQUEST)
+      detail("bad input")
+    }
 
     assertThat(result.status).isEqualTo(400)
     assertThat(result.detail).isEqualTo("bad input")
   }
 
   @Test
-  fun givenHttpStatusCodeAndNoBlock_whenBuildingProblem_thenOnlyStatusIsSet() {
-    val result = problem(HttpStatus.BAD_REQUEST)
-
-    assertThat(result.status).isEqualTo(400)
-    assertThat(result.detail).isNull()
-  }
-
-  @Test
-  fun givenHttpStatusCode_whenSettingBuilderStatus_thenNumericStatusIsUsed() {
-    val result = problem(0) { status(HttpStatus.CONFLICT) }
-
-    assertThat(result.status).isEqualTo(409)
-  }
-
-  @Test
   fun givenVarargExtensions_whenAddingToBuilder_thenAllExtensionsArePresent() {
-    val result = problem(400) { extensions("field" to "email", "reason" to "blank") }
+    val result = buildProblem {
+      status(400)
+      extensions("field" to "email", "reason" to "blank")
+    }
 
     assertThat(result.extensions).containsEntry("field", "email").containsEntry("reason", "blank")
   }
 
   @Test
   fun givenStringTypeAndInstance_whenBuildingProblem_thenUrisAreApplied() {
-    val result =
-        problem(400) {
-          type("https://example.org/invalid")
-          instance("/users/1")
-        }
+    val result = buildProblem {
+      type("https://example.org/invalid")
+      status(400)
+      instance("/users/1")
+    }
 
     assertThat(result.type).isEqualTo(URI.create("https://example.org/invalid"))
     assertThat(result.instance).isEqualTo(URI.create("/users/1"))
@@ -97,11 +93,11 @@ class ProblemExtensionsTest {
 
   @Test
   fun givenUriTypeAndInstance_whenBuildingProblem_thenUrisAreApplied() {
-    val result =
-        problem(400) {
-          type(URI.create("https://example.org/invalid"))
-          instance(URI.create("/users/1"))
-        }
+    val result = buildProblem {
+      type(URI.create("https://example.org/invalid"))
+      status(400)
+      instance(URI.create("/users/1"))
+    }
 
     assertThat(result.type).isEqualTo(URI.create("https://example.org/invalid"))
     assertThat(result.instance).isEqualTo(URI.create("/users/1"))
@@ -109,33 +105,36 @@ class ProblemExtensionsTest {
 
   @Test
   fun givenNullTypeAndInstance_whenBuildingProblem_thenDefaultsAreKept() {
-    val result =
-        problem(400) {
-          type(null as String?)
-          instance(null as String?)
-        }
+    val result = buildProblem {
+      type(null as String?)
+      status(400)
+      instance(null as String?)
+    }
 
     assertThat(result.type).isEqualTo(Problem.BLANK_TYPE)
     assertThat(result.instance).isNull()
   }
 
   @Test
-  fun givenIntStatusInBlock_whenBuildingProblem_thenStatusIsOverridden() {
-    val result = problem(400) { status(409) }
+  fun givenStatusSetTwiceInBlock_whenBuildingProblem_thenLastStatusWins() {
+    val result = buildProblem {
+      status(400)
+      status(409)
+    }
 
     assertThat(result.status).isEqualTo(409)
   }
 
   @Test
   fun givenAllExtensionVariants_whenBuildingProblem_thenAllExtensionsArePresent() {
-    val result =
-        problem(400) {
-          extension("a", 1)
-          extension(Problem.extension("b", 2))
-          extensions(mapOf("c" to 3))
-          extensions(Problem.extension("d", 4), Problem.extension("e", 5))
-          extensions(listOf(Problem.extension("f", 6)))
-        }
+    val result = buildProblem {
+      status(400)
+      extension("a", 1)
+      extension(Problem.extension("b", 2))
+      extensions(mapOf("c" to 3))
+      extensions(Problem.extension("d", 4), Problem.extension("e", 5))
+      extensions(listOf(Problem.extension("f", 6)))
+    }
 
     assertThat(result.extensions)
         .containsEntry("a", 1)
@@ -144,6 +143,98 @@ class ProblemExtensionsTest {
         .containsEntry("d", 4)
         .containsEntry("e", 5)
         .containsEntry("f", 6)
+  }
+
+  @Test
+  fun givenExistingExtension_whenIndexingProblem_thenValueIsReturned() {
+    val result = buildProblem {
+      status(400)
+      extension("field", "email")
+      extension("count", 3)
+    }
+
+    assertThat(result["field"]).isEqualTo("email")
+    assertThat(result["count"]).isEqualTo(3)
+  }
+
+  @Test
+  fun givenMissingExtension_whenIndexingProblem_thenNullIsReturned() {
+    val result = buildProblem {
+      status(400)
+      extension("field", "email")
+    }
+
+    assertThat(result["reason"]).isNull()
+  }
+
+  @Test
+  fun givenNoExtensions_whenIndexingProblem_thenNullIsReturned() {
+    val result = buildProblem { status(400) }
+
+    assertThat(result["field"]).isNull()
+  }
+
+  @Test
+  fun givenMatchingType_whenReadingTypedExtension_thenValueIsReturned() {
+    val result = buildProblem {
+      status(400)
+      extension("attempts", 3)
+      extension("field", "email")
+    }
+
+    assertThat(result.extension<Int>("attempts")).isEqualTo(3)
+    assertThat(result.extension<String>("field")).isEqualTo("email")
+  }
+
+  @Test
+  fun givenMismatchedType_whenReadingTypedExtension_thenNullIsReturned() {
+    val result = buildProblem {
+      status(400)
+      extension("attempts", 3)
+    }
+
+    assertThat(result.extension<String>("attempts")).isNull()
+  }
+
+  @Test
+  fun givenMissingExtension_whenReadingTypedExtension_thenNullIsReturned() {
+    val result = buildProblem { status(400) }
+
+    assertThat(result.extension<String>("field")).isNull()
+  }
+
+  @Test
+  fun givenExistingExtension_whenCheckingContains_thenTrueIsReturned() {
+    val result = buildProblem {
+      status(400)
+      extension("field", "email")
+    }
+
+    assertThat("field" in result).isTrue()
+  }
+
+  @Test
+  fun givenMissingExtension_whenCheckingContains_thenFalseIsReturned() {
+    val result = buildProblem {
+      status(400)
+      extension("field", "email")
+    }
+
+    assertThat("reason" in result).isFalse()
+  }
+
+  @Test
+  fun givenKnownStatus_whenReadingHttpStatus_thenMatchingHttpStatusIsReturned() {
+    val result = buildProblem { status(400) }
+
+    assertThat(result.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
+  }
+
+  @Test
+  fun givenUnsetStatus_whenReadingHttpStatus_thenExceptionIsThrown() {
+    val result = buildProblem {}
+
+    assertThatThrownBy { result.httpStatus }.isInstanceOf(IllegalArgumentException::class.java)
   }
 
   @Test
@@ -164,6 +255,38 @@ class ProblemExtensionsTest {
   }
 
   @Test
+  fun givenKeyAndValue_whenSettingContextByIndex_thenValueIsStored() {
+    val context = ProblemContext.create()
+
+    context["userId"] = "12345"
+
+    assertThat(context.toMap()).containsEntry("userId", "12345")
+  }
+
+  @Test
+  fun givenNullValue_whenSettingContextByIndex_thenExistingValueIsRemoved() {
+    val context = ProblemContext.create().put("userId", "12345")
+
+    context["userId"] = null
+
+    assertThat(context.toMap()).doesNotContainKey("userId")
+  }
+
+  @Test
+  fun givenExistingKey_whenCheckingContextContains_thenTrueIsReturned() {
+    val context = ProblemContext.create().put("userId", "12345")
+
+    assertThat("userId" in context).isTrue()
+  }
+
+  @Test
+  fun givenMissingKey_whenCheckingContextContains_thenFalseIsReturned() {
+    val context = ProblemContext.create().put("userId", "12345")
+
+    assertThat("traceId" in context).isFalse()
+  }
+
+  @Test
   fun givenVarargPairEntriesWithNullValue_whenPuttingAllIntoContext_thenExistingValueIsRemoved() {
     val context = ProblemContext.create().put("userId", "12345")
 
@@ -174,13 +297,13 @@ class ProblemExtensionsTest {
 
   @Test
   fun givenProblem_whenCopyingWithChanges_thenChangesAreAppliedOverOriginalFields() {
-    val original =
-        problem(400) {
-          type("https://example.org/invalid")
-          title("Invalid Input")
-          detail("bad input")
-          extension("field", "email")
-        }
+    val original = buildProblem {
+      type("https://example.org/invalid")
+      title("Invalid Input")
+      status(400)
+      detail("bad input")
+      extension("field", "email")
+    }
 
     val result = original.copy {
       detail("still bad input")
@@ -196,7 +319,10 @@ class ProblemExtensionsTest {
 
   @Test
   fun givenProblem_whenCopying_thenOriginalIsUnchanged() {
-    val original = problem(400) { extension("field", "email") }
+    val original = buildProblem {
+      status(400)
+      extension("field", "email")
+    }
 
     original.copy {
       status(409)
@@ -209,7 +335,10 @@ class ProblemExtensionsTest {
 
   @Test
   fun givenProblem_whenCopyingWithEmptyBlock_thenCopyEqualsOriginal() {
-    val original = problem(400) { detail("bad input") }
+    val original = buildProblem {
+      status(400)
+      detail("bad input")
+    }
 
     val result = original.copy {}
 

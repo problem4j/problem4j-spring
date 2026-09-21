@@ -17,13 +17,14 @@
 package io.github.problem4j.spring.webflux.app.rest
 
 import io.github.problem4j.core.ProblemException
-import io.github.problem4j.spring.web.problem
+import io.github.problem4j.spring.web.buildProblem
 import io.github.problem4j.spring.webflux.app.problem.CoroutineException
 import io.github.problem4j.spring.webflux.app.problem.UnresolvableException
+import java.time.Duration
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.time.delay
 import kotlinx.coroutines.withContext
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -35,10 +36,11 @@ class CoroutineController {
 
   @GetMapping(path = ["/problem-exception"])
   suspend fun problemException(): String {
-    withContext(Dispatchers.Default) { delay(1) }
+    withContext(Dispatchers.Default) { delay(Duration.ofMillis(1)) }
     throw ProblemException(
-        problem(409) {
+        buildProblem {
           type("https://example.org/coroutine")
+          status(409)
           detail("coroutine conflict")
         }
     )
@@ -50,13 +52,13 @@ class CoroutineController {
 
   @GetMapping(path = ["/unresolvable"])
   suspend fun unresolvable(): String {
-    delay(1)
+    delay(Duration.ofMillis(1))
     throw UnresolvableException()
   }
 
   @GetMapping(path = ["/flow"])
   fun flow(): Flow<String> = flow {
-    delay(1)
+    delay(Duration.ofMillis(1))
     throw CoroutineException("flow failure")
   }
 }

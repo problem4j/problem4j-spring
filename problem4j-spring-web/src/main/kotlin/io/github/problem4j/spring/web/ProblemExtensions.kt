@@ -23,16 +23,17 @@ import java.net.URI
 import org.springframework.http.HttpStatusCode
 
 /**
- * Mutable DSL receiver used by [problem] functions. Exposes all configuration methods of
- * [ProblemBuilder] except `build()`, which is invoked by [problem] once the DSL block completes.
- * Each call in the block is applied, so methods do not need to be chained.
+ * Mutable DSL receiver used by [buildProblem] functions. Exposes all configuration methods of
+ * [ProblemBuilder] except `build()`, which is invoked by [buildProblem] once the DSL block
+ * completes. Each call in the block is applied, so methods do not need to be chained.
  *
  * Example:
  * ```
- * import io.github.problem4j.spring.web.problem
+ * import io.github.problem4j.spring.web.buildProblem
  *
- * val problem = problem(400) {
+ * val problem = buildProblem {
  *     title("Invalid Input")
+ *     status(400)
  *     detail("the provided email is invalid")
  *     extension("field", "email")
  * }
@@ -41,7 +42,7 @@ import org.springframework.http.HttpStatusCode
  * @since 3.1.0
  */
 @ProblemDslMarker
-public interface ProblemBuilderDsl {
+public interface ProblemBuilderSpec {
 
   /**
    * Sets the problem type URI, identifying the kind of problem.
@@ -71,7 +72,7 @@ public interface ProblemBuilderDsl {
   public fun title(title: String?)
 
   /**
-   * Sets the HTTP status code of the problem, overriding the one passed to [problem].
+   * Sets the HTTP status code of the problem.
    *
    * @param status numeric HTTP status code
    * @since 3.1.0
@@ -79,8 +80,7 @@ public interface ProblemBuilderDsl {
   public fun status(status: Int)
 
   /**
-   * Sets the HTTP status code of the problem from a Spring [HttpStatusCode], overriding the one
-   * passed to [problem].
+   * Sets the HTTP status code of the problem from a Spring [HttpStatusCode].
    *
    * @param status Spring HTTP status code
    * @since 3.1.0
@@ -164,7 +164,8 @@ public interface ProblemBuilderDsl {
    *
    * Example:
    * ```
-   * problem(400) {
+   * buildProblem {
+   *     status(400)
    *     extensions("field" to "email", "reason" to "blank")
    * }
    * ```
@@ -176,82 +177,135 @@ public interface ProblemBuilderDsl {
 }
 
 /**
- * Builds a [Problem] with the given HTTP [status].
+ * Builds a [Problem] using a [ProblemBuilderSpec] DSL.
  *
  * Example:
  * ```
- * import io.github.problem4j.spring.web.problem
+ * import io.github.problem4j.spring.web.buildProblem
  *
- * val problem = problem(400)
- * ```
- *
- * @param status HTTP status code for the resulting [Problem]
- * @return the built [Problem]
- * @since 3.1.0
- */
-public fun problem(status: Int): Problem = Problem.builder().status(status).build()
-
-/**
- * Builds a [Problem] with the given HTTP [status] using a [ProblemBuilderDsl] DSL.
- *
- * Example:
- * ```
- * import io.github.problem4j.spring.web.problem
- *
- * val problem = problem(400) {
+ * val problem = buildProblem {
  *     title("Invalid Input")
+ *     status(400)
  *     detail("the provided email is invalid")
  * }
  * ```
  *
- * @param status HTTP status code for the resulting [Problem]
  * @param block configures the builder
  * @return the built [Problem]
  * @since 3.1.0
  */
-public fun problem(status: Int, block: ProblemBuilderDsl.() -> Unit): Problem =
-    ProblemBuilderDslImpl(Problem.builder().status(status)).apply(block).build()
+public fun buildProblem(block: ProblemBuilderSpec.() -> Unit): Problem =
+    Problem.builder().build(block)
 
 /**
- * Builds a [Problem] with the given Spring [HttpStatusCode].
+ * Creates a copy of this [Problem] with the changes applied by a [ProblemBuilderSpec] DSL. The
+ * original [Problem] is left unchanged.
  *
  * Example:
  * ```
- * import io.github.problem4j.spring.web.problem
- * import org.springframework.http.HttpStatus
+ * import io.github.problem4j.spring.web.copy
+ * import io.github.problem4j.spring.web.buildProblem
  *
- * val problem = problem(HttpStatus.BAD_REQUEST)
- * ```
- *
- * @param status HTTP status code for the resulting [Problem]
- * @return the built [Problem]
- * @since 3.1.0
- */
-public fun problem(status: HttpStatusCode): Problem = problem(status.value())
-
-/**
- * Builds a [Problem] with the given Spring [HttpStatusCode] using a [ProblemBuilderDsl] DSL.
- *
- * Example:
- * ```
- * import io.github.problem4j.spring.web.problem
- * import org.springframework.http.HttpStatus
- *
- * val problem = problem(HttpStatus.BAD_REQUEST) {
- *     title("Invalid Input")
+ * val original = buildProblem {
+ *     status(400)
  *     detail("the provided email is invalid")
  * }
+ * val copy = original.copy { extension("field", "email") }
  * ```
  *
- * @param status HTTP status code for the resulting [Problem]
- * @param block configures the builder
- * @return the built [Problem]
+ * @param block configures the builder, pre-populated with the fields of this [Problem]
+ * @return the new [Problem]
  * @since 3.1.0
  */
-public fun problem(
-    status: HttpStatusCode,
-    block: ProblemBuilderDsl.() -> Unit,
-): Problem = problem(status.value(), block)
+public fun Problem.copy(block: ProblemBuilderSpec.() -> Unit): Problem = toBuilder().build(block)
+
+/**
+ * Returns the value of the extension with the given name, or `null` when no such extension is
+ * present.
+ *
+ * Example:
+ * ```
+ * import io.github.problem4j.spring.web.get
+ * import io.github.problem4j.spring.web.buildProblem
+ *
+ * val problem = buildProblem {
+ *     status(400)
+ *     extension("field", "email")
+ * }
+ * val field = problem["field"]
+ * // field == "email"
+ * ```
+ *
+ * @param name the extension key
+ * @return the extension value, or `null` when absent
+ * @since 3.1.0
+ */
+public operator fun Problem.get(name: String): Any? = extensions[name]
+
+/**
+ * Returns the value of the extension with the given name cast to [T], or `null` when no such
+ * extension is present or its value is not a [T].
+ *
+ * Example:
+ * ```
+ * import io.github.problem4j.spring.web.extension
+ * import io.github.problem4j.spring.web.buildProblem
+ *
+ * val problem = buildProblem {
+ *     status(400)
+ *     extension("attempts", 3)
+ * }
+ * val attempts = problem.extension<Int>("attempts")
+ * // attempts == 3
+ * ```
+ *
+ * @param name the extension key
+ * @param T expected type of the extension value
+ * @return the extension value, or `null` when absent or of another type
+ * @since 3.1.0
+ */
+public inline fun <reified T> Problem.extension(name: String): T? = extensions[name] as? T
+
+/**
+ * Checks whether an extension with the given name is present.
+ *
+ * Example:
+ * ```
+ * import io.github.problem4j.spring.web.contains
+ * import io.github.problem4j.spring.web.buildProblem
+ *
+ * val problem = buildProblem {
+ *     status(400)
+ *     extension("field", "email")
+ * }
+ * val hasField = "field" in problem
+ * // hasField == true
+ * ```
+ *
+ * @param name the extension key
+ * @return `true` when an extension with this name is present, `false` otherwise
+ * @since 3.1.0
+ */
+public operator fun Problem.contains(name: String): Boolean = extensions.containsKey(name)
+
+/**
+ * Returns the HTTP status of this problem as a Spring [HttpStatusCode].
+ *
+ * Example:
+ * ```
+ * import io.github.problem4j.spring.web.httpStatus
+ * import io.github.problem4j.spring.web.buildProblem
+ *
+ * val problem = buildProblem { status(400) }
+ * val status = problem.httpStatus
+ * // status == HttpStatus.BAD_REQUEST
+ * ```
+ *
+ * @throws IllegalArgumentException if the numeric status is not a valid HTTP status code
+ * @since 3.1.0
+ */
+public val Problem.httpStatus: HttpStatusCode
+  get() = HttpStatusCode.valueOf(status)
 
 /**
  * Sets the HTTP status for this builder from a Spring [HttpStatusCode].
@@ -354,16 +408,51 @@ public fun ProblemContext.putAll(vararg entries: Pair<String, String?>): Problem
     putAll(mapOf(*entries))
 
 /**
- * DSL marker for the [problem] builder blocks. Stops a nested block from implicitly calling a
- * method of an enclosing block's receiver, so each call in a nested `problem { }` always applies to
- * the innermost [ProblemBuilderDsl].
+ * Associates the given value with the given key, or unsets it when [value] is `null`.
+ *
+ * Example:
+ * ```
+ * import io.github.problem4j.core.ProblemContext
+ * import io.github.problem4j.spring.web.set
+ *
+ * val context = ProblemContext.create()
+ * context["userId"] = "12345"
+ * ```
+ *
+ * @param key the context key
+ * @param value the value to associate, or `null` to unset it
+ * @since 3.1.0
  */
-@DslMarker
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.BINARY)
-internal annotation class ProblemDslMarker
+public operator fun ProblemContext.set(key: String, value: String?) {
+  put(key, value)
+}
 
-private class ProblemBuilderDslImpl(private var builder: ProblemBuilder) : ProblemBuilderDsl {
+/**
+ * Checks whether the context contains a value for the given key.
+ *
+ * Example:
+ * ```
+ * import io.github.problem4j.core.ProblemContext
+ * import io.github.problem4j.spring.web.contains
+ *
+ * val context = ProblemContext.create().put("userId", "12345")
+ * val hasUserId = "userId" in context
+ * // hasUserId == true
+ * ```
+ *
+ * @param key the context key
+ * @return `true` when the context contains a value for this key, `false` otherwise
+ * @since 3.1.0
+ */
+public operator fun ProblemContext.contains(key: String): Boolean = containsKey(key)
+
+@PublishedApi
+internal fun ProblemBuilder.build(block: ProblemBuilderSpec.() -> Unit): Problem =
+    ProblemBuilderSpecImpl(this).apply(block).build()
+
+@DslMarker internal annotation class ProblemDslMarker
+
+private class ProblemBuilderSpecImpl(private var builder: ProblemBuilder) : ProblemBuilderSpec {
 
   override fun type(type: URI?) {
     builder = builder.type(type)

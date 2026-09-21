@@ -62,6 +62,7 @@ tasks.withType<KotlinCompile>().configureEach {
 tasks.named<KotlinCompile>("compileKotlin").configure {
     compilerOptions {
         jvmTarget = JvmTarget.fromTarget(javaTargetVersion.toString())
+        freeCompilerArgs.add("-Xjdk-release=$javaTargetVersion")
     }
 }
 
@@ -75,7 +76,7 @@ tasks.withType<Jar>().configureEach {
     }
     from("${rootProject.rootDir}/LICENSE") {
         into("META-INF/")
-        rename { "LICENSE.txt" }
+        rename { "$it.txt" }
     }
 }
 
