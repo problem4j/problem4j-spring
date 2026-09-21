@@ -289,25 +289,6 @@ public inline fun <reified T> Problem.extension(name: String): T? = extensions[n
 public operator fun Problem.contains(name: String): Boolean = extensions.containsKey(name)
 
 /**
- * Returns the HTTP status of this problem as a Spring [HttpStatusCode].
- *
- * Example:
- * ```
- * import io.github.problem4j.spring.web.httpStatus
- * import io.github.problem4j.spring.web.buildProblem
- *
- * val problem = buildProblem { status(400) }
- * val status = problem.httpStatus
- * // status == HttpStatus.BAD_REQUEST
- * ```
- *
- * @throws IllegalArgumentException if the numeric status is not a valid HTTP status code
- * @since 3.1.0
- */
-public val Problem.httpStatus: HttpStatusCode
-  get() = HttpStatusCode.valueOf(status)
-
-/**
  * Sets the HTTP status for this builder from a Spring [HttpStatusCode].
  *
  * Example:

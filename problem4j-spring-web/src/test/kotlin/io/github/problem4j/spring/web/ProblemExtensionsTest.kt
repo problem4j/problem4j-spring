@@ -20,7 +20,6 @@ import io.github.problem4j.core.Problem
 import io.github.problem4j.core.ProblemContext
 import java.net.URI
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 
@@ -221,20 +220,6 @@ class ProblemExtensionsTest {
     }
 
     assertThat("reason" in result).isFalse()
-  }
-
-  @Test
-  fun givenKnownStatus_whenReadingHttpStatus_thenMatchingHttpStatusIsReturned() {
-    val result = buildProblem { status(400) }
-
-    assertThat(result.httpStatus).isEqualTo(HttpStatus.BAD_REQUEST)
-  }
-
-  @Test
-  fun givenUnsetStatus_whenReadingHttpStatus_thenExceptionIsThrown() {
-    val result = buildProblem {}
-
-    assertThatThrownBy { result.httpStatus }.isInstanceOf(IllegalArgumentException::class.java)
   }
 
   @Test
