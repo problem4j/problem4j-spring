@@ -143,6 +143,48 @@ class ResolverValidatorTest {
         .hasMessageNotContaining("'lower'");
   }
 
+  @Test
+  void givenTiesForMultipleExceptionClasses_whenValidating_thenReportsAllTies() {
+    Map<String, ProblemResolver> resolvers =
+        resolvers(
+            "firstA", new OrderedResolver(FirstException.class, 1),
+            "firstB", new OrderedResolver(FirstException.class, 1),
+            "secondA", new UnorderedResolver(SecondException.class),
+            "secondB", new UnorderedResolver(SecondException.class));
+
+    assertThatThrownBy(() -> ResolverValidator.validate(resolvers))
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessage(
+            "Multiple ProblemResolver beans with equal order for "
+                + FirstException.class.getName()
+                + ": 'firstA' ("
+                + OrderedResolver.class.getName()
+                + "), 'firstB' ("
+                + OrderedResolver.class.getName()
+                + "); for "
+                + SecondException.class.getName()
+                + ": 'secondA' ("
+                + UnorderedResolver.class.getName()
+                + "), 'secondB' ("
+                + UnorderedResolver.class.getName()
+                + "). Use @Order or Ordered to set their precedence.");
+  }
+
+  @Test
+  void givenTieForOneExceptionClassAndUniqueWinnerForAnother_whenValidating_thenReportsOnlyTie() {
+    Map<String, ProblemResolver> resolvers =
+        resolvers(
+            "firstA", new OrderedResolver(FirstException.class, 1),
+            "firstB", new OrderedResolver(FirstException.class, 2),
+            "secondA", new UnorderedResolver(SecondException.class),
+            "secondB", new UnorderedResolver(SecondException.class));
+
+    assertThatThrownBy(() -> ResolverValidator.validate(resolvers))
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessageContaining(SecondException.class.getName())
+        .hasMessageNotContaining(FirstException.class.getName());
+  }
+
   private static Map<String, ProblemResolver> resolvers(Object... namesAndResolvers) {
     Map<String, ProblemResolver> resolvers = new LinkedHashMap<>();
     for (int i = 0; i < namesAndResolvers.length; i += 2) {

@@ -27,7 +27,6 @@ import io.github.problem4j.spring.web.parameter.DefaultMethodValidationResultSup
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
-import java.util.ArrayList;
 import java.util.Map;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
@@ -87,8 +86,7 @@ public class ProblemWebAutoConfiguration {
       ResolverValidator.validate(problemResolvers);
     }
 
-    ProblemResolverStore problemResolverStore =
-        new DefaultProblemResolverStore(new ArrayList<>(problemResolvers.values()));
+    ProblemResolverStore problemResolverStore = new DefaultProblemResolverStore(problemResolvers);
 
     if (properties.getResolverCaching().isEnabled()) {
       problemResolverStore = new CachingProblemResolverStore(problemResolverStore);

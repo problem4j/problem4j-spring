@@ -17,6 +17,7 @@
 package io.github.problem4j.spring.web.architecture;
 
 import static com.tngtech.archunit.base.DescribedPredicate.not;
+import static com.tngtech.archunit.core.domain.JavaClass.Predicates.belongToAnyOf;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.equivalentTo;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
@@ -71,8 +72,8 @@ class ArchitectureTest {
 
   /**
    * {@link ProblemResolverStore}, {@link DefaultProblemResolverStore} and {@link
-   * CachingProblemResolverStore} are exempt because of backwards compatibility. New root-package
-   * classes must still satisfy the rule.
+   * CachingProblemResolverStore} (including their nested classes) are exempt because of backwards
+   * compatibility. New root-package classes must still satisfy the rule.
    */
   @Test
   void givenPackageStructure_whenCheckingRootPackage_thenRootDoesNotDependOnSubpackages() {
@@ -88,7 +89,7 @@ class ArchitectureTest {
 
   private static DescribedPredicate<JavaClass> isBackwardsCompatProblemResolverStore() {
     return equivalentTo(ProblemResolverStore.class)
-        .or(equivalentTo(DefaultProblemResolverStore.class))
+        .or(belongToAnyOf(DefaultProblemResolverStore.class))
         .or(equivalentTo(CachingProblemResolverStore.class));
   }
 

@@ -18,9 +18,10 @@ package io.github.problem4j.spring.web.autoconfigure;
 
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 /**
@@ -30,28 +31,36 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
  */
 final class ResolverValidator {
 
-  private ResolverValidator() {}
-
   /**
    * Validates resolver precedence.
    *
    * @param problemResolvers resolvers by bean name
    * @throws IllegalStateException if multiple resolvers supporting the same exception class share
-   *     the highest precedence
+   *     the highest precedence; the message lists every such exception class
    */
   static void validate(Map<String, ? extends ProblemResolver> problemResolvers) {
     Map<Class<? extends Exception>, List<Map.Entry<String, ProblemResolver>>> byExceptionClass =
-        new HashMap<>();
+        new LinkedHashMap<>();
     problemResolvers.forEach(
         (beanName, resolver) ->
             byExceptionClass
                 .computeIfAbsent(resolver.getExceptionClass(), key -> new ArrayList<>())
                 .add(Map.entry(beanName, resolver)));
 
-    byExceptionClass.forEach(ResolverValidator::validate);
+    List<String> conflicts = new ArrayList<>();
+    byExceptionClass.forEach(
+        (exceptionClass, entries) ->
+            findConflict(exceptionClass, entries).ifPresent(conflicts::add));
+
+    if (!conflicts.isEmpty()) {
+      throw new IllegalStateException(
+          "Multiple ProblemResolver beans with equal order for "
+              + String.join("; for ", conflicts)
+              + ". Use @Order or Ordered to set their precedence.");
+    }
   }
 
-  private static void validate(
+  private static Optional<String> findConflict(
       Class<? extends Exception> exceptionClass, List<Map.Entry<String, ProblemResolver>> entries) {
     entries.sort(Map.Entry.comparingByValue(AnnotationAwareOrderComparator.INSTANCE));
     ProblemResolver winner = entries.get(0).getValue();
@@ -65,13 +74,11 @@ final class ResolverValidator {
                 entry -> "'" + entry.getKey() + "' (" + entry.getValue().getClass().getName() + ")")
             .toList();
 
-    if (tied.size() > 1) {
-      throw new IllegalStateException(
-          "Multiple ProblemResolver beans with equal order for "
-              + exceptionClass.getName()
-              + ": "
-              + String.join(", ", tied)
-              + ". Use @Order or Ordered to set their precedence.");
+    if (tied.size() < 2) {
+      return Optional.empty();
     }
+    return Optional.of(exceptionClass.getName() + ": " + String.join(", ", tied));
   }
+
+  private ResolverValidator() {}
 }

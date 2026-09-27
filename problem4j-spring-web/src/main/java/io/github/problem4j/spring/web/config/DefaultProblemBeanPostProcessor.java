@@ -70,7 +70,11 @@ final class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor 
     maybeAddMethodParameterSupport(bean, auditLog);
 
     if (log.isDebugEnabled() && !auditLog.isEmpty()) {
-      log.debug("Enhanced {} bean with {}", beanName, asLogLine(auditLog));
+      log.debug(
+          "Enhanced '{}' [{}] bean with {}",
+          beanName,
+          AopUtils.getTargetClass(bean).getName(),
+          asLogLine(auditLog));
     }
     return bean;
   }

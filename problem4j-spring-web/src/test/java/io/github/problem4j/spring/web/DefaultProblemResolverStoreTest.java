@@ -24,7 +24,9 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.resolver.AbstractProblemResolver;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.BeforeEach;
@@ -164,6 +166,44 @@ class DefaultProblemResolverStoreTest {
             new DefaultProblemResolverStore(List.of(second, first))
                 .findResolver(MyBaseException.class))
         .containsSame(second);
+  }
+
+  @Test
+  void givenResolversByBeanName_whenFindingResolver_thenLowerOrderWins() {
+    ProblemResolver high = new HighPriorityResolver();
+    ProblemResolver low = new LowPriorityResolver();
+
+    assertThat(
+            new DefaultProblemResolverStore(beans("low", low, "high", high))
+                .findResolver(MyBaseException.class))
+        .containsSame(high);
+    assertThat(
+            new DefaultProblemResolverStore(beans("high", high, "low", low))
+                .findResolver(MyBaseException.class))
+        .containsSame(high);
+  }
+
+  @Test
+  void givenResolversByBeanNameWithEqualOrder_whenFindingResolver_thenFirstWins() {
+    ProblemResolver first = new TestResolver(MyBaseException.class);
+    ProblemResolver second = new TestResolver(MyBaseException.class);
+
+    assertThat(
+            new DefaultProblemResolverStore(beans("first", first, "second", second))
+                .findResolver(MyBaseException.class))
+        .containsSame(first);
+    assertThat(
+            new DefaultProblemResolverStore(beans("second", second, "first", first))
+                .findResolver(MyBaseException.class))
+        .containsSame(second);
+  }
+
+  private static Map<String, ProblemResolver> beans(Object... nameResolverPairs) {
+    Map<String, ProblemResolver> beans = new LinkedHashMap<>();
+    for (int i = 0; i < nameResolverPairs.length; i += 2) {
+      beans.put((String) nameResolverPairs[i], (ProblemResolver) nameResolverPairs[i + 1]);
+    }
+    return beans;
   }
 
   @Order(1)

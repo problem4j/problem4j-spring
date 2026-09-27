@@ -240,7 +240,10 @@ class ProblemBeanPostProcessorTest {
       assertThat(appender.list)
           .singleElement()
           .extracting(ILoggingEvent::getFormattedMessage)
-          .isEqualTo("Enhanced bean bean with NamedProblemFormat");
+          .isEqualTo(
+              "Enhanced 'bean' ["
+                  + StubProblemFormatAware.class.getName()
+                  + "] bean with NamedProblemFormat");
     }
 
     @Test
@@ -251,7 +254,10 @@ class ProblemBeanPostProcessorTest {
       assertThat(appender.list)
           .singleElement()
           .extracting(ILoggingEvent::getFormattedMessage)
-          .isEqualTo("Enhanced bean bean with NamedProblemFormat and NamedTypeNameMapper");
+          .isEqualTo(
+              "Enhanced 'bean' ["
+                  + StubProblemFormatAndTypeNameAware.class.getName()
+                  + "] bean with NamedProblemFormat and NamedTypeNameMapper");
     }
 
     @Test
@@ -262,7 +268,9 @@ class ProblemBeanPostProcessorTest {
           .singleElement()
           .extracting(ILoggingEvent::getFormattedMessage)
           .isEqualTo(
-              "Enhanced bean bean with NamedProblemFormat, NamedTypeNameMapper,"
+              "Enhanced 'bean' ["
+                  + StubAware.class.getName()
+                  + "] bean with NamedProblemFormat, NamedTypeNameMapper,"
                   + " NamedBindingResultSupport, NamedMethodValidationResultSupport and"
                   + " NamedMethodParameterSupport");
     }
