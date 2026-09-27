@@ -113,7 +113,8 @@ public class ProblemEnhancedWebFluxHandler extends ResponseEntityExceptionHandle
 
     Problem problem;
     try {
-      problem = getProblemForOverridingBody(context, ex, headers, status);
+      Problem scoped = getScopedProblem(context, ex, headers, status, HandlerTypes.of(exchange));
+      problem = scoped != null ? scoped : getProblemForOverridingBody(context, ex, headers, status);
       problem = problemPostProcessor.process(context, problem);
     } catch (Exception e) {
       logAdviceException(log, ex, exchange, e);
@@ -148,6 +149,24 @@ public class ProblemEnhancedWebFluxHandler extends ResponseEntityExceptionHandle
         .findResolver(ex.getClass())
         .map(resolver -> resolver.resolve(context, ex, headers, status))
         .orElseGet(() -> fallbackProblem(status));
+  }
+
+  // resolvers scoped to the handler take precedence, other exceptions keep going through the
+  // overridable getProblemForOverridingBody
+  private @Nullable Problem getScopedProblem(
+      ProblemContext context,
+      Exception ex,
+      HttpHeaders headers,
+      HttpStatusCode status,
+      @Nullable Class<?> handlerType) {
+    if (handlerType == null) {
+      return null;
+    }
+    return problemResolverStore
+        .findResolver(ex.getClass(), handlerType)
+        .filter(resolver -> resolver.getHandlerType() != null)
+        .map(resolver -> resolver.resolve(context, ex, headers, status))
+        .orElse(null);
   }
 
   /**

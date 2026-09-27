@@ -51,6 +51,10 @@ import java.lang.annotation.Target;
  * }
  * }</pre>
  *
+ * <p>If declared in a {@link org.springframework.stereotype.Controller @Controller} (including
+ * {@code @RestController}), the method applies only to exceptions thrown from that controller, and
+ * takes precedence over other resolvers for them.
+ *
  * <p>Precedence among resolvers for the same exception class can be set with {@link
  * org.springframework.core.annotation.Order @Order} on the method (lower value wins).
  *

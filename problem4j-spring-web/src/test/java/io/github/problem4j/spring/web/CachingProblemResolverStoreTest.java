@@ -36,6 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -217,5 +218,43 @@ class CachingProblemResolverStoreTest {
     assertThat(first).isEmpty();
     assertThat(second).isEmpty();
     assertThat(computeCounter).hasValue(1);
+  }
+
+  @Test
+  void givenHandlerTypes_whenFindingResolver_thenCachesPerHandlerType() {
+    AtomicInteger calls = new AtomicInteger(0);
+    ProblemResolver first = new TestResolver(TestException.class);
+    ProblemResolver second = new TestResolver(TestException.class);
+    ProblemResolverStore delegate =
+        new ProblemResolverStore() {
+          @Override
+          public Optional<ProblemResolver> findResolver(Class<? extends Exception> clazz) {
+            return Optional.empty();
+          }
+
+          @Override
+          public Optional<ProblemResolver> findResolver(
+              Class<? extends Exception> clazz, @Nullable Class<?> handlerType) {
+            calls.incrementAndGet();
+            return Optional.of(handlerType == String.class ? first : second);
+          }
+        };
+
+    ProblemResolverStore store = new CachingProblemResolverStore(delegate);
+
+    assertThat(store.findResolver(TestException.class, String.class)).containsSame(first);
+    assertThat(store.findResolver(TestException.class, Integer.class)).containsSame(second);
+    assertThat(store.findResolver(TestException.class, String.class)).containsSame(first);
+    assertThat(calls).hasValue(2);
+  }
+
+  @Test
+  void givenNoHandlerType_whenFindingResolver_thenUsesUnscopedLookup() {
+    ProblemResolver resolver = new TestResolver(TestException.class);
+
+    ProblemResolverStore store =
+        new CachingProblemResolverStore(new DefaultProblemResolverStore(List.of(resolver)));
+
+    assertThat(store.findResolver(TestException.class, null)).containsSame(resolver);
   }
 }

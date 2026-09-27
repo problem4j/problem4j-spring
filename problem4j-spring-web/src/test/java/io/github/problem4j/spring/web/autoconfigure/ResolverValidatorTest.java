@@ -239,4 +239,58 @@ class ResolverValidatorTest {
   static class FirstException extends RuntimeException {}
 
   static class SecondException extends RuntimeException {}
+
+  @Test
+  void givenScopedAndUnscopedResolversWithEqualOrder_whenValidating_thenPasses() {
+    Map<String, ProblemResolver> resolvers =
+        resolvers(
+            "global", new UnorderedResolver(FirstException.class),
+            "scoped", new ScopedResolver(FirstException.class, FirstController.class));
+
+    assertThatCode(() -> ResolverValidator.validate(resolvers)).doesNotThrowAnyException();
+  }
+
+  @Test
+  void givenScopedResolversForDifferentHandlersWithEqualOrder_whenValidating_thenPasses() {
+    Map<String, ProblemResolver> resolvers =
+        resolvers(
+            "first", new ScopedResolver(FirstException.class, FirstController.class),
+            "second", new ScopedResolver(FirstException.class, SecondController.class));
+
+    assertThatCode(() -> ResolverValidator.validate(resolvers)).doesNotThrowAnyException();
+  }
+
+  @Test
+  void givenScopedResolversForSameHandlerWithEqualOrder_whenValidating_thenThrows() {
+    Map<String, ProblemResolver> resolvers =
+        resolvers(
+            "firstScoped", new ScopedResolver(FirstException.class, FirstController.class),
+            "secondScoped", new ScopedResolver(FirstException.class, FirstController.class));
+
+    assertThatThrownBy(() -> ResolverValidator.validate(resolvers))
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessageContaining(
+            FirstException.class.getName() + " in " + FirstController.class.getName())
+        .hasMessageContaining("'firstScoped'")
+        .hasMessageContaining("'secondScoped'");
+  }
+
+  static class ScopedResolver extends UnorderedResolver {
+
+    private final Class<?> handlerType;
+
+    ScopedResolver(Class<? extends Exception> exceptionClass, Class<?> handlerType) {
+      super(exceptionClass);
+      this.handlerType = handlerType;
+    }
+
+    @Override
+    public Class<?> getHandlerType() {
+      return handlerType;
+    }
+  }
+
+  static class FirstController {}
+
+  static class SecondController {}
 }

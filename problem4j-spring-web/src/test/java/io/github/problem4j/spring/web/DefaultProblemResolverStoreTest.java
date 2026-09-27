@@ -234,4 +234,110 @@ class DefaultProblemResolverStoreTest {
       return order;
     }
   }
+
+  @Test
+  void givenScopedResolver_whenFindingWithoutHandler_thenIgnoresIt() {
+    ProblemResolver scoped = new ScopedResolver(MyBaseException.class, FirstController.class);
+
+    ProblemResolverStore store = new DefaultProblemResolverStore(List.of(scoped));
+
+    assertThat(store.findResolver(MyBaseException.class)).isEmpty();
+    assertThat(store.findResolver(MyBaseException.class, null)).isEmpty();
+  }
+
+  @Test
+  void givenScopedResolver_whenFindingForMatchingHandler_thenReturnsIt() {
+    ProblemResolver global = new TestResolver(MyBaseException.class);
+    ProblemResolver scoped = new ScopedResolver(MyBaseException.class, FirstController.class);
+
+    ProblemResolverStore store = new DefaultProblemResolverStore(List.of(global, scoped));
+
+    assertThat(store.findResolver(MyBaseException.class, FirstController.class))
+        .containsSame(scoped);
+  }
+
+  @Test
+  void givenScopedResolver_whenFindingForOtherHandler_thenReturnsGlobal() {
+    ProblemResolver global = new TestResolver(MyBaseException.class);
+    ProblemResolver scoped = new ScopedResolver(MyBaseException.class, FirstController.class);
+
+    ProblemResolverStore store = new DefaultProblemResolverStore(List.of(global, scoped));
+
+    assertThat(store.findResolver(MyBaseException.class, SecondController.class))
+        .containsSame(global);
+  }
+
+  @Test
+  void givenScopedResolver_whenFindingForHandlerSubclass_thenReturnsIt() {
+    ProblemResolver scoped = new ScopedResolver(MyBaseException.class, FirstController.class);
+
+    ProblemResolverStore store = new DefaultProblemResolverStore(List.of(scoped));
+
+    assertThat(store.findResolver(MyBaseException.class, ChildController.class))
+        .containsSame(scoped);
+  }
+
+  @Test
+  void givenScopedResolverForSuperclass_whenGlobalMatchesMoreSpecifically_thenScopedWins() {
+    ProblemResolver global = new TestResolver(MySubException.class);
+    ProblemResolver scoped = new ScopedResolver(MyBaseException.class, FirstController.class);
+
+    ProblemResolverStore store = new DefaultProblemResolverStore(List.of(global, scoped));
+
+    assertThat(store.findResolver(MySubException.class, FirstController.class))
+        .containsSame(scoped);
+  }
+
+  @Test
+  void givenScopedResolverForOtherException_whenFindingForMatchingHandler_thenReturnsGlobal() {
+    ProblemResolver global = new TestResolver(MyBaseException.class);
+    ProblemResolver scoped = new ScopedResolver(OtherException.class, FirstController.class);
+
+    ProblemResolverStore store = new DefaultProblemResolverStore(List.of(global, scoped));
+
+    assertThat(store.findResolver(MyBaseException.class, FirstController.class))
+        .containsSame(global);
+  }
+
+  @Test
+  void givenScopedResolversWithDifferentOrder_whenFindingForMatchingHandler_thenLowerOrderWins() {
+    ProblemResolver high = new ScopedResolver(MyBaseException.class, FirstController.class, 1);
+    ProblemResolver low = new ScopedResolver(MyBaseException.class, FirstController.class, 2);
+
+    ProblemResolverStore store = new DefaultProblemResolverStore(List.of(low, high));
+
+    assertThat(store.findResolver(MyBaseException.class, FirstController.class)).containsSame(high);
+  }
+
+  private static class ScopedResolver extends TestResolver implements Ordered {
+
+    private final Class<?> handlerType;
+    private final int order;
+
+    ScopedResolver(Class<? extends Exception> clazz, Class<?> handlerType) {
+      this(clazz, handlerType, Ordered.LOWEST_PRECEDENCE);
+    }
+
+    ScopedResolver(Class<? extends Exception> clazz, Class<?> handlerType, int order) {
+      super(clazz);
+      this.handlerType = handlerType;
+      this.order = order;
+    }
+
+    @Override
+    public Class<?> getHandlerType() {
+      return handlerType;
+    }
+
+    @Override
+    public int getOrder() {
+      return order;
+    }
+  }
+
+  private static class FirstController {}
+
+  private static class ChildController extends FirstController {}
+
+  private static class SecondController {}
 }

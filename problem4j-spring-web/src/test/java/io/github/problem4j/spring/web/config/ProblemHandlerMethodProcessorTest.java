@@ -35,6 +35,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 
 class ProblemHandlerMethodProcessorTest {
 
@@ -263,6 +265,29 @@ class ProblemHandlerMethodProcessorTest {
   }
 
   @Test
+  void givenHandlerInRestController_whenProcessing_thenResolverIsScopedToController() {
+    DefaultListableBeanFactory beanFactory = process(RestControllerHandlers.class);
+
+    assertThat(resolverFor(beanFactory, PaymentDeclinedException.class).getHandlerType())
+        .isEqualTo(RestControllerHandlers.class);
+  }
+
+  @Test
+  void givenHandlerInController_whenProcessing_thenResolverIsScopedToController() {
+    DefaultListableBeanFactory beanFactory = process(ControllerHandlers.class);
+
+    assertThat(resolverFor(beanFactory, PaymentDeclinedException.class).getHandlerType())
+        .isEqualTo(ControllerHandlers.class);
+  }
+
+  @Test
+  void givenHandlerInPlainBean_whenProcessing_thenResolverIsNotScoped() {
+    DefaultListableBeanFactory beanFactory = process(PublicHandlers.class);
+
+    assertThat(resolverFor(beanFactory, PaymentDeclinedException.class).getHandlerType()).isNull();
+  }
+
+  @Test
   void givenPrivateHandler_whenProcessing_thenIgnoresIt() {
     DefaultListableBeanFactory beanFactory = process(PrivateHandlers.class);
 
@@ -443,6 +468,24 @@ class ProblemHandlerMethodProcessorTest {
   static class OrderedHandlers {
 
     @Order(5)
+    @ProblemHandler
+    Problem paymentDeclined(PaymentDeclinedException ex) {
+      return Problem.builder().status(402).build();
+    }
+  }
+
+  @RestController
+  static class RestControllerHandlers {
+
+    @ProblemHandler
+    Problem paymentDeclined(PaymentDeclinedException ex) {
+      return Problem.builder().status(402).build();
+    }
+  }
+
+  @Controller
+  static class ControllerHandlers {
+
     @ProblemHandler
     Problem paymentDeclined(PaymentDeclinedException ex) {
       return Problem.builder().status(402).build();

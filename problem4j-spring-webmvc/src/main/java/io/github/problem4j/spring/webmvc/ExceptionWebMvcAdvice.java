@@ -30,6 +30,7 @@ import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -115,7 +116,7 @@ public class ExceptionWebMvcAdvice {
 
     Problem problem;
     try {
-      problem = getProblem(ex, context, headers);
+      problem = getProblem(ex, context, headers, HandlerTypes.of(request));
       problem = problemPostProcessor.process(context, problem);
     } catch (Exception e) {
       logAdviceException(log, ex, request, e);
@@ -133,11 +134,13 @@ public class ExceptionWebMvcAdvice {
     return new ResponseEntity<>(problem, headers, status);
   }
 
-  private Problem getProblem(Exception ex, ProblemContext context, HttpHeaders headers) {
+  private Problem getProblem(
+      Exception ex, ProblemContext context, HttpHeaders headers, @Nullable Class<?> handlerType) {
     if (problemMapper.isMappingCandidate(ex)) {
       return problemMapper.toProblemBuilder(ex, context).build();
     }
-    Optional<ProblemResolver> optionalResolver = problemResolverStore.findResolver(ex.getClass());
+    Optional<ProblemResolver> optionalResolver =
+        problemResolverStore.findResolver(ex.getClass(), handlerType);
     if (optionalResolver.isPresent()) {
       return optionalResolver.get().resolve(context, ex, headers, HttpStatus.INTERNAL_SERVER_ERROR);
     }

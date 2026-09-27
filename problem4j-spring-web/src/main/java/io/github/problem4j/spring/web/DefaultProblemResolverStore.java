@@ -47,6 +47,7 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
   private static final Logger log = LoggerFactory.getLogger(DefaultProblemResolverStore.class);
 
   private final Map<Class<? extends Exception>, Registration> resolvers;
+  private final Map<Class<?>, Map<Class<? extends Exception>, Registration>> scopedResolvers;
   private final ClassDistanceEvaluation classDistanceEvaluation;
 
   /**
@@ -83,11 +84,10 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
   public DefaultProblemResolverStore(
       List<? extends ProblemResolver> problemResolvers,
       ClassDistanceEvaluation classDistanceEvaluation) {
-    this.resolvers =
-        index(
-            problemResolvers.stream().map(resolver -> new Registration(null, resolver)),
-            AnnotationAwareOrderComparator.INSTANCE);
-    this.classDistanceEvaluation = classDistanceEvaluation;
+    this(
+        problemResolvers.stream().map(resolver -> new Registration(null, resolver)),
+        classDistanceEvaluation,
+        AnnotationAwareOrderComparator.INSTANCE);
   }
 
   /**
@@ -145,11 +145,35 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
       Map<String, ? extends ProblemResolver> problemResolvers,
       ClassDistanceEvaluation classDistanceEvaluation,
       Comparator<Object> orderComparator) {
-    this.resolvers =
-        index(
-            problemResolvers.entrySet().stream()
-                .map(entry -> new Registration(entry.getKey(), entry.getValue())),
-            orderComparator);
+    this(
+        problemResolvers.entrySet().stream()
+            .map(entry -> new Registration(entry.getKey(), entry.getValue())),
+        classDistanceEvaluation,
+        orderComparator);
+  }
+
+  private DefaultProblemResolverStore(
+      Stream<Registration> registrations,
+      ClassDistanceEvaluation classDistanceEvaluation,
+      Comparator<Object> orderComparator) {
+    List<Registration> sorted = new ArrayList<>(registrations.toList());
+    sorted.sort((left, right) -> orderComparator.compare(left.getResolver(), right.getResolver()));
+
+    List<Registration> unscoped = new ArrayList<>();
+    Map<Class<?>, List<Registration>> scoped = new HashMap<>();
+    for (Registration registration : sorted) {
+      Class<?> handlerType = registration.getResolver().getHandlerType();
+      if (handlerType == null) {
+        unscoped.add(registration);
+      } else {
+        scoped.computeIfAbsent(handlerType, key -> new ArrayList<>()).add(registration);
+      }
+    }
+
+    this.resolvers = index(unscoped);
+    Map<Class<?>, Map<Class<? extends Exception>, Registration>> scopedCopy = new HashMap<>();
+    scoped.forEach((handlerType, contenders) -> scopedCopy.put(handlerType, index(contenders)));
+    this.scopedResolvers = Map.copyOf(scopedCopy);
     this.classDistanceEvaluation = classDistanceEvaluation;
   }
 
@@ -165,8 +189,48 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
    */
   @Override
   public Optional<ProblemResolver> findResolver(Class<? extends Exception> clazz) {
+    return findClosest(resolvers, clazz);
+  }
+
+  /**
+   * Returns a {@link ProblemResolver} for the given exception class thrown from a handler of the
+   * given type.
+   *
+   * <p>Resolvers scoped to the handler type (or its supertypes) are searched first, and if any of
+   * them matches, the most specific one is returned, even if an unscoped resolver matches more
+   * specifically. Otherwise, unscoped resolvers are searched as in {@link #findResolver(Class)}.
+   *
+   * @param clazz exception class to resolve
+   * @param handlerType the type of the handler the exception was thrown from, or {@code null} if
+   *     unknown
+   * @return an {@link Optional} containing the matching resolver, or empty if none found
+   * @since 3.1.0
+   */
+  @Override
+  public Optional<ProblemResolver> findResolver(
+      Class<? extends Exception> clazz, @Nullable Class<?> handlerType) {
+    if (handlerType != null) {
+      Map<Class<? extends Exception>, Registration> applicable = new HashMap<>();
+      scopedResolvers.forEach(
+          (scope, byException) -> {
+            if (scope.isAssignableFrom(handlerType)) {
+              byException.forEach(applicable::putIfAbsent);
+            }
+          });
+      Optional<ProblemResolver> scoped = findClosest(applicable, clazz);
+      if (scoped.isPresent()) {
+        return scoped;
+      }
+    }
+    return findResolver(clazz);
+  }
+
+  private Optional<ProblemResolver> findClosest(
+      Map<Class<? extends Exception>, Registration> candidatesByException,
+      Class<? extends Exception> clazz) {
     List<Registration> candidates = new ArrayList<>();
-    for (Map.Entry<Class<? extends Exception>, Registration> entry : resolvers.entrySet()) {
+    for (Map.Entry<Class<? extends Exception>, Registration> entry :
+        candidatesByException.entrySet()) {
       if (entry.getKey().isAssignableFrom(clazz)) {
         candidates.add(entry.getValue());
       }
@@ -180,11 +244,7 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
     return classDistanceEvaluation.calculate(clazz, resolver.getExceptionClass());
   }
 
-  private static Map<Class<? extends Exception>, Registration> index(
-      Stream<Registration> registrations, Comparator<Object> orderComparator) {
-    List<Registration> sorted = new ArrayList<>(registrations.toList());
-    sorted.sort((left, right) -> orderComparator.compare(left.getResolver(), right.getResolver()));
-
+  private static Map<Class<? extends Exception>, Registration> index(List<Registration> sorted) {
     Map<Class<? extends Exception>, List<Registration>> byExceptionClass = new HashMap<>();
     sorted.forEach(
         registration ->

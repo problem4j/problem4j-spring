@@ -39,6 +39,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.function.SingletonSupplier;
 
@@ -49,6 +50,10 @@ import org.springframework.util.function.SingletonSupplier;
  * <p>Registered resolvers are regular beans, so they are picked up by {@code ProblemResolverStore}
  * like any other {@link ProblemResolver}. Their precedence is taken from {@link Order @Order} on
  * the annotated method ({@link Ordered#LOWEST_PRECEDENCE} if absent).
+ *
+ * <p>Methods declared in a {@link Controller @Controller} (including {@code @RestController}) are
+ * scoped to that controller, so they apply only to exceptions thrown from it (see {@link
+ * ProblemResolver#getHandlerType()}).
  *
  * <p>Private methods are ignored. Invalid method signatures fail application startup.
  *
@@ -87,9 +92,13 @@ public final class ProblemHandlerMethodProcessor implements BeanFactoryPostProce
         continue;
       }
 
+      Class<?> userType = ClassUtils.getUserClass(beanType);
+      Class<?> handlerType =
+          AnnotatedElementUtils.hasAnnotation(userType, Controller.class) ? userType : null;
+
       Map<Method, ProblemHandler> methods =
           MethodIntrospector.selectMethods(
-              ClassUtils.getUserClass(beanType),
+              userType,
               (MethodIntrospector.MetadataLookup<ProblemHandler>)
                   method ->
                       Modifier.isPrivate(method.getModifiers())
@@ -98,7 +107,8 @@ public final class ProblemHandlerMethodProcessor implements BeanFactoryPostProce
                               method, ProblemHandler.class));
 
       methods.forEach(
-          (method, mapping) -> register(registry, beanFactory, beanName, method, mapping));
+          (method, mapping) ->
+              register(registry, beanFactory, beanName, handlerType, method, mapping));
     }
   }
 
@@ -106,6 +116,7 @@ public final class ProblemHandlerMethodProcessor implements BeanFactoryPostProce
       BeanDefinitionRegistry registry,
       ConfigurableListableBeanFactory beanFactory,
       String beanName,
+      @Nullable Class<?> handlerType,
       Method method,
       ProblemHandler mapping) {
     Supplier<Object> target = SingletonSupplier.of(() -> beanFactory.getBean(beanName))::obtain;
@@ -116,7 +127,9 @@ public final class ProblemHandlerMethodProcessor implements BeanFactoryPostProce
       RootBeanDefinition definition =
           new RootBeanDefinition(
               MethodProblemResolver.class,
-              () -> new MethodProblemResolver(exceptionClass, target, method, orderValue));
+              () ->
+                  new MethodProblemResolver(
+                      exceptionClass, target, method, orderValue, handlerType));
       registry.registerBeanDefinition(
           beanName + "#" + method.getName() + "#" + exceptionClass.getName(), definition);
     }

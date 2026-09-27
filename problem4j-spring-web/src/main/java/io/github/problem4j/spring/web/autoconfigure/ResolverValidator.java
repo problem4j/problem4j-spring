@@ -23,12 +23,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 /**
  * Validates that for each exception class a single {@link ProblemResolver} bean has the highest
  * precedence, as determined by {@link org.springframework.core.Ordered} or {@link
- * org.springframework.core.annotation.Order @Order}.
+ * org.springframework.core.annotation.Order @Order}. Resolvers scoped to different handler types
+ * (see {@link ProblemResolver#getHandlerType()}) are validated separately.
  */
 final class ResolverValidator {
 
@@ -53,18 +55,18 @@ final class ResolverValidator {
    */
   static void validate(
       Map<String, ? extends ProblemResolver> problemResolvers, Comparator<Object> orderComparator) {
-    Map<Class<? extends Exception>, List<Map.Entry<String, ProblemResolver>>> byExceptionClass =
-        new LinkedHashMap<>();
+    Map<ResolverKey, List<Map.Entry<String, ProblemResolver>>> byKey = new LinkedHashMap<>();
     problemResolvers.forEach(
         (beanName, resolver) ->
-            byExceptionClass
-                .computeIfAbsent(resolver.getExceptionClass(), key -> new ArrayList<>())
+            byKey
+                .computeIfAbsent(
+                    new ResolverKey(resolver.getHandlerType(), resolver.getExceptionClass()),
+                    key -> new ArrayList<>())
                 .add(Map.entry(beanName, resolver)));
 
     List<String> conflicts = new ArrayList<>();
-    byExceptionClass.forEach(
-        (exceptionClass, entries) ->
-            findConflict(exceptionClass, entries, orderComparator).ifPresent(conflicts::add));
+    byKey.forEach(
+        (key, entries) -> findConflict(key, entries, orderComparator).ifPresent(conflicts::add));
 
     if (!conflicts.isEmpty()) {
       throw new IllegalStateException(
@@ -75,7 +77,7 @@ final class ResolverValidator {
   }
 
   private static Optional<String> findConflict(
-      Class<? extends Exception> exceptionClass,
+      ResolverKey key,
       List<Map.Entry<String, ProblemResolver>> entries,
       Comparator<Object> orderComparator) {
     entries.sort(Map.Entry.comparingByValue(orderComparator));
@@ -91,8 +93,19 @@ final class ResolverValidator {
     if (tied.size() < 2) {
       return Optional.empty();
     }
-    return Optional.of(exceptionClass.getName() + ": " + String.join(", ", tied));
+    return Optional.of(key + ": " + String.join(", ", tied));
   }
 
   private ResolverValidator() {}
+
+  private record ResolverKey(
+      @Nullable Class<?> handlerType, Class<? extends Exception> exceptionClass) {
+
+    @Override
+    public String toString() {
+      return handlerType != null
+          ? exceptionClass.getName() + " in " + handlerType.getName()
+          : exceptionClass.getName();
+    }
+  }
 }

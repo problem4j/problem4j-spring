@@ -36,22 +36,30 @@ final class MethodProblemResolver implements ProblemResolver, Ordered {
   private final Supplier<Object> target;
   private final Method method;
   private final int order;
+  private final @Nullable Class<?> handlerType;
   private volatile @Nullable Method invocableMethod;
 
   MethodProblemResolver(
       Class<? extends Exception> exceptionClass,
       Supplier<Object> target,
       Method method,
-      int order) {
+      int order,
+      @Nullable Class<?> handlerType) {
     this.exceptionClass = exceptionClass;
     this.target = target;
     this.method = method;
     this.order = order;
+    this.handlerType = handlerType;
   }
 
   @Override
   public Class<? extends Exception> getExceptionClass() {
     return exceptionClass;
+  }
+
+  @Override
+  public @Nullable Class<?> getHandlerType() {
+    return handlerType;
   }
 
   @Override

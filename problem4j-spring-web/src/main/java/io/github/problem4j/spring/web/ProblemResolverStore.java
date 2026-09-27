@@ -18,6 +18,7 @@ package io.github.problem4j.spring.web;
 
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Registry that provides access to {@link ProblemResolver} instances based on exception types.
@@ -45,4 +46,24 @@ public interface ProblemResolverStore {
    * @since 1.2.0
    */
   Optional<ProblemResolver> findResolver(Class<? extends Exception> clazz);
+
+  /**
+   * Finds the most specific {@link ProblemResolver} for the given exception class thrown from a
+   * handler of the given type.
+   *
+   * <p>Resolvers scoped to the handler type (see {@link ProblemResolver#getHandlerType()}) take
+   * precedence over unscoped ones. The default implementation ignores the handler type and
+   * delegates to {@link #findResolver(Class)}.
+   *
+   * @param clazz the exception class for which to find a resolver
+   * @param handlerType the type of the handler the exception was thrown from, or {@code null} if
+   *     unknown
+   * @return an {@link Optional} containing the most specific {@link ProblemResolver} if found,
+   *     otherwise an empty {@link Optional}
+   * @since 3.1.0
+   */
+  default Optional<ProblemResolver> findResolver(
+      Class<? extends Exception> clazz, @Nullable Class<?> handlerType) {
+    return findResolver(clazz);
+  }
 }

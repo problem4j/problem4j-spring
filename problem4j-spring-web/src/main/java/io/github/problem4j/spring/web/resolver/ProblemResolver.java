@@ -18,6 +18,7 @@ package io.github.problem4j.spring.web.resolver;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 
@@ -53,4 +54,16 @@ public interface ProblemResolver {
    * @since 3.0.0
    */
   Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status);
+
+  /**
+   * Returns the handler type (e.g. controller class) this resolver is scoped to. A scoped resolver
+   * applies only to exceptions thrown from handlers of that type (or its subtypes), and takes
+   * precedence over unscoped resolvers for them.
+   *
+   * @return the handler type, or {@code null} if this resolver applies to all handlers
+   * @since 3.1.0
+   */
+  default @Nullable Class<?> getHandlerType() {
+    return null;
+  }
 }
