@@ -45,7 +45,7 @@ class ErrorResponseWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.CONFLICT)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(Problem.of(HttpStatus.CONFLICT.value(), "this is detail"));

@@ -45,7 +45,7 @@ class NotFoundNoHandlerFoundWebFluxTest {
         .expectStatus()
         .isNotFound()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(Problem.of(HttpStatus.NOT_FOUND.value()));

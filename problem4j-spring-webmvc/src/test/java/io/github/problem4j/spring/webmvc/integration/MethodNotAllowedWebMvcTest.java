@@ -45,7 +45,7 @@ class MethodNotAllowedWebMvcTest {
         restTemplate.postForEntity("/method-not-allowed", null, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 

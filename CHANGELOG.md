@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+### Changed
+
+- Bump `problem4j-core` to `2.0.1`.
+
 ### Fixed
 
 - Make `Automatic-Module-Name` stable, by adding it to `META-INF/MANIFEST.MF`.

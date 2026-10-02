@@ -60,7 +60,7 @@ class BindingKotlinWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem -> {
@@ -103,7 +103,7 @@ class BindingKotlinWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem -> {
@@ -150,7 +150,7 @@ class BindingKotlinWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem ->
@@ -183,7 +183,7 @@ class BindingKotlinWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem ->
@@ -232,7 +232,7 @@ class BindingKotlinWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem ->
@@ -269,7 +269,7 @@ class BindingKotlinWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem ->
@@ -370,7 +370,7 @@ class BindingKotlinWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem -> {
@@ -472,7 +472,7 @@ class BindingKotlinWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem -> {
@@ -518,7 +518,7 @@ class BindingKotlinWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem -> {
@@ -561,7 +561,7 @@ class BindingKotlinWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem -> {

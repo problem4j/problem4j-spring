@@ -117,7 +117,7 @@ class BindingPrimitiveWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem -> {
@@ -219,7 +219,7 @@ class BindingPrimitiveWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem -> {
@@ -265,7 +265,7 @@ class BindingPrimitiveWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem -> {
@@ -308,7 +308,7 @@ class BindingPrimitiveWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem -> {
@@ -337,7 +337,7 @@ class BindingPrimitiveWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem -> {
@@ -400,7 +400,7 @@ class BindingPrimitiveWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem ->

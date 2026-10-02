@@ -49,7 +49,7 @@ class TypeMismatchWebMvcTest {
         restTemplate.getForEntity("/type-mismatch/path-variable/abc", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -78,7 +78,7 @@ class TypeMismatchWebMvcTest {
         restTemplate.getForEntity("/type-mismatch/request-param?id=abc", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -113,7 +113,7 @@ class TypeMismatchWebMvcTest {
             "/type-mismatch/request-header", HttpMethod.GET, request, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -153,7 +153,7 @@ class TypeMismatchWebMvcTest {
         restTemplate.exchange("/type-mismatch/cookie-value", HttpMethod.GET, request, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -193,7 +193,7 @@ class TypeMismatchWebMvcTest {
         restTemplate.postForEntity("/type-mismatch/request-body", request, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 

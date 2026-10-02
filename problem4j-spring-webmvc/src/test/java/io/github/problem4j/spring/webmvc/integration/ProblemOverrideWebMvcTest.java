@@ -59,7 +59,7 @@ class ProblemOverrideWebMvcTest {
         restTemplate.postForEntity("/problem-override/type-not-blank", request, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -77,7 +77,7 @@ class ProblemOverrideWebMvcTest {
         restTemplate.postForEntity("/problem-override/instance-override", request, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
     assertThat(problem.getType()).isEqualTo(Problem.BLANK_TYPE);
@@ -96,7 +96,7 @@ class ProblemOverrideWebMvcTest {
         restTemplate.postForEntity("/problem-override/instance-override", request, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
     assertThat(response.getHeaders().getFirst("X-Trace-ID")).isEqualTo(traceId);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);

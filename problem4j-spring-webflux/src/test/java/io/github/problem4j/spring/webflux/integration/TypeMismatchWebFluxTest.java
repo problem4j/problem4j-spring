@@ -45,7 +45,7 @@ class TypeMismatchWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(
@@ -81,7 +81,7 @@ class TypeMismatchWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(
@@ -118,7 +118,7 @@ class TypeMismatchWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(
@@ -154,7 +154,7 @@ class TypeMismatchWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(
@@ -193,7 +193,7 @@ class TypeMismatchWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(

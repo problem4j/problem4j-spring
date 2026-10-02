@@ -52,7 +52,7 @@ class MissingParameterWebMvcTest {
         restTemplate.getForEntity("/missing-parameter/path-variable", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -80,7 +80,7 @@ class MissingParameterWebMvcTest {
         restTemplate.getForEntity("/missing-parameter/request-param", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -115,7 +115,7 @@ class MissingParameterWebMvcTest {
         restTemplate.postForEntity("/missing-parameter/request-part", request, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -137,7 +137,7 @@ class MissingParameterWebMvcTest {
             String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -172,7 +172,7 @@ class MissingParameterWebMvcTest {
     ResponseEntity<String> response =
         restTemplate.getForEntity("/missing-parameter/request-header", String.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
     assertThat(problem)
         .isEqualTo(
@@ -200,7 +200,7 @@ class MissingParameterWebMvcTest {
     ResponseEntity<String> response =
         restTemplate.getForEntity("/missing-parameter/cookie-value", String.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
     assertThat(problem)
         .isEqualTo(
@@ -228,7 +228,7 @@ class MissingParameterWebMvcTest {
     ResponseEntity<String> response =
         restTemplate.getForEntity("/missing-parameter/request-attribute", String.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
     assertThat(problem)
         .isEqualTo(
@@ -244,7 +244,7 @@ class MissingParameterWebMvcTest {
     ResponseEntity<String> response =
         restTemplate.getForEntity("/missing-parameter/session-attribute", String.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
     assertThat(problem)
         .isEqualTo(

@@ -23,9 +23,11 @@ dependencies {
     annotationProcessor(libs.spring.boot.configuration.processor)
 
     // Test
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(platform(libs.kotlin.bom))
     testImplementation(platform(libs.spring.boot.dependencies))
     testImplementation(libs.spring.boot.starter.webmvc.test)
-    testImplementation(libs.spring.boot.starter.webmvc)
+    testImplementation(libs.spring.boot.restclient)
     testImplementation(libs.spring.boot.validation)
     testImplementation(libs.archunit.junit5)
     testImplementation(libs.jackson3.dataformat.xml)
@@ -33,10 +35,6 @@ dependencies {
     testImplementation(libs.jspecify)
     testImplementation(libs.kotlin.reflect)
     testImplementation(libs.kotlin.stdlib)
-
-    // Included because TestRestTemplate requires it if used with actual web environment in tests. Not migrating to
-    // WebTestClient either for easier merges with 1.x versions.
-    testImplementation(libs.spring.boot.restclient)
 
     testRuntimeOnly(libs.junit.platform.launcher)
 

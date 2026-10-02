@@ -45,7 +45,7 @@ class ResponseStatusExceptionWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.GONE)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(Problem.of(HttpStatus.GONE.value()));
@@ -62,7 +62,7 @@ class ResponseStatusExceptionWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.GONE)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(Problem.of(HttpStatus.GONE.value()));

@@ -45,7 +45,7 @@ class MaxUploadSizeExceededWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.CONTENT_TOO_LARGE)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(

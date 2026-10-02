@@ -47,7 +47,7 @@ class NotAcceptableWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.NOT_ACCEPTABLE)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(Problem.of(HttpStatus.NOT_ACCEPTABLE.value()));

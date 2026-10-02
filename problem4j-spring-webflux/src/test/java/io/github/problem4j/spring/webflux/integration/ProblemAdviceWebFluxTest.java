@@ -57,7 +57,7 @@ class ProblemAdviceWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.valueOf(418))
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(
@@ -87,7 +87,7 @@ class ProblemAdviceWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.valueOf(418))
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(
@@ -109,7 +109,7 @@ class ProblemAdviceWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(Problem.of(0));
@@ -124,7 +124,7 @@ class ProblemAdviceWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(
@@ -145,7 +145,7 @@ class ProblemAdviceWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value()));

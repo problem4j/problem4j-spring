@@ -118,7 +118,7 @@ class BindingPrimitiveWebMvcTest {
         restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -215,7 +215,7 @@ class BindingPrimitiveWebMvcTest {
         restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -258,7 +258,7 @@ class BindingPrimitiveWebMvcTest {
         restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -298,7 +298,7 @@ class BindingPrimitiveWebMvcTest {
         restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -327,7 +327,7 @@ class BindingPrimitiveWebMvcTest {
             String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -386,7 +386,7 @@ class BindingPrimitiveWebMvcTest {
             "/binding-primitive/complex", new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 

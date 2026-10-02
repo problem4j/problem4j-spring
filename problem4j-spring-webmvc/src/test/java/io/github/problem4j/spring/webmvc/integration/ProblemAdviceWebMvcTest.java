@@ -60,7 +60,7 @@ class ProblemAdviceWebMvcTest {
             String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.valueOf(418));
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -92,7 +92,7 @@ class ProblemAdviceWebMvcTest {
             String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.valueOf(418));
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -113,7 +113,7 @@ class ProblemAdviceWebMvcTest {
         restTemplate.getForEntity("/problem-advice/annotation-empty", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -126,7 +126,7 @@ class ProblemAdviceWebMvcTest {
         restTemplate.getForEntity("/problem-advice/resolvable", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -146,7 +146,7 @@ class ProblemAdviceWebMvcTest {
         restTemplate.getForEntity("/problem-advice/unresolvable", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
