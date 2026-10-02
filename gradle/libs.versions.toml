@@ -1,5 +1,5 @@
 [versions]
-archunit = "1.5.0"
+archunit = "1.5.1"
 errorprone = "2.50.0"
 errorprone-plugin = "5.1.1"
 idea-ext = "1.4.1"
