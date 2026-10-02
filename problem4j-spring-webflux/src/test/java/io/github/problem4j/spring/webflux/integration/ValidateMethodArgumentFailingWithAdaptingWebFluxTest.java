@@ -59,7 +59,7 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem ->
@@ -90,7 +90,7 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem ->
@@ -118,7 +118,7 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem ->
@@ -147,7 +147,7 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem ->
@@ -179,7 +179,7 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem ->
@@ -204,7 +204,7 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem ->
@@ -229,7 +229,7 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem ->
@@ -258,7 +258,7 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(
             problem ->

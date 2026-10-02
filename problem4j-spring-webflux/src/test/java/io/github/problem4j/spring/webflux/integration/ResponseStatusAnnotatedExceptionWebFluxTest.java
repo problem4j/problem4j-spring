@@ -45,7 +45,7 @@ class ResponseStatusAnnotatedExceptionWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.FORBIDDEN)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(Problem.of(HttpStatus.FORBIDDEN.value()));
@@ -60,7 +60,7 @@ class ResponseStatusAnnotatedExceptionWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.FORBIDDEN)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(Problem.of(HttpStatus.FORBIDDEN.value(), "this is reason"));
@@ -75,7 +75,7 @@ class ResponseStatusAnnotatedExceptionWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.valueOf(418))
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(Problem.builder().status(418).title("Both Annotated Exception").build());

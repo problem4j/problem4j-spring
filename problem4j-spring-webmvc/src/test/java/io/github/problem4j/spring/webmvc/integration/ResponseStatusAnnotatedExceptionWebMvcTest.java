@@ -46,7 +46,7 @@ class ResponseStatusAnnotatedExceptionWebMvcTest {
             "/response-status-annotated/forbidden-status-annotated", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -59,7 +59,7 @@ class ResponseStatusAnnotatedExceptionWebMvcTest {
         restTemplate.getForEntity("/response-status-annotated/reason-annotated", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -72,7 +72,7 @@ class ResponseStatusAnnotatedExceptionWebMvcTest {
         restTemplate.getForEntity("/response-status-annotated/both-annotated", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.valueOf(418));
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 

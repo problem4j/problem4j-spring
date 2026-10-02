@@ -47,7 +47,7 @@ class MalformedMultipartWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(Problem.of(HttpStatus.BAD_REQUEST.value()));

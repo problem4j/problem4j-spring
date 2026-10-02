@@ -59,7 +59,7 @@ class CoroutineWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.CONFLICT)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectHeader()
         .valueEquals("X-Trace-Id", TRACE_ID)
         .expectBody(Problem.class)
@@ -85,7 +85,7 @@ class CoroutineWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(

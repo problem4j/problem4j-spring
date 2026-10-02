@@ -45,7 +45,7 @@ class ResponseStatusExceptionWebMvcTest {
         restTemplate.getForEntity("/response-status-exception", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.GONE);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
@@ -59,7 +59,7 @@ class ResponseStatusExceptionWebMvcTest {
             "/response-status-exception?reason=resource%20gone", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.GONE);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 

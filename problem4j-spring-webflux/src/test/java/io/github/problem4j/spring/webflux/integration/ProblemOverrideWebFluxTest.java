@@ -55,7 +55,7 @@ class ProblemOverrideWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> Assertions.assertThat(v).isNotNull())
         .value(
@@ -75,7 +75,7 @@ class ProblemOverrideWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .value(problem -> assertThat(problem.getType()).isEqualTo(Problem.BLANK_TYPE));
@@ -94,7 +94,7 @@ class ProblemOverrideWebFluxTest {
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectHeader()
         .value("X-Trace-Id", v -> assertThat(v).isEqualTo(traceId))
         .expectBody(Problem.class)

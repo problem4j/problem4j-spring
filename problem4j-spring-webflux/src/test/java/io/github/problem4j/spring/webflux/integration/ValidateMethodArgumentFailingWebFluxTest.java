@@ -58,7 +58,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(
@@ -86,7 +86,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> Assertions.assertThat(v).isNotNull())
         .isEqualTo(
@@ -111,7 +111,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .isEqualTo(
@@ -136,7 +136,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .value(v -> assertThat(v).isNotNull())
@@ -165,7 +165,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .value(
@@ -191,7 +191,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .value(
@@ -217,7 +217,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .value(
@@ -248,7 +248,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .value(
@@ -282,7 +282,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .value(
@@ -317,7 +317,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .value(
@@ -354,7 +354,7 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .expectStatus()
         .isBadRequest()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE)
+        .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
         .value(

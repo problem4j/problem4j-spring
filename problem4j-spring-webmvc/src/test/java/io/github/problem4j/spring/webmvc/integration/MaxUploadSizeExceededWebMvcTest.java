@@ -62,7 +62,7 @@ class MaxUploadSizeExceededWebMvcTest {
         restTemplate.postForEntity("/max-upload-size-exceeded", requestEntity, String.class);
 
     assertThat(response.getStatusCode().value()).isEqualTo(HttpStatus.CONTENT_TOO_LARGE.value());
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
     assertThat(problem)

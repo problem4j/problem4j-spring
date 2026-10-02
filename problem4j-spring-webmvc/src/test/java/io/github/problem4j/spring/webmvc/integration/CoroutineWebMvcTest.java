@@ -60,7 +60,7 @@ class CoroutineWebMvcTest {
     ResponseEntity<String> response = exchange(path);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
     assertThat(response.getHeaders().getFirst("X-Trace-Id")).isEqualTo(TRACE_ID);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
@@ -82,7 +82,7 @@ class CoroutineWebMvcTest {
     ResponseEntity<String> response = exchange("/coroutine/unresolvable");
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 

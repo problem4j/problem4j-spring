@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+<<<<<<< HEAD
 ### Added
 
 - Make `AbstractProblemResolver` and its subclasses take additional arguments via `BeanPostProcessor` for easier
@@ -23,6 +24,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ### Changed
 
+- Bump `problem4j-core` to `2.0.1`.
 - `ServerWebInputProblemResolver` no longer delegates type-mismatch handling to the `TypeMismatchProblemResolver` bean.
 - Split `ProblemAutoConfiguration` into several auto-configurations. `ProblemAutoConfiguration` now keeps only generic
   beans (`ProblemMapper`, `ProblemFormat`, `ProblemPostProcessor`, `TypeNameMapper`, `ProblemBeanPostProcessor`) and no
