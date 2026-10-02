@@ -6,7 +6,6 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
-<<<<<<< HEAD
 ### Added
 
 - Make `AbstractProblemResolver` and its subclasses take additional arguments via `BeanPostProcessor` for easier
