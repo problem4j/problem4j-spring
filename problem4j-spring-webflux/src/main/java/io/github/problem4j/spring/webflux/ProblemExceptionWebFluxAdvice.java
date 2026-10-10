@@ -23,6 +23,7 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemException;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -64,9 +65,9 @@ public class ProblemExceptionWebFluxAdvice {
    */
   public ProblemExceptionWebFluxAdvice(
       ProblemPostProcessor problemPostProcessor,
-      List<AdviceWebFluxInspector> adviceWebFluxInspectors) {
+      List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
     this.problemPostProcessor = problemPostProcessor;
-    this.adviceWebFluxInspectors = adviceWebFluxInspectors;
+    this.adviceWebFluxInspectors = new ArrayList<>(adviceWebFluxInspectors);
   }
 
   /**

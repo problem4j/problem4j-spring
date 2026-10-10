@@ -24,6 +24,7 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.jspecify.annotations.Nullable;
@@ -76,10 +77,10 @@ public class ProblemEnhancedWebMvcHandler extends ResponseEntityExceptionHandler
   public ProblemEnhancedWebMvcHandler(
       ProblemResolverStore problemResolverStore,
       ProblemPostProcessor problemPostProcessor,
-      List<AdviceWebMvcInspector> adviceWebMvcInspectors) {
+      List<? extends AdviceWebMvcInspector> adviceWebMvcInspectors) {
     this.problemResolverStore = problemResolverStore;
     this.problemPostProcessor = problemPostProcessor;
-    this.adviceWebMvcInspectors = adviceWebMvcInspectors;
+    this.adviceWebMvcInspectors = new ArrayList<>(adviceWebMvcInspectors);
   }
 
   /**

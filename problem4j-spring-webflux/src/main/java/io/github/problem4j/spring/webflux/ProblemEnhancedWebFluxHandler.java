@@ -23,6 +23,7 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.jspecify.annotations.Nullable;
@@ -77,10 +78,10 @@ public class ProblemEnhancedWebFluxHandler extends ResponseEntityExceptionHandle
   public ProblemEnhancedWebFluxHandler(
       ProblemResolverStore problemResolverStore,
       ProblemPostProcessor problemPostProcessor,
-      List<AdviceWebFluxInspector> adviceWebFluxInspectors) {
+      List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
     this.problemResolverStore = problemResolverStore;
     this.problemPostProcessor = problemPostProcessor;
-    this.adviceWebFluxInspectors = adviceWebFluxInspectors;
+    this.adviceWebFluxInspectors = new ArrayList<>(adviceWebFluxInspectors);
   }
 
   /**

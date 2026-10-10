@@ -107,7 +107,7 @@ public class ProblemWebFluxAutoConfiguration {
   @Bean
   ProblemExceptionWebFluxAdvice problemExceptionWebFluxAdvice(
       ProblemPostProcessor problemPostProcessor,
-      List<AdviceWebFluxInspector> adviceWebFluxInspectors) {
+      List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
     return new ProblemExceptionWebFluxAdvice(problemPostProcessor, adviceWebFluxInspectors);
   }
 
@@ -160,7 +160,7 @@ public class ProblemWebFluxAutoConfiguration {
     ResponseEntityExceptionHandler problemEnhancedWebFluxHandler(
         ProblemResolverStore problemResolverStore,
         ProblemPostProcessor problemPostProcessor,
-        List<AdviceWebFluxInspector> adviceWebFluxInspectors) {
+        List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
       return new ProblemEnhancedWebFluxHandler(
           problemResolverStore, problemPostProcessor, adviceWebFluxInspectors);
     }

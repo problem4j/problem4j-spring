@@ -24,6 +24,7 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemException;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -64,9 +65,9 @@ public class ProblemExceptionWebMvcAdvice {
    */
   public ProblemExceptionWebMvcAdvice(
       ProblemPostProcessor problemPostProcessor,
-      List<AdviceWebMvcInspector> adviceWebMvcInspectors) {
+      List<? extends AdviceWebMvcInspector> adviceWebMvcInspectors) {
     this.problemPostProcessor = problemPostProcessor;
-    this.adviceWebMvcInspectors = adviceWebMvcInspectors;
+    this.adviceWebMvcInspectors = new ArrayList<>(adviceWebMvcInspectors);
   }
 
   /**

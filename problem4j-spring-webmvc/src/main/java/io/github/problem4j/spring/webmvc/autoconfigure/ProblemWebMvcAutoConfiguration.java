@@ -111,7 +111,7 @@ public class ProblemWebMvcAutoConfiguration {
   @Bean
   ProblemExceptionWebMvcAdvice problemExceptionWebMvcAdvice(
       ProblemPostProcessor problemPostProcessor,
-      List<AdviceWebMvcInspector> adviceWebMvcInspectors) {
+      List<? extends AdviceWebMvcInspector> adviceWebMvcInspectors) {
     return new ProblemExceptionWebMvcAdvice(problemPostProcessor, adviceWebMvcInspectors);
   }
 
@@ -164,7 +164,7 @@ public class ProblemWebMvcAutoConfiguration {
     ResponseEntityExceptionHandler problemEnhancedWebMvcHandler(
         ProblemResolverStore problemResolverStore,
         ProblemPostProcessor problemPostProcessor,
-        List<AdviceWebMvcInspector> adviceWebMvcInspectors) {
+        List<? extends AdviceWebMvcInspector> adviceWebMvcInspectors) {
       return new ProblemEnhancedWebMvcHandler(
           problemResolverStore, problemPostProcessor, adviceWebMvcInspectors);
     }
