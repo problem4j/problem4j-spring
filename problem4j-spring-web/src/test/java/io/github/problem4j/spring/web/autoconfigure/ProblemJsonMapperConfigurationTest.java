@@ -19,6 +19,7 @@ package io.github.problem4j.spring.web.autoconfigure;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
+import io.github.problem4j.jackson3.ProblemJacksonMixIn;
 import io.github.problem4j.spring.web.ProblemJsonMapperBuilderCustomizer;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -77,6 +78,17 @@ class ProblemJsonMapperConfigurationTest {
         .run(
             context ->
                 assertThat(context).doesNotHaveBean(ProblemJsonMapperBuilderCustomizer.class));
+  }
+
+  @Test
+  void givenProblemJacksonMixInNotOnClasspath_whenContextStarts_thenDoesNotRegisterCustomizer() {
+    contextRunner
+        .withClassLoader(new FilteredClassLoader(ProblemJacksonMixIn.class))
+        .run(
+            context -> {
+              assertThat(context).hasNotFailed();
+              assertThat(context).doesNotHaveBean(ProblemJsonMapperBuilderCustomizer.class);
+            });
   }
 
   @Test

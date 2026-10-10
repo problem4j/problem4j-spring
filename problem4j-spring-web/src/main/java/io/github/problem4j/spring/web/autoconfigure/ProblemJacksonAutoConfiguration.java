@@ -18,6 +18,7 @@ package io.github.problem4j.spring.web.autoconfigure;
 
 import com.fasterxml.jackson.databind.Module;
 import io.github.problem4j.jackson2.ProblemModule;
+import io.github.problem4j.jackson3.ProblemJacksonMixIn;
 import io.github.problem4j.spring.web.ProblemJsonMapperBuilderCustomizer;
 import io.github.problem4j.spring.web.ProblemXmlMapperBuilderCustomizer;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -51,7 +52,11 @@ public class ProblemJacksonAutoConfiguration {
   public ProblemJacksonAutoConfiguration() {}
 
   /** Configuration for JSON support in Problem serialization. */
-  @ConditionalOnClass({JsonMapperBuilderCustomizer.class, JsonMapper.class})
+  @ConditionalOnClass({
+    JsonMapperBuilderCustomizer.class,
+    JsonMapper.class,
+    ProblemJacksonMixIn.class
+  })
   @Configuration(proxyBeanMethods = false)
   static class ProblemJsonMapperConfiguration {
 
@@ -73,7 +78,11 @@ public class ProblemJacksonAutoConfiguration {
   }
 
   /** Configuration for XML support in Problem serialization. */
-  @ConditionalOnClass({XmlMapperBuilderCustomizer.class, XmlMapper.class})
+  @ConditionalOnClass({
+    XmlMapperBuilderCustomizer.class,
+    XmlMapper.class,
+    ProblemJacksonMixIn.class
+  })
   @Configuration(proxyBeanMethods = false)
   static class ProblemXmlMapperConfiguration {
 
