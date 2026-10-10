@@ -18,6 +18,7 @@ package io.github.problem4j.spring.web.autoconfigure;
 
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,19 @@ final class ResolverValidator {
    *     the highest precedence; the message lists every such exception class
    */
   static void validate(Map<String, ? extends ProblemResolver> problemResolvers) {
+    validate(problemResolvers, AnnotationAwareOrderComparator.INSTANCE);
+  }
+
+  /**
+   * Validates resolver precedence using the given comparator.
+   *
+   * @param problemResolvers resolvers by bean name
+   * @param orderComparator comparator deciding precedence of resolvers (lower wins)
+   * @throws IllegalStateException if multiple resolvers supporting the same exception class share
+   *     the highest precedence; the message lists every such exception class
+   */
+  static void validate(
+      Map<String, ? extends ProblemResolver> problemResolvers, Comparator<Object> orderComparator) {
     Map<Class<? extends Exception>, List<Map.Entry<String, ProblemResolver>>> byExceptionClass =
         new LinkedHashMap<>();
     problemResolvers.forEach(
@@ -50,7 +64,7 @@ final class ResolverValidator {
     List<String> conflicts = new ArrayList<>();
     byExceptionClass.forEach(
         (exceptionClass, entries) ->
-            findConflict(exceptionClass, entries).ifPresent(conflicts::add));
+            findConflict(exceptionClass, entries, orderComparator).ifPresent(conflicts::add));
 
     if (!conflicts.isEmpty()) {
       throw new IllegalStateException(
@@ -61,15 +75,15 @@ final class ResolverValidator {
   }
 
   private static Optional<String> findConflict(
-      Class<? extends Exception> exceptionClass, List<Map.Entry<String, ProblemResolver>> entries) {
-    entries.sort(Map.Entry.comparingByValue(AnnotationAwareOrderComparator.INSTANCE));
+      Class<? extends Exception> exceptionClass,
+      List<Map.Entry<String, ProblemResolver>> entries,
+      Comparator<Object> orderComparator) {
+    entries.sort(Map.Entry.comparingByValue(orderComparator));
     ProblemResolver winner = entries.get(0).getValue();
 
     List<String> tied =
         entries.stream()
-            .filter(
-                entry ->
-                    AnnotationAwareOrderComparator.INSTANCE.compare(winner, entry.getValue()) == 0)
+            .filter(entry -> orderComparator.compare(winner, entry.getValue()) == 0)
             .map(
                 entry -> "'" + entry.getKey() + "' (" + entry.getValue().getClass().getName() + ")")
             .toList();

@@ -22,6 +22,7 @@ import static java.util.Objects.requireNonNull;
 
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +84,9 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
       List<? extends ProblemResolver> problemResolvers,
       ClassDistanceEvaluation classDistanceEvaluation) {
     this.resolvers =
-        index(problemResolvers.stream().map(resolver -> new Registration(null, resolver)));
+        index(
+            problemResolvers.stream().map(resolver -> new Registration(null, resolver)),
+            AnnotationAwareOrderComparator.INSTANCE);
     this.classDistanceEvaluation = classDistanceEvaluation;
   }
 
@@ -119,10 +122,34 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
   public DefaultProblemResolverStore(
       Map<String, ? extends ProblemResolver> problemResolvers,
       ClassDistanceEvaluation classDistanceEvaluation) {
+    this(problemResolvers, classDistanceEvaluation, AnnotationAwareOrderComparator.INSTANCE);
+  }
+
+  /**
+   * Creates a new store initialized with the given resolvers, keyed by bean name, a specific class
+   * distance evaluation strategy and a comparator deciding resolver precedence.
+   *
+   * <p>If multiple resolvers support the same exception class, the one ordered first by {@code
+   * orderComparator} is used. On tie, the first one in the map is used. Bean names are used only
+   * for diagnostics.
+   *
+   * @param problemResolvers available {@link ProblemResolver} instances by bean name
+   * @param classDistanceEvaluation the strategy used to evaluate the distance between exception
+   *     classes (e.g., when finding the best resolver for a specific exception type).
+   * @param orderComparator comparator deciding precedence of resolvers supporting the same
+   *     exception class (lower wins)
+   * @throws NullPointerException if any resolver or its exception class is {@code null}
+   * @since 3.1.0
+   */
+  public DefaultProblemResolverStore(
+      Map<String, ? extends ProblemResolver> problemResolvers,
+      ClassDistanceEvaluation classDistanceEvaluation,
+      Comparator<Object> orderComparator) {
     this.resolvers =
         index(
             problemResolvers.entrySet().stream()
-                .map(entry -> new Registration(entry.getKey(), entry.getValue())));
+                .map(entry -> new Registration(entry.getKey(), entry.getValue())),
+            orderComparator);
     this.classDistanceEvaluation = classDistanceEvaluation;
   }
 
@@ -154,12 +181,9 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
   }
 
   private static Map<Class<? extends Exception>, Registration> index(
-      Stream<Registration> registrations) {
+      Stream<Registration> registrations, Comparator<Object> orderComparator) {
     List<Registration> sorted = new ArrayList<>(registrations.toList());
-    sorted.sort(
-        (left, right) ->
-            AnnotationAwareOrderComparator.INSTANCE.compare(
-                left.getResolver(), right.getResolver()));
+    sorted.sort((left, right) -> orderComparator.compare(left.getResolver(), right.getResolver()));
 
     Map<Class<? extends Exception>, List<Registration>> byExceptionClass = new HashMap<>();
     sorted.forEach(

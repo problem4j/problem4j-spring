@@ -165,6 +165,38 @@ class ProblemWebAutoConfigurationTest {
   }
 
   @Test
+  void givenFailPolicyAndBeanMethodsWithDifferentOrder_whenContextStarts_thenLowerOrderWins() {
+    new WebApplicationContextRunner()
+        .withConfiguration(autoConfigurations)
+        .withUserConfiguration(BeanMethodOrderResolversConfiguration.class)
+        .withPropertyValues("problem4j.duplicate-resolver-policy=fail")
+        .run(
+            context ->
+                assertThat(
+                        context
+                            .getBean(ProblemResolverStore.class)
+                            .findResolver(DuplicatedException.class))
+                    .get()
+                    .isSameAs(context.getBean("prioritizedBeanMethodResolver")));
+  }
+
+  @Test
+  void givenBeanMethodOrderAndClassOrder_whenContextStarts_thenBeanMethodOrderIsApplied() {
+    new WebApplicationContextRunner()
+        .withConfiguration(autoConfigurations)
+        .withUserConfiguration(BeanMethodAndClassOrderResolversConfiguration.class)
+        .withPropertyValues("problem4j.duplicate-resolver-policy=fail")
+        .run(
+            context ->
+                assertThat(
+                        context
+                            .getBean(ProblemResolverStore.class)
+                            .findResolver(DuplicatedException.class))
+                    .get()
+                    .isSameAs(context.getBean("beanMethodOrderedResolver")));
+  }
+
+  @Test
   void givenFailPolicyAndResolverCaching_whenContextStarts_thenCachingStoreResolves() {
     new WebApplicationContextRunner()
         .withConfiguration(autoConfigurations)
@@ -207,6 +239,36 @@ class ProblemWebAutoConfigurationTest {
     @Bean
     PrioritizedResolver prioritizedResolver() {
       return new PrioritizedResolver();
+    }
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  static class BeanMethodOrderResolversConfiguration {
+
+    @Bean
+    DuplicatedResolver plainBeanMethodResolver() {
+      return new DuplicatedResolver();
+    }
+
+    @Order(0)
+    @Bean
+    DuplicatedResolver prioritizedBeanMethodResolver() {
+      return new DuplicatedResolver();
+    }
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  static class BeanMethodAndClassOrderResolversConfiguration {
+
+    @Bean
+    PrioritizedResolver classOrderedResolver() {
+      return new PrioritizedResolver();
+    }
+
+    @Order(-1)
+    @Bean
+    DuplicatedResolver beanMethodOrderedResolver() {
+      return new DuplicatedResolver();
     }
   }
 

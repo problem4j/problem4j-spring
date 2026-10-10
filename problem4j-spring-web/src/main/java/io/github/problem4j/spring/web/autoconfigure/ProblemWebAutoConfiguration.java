@@ -16,8 +16,11 @@
 
 package io.github.problem4j.spring.web.autoconfigure;
 
+import static io.github.problem4j.spring.web.HierarchyTraversalMode.SUPERCLASS;
+
 import io.github.problem4j.spring.web.CachingProblemResolverStore;
 import io.github.problem4j.spring.web.DefaultProblemResolverStore;
+import io.github.problem4j.spring.web.GraphClassDistanceEvaluation;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DuplicateResolverPolicy;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
@@ -27,7 +30,9 @@ import io.github.problem4j.spring.web.parameter.DefaultMethodValidationResultSup
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
+import java.util.Comparator;
 import java.util.Map;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -72,6 +77,8 @@ public class ProblemWebAutoConfiguration {
    *     name
    * @param properties the configuration properties, used to decide whether resolver lookups are
    *     cached and how resolvers with equal order are handled
+   * @param beanFactory the bean factory, used to resolve {@code @Order} declared on {@code @Bean}
+   *     methods of resolvers
    * @return {@link DefaultProblemResolverStore}, wrapped in {@link CachingProblemResolverStore} if
    *     caching is enabled
    * @throws IllegalStateException if {@link ProblemProperties#getDuplicateResolverPolicy()} is
@@ -81,12 +88,18 @@ public class ProblemWebAutoConfiguration {
   @ConditionalOnMissingBean(ProblemResolverStore.class)
   @Bean
   ProblemResolverStore problemResolverStore(
-      Map<String, ? extends ProblemResolver> problemResolvers, ProblemProperties properties) {
+      Map<String, ? extends ProblemResolver> problemResolvers,
+      ProblemProperties properties,
+      ConfigurableListableBeanFactory beanFactory) {
+    Comparator<Object> orderComparator = ResolverOrdering.comparator(beanFactory, problemResolvers);
+
     if (properties.getDuplicateResolverPolicy() == DuplicateResolverPolicy.FAIL) {
-      ResolverValidator.validate(problemResolvers);
+      ResolverValidator.validate(problemResolvers, orderComparator);
     }
 
-    ProblemResolverStore problemResolverStore = new DefaultProblemResolverStore(problemResolvers);
+    ProblemResolverStore problemResolverStore =
+        new DefaultProblemResolverStore(
+            problemResolvers, new GraphClassDistanceEvaluation(SUPERCLASS), orderComparator);
 
     if (properties.getResolverCaching().isEnabled()) {
       problemResolverStore = new CachingProblemResolverStore(problemResolverStore);
