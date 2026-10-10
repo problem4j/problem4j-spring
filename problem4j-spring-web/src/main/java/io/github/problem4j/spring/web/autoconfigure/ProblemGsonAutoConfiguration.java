@@ -17,6 +17,7 @@
 package io.github.problem4j.spring.web.autoconfigure;
 
 import com.google.gson.Gson;
+import io.github.problem4j.gson.ProblemTypeAdapterFactory;
 import io.github.problem4j.spring.web.ProblemGsonBuilderCustomizer;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
@@ -35,7 +36,7 @@ import org.springframework.context.annotation.Bean;
  */
 @AutoConfiguration
 @ConditionalOnBooleanProperty(name = "problem4j.enabled", matchIfMissing = true)
-@ConditionalOnClass({GsonBuilderCustomizer.class, Gson.class})
+@ConditionalOnClass({GsonBuilderCustomizer.class, Gson.class, ProblemTypeAdapterFactory.class})
 public class ProblemGsonAutoConfiguration {
 
   /**

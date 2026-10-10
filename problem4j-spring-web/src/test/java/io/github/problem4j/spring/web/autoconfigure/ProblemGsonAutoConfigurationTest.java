@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.gson.Gson;
 import io.github.problem4j.core.Problem;
+import io.github.problem4j.gson.ProblemTypeAdapterFactory;
 import io.github.problem4j.spring.web.ProblemGsonBuilderCustomizer;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -74,6 +75,18 @@ class ProblemGsonAutoConfigurationTest {
     contextRunner
         .withClassLoader(new FilteredClassLoader(Gson.class))
         .run(context -> assertThat(context).doesNotHaveBean(ProblemGsonBuilderCustomizer.class));
+  }
+
+  @Test
+  void givenProblem4jGsonNotOnClasspath_whenContextStarts_thenDoesNotRegisterCustomizer() {
+    contextRunner
+        .withClassLoader(new FilteredClassLoader(ProblemTypeAdapterFactory.class))
+        .run(
+            context -> {
+              assertThat(context).hasNotFailed();
+              assertThat(context).doesNotHaveBean(ProblemGsonBuilderCustomizer.class);
+              assertThat(context).hasSingleBean(Gson.class);
+            });
   }
 
   @Test
