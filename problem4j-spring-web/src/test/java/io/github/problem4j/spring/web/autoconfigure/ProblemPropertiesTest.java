@@ -29,6 +29,12 @@ import org.junit.jupiter.api.Test;
 class ProblemPropertiesTest {
 
   @Test
+  void givenDeprecatedDefaultEnabledValues_whenRead_thenMatchDefaultEnabled() {
+    assertThat(ResolverCaching.DEFAULT_ENABLED_VALUE)
+        .isEqualTo(String.valueOf(ResolverCaching.DEFAULT_ENABLED));
+  }
+
+  @Test
   void givenNoArgConstructor_whenCreated_thenDefaultsApplied() {
     ProblemProperties properties = new ProblemProperties();
 

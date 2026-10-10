@@ -255,6 +255,16 @@ public class ProblemWebFluxProperties {
      */
     public static final boolean DEFAULT_ENABLED = true;
 
+    /**
+     * Default enabled value as a string for {@code ExceptionAdvice} configuration group.
+     *
+     * @since 1.2.0
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
+     */
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public static final String DEFAULT_ENABLED_VALUE = "true";
+
     /** Whether the {@code ExceptionWebFluxAdvice} bean should be registered. */
     private boolean enabled = DEFAULT_ENABLED;
 
@@ -319,6 +329,16 @@ public class ProblemWebFluxProperties {
      * @since 1.2.0
      */
     public static final boolean DEFAULT_ENABLED = true;
+
+    /**
+     * Default enabled value as a string for {@code ProblemExceptionAdvice} configuration group.
+     *
+     * @since 1.2.0
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
+     */
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public static final String DEFAULT_ENABLED_VALUE = "true";
 
     /** Whether the {@code ProblemExceptionWebFluxAdvice} bean should be registered. */
     private boolean enabled = DEFAULT_ENABLED;
@@ -385,6 +405,16 @@ public class ProblemWebFluxProperties {
      */
     public static final boolean DEFAULT_ENABLED = true;
 
+    /**
+     * Default enabled value as a string for {@code ProblemContextFilter} configuration group.
+     *
+     * @since 1.2.0
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
+     */
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public static final String DEFAULT_ENABLED_VALUE = "true";
+
     /** Whether the {@code ProblemContextWebFluxFilter} bean should be registered. */
     private boolean enabled = DEFAULT_ENABLED;
 
@@ -449,6 +479,16 @@ public class ProblemWebFluxProperties {
      * @since 1.2.0
      */
     public static final boolean DEFAULT_ENABLED = true;
+
+    /**
+     * Default enabled value as a string for {@code ExceptionHandler} configuration group.
+     *
+     * @since 1.2.0
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
+     */
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public static final String DEFAULT_ENABLED_VALUE = "true";
 
     /** Whether the {@code ProblemEnhancedWebFluxHandler} should be registered. */
     private boolean enabled = DEFAULT_ENABLED;
@@ -516,6 +556,15 @@ public class ProblemWebFluxProperties {
 
     /** Default enabled value for {@code ErrorWebExceptionHandler} configuration group. */
     public static final boolean DEFAULT_ENABLED = true;
+
+    /**
+     * Default enabled value as a string for {@code ErrorWebExceptionHandler} configuration group.
+     *
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
+     */
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public static final String DEFAULT_ENABLED_VALUE = "true";
 
     /** Whether the {@code ProblemErrorWebExceptionHandler} should be registered. */
     private boolean enabled = DEFAULT_ENABLED;

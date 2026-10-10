@@ -254,6 +254,16 @@ public class ProblemWebMvcProperties {
      */
     public static final boolean DEFAULT_ENABLED = true;
 
+    /**
+     * Default enabled value string for {@code ExceptionWebMvcAdvice}.
+     *
+     * @since 1.2.0
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
+     */
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public static final String DEFAULT_ENABLED_VALUE = "true";
+
     /** Whether the {@code ExceptionWebMvcAdvice} bean should be registered. */
     private boolean enabled = DEFAULT_ENABLED;
 
@@ -318,6 +328,16 @@ public class ProblemWebMvcProperties {
      * @since 1.2.0
      */
     public static final boolean DEFAULT_ENABLED = true;
+
+    /**
+     * Default enabled value string for {@code ProblemExceptionWebMvcAdvice}.
+     *
+     * @since 1.2.0
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
+     */
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public static final String DEFAULT_ENABLED_VALUE = "true";
 
     /** Whether the {@code ProblemExceptionWebMvcAdvice} bean should be registered. */
     private boolean enabled = DEFAULT_ENABLED;
@@ -385,6 +405,16 @@ public class ProblemWebMvcProperties {
      */
     public static final boolean DEFAULT_ENABLED = true;
 
+    /**
+     * Default enabled value string for {@code ProblemContextWebMvcFilter}.
+     *
+     * @since 1.2.0
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
+     */
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public static final String DEFAULT_ENABLED_VALUE = "true";
+
     /** Whether the {@code ProblemContextWebMvcFilter} bean should be registered. */
     private boolean enabled = DEFAULT_ENABLED;
 
@@ -449,6 +479,16 @@ public class ProblemWebMvcProperties {
      * @since 1.2.0
      */
     public static final boolean DEFAULT_ENABLED = true;
+
+    /**
+     * Default enabled value string for {@code ExceptionHandler}.
+     *
+     * @since 1.2.0
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
+     */
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public static final String DEFAULT_ENABLED_VALUE = "true";
 
     /** Whether the {@code ProblemEnhancedWebMvcHandler} should be registered. */
     private boolean enabled = DEFAULT_ENABLED;
@@ -521,6 +561,16 @@ public class ProblemWebMvcProperties {
      * @since 1.2.0
      */
     public static final boolean DEFAULT_ENABLED = true;
+
+    /**
+     * Default enabled value string for {@code ErrorController}.
+     *
+     * @since 1.2.0
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
+     */
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public static final String DEFAULT_ENABLED_VALUE = "true";
 
     /** Whether the {@code ProblemErrorController} should be registered. */
     private boolean enabled = DEFAULT_ENABLED;

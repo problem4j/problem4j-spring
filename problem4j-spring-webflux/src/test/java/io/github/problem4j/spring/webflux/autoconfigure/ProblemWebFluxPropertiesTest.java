@@ -31,6 +31,20 @@ import org.junit.jupiter.api.Test;
 class ProblemWebFluxPropertiesTest {
 
   @Test
+  void givenDeprecatedDefaultEnabledValues_whenRead_thenMatchDefaultEnabled() {
+    assertThat(ExceptionAdvice.DEFAULT_ENABLED_VALUE)
+        .isEqualTo(String.valueOf(ExceptionAdvice.DEFAULT_ENABLED));
+    assertThat(ProblemExceptionAdvice.DEFAULT_ENABLED_VALUE)
+        .isEqualTo(String.valueOf(ProblemExceptionAdvice.DEFAULT_ENABLED));
+    assertThat(ProblemContextFilter.DEFAULT_ENABLED_VALUE)
+        .isEqualTo(String.valueOf(ProblemContextFilter.DEFAULT_ENABLED));
+    assertThat(ExceptionHandler.DEFAULT_ENABLED_VALUE)
+        .isEqualTo(String.valueOf(ExceptionHandler.DEFAULT_ENABLED));
+    assertThat(ErrorWebExceptionHandler.DEFAULT_ENABLED_VALUE)
+        .isEqualTo(String.valueOf(ErrorWebExceptionHandler.DEFAULT_ENABLED));
+  }
+
+  @Test
   void givenNoArgConstructor_whenCreated_thenDefaultsApplied() {
     ProblemWebFluxProperties properties = new ProblemWebFluxProperties();
 

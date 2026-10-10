@@ -353,6 +353,16 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
      */
     public static final boolean DEFAULT_ENABLED = false;
 
+    /**
+     * Default enabled value string for resolver caching.
+     *
+     * @since 1.2.0
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
+     */
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    public static final String DEFAULT_ENABLED_VALUE = "false";
+
     /** Indicates whether resolver lookup caching is enabled. */
     private boolean enabled = DEFAULT_ENABLED;
 
