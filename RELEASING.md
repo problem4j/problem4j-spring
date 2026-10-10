@@ -14,7 +14,7 @@
 ## Maven Central
 
 [![Publish Release Status](https://github.com/problem4j/problem4j-spring/actions/workflows/gradle-publish-release.yml/badge.svg)][gradle-publish-release]
-[![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom)][maven-central]
+[![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=!*-*)][maven-central]
 
 1. Keep Git tags with `vX.Y.Z-suffix` format. GitHub Actions job will only trigger on such tags and will remove `v`
    prefix.

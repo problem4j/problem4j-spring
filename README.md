@@ -3,7 +3,7 @@
 <p align="center">
   <a href="https://codecov.io/gh/problem4j/problem4j-spring"><img src="https://codecov.io/gh/problem4j/problem4j-spring/graph/badge.svg?token=S2DOKHIXMH" alt="Codecov"></a>
   <a href="https://github.com/problem4j/problem4j-spring/actions/workflows/gradle-build.yml"><img src="https://github.com/problem4j/problem4j-spring/actions/workflows/gradle-build.yml/badge.svg" alt="Build Status"></a>
-  <a href="https://central.sonatype.com/artifact/io.github.problem4j/problem4j-spring-bom"><img src="https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom" alt="Sonatype"></a>
+  <a href="https://central.sonatype.com/artifact/io.github.problem4j/problem4j-spring-bom"><img src="https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=!*-*" alt="Sonatype"></a>
   <a href="https://github.com/problem4j/problem4j-spring/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-green" alt="License"></a>
 </p>
 
