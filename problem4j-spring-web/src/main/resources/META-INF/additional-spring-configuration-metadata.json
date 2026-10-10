@@ -1,4 +1,10 @@
 {
+  "properties": [
+    {
+      "name": "problem4j.detail-format",
+      "defaultValue": "capitalized"
+    }
+  ],
   "hints": [
     {
       "name": "problem4j.detail-format",

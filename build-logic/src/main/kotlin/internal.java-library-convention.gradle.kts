@@ -41,6 +41,9 @@ tasks.withType<JavaCompile>().configureEach {
 }
 tasks.named<JavaCompile>("compileJava").configure {
     options.release = javaTargetVersion
+    // spring-boot-configuration-processor merges META-INF/additional-spring-configuration-metadata.json
+    // only if resources are processed before compilation
+    inputs.files(tasks.named("processResources"))
 }
 
 kotlin {
