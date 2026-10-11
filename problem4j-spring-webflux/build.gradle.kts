@@ -32,6 +32,8 @@ dependencies {
     testImplementation(libs.jspecify)
     testImplementation(libs.kotlin.reflect)
     testImplementation(libs.kotlin.stdlib)
+    testImplementation(libs.kotlinx.coroutines.core)
+    testImplementation(libs.kotlinx.coroutines.reactor)
 
     testRuntimeOnly(libs.junit.platform.launcher)
 
