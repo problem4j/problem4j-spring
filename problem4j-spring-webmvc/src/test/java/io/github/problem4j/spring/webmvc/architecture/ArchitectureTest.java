@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webmvc.architecture;
 
+import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAnyPackage;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
@@ -23,6 +24,7 @@ import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.sli
 import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
+import com.tngtech.archunit.core.domain.Source;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.lang.ArchCondition;
@@ -74,6 +76,39 @@ class ArchitectureTest {
             .resideInAPackage(BASE_PACKAGE + ".*..")
             .because("subpackages may depend on the root package, not the other way around");
     rule.check(CLASSES);
+  }
+
+  @Test
+  void givenKotlinSources_whenCheckingDependencies_thenOnlyBaselineDependenciesAreUsed() {
+    ArchRule rule =
+        classes()
+            .that(areCompiledFromKotlin())
+            .should()
+            .onlyDependOnClassesThat(
+                resideInAnyPackage(
+                    "java..",
+                    "kotlin..",
+                    "org.jetbrains.annotations..",
+                    "io.github.problem4j..",
+                    "org.springframework.http..",
+                    "org.springframework.web..",
+                    "jakarta.servlet.."))
+            .because(
+                "Kotlin extensions are compiled into facade classes verified as a whole on first use, so they must reference only the WebMVC baseline - put extensions requiring optional dependencies into a separate file");
+    rule.check(CLASSES);
+  }
+
+  private static DescribedPredicate<JavaClass> areCompiledFromKotlin() {
+    return new DescribedPredicate<>("are compiled from Kotlin sources") {
+      @Override
+      public boolean test(JavaClass javaClass) {
+        return javaClass
+            .getSource()
+            .flatMap(Source::getFileName)
+            .filter(name -> name.endsWith(".kt"))
+            .isPresent();
+      }
+    };
   }
 
   @Test

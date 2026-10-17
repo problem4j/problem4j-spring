@@ -20,6 +20,7 @@ import static com.tngtech.archunit.base.DescribedPredicate.not;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.belongToAnyOf;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.equivalentTo;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage;
+import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAnyPackage;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
@@ -27,6 +28,7 @@ import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.sli
 import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
+import com.tngtech.archunit.core.domain.Source;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.lang.ArchCondition;
@@ -91,6 +93,37 @@ class ArchitectureTest {
     return equivalentTo(ProblemResolverStore.class)
         .or(belongToAnyOf(DefaultProblemResolverStore.class))
         .or(equivalentTo(CachingProblemResolverStore.class));
+  }
+
+  @Test
+  void givenKotlinSources_whenCheckingDependencies_thenOnlyBaselineDependenciesAreUsed() {
+    ArchRule rule =
+        classes()
+            .that(areCompiledFromKotlin())
+            .should()
+            .onlyDependOnClassesThat(
+                resideInAnyPackage(
+                    "java..",
+                    "kotlin..",
+                    "org.jetbrains.annotations..",
+                    "io.github.problem4j..",
+                    "org.springframework.http.."))
+            .because(
+                "shared Kotlin extensions are compiled into facade classes loaded by both WebMVC and WebFlux applications, so they must not reference optional dependencies (servlet API, Jakarta Validation, Gson, Jackson 2/XML) - put such extensions into a separate file");
+    rule.check(CLASSES);
+  }
+
+  private static DescribedPredicate<JavaClass> areCompiledFromKotlin() {
+    return new DescribedPredicate<>("are compiled from Kotlin sources") {
+      @Override
+      public boolean test(JavaClass javaClass) {
+        return javaClass
+            .getSource()
+            .flatMap(Source::getFileName)
+            .filter(name -> name.endsWith(".kt"))
+            .isPresent();
+      }
+    };
   }
 
   @Test
