@@ -191,13 +191,13 @@ private class ProblemContextWebMvcFilterSpecImpl : ProblemContextWebMvcFilterSpe
   }
 
   override fun onContext(
-      callback: (HttpServletRequest, HttpServletResponse, ProblemContext) -> Unit
+      callback: (HttpServletRequest, HttpServletResponse, ProblemContext) -> Unit,
   ) {
     contextCallbacks.add(callback)
   }
 
   override fun onComplete(
-      callback: (HttpServletRequest, HttpServletResponse, ProblemContext) -> Unit
+      callback: (HttpServletRequest, HttpServletResponse, ProblemContext) -> Unit,
   ) {
     completeCallbacks.add(callback)
   }
