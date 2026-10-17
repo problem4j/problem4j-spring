@@ -103,7 +103,7 @@ class ProblemWebFluxExtensionsTest {
     val filter = problemContextWebFluxFilter({ "X-Trace-Id" }) { createTraceId { _ -> "custom" } }
     val exchange =
         MockServerWebExchange.from(
-            MockServerHttpRequest.get("/").header("X-Trace-Id", "from-header")
+            MockServerHttpRequest.get("/").header("X-Trace-Id", "from-header"),
         )
 
     filter.filter(exchange) { Mono.empty() }.block()
@@ -156,7 +156,7 @@ class ProblemWebFluxExtensionsTest {
                 ctx.get<String>(TRACE_ID_ATTRIBUTE),
                 ctx.get<String>("first"),
                 ctx.get<String>("second"),
-            )
+            ),
         )
         Mono.empty()
       }
