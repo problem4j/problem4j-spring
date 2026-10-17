@@ -25,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
+import org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST
 import org.springframework.web.context.request.WebRequest
 
 /**
@@ -220,7 +221,7 @@ private class DslProblemContextWebMvcFilter(
       super.doFilterInternal(request, response, filterChain)
     } finally {
       // absent only if building the context failed, in which case onContext never ran either
-      val context = request.getAttribute(PROBLEM_CONTEXT_ATTRIBUTE) as? ProblemContext
+      val context = request.problemContext
       if (context != null) {
         completeCallbacks.forEach { it(request, response, context) }
       }
@@ -241,3 +242,57 @@ private class DslProblemContextWebMvcFilter(
     contextCallbacks.forEach { it(request, response, context) }
   }
 }
+
+/**
+ * The [ProblemContext] assigned to this request by [ProblemContextWebMvcFilter], or `null` if none
+ * is assigned (e.g. the filter is disabled or has not processed this request yet).
+ *
+ * Example:
+ * ```
+ * import io.github.problem4j.spring.webmvc.problemContext
+ * import jakarta.servlet.http.HttpServletRequest
+ * import org.springframework.web.bind.annotation.GetMapping
+ * import org.springframework.web.bind.annotation.RestController
+ *
+ * @RestController
+ * class OrderController {
+ *
+ *     @GetMapping("/orders")
+ *     fun orders(request: HttpServletRequest): List<Order> {
+ *         log.info("Listing orders [traceId={}]", request.problemContext?.get("traceId"))
+ *         return orderService.findAll()
+ *     }
+ * }
+ * ```
+ *
+ * @since 3.1.0
+ */
+public val HttpServletRequest.problemContext: ProblemContext?
+  get() = getAttribute(PROBLEM_CONTEXT_ATTRIBUTE) as? ProblemContext
+
+/**
+ * The [ProblemContext] assigned to this request by [ProblemContextWebMvcFilter], or `null` if none
+ * is assigned (e.g. the filter is disabled or has not processed this request yet).
+ *
+ * Example:
+ * ```
+ * import io.github.problem4j.spring.webmvc.problemContext
+ * import org.springframework.web.bind.annotation.ControllerAdvice
+ * import org.springframework.web.bind.annotation.ExceptionHandler
+ * import org.springframework.web.context.request.WebRequest
+ *
+ * @ControllerAdvice
+ * class ReportingAdvice {
+ *
+ *     @ExceptionHandler(ReportGenerationException::class)
+ *     fun handle(ex: ReportGenerationException, request: WebRequest): ResponseEntity<Any> {
+ *         alerting.notify(ex, request.problemContext?.get("traceId"))
+ *         return ResponseEntity.internalServerError().build()
+ *     }
+ * }
+ * ```
+ *
+ * @since 3.1.0
+ */
+public val WebRequest.problemContext: ProblemContext?
+  get() = getAttribute(PROBLEM_CONTEXT_ATTRIBUTE, SCOPE_REQUEST) as? ProblemContext

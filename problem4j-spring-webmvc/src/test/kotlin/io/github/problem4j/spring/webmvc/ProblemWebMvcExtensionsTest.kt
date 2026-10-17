@@ -186,4 +186,62 @@ class ProblemWebMvcExtensionsTest {
 
     assertThat(captured).containsExactly(existing, existing)
   }
+
+  @Test
+  fun givenContextAttribute_whenReadingFromServletRequest_thenContextIsReturned() {
+    val request =
+        MockHttpServletRequest().apply { setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, context) }
+
+    assertThat(request.problemContext).isSameAs(context)
+  }
+
+  @Test
+  fun givenNoContextAttribute_whenReadingFromServletRequest_thenNullIsReturned() {
+    assertThat(MockHttpServletRequest().problemContext).isNull()
+  }
+
+  @Test
+  fun givenNonContextAttribute_whenReadingFromServletRequest_thenNullIsReturned() {
+    val request = MockHttpServletRequest().apply { setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, "text") }
+
+    assertThat(request.problemContext).isNull()
+  }
+
+  @Test
+  fun givenContextAttribute_whenReadingFromWebRequest_thenContextIsReturned() {
+    val servletRequest =
+        MockHttpServletRequest().apply { setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, context) }
+
+    assertThat(ServletWebRequest(servletRequest).problemContext).isSameAs(context)
+  }
+
+  @Test
+  fun givenNoContextAttribute_whenReadingFromWebRequest_thenNullIsReturned() {
+    assertThat(request.problemContext).isNull()
+  }
+
+  @Test
+  fun givenNonContextAttribute_whenReadingFromWebRequest_thenNullIsReturned() {
+    val servletRequest =
+        MockHttpServletRequest().apply { setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, "text") }
+
+    assertThat(ServletWebRequest(servletRequest).problemContext).isNull()
+  }
+
+  @Test
+  fun givenFilteredRequest_whenReadingFromServletRequest_thenFilterContextIsReturned() {
+    val captured = AtomicReference<ProblemContext>()
+    val filter =
+        problemContextWebMvcFilter({ null }) {
+          onContext { request, _, context ->
+            assertThat(request.problemContext).isSameAs(context)
+            captured.set(context)
+          }
+        }
+    val request = MockHttpServletRequest()
+
+    filter.doFilter(request, MockHttpServletResponse(), MockFilterChain())
+
+    assertThat(request.problemContext).isNotNull().isSameAs(captured.get())
+  }
 }

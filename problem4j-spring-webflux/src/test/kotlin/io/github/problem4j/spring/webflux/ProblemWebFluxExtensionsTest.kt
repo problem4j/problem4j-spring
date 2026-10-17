@@ -31,6 +31,7 @@ import org.springframework.mock.web.server.MockServerWebExchange
 import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
+import reactor.util.context.Context
 
 class ProblemWebFluxExtensionsTest {
 
@@ -207,5 +208,58 @@ class ProblemWebFluxExtensionsTest {
     filter.filter(exchange) { Mono.empty() }.block()
 
     assertThat(captured).containsExactly(existing, existing)
+  }
+
+  @Test
+  fun givenContextAttribute_whenReadingFromExchange_thenContextIsReturned() {
+    val exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"))
+    exchange.attributes[PROBLEM_CONTEXT_ATTRIBUTE] = context
+
+    assertThat(exchange.problemContext).isSameAs(context)
+  }
+
+  @Test
+  fun givenNoContextAttribute_whenReadingFromExchange_thenNullIsReturned() {
+    assertThat(request.problemContext).isNull()
+  }
+
+  @Test
+  fun givenNonContextAttribute_whenReadingFromExchange_thenNullIsReturned() {
+    val exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"))
+    exchange.attributes[PROBLEM_CONTEXT_ATTRIBUTE] = "text"
+
+    assertThat(exchange.problemContext).isNull()
+  }
+
+  @Test
+  fun givenContextEntry_whenReadingFromReactorContext_thenContextIsReturned() {
+    assertThat(Context.of(PROBLEM_CONTEXT_ATTRIBUTE, context).problemContext).isSameAs(context)
+  }
+
+  @Test
+  fun givenNoContextEntry_whenReadingFromReactorContext_thenNullIsReturned() {
+    assertThat(Context.empty().problemContext).isNull()
+  }
+
+  @Test
+  fun givenNonContextEntry_whenReadingFromReactorContext_thenNullIsReturned() {
+    assertThat(Context.of(PROBLEM_CONTEXT_ATTRIBUTE, "text").problemContext).isNull()
+  }
+
+  @Test
+  fun givenFilteredExchange_whenReadingDownstream_thenFilterContextIsReturned() {
+    val captured = AtomicReference<List<ProblemContext?>>()
+    val filter = problemContextWebFluxFilter({ null }) {}
+    val exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"))
+    val chain = WebFilterChain { ex ->
+      Mono.deferContextual { ctx ->
+        captured.set(listOf(ex.problemContext, ctx.problemContext))
+        Mono.empty()
+      }
+    }
+
+    filter.filter(exchange, chain).block()
+
+    assertThat(captured.get()).doesNotContainNull().containsOnly(exchange.problemContext)
   }
 }

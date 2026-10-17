@@ -26,6 +26,7 @@ import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
 import reactor.util.context.Context
+import reactor.util.context.ContextView
 
 /**
  * Creates an [AdviceWebFluxInspector] from a lambda.
@@ -228,7 +229,7 @@ private class DslProblemContextWebFluxFilter(
 
   override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
     val result = super.filter(exchange, chain)
-    val context = exchange.getAttribute<Any>(PROBLEM_CONTEXT_ATTRIBUTE) as? ProblemContext
+    val context = exchange.problemContext
     if (context == null || completeCallbacks.isEmpty()) {
       return result
     }
@@ -252,3 +253,50 @@ private class DslProblemContextWebFluxFilter(
         write(acc, exchange, context)
       }
 }
+
+/**
+ * The [ProblemContext] assigned to this exchange by [ProblemContextWebFluxFilter], or `null` if
+ * none is assigned (e.g. the filter is disabled or has not processed this exchange yet).
+ *
+ * Example:
+ * ```
+ * import io.github.problem4j.spring.webflux.problemContext
+ * import org.springframework.web.bind.annotation.GetMapping
+ * import org.springframework.web.bind.annotation.RestController
+ * import org.springframework.web.server.ServerWebExchange
+ *
+ * @RestController
+ * class OrderController {
+ *
+ *     @GetMapping("/orders")
+ *     suspend fun orders(exchange: ServerWebExchange): List<Order> {
+ *         log.info("Listing orders [traceId={}]", exchange.problemContext?.get("traceId"))
+ *         return orderService.findAll()
+ *     }
+ * }
+ * ```
+ *
+ * @since 3.1.0
+ */
+public val ServerWebExchange.problemContext: ProblemContext?
+  get() = getAttribute<Any>(PROBLEM_CONTEXT_ATTRIBUTE) as? ProblemContext
+
+/**
+ * The [ProblemContext] propagated through Reactor [Context] by [ProblemContextWebFluxFilter], or
+ * `null` if none is present (e.g. the filter is disabled or this pipeline is not downstream of it).
+ *
+ * Example:
+ * ```
+ * import io.github.problem4j.spring.webflux.problemContext
+ * import reactor.core.publisher.Mono
+ *
+ * fun auditOrder(order: Order): Mono<Void> =
+ *     Mono.deferContextual { ctx ->
+ *         auditClient.send(order.id, ctx.problemContext?.get("traceId"))
+ *     }
+ * ```
+ *
+ * @since 3.1.0
+ */
+public val ContextView.problemContext: ProblemContext?
+  get() = getOrDefault<Any>(PROBLEM_CONTEXT_ATTRIBUTE, null) as? ProblemContext
