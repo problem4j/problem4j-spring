@@ -1,16 +1,16 @@
 [versions]
 errorprone = "2.50.0"
-errorprone-plugin = "5.1.0"
+errorprone-plugin = "5.1.1"
 idea-ext = "1.4.1"
-jspecify = "1.0.0"
-kotlin = "2.4.0"
+jspecify = "1.0.1"
+kotlin = "2.4.21"
 nmcp = "1.6.2"
-nullaway = "0.13.7"
+nullaway = "0.14.2"
 problem4j-core = "1.4.3"
 problem4j-jackson2 = "1.4.3"
 problem4j-jackson3 = "1.4.3"
 spotless = "8.10.4"
-spring-boot = "4.0.7"
+spring-boot = "4.0.8"
 
 [plugins]
 errorprone = { id = "net.ltgt.errorprone", version.ref = "errorprone-plugin" }
