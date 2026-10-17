@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   `MethodValidationResultSupportAware`, `MethodParameterSupportAware`) that any bean can implement to receive the
   corresponding Problem4J collaborator from `ProblemBeanPostProcessor` after construction.
 - Add `problem4j-gson` and register `ProblemTypeAdapterFactory` if present on the classpath.
-- Add Kotlin extensions and DSL functions for common Problem4J classes.
+- Add Kotlin extensions and DSL functions for common Problem4J classes and utilities.
 - Add `problem4j.duplicate-resolver-policy` property to control what happens when multiple `ProblemResolver` instances
   for the same exception class have equal order. `fail` (default) fails application startup, `first` picks the first
   one registered in the application context.

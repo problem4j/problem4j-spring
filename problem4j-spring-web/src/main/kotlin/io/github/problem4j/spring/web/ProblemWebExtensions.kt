@@ -41,7 +41,6 @@ import org.springframework.http.HttpStatusCode
  *
  * @since 3.1.0
  */
-@ProblemDslMarker
 public interface ProblemBuilderSpec {
 
   /**
@@ -430,8 +429,6 @@ public operator fun ProblemContext.contains(key: String): Boolean = containsKey(
 @PublishedApi
 internal fun ProblemBuilder.build(block: ProblemBuilderSpec.() -> Unit): Problem =
     ProblemBuilderSpecImpl(this).apply(block).build()
-
-@DslMarker internal annotation class ProblemDslMarker
 
 private class ProblemBuilderSpecImpl(private var builder: ProblemBuilder) : ProblemBuilderSpec {
 
