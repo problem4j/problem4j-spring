@@ -37,7 +37,7 @@ dependencies {
     testImplementation(libs.spring.boot.jackson)
     testImplementation(libs.spring.boot.web.server)
     testImplementation(libs.spring.boot.validation)
-    testImplementation(libs.archunit.junit5)
+    testImplementation(libs.archunit.junit6)
     testImplementation(libs.jakarta.servlet.api)
     testImplementation(libs.jspecify)
 

@@ -29,7 +29,7 @@ dependencies {
     testImplementation(libs.spring.boot.starter.webmvc.test)
     testImplementation(libs.spring.boot.restclient)
     testImplementation(libs.spring.boot.validation)
-    testImplementation(libs.archunit.junit5)
+    testImplementation(libs.archunit.junit6)
     testImplementation(libs.jackson3.dataformat.xml)
     testImplementation(libs.jackson3.module.kotlin)
     testImplementation(libs.jspecify)

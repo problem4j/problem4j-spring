@@ -42,7 +42,7 @@ class CoroutineController {
             .type("https://example.org/coroutine")
             .status(409)
             .detail("coroutine conflict")
-            .build()
+            .build(),
     )
   }
 

@@ -1,5 +1,5 @@
 [versions]
-archunit = "1.5.0"
+archunit = "1.5.1"
 errorprone = "2.50.0"
 errorprone-plugin = "5.1.1"
 idea-ext = "1.4.1"
@@ -31,7 +31,7 @@ kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin
 spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
 
 # direct versions
-archunit-junit5 = { module = "com.tngtech.archunit:archunit-junit5", version.ref = "archunit" }
+archunit-junit6 = { module = "com.tngtech.archunit:archunit-junit6", version.ref = "archunit" }
 errorprone-core = { module = "com.google.errorprone:error_prone_core", version.ref = "errorprone" }
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
 nullaway = { module = "com.uber.nullaway:nullaway", version.ref = "nullaway" }

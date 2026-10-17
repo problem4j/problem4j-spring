@@ -27,7 +27,7 @@ dependencies {
     testImplementation(platform(libs.spring.boot.dependencies))
     testImplementation(libs.spring.boot.starter.webflux.test)
     testImplementation(libs.spring.boot.validation)
-    testImplementation(libs.archunit.junit5)
+    testImplementation(libs.archunit.junit6)
     testImplementation(libs.jackson3.module.kotlin)
     testImplementation(libs.jspecify)
     testImplementation(libs.kotlin.reflect)
