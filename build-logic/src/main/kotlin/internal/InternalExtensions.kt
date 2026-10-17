@@ -75,7 +75,7 @@ fun Project.findDevelopers(): List<Developer> {
             organization = findProperty("internal.pom.developers.$index.organization") as? String,
             organizationUrl =
                 findProperty("internal.pom.developers.$index.organization-url") as? String,
-        )
+        ),
     )
     index++
   }
@@ -109,7 +109,7 @@ fun Project.findLicenses(): List<License> {
             url = findProperty("internal.pom.licenses.$index.url") as? String,
             distribution = findProperty("internal.pom.licenses.$index.distribution") as? String,
             comments = findProperty("internal.pom.licenses.$index.comments") as? String,
-        )
+        ),
     )
     index++
   }
