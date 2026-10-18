@@ -16,8 +16,6 @@
 
 package io.github.problem4j.spring.web.config;
 
-import static java.util.Objects.requireNonNull;
-
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormatAware;
 import io.github.problem4j.spring.web.ProblemSupportAware;
@@ -162,38 +160,35 @@ final class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor 
 
     @Override
     public Builder problemFormat(Supplier<@Nullable ProblemFormat> problemFormat) {
-      this.problemFormat = requireNonNull(problemFormat, "problemFormat must not be null");
+      this.problemFormat = problemFormat;
       return this;
     }
 
     @Override
     public Builder typeNameMapper(Supplier<@Nullable TypeNameMapper> typeNameMapper) {
-      this.typeNameMapper = requireNonNull(typeNameMapper, "typeNameMapper must not be null");
+      this.typeNameMapper = typeNameMapper;
       return this;
     }
 
     @Override
     public Builder bindingResultSupport(
         Supplier<@Nullable BindingResultSupport> bindingResultSupport) {
-      this.bindingResultSupport =
-          requireNonNull(bindingResultSupport, "bindingResultSupport must not be null");
+      this.bindingResultSupport = bindingResultSupport;
       return this;
     }
 
     @Override
     public Builder methodValidationResultSupport(
         Supplier<@Nullable MethodValidationResultSupport> methodValidationResultSupport) {
-      this.methodValidationResultSupport =
-          requireNonNull(
-              methodValidationResultSupport, "methodValidationResultSupport must not be null");
+      this.methodValidationResultSupport = methodValidationResultSupport;
+
       return this;
     }
 
     @Override
     public Builder methodParameterSupport(
         Supplier<@Nullable MethodParameterSupport> methodParameterSupport) {
-      this.methodParameterSupport =
-          requireNonNull(methodParameterSupport, "methodParameterSupport must not be null");
+      this.methodParameterSupport = methodParameterSupport;
       return this;
     }
 

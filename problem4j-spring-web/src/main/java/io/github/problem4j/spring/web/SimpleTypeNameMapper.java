@@ -84,7 +84,7 @@ public class SimpleTypeNameMapper implements TypeNameMapper {
    * @since 3.1.0
    */
   public SimpleTypeNameMapper(TypeNameEntry entry) {
-    this(List.of(requireNonNull(entry, "entry must not be null")));
+    this(List.of(entry));
   }
 
   /**

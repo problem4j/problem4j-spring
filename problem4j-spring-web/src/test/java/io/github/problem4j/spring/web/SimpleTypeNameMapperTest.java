@@ -290,14 +290,6 @@ class SimpleTypeNameMapperTest {
     assertThat(mapper.map(String.class)).hasValue("string");
   }
 
-  @SuppressWarnings("NullAway")
-  @Test
-  void givenNullSingleEntry_whenCreating_thenThrowsNullPointerException() {
-    assertThatThrownBy(() -> new SimpleTypeNameMapper((TypeNameEntry) null))
-        .isInstanceOf(NullPointerException.class)
-        .hasMessage("entry must not be null");
-  }
-
   private interface FirstInterface {}
 
   private interface SecondInterface {}

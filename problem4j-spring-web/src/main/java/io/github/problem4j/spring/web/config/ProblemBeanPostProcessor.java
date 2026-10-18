@@ -99,7 +99,6 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
      *
      * @param problemFormat supplier of the {@link ProblemFormat} bean
      * @return this builder
-     * @throws NullPointerException if {@code problemFormat} is {@code null}
      * @since 3.1.0
      */
     Builder problemFormat(Supplier<@Nullable ProblemFormat> problemFormat);
@@ -109,7 +108,6 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
      *
      * @param typeNameMapper supplier of the {@link TypeNameMapper} bean
      * @return this builder
-     * @throws NullPointerException if {@code typeNameMapper} is {@code null}
      * @since 3.1.0
      */
     Builder typeNameMapper(Supplier<@Nullable TypeNameMapper> typeNameMapper);
@@ -119,7 +117,6 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
      *
      * @param bindingResultSupport supplier of the {@link BindingResultSupport} bean
      * @return this builder
-     * @throws NullPointerException if {@code bindingResultSupport} is {@code null}
      * @since 3.1.0
      */
     Builder bindingResultSupport(Supplier<@Nullable BindingResultSupport> bindingResultSupport);
@@ -130,7 +127,6 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
      * @param methodValidationResultSupport supplier of the {@link MethodValidationResultSupport}
      *     bean
      * @return this builder
-     * @throws NullPointerException if {@code methodValidationResultSupport} is {@code null}
      * @since 3.1.0
      */
     Builder methodValidationResultSupport(
@@ -141,7 +137,6 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
      *
      * @param methodParameterSupport supplier of the {@link MethodParameterSupport} bean
      * @return this builder
-     * @throws NullPointerException if {@code methodParameterSupport} is {@code null}
      * @since 3.1.0
      */
     Builder methodParameterSupport(

@@ -17,7 +17,6 @@
 package io.github.problem4j.spring.web.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -186,21 +185,6 @@ class ProblemBeanPostProcessorTest {
     assertThat(bean.bindingResultSupport).isNull();
     assertThat(bean.methodValidationResultSupport).isNull();
     assertThat(bean.methodParameterSupport).isNull();
-  }
-
-  @SuppressWarnings("NullAway")
-  @Test
-  void givenNullSupplier_whenSetOnBuilder_thenThrowsNullPointerException() {
-    ProblemBeanPostProcessor.Builder builder = ProblemBeanPostProcessor.builder();
-
-    assertThatThrownBy(() -> builder.problemFormat(null)).isInstanceOf(NullPointerException.class);
-    assertThatThrownBy(() -> builder.typeNameMapper(null)).isInstanceOf(NullPointerException.class);
-    assertThatThrownBy(() -> builder.bindingResultSupport(null))
-        .isInstanceOf(NullPointerException.class);
-    assertThatThrownBy(() -> builder.methodValidationResultSupport(null))
-        .isInstanceOf(NullPointerException.class);
-    assertThatThrownBy(() -> builder.methodParameterSupport(null))
-        .isInstanceOf(NullPointerException.class);
   }
 
   @Nested
