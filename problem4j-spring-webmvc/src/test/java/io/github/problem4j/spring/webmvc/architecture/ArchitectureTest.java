@@ -90,6 +90,7 @@ class ArchitectureTest {
                     "kotlin..",
                     "org.jetbrains.annotations..",
                     "io.github.problem4j..",
+                    "org.slf4j..",
                     "org.springframework.http..",
                     "org.springframework.web..",
                     "jakarta.servlet.."))

@@ -107,6 +107,7 @@ class ArchitectureTest {
                     "kotlin..",
                     "org.jetbrains.annotations..",
                     "io.github.problem4j..",
+                    "org.slf4j..",
                     "org.springframework.http.."))
             .because(
                 "shared Kotlin extensions are compiled into facade classes loaded by both WebMVC and WebFlux applications, so they must not reference optional dependencies (servlet API, Jakarta Validation, Gson, Jackson 2/XML) - put such extensions into a separate file");
