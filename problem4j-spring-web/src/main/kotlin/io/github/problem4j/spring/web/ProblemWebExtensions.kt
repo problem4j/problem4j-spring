@@ -20,6 +20,7 @@ import io.github.problem4j.core.Problem
 import io.github.problem4j.core.ProblemBuilder
 import io.github.problem4j.core.ProblemContext
 import java.net.URI
+import kotlin.reflect.KClass
 import org.springframework.http.HttpStatusCode
 
 /**
@@ -490,3 +491,38 @@ private class ProblemBuilderSpecImpl(private var builder: ProblemBuilder) : Prob
 
   fun build(): Problem = builder.build()
 }
+
+/**
+ * Creates a [SimpleTypeNameMapper] with custom mappings from `type to name` pairs, taking
+ * precedence over its default mappings (see [SimpleTypeNameMapper]). Pairs are compared in given
+ * order and the first one matching wins. A pair matches its own type and all of its subtypes, so
+ * pairs for more specific types should be given before pairs for their supertypes. For types with a
+ * primitive counterpart, such as [Int], both the primitive and the boxed Java type are matched. If
+ * the same type is given more than once, the last name wins, keeping the position of the first
+ * occurrence. As pairs are consulted before the default mappings, a pair for a broad type (e.g.
+ * [Number] or [Any]) hides default mappings of its subtypes.
+ *
+ * Example:
+ * ```
+ * import io.github.problem4j.spring.web.TypeNameMapper
+ * import io.github.problem4j.spring.web.simpleTypeNameMapper
+ * import java.time.LocalDate
+ * import java.time.temporal.Temporal
+ * import java.util.UUID
+ * import org.springframework.context.annotation.Bean
+ *
+ * @Bean
+ * fun typeNameMapper(): TypeNameMapper =
+ *     simpleTypeNameMapper(
+ *         UUID::class to "uuid",
+ *         LocalDate::class to "date",
+ *         Temporal::class to "date-time",
+ *     )
+ * ```
+ *
+ * @param mappings pairs of types and names they are mapped to, in order of comparison
+ * @return a new [SimpleTypeNameMapper] with given custom mappings
+ * @since 3.1.0
+ */
+public fun simpleTypeNameMapper(vararg mappings: Pair<KClass<*>, String>): SimpleTypeNameMapper =
+    SimpleTypeNameMapper(mappings.map { (type, name) -> TypeNameEntry(type.javaObjectType, name) })

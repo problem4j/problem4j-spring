@@ -17,9 +17,13 @@
 package io.github.problem4j.spring.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -27,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
@@ -91,4 +96,211 @@ class SimpleTypeNameMapperTest {
         Arguments.of(HashSet.class, "array"),
         Arguments.of(TreeSet.class, "array"));
   }
+
+  @Test
+  void givenCustomMapping_whenMappingRegisteredType_thenCustomNameIsReturned() {
+    TypeNameMapper mapper = new SimpleTypeNameMapper(new TypeNameEntry(UUID.class, "uuid"));
+
+    assertThat(mapper.map(UUID.class)).hasValue("uuid");
+  }
+
+  @Test
+  void givenCustomMapping_whenMappingOtherType_thenDefaultNameIsReturned() {
+    TypeNameMapper mapper = new SimpleTypeNameMapper(new TypeNameEntry(UUID.class, "uuid"));
+
+    assertThat(mapper.map(Integer.class)).hasValue("integer");
+    assertThat(mapper.map(Object.class)).isEmpty();
+  }
+
+  @Test
+  void givenCustomMappingForDefaultType_whenMapping_thenCustomMappingTakesPrecedence() {
+    TypeNameMapper mapper = new SimpleTypeNameMapper(new TypeNameEntry(String.class, "text"));
+
+    assertThat(mapper.map(String.class)).hasValue("text");
+  }
+
+  @Test
+  void givenCustomMappingForInterface_whenMappingImplementation_thenCustomNameIsReturned() {
+    TypeNameMapper mapper =
+        new SimpleTypeNameMapper(new TypeNameEntry(Temporal.class, "date-time"));
+
+    assertThat(mapper.map(LocalDate.class)).hasValue("date-time");
+  }
+
+  @Test
+  void givenCustomMappingForSuperclass_whenMappingSubclass_thenCustomMappingTakesPrecedence() {
+    TypeNameMapper mapper = new SimpleTypeNameMapper(new TypeNameEntry(Number.class, "numeric"));
+
+    assertThat(mapper.map(BigDecimal.class)).hasValue("numeric");
+  }
+
+  @Test
+  void givenSpecificTypeBeforeSupertype_whenMapping_thenEachTypeMatchesItsOwnMapping() {
+    TypeNameMapper mapper =
+        new SimpleTypeNameMapper(
+            new TypeNameEntry(LocalDate.class, "date"),
+            new TypeNameEntry(Temporal.class, "date-time"));
+
+    assertThat(mapper.map(LocalDate.class)).hasValue("date");
+    assertThat(mapper.map(LocalDateTime.class)).hasValue("date-time");
+  }
+
+  @Test
+  void givenSupertypeBeforeSpecificType_whenMapping_thenSupertypeMappingWins() {
+    TypeNameMapper mapper =
+        new SimpleTypeNameMapper(
+            new TypeNameEntry(Temporal.class, "date-time"),
+            new TypeNameEntry(LocalDate.class, "date"));
+
+    assertThat(mapper.map(LocalDate.class)).hasValue("date-time");
+  }
+
+  @Test
+  void givenMultipleMatchingInterfaces_whenMapping_thenFirstGivenMappingWins() {
+    TypeNameMapper mapper =
+        new SimpleTypeNameMapper(
+            new TypeNameEntry(SecondInterface.class, "second"),
+            new TypeNameEntry(FirstInterface.class, "first"));
+
+    assertThat(mapper.map(BothInterfaces.class)).hasValue("second");
+  }
+
+  @Test
+  void givenSameTypeGivenTwice_whenMapping_thenLastNameWinsAtFirstPosition() {
+    TypeNameMapper mapper =
+        new SimpleTypeNameMapper(
+            new TypeNameEntry(UUID.class, "uuid"),
+            new TypeNameEntry(Object.class, "object"),
+            new TypeNameEntry(UUID.class, "identifier"));
+
+    assertThat(mapper.map(UUID.class)).hasValue("identifier");
+  }
+
+  @Test
+  void givenCustomMappingForWrapper_whenMappingPrimitive_thenCustomNameIsReturned() {
+    TypeNameMapper mapper = new SimpleTypeNameMapper(new TypeNameEntry(Integer.class, "int32"));
+
+    assertThat(mapper.map(int.class)).hasValue("int32");
+    assertThat(mapper.map(Integer.class)).hasValue("int32");
+  }
+
+  @Test
+  void givenCustomMappingForPrimitive_whenMappingWrapper_thenDefaultNameIsReturned() {
+    TypeNameMapper mapper = new SimpleTypeNameMapper(new TypeNameEntry(int.class, "int32"));
+
+    assertThat(mapper.map(int.class)).hasValue("int32");
+    assertThat(mapper.map(Integer.class)).hasValue("integer");
+  }
+
+  @Test
+  void givenCustomMappingForWrapperSupertype_whenMappingPrimitive_thenCustomNameIsReturned() {
+    TypeNameMapper mapper = new SimpleTypeNameMapper(new TypeNameEntry(Number.class, "numeric"));
+
+    assertThat(mapper.map(long.class)).hasValue("numeric");
+  }
+
+  @Test
+  void givenNoCustomMappings_whenCreatingWithEmptyVarargs_thenDefaultsAreUsed() {
+    TypeNameMapper mapper = new SimpleTypeNameMapper(new TypeNameEntry[0]);
+
+    assertThat(mapper.map(Integer.class)).hasValue("integer");
+  }
+
+  @Test
+  void givenCustomMappings_whenMappingNullType_thenEmptyIsReturned() {
+    TypeNameMapper mapper = new SimpleTypeNameMapper(new TypeNameEntry(Object.class, "object"));
+
+    assertThat(mapper.map(null)).isEmpty();
+  }
+
+  @SuppressWarnings("NullAway")
+  @Test
+  void givenNullEntriesArray_whenCreating_thenThrowsNullPointerException() {
+    assertThatThrownBy(() -> new SimpleTypeNameMapper((TypeNameEntry[]) null))
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("entries must not be null");
+  }
+
+  @SuppressWarnings("NullAway")
+  @Test
+  void givenNullEntry_whenCreating_thenThrowsNullPointerException() {
+    assertThatThrownBy(() -> new SimpleTypeNameMapper(new TypeNameEntry(UUID.class, "uuid"), null))
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("entries must not contain null elements");
+  }
+
+  @Test
+  void givenListOfEntries_whenMapping_thenEntriesAreComparedInListOrder() {
+    TypeNameMapper mapper =
+        new SimpleTypeNameMapper(
+            List.of(
+                new TypeNameEntry(LocalDate.class, "date"),
+                new TypeNameEntry(Temporal.class, "date-time")));
+
+    assertThat(mapper.map(LocalDate.class)).hasValue("date");
+    assertThat(mapper.map(LocalDateTime.class)).hasValue("date-time");
+    assertThat(mapper.map(Integer.class)).hasValue("integer");
+  }
+
+  @Test
+  void givenEmptyList_whenMapping_thenDefaultsAreUsed() {
+    TypeNameMapper mapper = new SimpleTypeNameMapper(List.of());
+
+    assertThat(mapper.map(Integer.class)).hasValue("integer");
+    assertThat(mapper.map(UUID.class)).isEmpty();
+  }
+
+  @Test
+  void givenSourceListModifiedAfterCreation_whenMapping_thenOriginalEntriesAreUsed() {
+    List<TypeNameEntry> entries = new ArrayList<>();
+    entries.add(new TypeNameEntry(UUID.class, "uuid"));
+    TypeNameMapper mapper = new SimpleTypeNameMapper(entries);
+
+    entries.set(0, new TypeNameEntry(UUID.class, "changed"));
+    entries.add(new TypeNameEntry(String.class, "text"));
+
+    assertThat(mapper.map(UUID.class)).hasValue("uuid");
+    assertThat(mapper.map(String.class)).hasValue("string");
+  }
+
+  @SuppressWarnings("NullAway")
+  @Test
+  void givenNullList_whenCreating_thenThrowsNullPointerException() {
+    assertThatThrownBy(() -> new SimpleTypeNameMapper((List<TypeNameEntry>) null))
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("entries must not be null");
+  }
+
+  @SuppressWarnings("NullAway")
+  @Test
+  void givenListWithNullElement_whenCreating_thenThrowsNullPointerException() {
+    List<TypeNameEntry> entries = new ArrayList<>();
+    entries.add(null);
+
+    assertThatThrownBy(() -> new SimpleTypeNameMapper(entries))
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("entries must not contain null elements");
+  }
+
+  @Test
+  void givenSingleEntry_whenMapping_thenOnlyThatTypeIsCustomized() {
+    TypeNameMapper mapper = new SimpleTypeNameMapper(new TypeNameEntry(UUID.class, "uuid"));
+
+    assertThat(mapper.map(UUID.class)).hasValue("uuid");
+    assertThat(mapper.map(String.class)).hasValue("string");
+  }
+
+  @SuppressWarnings("NullAway")
+  @Test
+  void givenNullSingleEntry_whenCreating_thenThrowsNullPointerException() {
+    assertThatThrownBy(() -> new SimpleTypeNameMapper((TypeNameEntry) null))
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("entry must not be null");
+  }
+
+  private interface FirstInterface {}
+
+  private interface SecondInterface {}
+
+  private static final class BothInterfaces implements FirstInterface, SecondInterface {}
 }

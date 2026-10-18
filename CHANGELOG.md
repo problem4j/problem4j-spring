@@ -15,6 +15,9 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Add `*Aware` callback interfaces (`ProblemFormatAware`, `TypeNameMapperAware`, `BindingResultSupportAware`,
   `MethodValidationResultSupportAware`, `MethodParameterSupportAware`) that any bean can implement to receive the
   corresponding Problem4J collaborator from `ProblemBeanPostProcessor` after construction.
+- Add `SimpleTypeNameMapper(TypeNameEntry...)` constructor for custom type mappings, compared in given order before the
+  default ones (each matching its type and subtypes), and `simpleTypeNameMapper(...)` Kotlin function creating it from
+  `type to name` pairs.
 - Add `problem4j-gson` and register `ProblemTypeAdapterFactory` if present on the classpath.
 - Add Kotlin extensions and DSL functions for common Problem4J classes and utilities.
 - Add `problem4j.duplicate-resolver-policy` property to control what happens when multiple `ProblemResolver` instances
