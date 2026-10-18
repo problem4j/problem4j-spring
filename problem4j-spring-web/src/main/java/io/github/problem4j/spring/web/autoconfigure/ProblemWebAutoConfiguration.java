@@ -73,8 +73,6 @@ public class ProblemWebAutoConfiguration {
    * Provides a {@link ProblemResolverStore} that aggregates all {@link ProblemResolver}
    * implementations.
    *
-   * @param problemResolvers all available {@link ProblemResolver} declared as components, by bean
-   *     name
    * @param properties the configuration properties, used to decide whether resolver lookups are
    *     cached and how resolvers with equal order are handled
    * @param beanFactory the bean factory, used to resolve {@code @Order} declared on {@code @Bean}
@@ -88,9 +86,9 @@ public class ProblemWebAutoConfiguration {
   @ConditionalOnMissingBean(ProblemResolverStore.class)
   @Bean
   ProblemResolverStore problemResolverStore(
-      Map<String, ? extends ProblemResolver> problemResolvers,
-      ProblemProperties properties,
-      ConfigurableListableBeanFactory beanFactory) {
+      ProblemProperties properties, ConfigurableListableBeanFactory beanFactory) {
+    Map<String, ProblemResolver> problemResolvers =
+        beanFactory.getBeansOfType(ProblemResolver.class);
     Comparator<Object> orderComparator = ResolverOrdering.comparator(beanFactory, problemResolvers);
 
     if (properties.getDuplicateResolverPolicy() == DuplicateResolverPolicy.FAIL) {

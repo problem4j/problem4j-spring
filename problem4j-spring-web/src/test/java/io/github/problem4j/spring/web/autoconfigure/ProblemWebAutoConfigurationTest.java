@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -197,6 +198,43 @@ class ProblemWebAutoConfigurationTest {
   }
 
   @Test
+  void givenResolverInParentContext_whenContextStarts_thenOnlyCurrentContextResolversAreUsed() {
+    try (AnnotationConfigApplicationContext parent =
+        new AnnotationConfigApplicationContext(ParentBeanMethodOrderResolverConfiguration.class)) {
+      new WebApplicationContextRunner()
+          .withParent(parent)
+          .withConfiguration(autoConfigurations)
+          .withUserConfiguration(ChildPlainResolverConfiguration.class)
+          .withPropertyValues("problem4j.duplicate-resolver-policy=fail")
+          .run(
+              context ->
+                  assertThat(
+                          context
+                              .getBean(ProblemResolverStore.class)
+                              .findResolver(DuplicatedException.class))
+                      .get()
+                      .isSameAs(context.getBean("childPlainResolver")));
+    }
+  }
+
+  @Test
+  void givenResolverOnlyInParentContext_whenContextStarts_thenItIsNotUsed() {
+    try (AnnotationConfigApplicationContext parent =
+        new AnnotationConfigApplicationContext(ParentBeanMethodOrderResolverConfiguration.class)) {
+      new WebApplicationContextRunner()
+          .withParent(parent)
+          .withConfiguration(autoConfigurations)
+          .run(
+              context ->
+                  assertThat(
+                          context
+                              .getBean(ProblemResolverStore.class)
+                              .findResolver(DuplicatedException.class))
+                      .isEmpty());
+    }
+  }
+
+  @Test
   void givenFailPolicyAndResolverCaching_whenContextStarts_thenCachingStoreResolves() {
     new WebApplicationContextRunner()
         .withConfiguration(autoConfigurations)
@@ -268,6 +306,25 @@ class ProblemWebAutoConfigurationTest {
     @Order(-1)
     @Bean
     DuplicatedResolver beanMethodOrderedResolver() {
+      return new DuplicatedResolver();
+    }
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  static class ParentBeanMethodOrderResolverConfiguration {
+
+    @Order(0)
+    @Bean
+    DuplicatedResolver parentPrioritizedResolver() {
+      return new DuplicatedResolver();
+    }
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  static class ChildPlainResolverConfiguration {
+
+    @Bean
+    DuplicatedResolver childPlainResolver() {
       return new DuplicatedResolver();
     }
   }
