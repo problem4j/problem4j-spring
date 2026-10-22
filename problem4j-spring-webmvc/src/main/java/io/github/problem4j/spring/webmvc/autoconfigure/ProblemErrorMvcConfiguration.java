@@ -17,7 +17,10 @@
 package io.github.problem4j.spring.webmvc.autoconfigure;
 
 import io.github.problem4j.spring.web.ProblemPostProcessor;
+import io.github.problem4j.spring.web.resolver.ProblemResolutionFacade;
+import io.github.problem4j.spring.webmvc.AdviceWebMvcInspector;
 import io.github.problem4j.spring.webmvc.ProblemErrorController;
+import java.util.List;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -66,14 +69,21 @@ class ProblemErrorMvcConfiguration {
    *
    * <p>Replaces the default error controller when no other implementation is present.
    *
+   * @param problemPostProcessor post-processor applied to rendered problems
    * @param errorAttributes provides error information for requests
+   * @param problemResolutionFacade resolves exceptions that caused errors
+   * @param adviceWebMvcInspectors inspectors notified about resolved exceptions
    * @return a new {@link ProblemErrorController} instance
    * @see org.springframework.boot.webmvc.autoconfigure.error.ErrorMvcAutoConfiguration
    */
   @ConditionalOnMissingBean(ErrorController.class)
   @Bean
   ErrorController problemErrorController(
-      ProblemPostProcessor problemPostProcessor, ErrorAttributes errorAttributes) {
-    return new ProblemErrorController(problemPostProcessor, errorAttributes);
+      ProblemPostProcessor problemPostProcessor,
+      ErrorAttributes errorAttributes,
+      ProblemResolutionFacade problemResolutionFacade,
+      List<? extends AdviceWebMvcInspector> adviceWebMvcInspectors) {
+    return new ProblemErrorController(
+        problemPostProcessor, errorAttributes, problemResolutionFacade, adviceWebMvcInspectors);
   }
 }

@@ -16,12 +16,10 @@
 
 package io.github.problem4j.spring.webflux.autoconfigure;
 
-import io.github.problem4j.core.ProblemMapper;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties;
 import io.github.problem4j.spring.webflux.AdviceWebFluxInspector;
-import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
 import io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler;
 import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
@@ -69,28 +67,6 @@ public class ProblemWebFluxAutoConfiguration {
 
   /** Creates a new instance of this autoconfiguration. */
   public ProblemWebFluxAutoConfiguration() {}
-
-  /**
-   * Creates the default {@link ExceptionWebFluxAdvice} used for handling exceptions in WebFlux
-   * applications.
-   *
-   * <p>The advice intercepts thrown exceptions and resolves them to {@code Problem} objects
-   * according {@code ProblemResolver}-s managed by {@link ProblemResolverStore}.
-   */
-  @Order(Ordered.LOWEST_PRECEDENCE)
-  @ConditionalOnBooleanProperty(
-      name = "problem4j.webflux.exception-advice.enabled",
-      matchIfMissing = true)
-  @ConditionalOnMissingBean(ExceptionWebFluxAdvice.class)
-  @Bean
-  ExceptionWebFluxAdvice exceptionWebFluxAdvice(
-      ProblemMapper problemMapper,
-      ProblemResolverStore problemResolverStore,
-      ProblemPostProcessor problemPostProcessor,
-      List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
-    return new ExceptionWebFluxAdvice(
-        problemMapper, problemResolverStore, problemPostProcessor, adviceWebFluxInspectors);
-  }
 
   /**
    * Creates the default {@link ProblemExceptionWebFluxAdvice}, responsible for handling

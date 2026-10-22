@@ -18,6 +18,7 @@ package io.github.problem4j.spring.webmvc.autoconfigure;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 
 /**
  * Configuration properties for Problem Details WebMVC integration.
@@ -33,6 +34,7 @@ public class ProblemWebMvcProperties {
   private boolean enabled = true;
 
   /** Configuration for {@code ExceptionWebMvcAdvice}. */
+  @SuppressWarnings("removal")
   private ExceptionAdvice exceptionAdvice = new ExceptionAdvice();
 
   /** Configuration for {@code ProblemExceptionWebMvcAdvice}. */
@@ -125,7 +127,10 @@ public class ProblemWebMvcProperties {
    * @return the configuration for exception advice
    * @see io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice
    * @since 1.2.0
+   * @deprecated since 3.1.0, as {@code ExceptionWebMvcAdvice} is no longer registered by
+   *     autoconfiguration, so this setting has no effect
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public ExceptionAdvice getExceptionAdvice() {
     return exceptionAdvice;
   }
@@ -136,7 +141,10 @@ public class ProblemWebMvcProperties {
    * @param exceptionAdvice configuration for {@code ExceptionWebMvcAdvice}
    * @see io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice
    * @since 3.1.0
+   * @deprecated since 3.1.0, as {@code ExceptionWebMvcAdvice} is no longer registered by
+   *     autoconfiguration, so this setting has no effect
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public void setExceptionAdvice(ExceptionAdvice exceptionAdvice) {
     this.exceptionAdvice = exceptionAdvice;
   }
@@ -244,7 +252,10 @@ public class ProblemWebMvcProperties {
    *
    * @see io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice
    * @since 1.2.0
+   * @deprecated since 3.1.0, as {@code ExceptionWebMvcAdvice} is no longer registered by
+   *     autoconfiguration, so this setting has no effect
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public static class ExceptionAdvice {
 
     /**
@@ -295,7 +306,14 @@ public class ProblemWebMvcProperties {
      * @return {@code true} if exception advice is enabled, otherwise {@code false}
      * @see io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice
      * @since 1.2.0
+     * @deprecated since 3.1.0, as {@code ExceptionWebMvcAdvice} is no longer registered by
+     *     autoconfiguration, so this setting has no effect
      */
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    @DeprecatedConfigurationProperty(
+        reason =
+            "ExceptionWebMvcAdvice is no longer registered, exceptions are resolved by ProblemErrorController",
+        since = "3.1.0")
     public boolean isEnabled() {
       return enabled;
     }
@@ -306,7 +324,10 @@ public class ProblemWebMvcProperties {
      * @param enabled whether the {@code ExceptionWebMvcAdvice} bean should be registered
      * @see io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice
      * @since 3.1.0
+     * @deprecated since 3.1.0, as {@code ExceptionWebMvcAdvice} is no longer registered by
+     *     autoconfiguration, so this setting has no effect
      */
+    @Deprecated(since = "3.1.0", forRemoval = true)
     public void setEnabled(boolean enabled) {
       this.enabled = enabled;
     }

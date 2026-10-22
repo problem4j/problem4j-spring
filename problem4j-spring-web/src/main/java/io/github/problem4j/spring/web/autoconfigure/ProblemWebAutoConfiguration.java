@@ -18,6 +18,7 @@ package io.github.problem4j.spring.web.autoconfigure;
 
 import static io.github.problem4j.spring.web.HierarchyTraversalMode.SUPERCLASS;
 
+import io.github.problem4j.core.ProblemMapper;
 import io.github.problem4j.spring.web.CachingProblemResolverStore;
 import io.github.problem4j.spring.web.DefaultProblemResolverStore;
 import io.github.problem4j.spring.web.GraphClassDistanceEvaluation;
@@ -29,6 +30,8 @@ import io.github.problem4j.spring.web.parameter.DefaultMethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.DefaultMethodValidationResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
+import io.github.problem4j.spring.web.resolver.DefaultProblemResolutionFacade;
+import io.github.problem4j.spring.web.resolver.ProblemResolutionFacade;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.util.Comparator;
 import java.util.Map;
@@ -104,6 +107,22 @@ public class ProblemWebAutoConfiguration {
     }
 
     return problemResolverStore;
+  }
+
+  /**
+   * Provides {@link ProblemResolutionFacade}, used by error handlers of WebMVC and WebFlux to
+   * resolve exceptions that are not handled by any other exception handler. The default
+   * implementation is {@link DefaultProblemResolutionFacade}.
+   *
+   * @param problemMapper mapper for {@code @ProblemMapping}-annotated exceptions
+   * @param problemResolverStore store of registered {@link ProblemResolver}s
+   * @return a new {@link DefaultProblemResolutionFacade}
+   */
+  @ConditionalOnMissingBean(ProblemResolutionFacade.class)
+  @Bean
+  ProblemResolutionFacade problemResolutionFacade(
+      ProblemMapper problemMapper, ProblemResolverStore problemResolverStore) {
+    return new DefaultProblemResolutionFacade(problemMapper, problemResolverStore);
   }
 
   /**

@@ -122,7 +122,7 @@ class ProblemWebMvcAutoConfigurationTest {
 
     @Test
     void contextLoadsWithoutExceptionAdvice() {
-      assertThat(exceptionWebMvcAdvice).isNotNull();
+      assertThat(exceptionWebMvcAdvice).isNull();
       assertThat(properties.getExceptionAdvice().isEnabled()).isTrue();
     }
   }

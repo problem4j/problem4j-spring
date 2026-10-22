@@ -18,6 +18,7 @@ package io.github.problem4j.spring.webflux.autoconfigure;
 
 import org.jspecify.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 
 /**
  * Configuration properties for Problem Details WebFlux integration.
@@ -33,6 +34,7 @@ public class ProblemWebFluxProperties {
   private boolean enabled = true;
 
   /** Configuration for {@code ExceptionWebFluxAdvice}. */
+  @SuppressWarnings("removal")
   private ExceptionAdvice exceptionAdvice = new ExceptionAdvice();
 
   /** Configuration for {@code ProblemExceptionWebFluxAdvice}. */
@@ -125,7 +127,10 @@ public class ProblemWebFluxProperties {
    * @return the configuration for exception advice
    * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
    * @since 1.2.0
+   * @deprecated since 3.1.0, as {@code ExceptionWebFluxAdvice} is no longer registered by
+   *     autoconfiguration, so this setting has no effect
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public ExceptionAdvice getExceptionAdvice() {
     return exceptionAdvice;
   }
@@ -136,7 +141,10 @@ public class ProblemWebFluxProperties {
    * @param exceptionAdvice configuration for {@code ExceptionWebFluxAdvice}
    * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
    * @since 3.1.0
+   * @deprecated since 3.1.0, as {@code ExceptionWebFluxAdvice} is no longer registered by
+   *     autoconfiguration, so this setting has no effect
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public void setExceptionAdvice(ExceptionAdvice exceptionAdvice) {
     this.exceptionAdvice = exceptionAdvice;
   }
@@ -245,7 +253,10 @@ public class ProblemWebFluxProperties {
    *
    * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
    * @since 1.2.0
+   * @deprecated since 3.1.0, as {@code ExceptionWebFluxAdvice} is no longer registered by
+   *     autoconfiguration, so this setting has no effect
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public static class ExceptionAdvice {
 
     /**
@@ -296,7 +307,14 @@ public class ProblemWebFluxProperties {
      * @return {@code true} if exception advice is enabled, otherwise {@code false}
      * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
      * @since 1.2.0
+     * @deprecated since 3.1.0, as {@code ExceptionWebFluxAdvice} is no longer registered by
+     *     autoconfiguration, so this setting has no effect
      */
+    @Deprecated(since = "3.1.0", forRemoval = true)
+    @DeprecatedConfigurationProperty(
+        reason =
+            "ExceptionWebFluxAdvice is no longer registered, exceptions are resolved by ProblemErrorWebExceptionHandler",
+        since = "3.1.0")
     public boolean isEnabled() {
       return enabled;
     }
@@ -307,7 +325,10 @@ public class ProblemWebFluxProperties {
      * @param enabled whether the {@code ExceptionWebFluxAdvice} bean should be registered
      * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
      * @since 3.1.0
+     * @deprecated since 3.1.0, as {@code ExceptionWebFluxAdvice} is no longer registered by
+     *     autoconfiguration, so this setting has no effect
      */
+    @Deprecated(since = "3.1.0", forRemoval = true)
     public void setEnabled(boolean enabled) {
       this.enabled = enabled;
     }

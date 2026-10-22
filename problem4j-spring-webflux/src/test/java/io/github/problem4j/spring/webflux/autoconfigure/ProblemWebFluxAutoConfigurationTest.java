@@ -110,7 +110,7 @@ class ProblemWebFluxAutoConfigurationTest {
 
     @Test
     void contextLoadsWithoutExceptionAdvice() {
-      assertThat(exceptionWebFluxAdvice).isNotNull();
+      assertThat(exceptionWebFluxAdvice).isNull();
       assertThat(properties.getExceptionAdvice().isEnabled()).isTrue();
     }
   }

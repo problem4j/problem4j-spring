@@ -17,7 +17,10 @@
 package io.github.problem4j.spring.webflux.autoconfigure;
 
 import io.github.problem4j.spring.web.ProblemPostProcessor;
+import io.github.problem4j.spring.web.resolver.ProblemResolutionFacade;
+import io.github.problem4j.spring.webflux.AdviceWebFluxInspector;
 import io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler;
+import java.util.List;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -80,14 +83,18 @@ class ProblemErrorWebFluxConfiguration {
       WebProperties webProperties,
       ObjectProvider<ViewResolver> viewResolvers,
       ServerCodecConfigurer serverCodecConfigurer,
-      ApplicationContext applicationContext) {
+      ApplicationContext applicationContext,
+      ProblemResolutionFacade problemResolutionFacade,
+      List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
     ProblemErrorWebExceptionHandler exceptionHandler =
         new ProblemErrorWebExceptionHandler(
             problemPostProcessor,
             errorAttributes,
             webProperties.getResources(),
             webProperties.getError(),
-            applicationContext);
+            applicationContext,
+            problemResolutionFacade,
+            adviceWebFluxInspectors);
     exceptionHandler.setViewResolvers(viewResolvers.orderedStream().toList());
     exceptionHandler.setMessageWriters(serverCodecConfigurer.getWriters());
     exceptionHandler.setMessageReaders(serverCodecConfigurer.getReaders());

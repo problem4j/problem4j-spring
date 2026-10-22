@@ -16,12 +16,10 @@
 
 package io.github.problem4j.spring.webmvc.autoconfigure;
 
-import io.github.problem4j.core.ProblemMapper;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties;
 import io.github.problem4j.spring.webmvc.AdviceWebMvcInspector;
-import io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice;
 import io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter;
 import io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler;
 import io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice;
@@ -73,28 +71,6 @@ public class ProblemWebMvcAutoConfiguration {
    * @since 1.2.0
    */
   public ProblemWebMvcAutoConfiguration() {}
-
-  /**
-   * Creates the default {@link ExceptionWebMvcAdvice} used for handling exceptions in WebMVC
-   * applications.
-   *
-   * <p>The advice intercepts thrown exceptions and resolves them to {@code Problem} objects
-   * according {@code ProblemResolver}-s managed by {@link ProblemResolverStore}.
-   */
-  @Order(Ordered.LOWEST_PRECEDENCE)
-  @ConditionalOnBooleanProperty(
-      name = "problem4j.webmvc.exception-advice.enabled",
-      matchIfMissing = true)
-  @ConditionalOnMissingBean(ExceptionWebMvcAdvice.class)
-  @Bean
-  ExceptionWebMvcAdvice exceptionWebMvcAdvice(
-      ProblemMapper problemMapper,
-      ProblemResolverStore problemResolverStore,
-      ProblemPostProcessor problemPostProcessor,
-      List<? extends AdviceWebMvcInspector> adviceWebMvcInspectors) {
-    return new ExceptionWebMvcAdvice(
-        problemMapper, problemResolverStore, problemPostProcessor, adviceWebMvcInspectors);
-  }
 
   /**
    * Creates the default {@link ProblemExceptionWebMvcAdvice}, responsible for handling
