@@ -19,7 +19,7 @@ package io.github.problem4j.spring.web.resolver
 import io.github.problem4j.core.Problem
 import io.github.problem4j.core.ProblemContext
 import io.github.problem4j.spring.web.ProblemBuilderSpec
-import io.github.problem4j.spring.web.build
+import io.github.problem4j.spring.web.applySpec
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
 
@@ -55,7 +55,7 @@ public inline fun <reified E : Exception> problemResolver(
           ex: Exception,
           headers: HttpHeaders,
           status: HttpStatusCode,
-      ): Problem = Problem.builder().status(status.value()).build { resolve(context, ex as E) }
+      ): Problem = Problem.builder().status(status.value()).applySpec { resolve(context, ex as E) }
     }
 
 /**
@@ -82,12 +82,4 @@ public inline fun <reified E : Exception> problemResolver(
  */
 public inline fun <reified E : Exception> problemResolver(
     crossinline resolve: ProblemBuilderSpec.(E) -> Unit,
-): ProblemResolver =
-    object : AbstractProblemResolver(E::class.java) {
-      override fun resolve(
-          context: ProblemContext,
-          ex: Exception,
-          headers: HttpHeaders,
-          status: HttpStatusCode,
-      ): Problem = Problem.builder().status(status.value()).build { resolve(ex as E) }
-    }
+): ProblemResolver = problemResolver<E> { _, ex -> resolve(ex) }

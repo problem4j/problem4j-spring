@@ -16,101 +16,13 @@
 
 package io.github.problem4j.spring.webflux
 
-import io.github.problem4j.core.Problem
 import io.github.problem4j.core.ProblemContext
-import io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE
 import io.github.problem4j.spring.web.ProblemContextSettings
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatusCode
+import io.github.problem4j.spring.web.ProblemDsl
 import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
 import reactor.util.context.Context
-import reactor.util.context.ContextView
-
-/**
- * Creates an [AdviceWebFluxInspector] from a lambda.
- *
- * Example:
- * ```
- * import io.github.problem4j.spring.webflux.AdviceWebFluxInspector
- * import io.github.problem4j.spring.webflux.adviceWebFluxInspector
- * import org.springframework.context.annotation.Bean
- *
- * @Bean
- * fun loggingInspector(): AdviceWebFluxInspector =
- *     adviceWebFluxInspector { ctx, problem, ex, headers, status, exchange ->
- *         log.warn("Resolved {} to {}", ex.message, problem.status)
- *     }
- * ```
- *
- * @param inspect observes the resolved [Problem] with all arguments of
- *   [AdviceWebFluxInspector.inspect]
- * @return an [AdviceWebFluxInspector] delegating to [inspect]
- * @since 3.1.0
- */
-public fun adviceWebFluxInspector(
-    inspect:
-        (
-            ProblemContext,
-            Problem,
-            Exception,
-            HttpHeaders,
-            HttpStatusCode,
-            ServerWebExchange,
-        ) -> Unit,
-): AdviceWebFluxInspector = AdviceWebFluxInspector(inspect)
-
-/**
- * Creates an [AdviceWebFluxInspector] from a lambda.
- *
- * Example:
- * ```
- * import io.github.problem4j.spring.webflux.AdviceWebFluxInspector
- * import io.github.problem4j.spring.webflux.adviceWebFluxInspector
- * import org.springframework.context.annotation.Bean
- *
- * @Bean
- * fun loggingInspector(): AdviceWebFluxInspector =
- *     adviceWebFluxInspector { ctx, problem, ex, exchange ->
- *         log.warn("Resolved {} to {}", ex.message, problem.status)
- *     }
- * ```
- *
- * @param inspect observes the resolved [Problem] together with the exception that caused it
- * @return an [AdviceWebFluxInspector] delegating to [inspect]
- * @since 3.1.0
- */
-public fun adviceWebFluxInspector(
-    inspect: (ProblemContext, Problem, Exception, ServerWebExchange) -> Unit,
-): AdviceWebFluxInspector = AdviceWebFluxInspector { context, problem, ex, _, _, exchange ->
-  inspect(context, problem, ex, exchange)
-}
-
-/**
- * Creates an [AdviceWebFluxInspector] from a lambda.
- *
- * Example:
- * ```
- * import io.github.problem4j.spring.webflux.AdviceWebFluxInspector
- * import io.github.problem4j.spring.webflux.adviceWebFluxInspector
- * import org.springframework.context.annotation.Bean
- *
- * @Bean
- * fun loggingInspector(): AdviceWebFluxInspector =
- *     adviceWebFluxInspector { problem, ex ->
- *         log.warn("Resolved {} to {}", ex.message, problem.status)
- *     }
- * ```
- *
- * @param inspect observes the resolved [Problem] together with the exception that caused it
- * @return an [AdviceWebFluxInspector] delegating to [inspect]
- * @since 3.1.0
- */
-public fun adviceWebFluxInspector(inspect: (Problem, Exception) -> Unit): AdviceWebFluxInspector =
-    AdviceWebFluxInspector { _, problem, ex, _, _, _ ->
-      inspect(problem, ex)
-    }
 
 /**
  * DSL for customizing a [ProblemContextWebFluxFilter] without subclassing it.
@@ -118,6 +30,7 @@ public fun adviceWebFluxInspector(inspect: (Problem, Exception) -> Unit): Advice
  * @see problemContextWebFluxFilter
  * @since 3.1.0
  */
+@ProblemDsl
 public interface ProblemContextWebFluxFilterSpec {
 
   /**
@@ -253,50 +166,3 @@ private class DslProblemContextWebFluxFilter(
         write(acc, exchange, context)
       }
 }
-
-/**
- * The [ProblemContext] assigned to this exchange by [ProblemContextWebFluxFilter], or `null` if
- * none is assigned (e.g. the filter is disabled or has not processed this exchange yet).
- *
- * Example:
- * ```
- * import io.github.problem4j.spring.webflux.problemContext
- * import org.springframework.web.bind.annotation.GetMapping
- * import org.springframework.web.bind.annotation.RestController
- * import org.springframework.web.server.ServerWebExchange
- *
- * @RestController
- * class OrderController {
- *
- *     @GetMapping("/orders")
- *     suspend fun orders(exchange: ServerWebExchange): List<Order> {
- *         log.info("Listing orders [traceId={}]", exchange.problemContext?.get("traceId"))
- *         return orderService.findAll()
- *     }
- * }
- * ```
- *
- * @since 3.1.0
- */
-public val ServerWebExchange.problemContext: ProblemContext?
-  get() = getAttribute<Any>(PROBLEM_CONTEXT_ATTRIBUTE) as? ProblemContext
-
-/**
- * The [ProblemContext] propagated through Reactor [Context] by [ProblemContextWebFluxFilter], or
- * `null` if none is present (e.g. the filter is disabled or this pipeline is not downstream of it).
- *
- * Example:
- * ```
- * import io.github.problem4j.spring.webflux.problemContext
- * import reactor.core.publisher.Mono
- *
- * fun auditOrder(order: Order): Mono<Void> =
- *     Mono.deferContextual { ctx ->
- *         auditClient.send(order.id, ctx.problemContext?.get("traceId"))
- *     }
- * ```
- *
- * @since 3.1.0
- */
-public val ContextView.problemContext: ProblemContext?
-  get() = getOrDefault<Any>(PROBLEM_CONTEXT_ATTRIBUTE, null) as? ProblemContext

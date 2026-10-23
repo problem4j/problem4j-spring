@@ -16,7 +16,6 @@
 
 package io.github.problem4j.spring.webmvc
 
-import io.github.problem4j.core.Problem
 import io.github.problem4j.core.ProblemContext
 import io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE
 import io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE
@@ -25,66 +24,11 @@ import java.util.concurrent.atomic.AtomicReference
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
 import org.springframework.mock.web.MockFilterChain
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
-import org.springframework.web.context.request.ServletWebRequest
-import org.springframework.web.context.request.WebRequest
 
-class ProblemWebMvcExtensionsTest {
-
-  private val context: ProblemContext = ProblemContext.create()
-  private val problem: Problem = Problem.of(409)
-  private val request: WebRequest = ServletWebRequest(MockHttpServletRequest())
-
-  @Test
-  fun givenFullInspector_whenInspecting_thenArgumentsArePassed() {
-    val captured = AtomicReference<List<Any>>()
-    val ex = IllegalStateException("boom")
-    val inspector = adviceWebMvcInspector { ctx, problem, ex, headers, status, request ->
-      captured.set(listOf(ctx, problem, ex, headers, status, request))
-    }
-
-    inspector.inspect(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
-
-    assertThat(captured.get())
-        .containsExactly(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
-  }
-
-  @Test
-  fun givenInspectorWithoutHeadersAndStatus_whenInspecting_thenRemainingArgumentsArePassed() {
-    val captured = AtomicReference<List<Any>>()
-    val ex = IllegalStateException("boom")
-    val inspector = adviceWebMvcInspector { ctx, problem, ex, request ->
-      captured.set(listOf(ctx, problem, ex, request))
-    }
-
-    inspector.inspect(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
-
-    assertThat(captured.get()).containsExactly(context, problem, ex, request)
-  }
-
-  @Test
-  fun givenShortInspector_whenInspecting_thenProblemAndExceptionArePassed() {
-    val captured = AtomicReference<List<Any>>()
-    val ex = IllegalStateException("boom")
-    val inspector = adviceWebMvcInspector { problem, ex -> captured.set(listOf(problem, ex)) }
-
-    inspector.inspect(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
-
-    assertThat(captured.get()).containsExactly(problem, ex)
-  }
-
-  @Test
-  fun givenInspectorNotInvoked_whenCreating_thenLambdaIsNotCalled() {
-    val captured = AtomicReference<Exception>()
-
-    adviceWebMvcInspector { _, ex -> captured.set(ex) }
-
-    assertThat(captured.get()).isNull()
-  }
+class ProblemContextWebMvcFiltersTest {
 
   @Test
   fun givenCreateTraceId_whenFiltering_thenCustomTraceIdIsUsed() {
@@ -185,63 +129,5 @@ class ProblemWebMvcExtensionsTest {
     filter.doFilter(request, MockHttpServletResponse(), MockFilterChain())
 
     assertThat(captured).containsExactly(existing, existing)
-  }
-
-  @Test
-  fun givenContextAttribute_whenReadingFromServletRequest_thenContextIsReturned() {
-    val request =
-        MockHttpServletRequest().apply { setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, context) }
-
-    assertThat(request.problemContext).isSameAs(context)
-  }
-
-  @Test
-  fun givenNoContextAttribute_whenReadingFromServletRequest_thenNullIsReturned() {
-    assertThat(MockHttpServletRequest().problemContext).isNull()
-  }
-
-  @Test
-  fun givenNonContextAttribute_whenReadingFromServletRequest_thenNullIsReturned() {
-    val request = MockHttpServletRequest().apply { setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, "text") }
-
-    assertThat(request.problemContext).isNull()
-  }
-
-  @Test
-  fun givenContextAttribute_whenReadingFromWebRequest_thenContextIsReturned() {
-    val servletRequest =
-        MockHttpServletRequest().apply { setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, context) }
-
-    assertThat(ServletWebRequest(servletRequest).problemContext).isSameAs(context)
-  }
-
-  @Test
-  fun givenNoContextAttribute_whenReadingFromWebRequest_thenNullIsReturned() {
-    assertThat(request.problemContext).isNull()
-  }
-
-  @Test
-  fun givenNonContextAttribute_whenReadingFromWebRequest_thenNullIsReturned() {
-    val servletRequest =
-        MockHttpServletRequest().apply { setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, "text") }
-
-    assertThat(ServletWebRequest(servletRequest).problemContext).isNull()
-  }
-
-  @Test
-  fun givenFilteredRequest_whenReadingFromServletRequest_thenFilterContextIsReturned() {
-    val captured = AtomicReference<ProblemContext>()
-    val filter =
-        problemContextWebMvcFilter({ null }) {
-          onContext { request, _, context ->
-            assertThat(request.problemContext).isSameAs(context)
-            captured.set(context)
-          }
-        }
-    val request = MockHttpServletRequest()
-
-    filter.doFilter(request, MockHttpServletResponse(), MockFilterChain())
-
-    assertThat(request.problemContext).isNotNull().isSameAs(captured.get())
   }
 }

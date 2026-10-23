@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 
-class ProblemResolverExtensionsTest {
+class ProblemResolversTest {
 
   @Test
   fun givenExceptionSubtype_whenResolvingWithFunctionalResolver_thenTypedExceptionIsPassed() {

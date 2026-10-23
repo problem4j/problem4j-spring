@@ -16,7 +16,6 @@
 
 package io.github.problem4j.spring.webflux
 
-import io.github.problem4j.core.Problem
 import io.github.problem4j.core.ProblemContext
 import io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE
 import io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE
@@ -24,68 +23,12 @@ import java.util.concurrent.atomic.AtomicReference
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest
 import org.springframework.mock.web.server.MockServerWebExchange
-import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
-import reactor.util.context.Context
 
-class ProblemWebFluxExtensionsTest {
-
-  private val context: ProblemContext = ProblemContext.create()
-  private val problem: Problem = Problem.of(409)
-  private val request: ServerWebExchange =
-      MockServerWebExchange.from(MockServerHttpRequest.get("/"))
-
-  @Test
-  fun givenFullInspector_whenInspecting_thenArgumentsArePassed() {
-    val captured = AtomicReference<List<Any>>()
-    val ex = IllegalStateException("boom")
-    val inspector = adviceWebFluxInspector { ctx, problem, ex, headers, status, request ->
-      captured.set(listOf(ctx, problem, ex, headers, status, request))
-    }
-
-    inspector.inspect(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
-
-    assertThat(captured.get())
-        .containsExactly(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
-  }
-
-  @Test
-  fun givenInspectorWithoutHeadersAndStatus_whenInspecting_thenRemainingArgumentsArePassed() {
-    val captured = AtomicReference<List<Any>>()
-    val ex = IllegalStateException("boom")
-    val inspector = adviceWebFluxInspector { ctx, problem, ex, request ->
-      captured.set(listOf(ctx, problem, ex, request))
-    }
-
-    inspector.inspect(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
-
-    assertThat(captured.get()).containsExactly(context, problem, ex, request)
-  }
-
-  @Test
-  fun givenShortInspector_whenInspecting_thenProblemAndExceptionArePassed() {
-    val captured = AtomicReference<List<Any>>()
-    val ex = IllegalStateException("boom")
-    val inspector = adviceWebFluxInspector { problem, ex -> captured.set(listOf(problem, ex)) }
-
-    inspector.inspect(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
-
-    assertThat(captured.get()).containsExactly(problem, ex)
-  }
-
-  @Test
-  fun givenInspectorNotInvoked_whenCreating_thenLambdaIsNotCalled() {
-    val captured = AtomicReference<Exception>()
-
-    adviceWebFluxInspector { _, ex -> captured.set(ex) }
-
-    assertThat(captured.get()).isNull()
-  }
+class ProblemContextWebFluxFiltersTest {
 
   @Test
   fun givenCreateTraceId_whenFiltering_thenCustomTraceIdIsUsed() {
@@ -208,58 +151,5 @@ class ProblemWebFluxExtensionsTest {
     filter.filter(exchange) { Mono.empty() }.block()
 
     assertThat(captured).containsExactly(existing, existing)
-  }
-
-  @Test
-  fun givenContextAttribute_whenReadingFromExchange_thenContextIsReturned() {
-    val exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"))
-    exchange.attributes[PROBLEM_CONTEXT_ATTRIBUTE] = context
-
-    assertThat(exchange.problemContext).isSameAs(context)
-  }
-
-  @Test
-  fun givenNoContextAttribute_whenReadingFromExchange_thenNullIsReturned() {
-    assertThat(request.problemContext).isNull()
-  }
-
-  @Test
-  fun givenNonContextAttribute_whenReadingFromExchange_thenNullIsReturned() {
-    val exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"))
-    exchange.attributes[PROBLEM_CONTEXT_ATTRIBUTE] = "text"
-
-    assertThat(exchange.problemContext).isNull()
-  }
-
-  @Test
-  fun givenContextEntry_whenReadingFromReactorContext_thenContextIsReturned() {
-    assertThat(Context.of(PROBLEM_CONTEXT_ATTRIBUTE, context).problemContext).isSameAs(context)
-  }
-
-  @Test
-  fun givenNoContextEntry_whenReadingFromReactorContext_thenNullIsReturned() {
-    assertThat(Context.empty().problemContext).isNull()
-  }
-
-  @Test
-  fun givenNonContextEntry_whenReadingFromReactorContext_thenNullIsReturned() {
-    assertThat(Context.of(PROBLEM_CONTEXT_ATTRIBUTE, "text").problemContext).isNull()
-  }
-
-  @Test
-  fun givenFilteredExchange_whenReadingDownstream_thenFilterContextIsReturned() {
-    val captured = AtomicReference<List<ProblemContext?>>()
-    val filter = problemContextWebFluxFilter({ null }) {}
-    val exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"))
-    val chain = WebFilterChain { ex ->
-      Mono.deferContextual { ctx ->
-        captured.set(listOf(ex.problemContext, ctx.problemContext))
-        Mono.empty()
-      }
-    }
-
-    filter.filter(exchange, chain).block()
-
-    assertThat(captured.get()).doesNotContainNull().containsOnly(exchange.problemContext)
   }
 }
