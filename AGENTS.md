@@ -1,4 +1,4 @@
-# Copilot Instructions - `problem4j-spring`
+# `problem4j-spring` - Agent Instructions
 
 Spring Boot integrations for RFC 7807 "Problem Details" - consistent error responses for REST APIs using immutable
 `Problem` objects. Supports Spring WebMVC and WebFlux.
