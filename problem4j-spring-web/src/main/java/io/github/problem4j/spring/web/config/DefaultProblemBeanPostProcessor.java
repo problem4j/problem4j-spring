@@ -18,7 +18,7 @@ package io.github.problem4j.spring.web.config;
 
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormatAware;
-import io.github.problem4j.spring.web.ProblemSupportAware;
+import io.github.problem4j.spring.web.ProblemUtilityAware;
 import io.github.problem4j.spring.web.TypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapperAware;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
@@ -56,7 +56,7 @@ final class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor 
 
   @Override
   public Object postProcessBeforeInitialization(Object bean, String beanName) {
-    if (!(bean instanceof ProblemSupportAware)) {
+    if (!(bean instanceof ProblemUtilityAware)) {
       return bean;
     }
 

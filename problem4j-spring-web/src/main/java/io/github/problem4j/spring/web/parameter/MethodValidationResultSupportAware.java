@@ -16,7 +16,7 @@
 
 package io.github.problem4j.spring.web.parameter;
 
-import io.github.problem4j.spring.web.ProblemSupportAware;
+import io.github.problem4j.spring.web.ProblemUtilityAware;
 
 /**
  * Callback interface for components that want to be configured with a {@link
@@ -31,7 +31,7 @@ import io.github.problem4j.spring.web.ProblemSupportAware;
  * @see MethodValidationResultSupport
  * @since 3.1.0
  */
-public interface MethodValidationResultSupportAware extends ProblemSupportAware {
+public interface MethodValidationResultSupportAware extends ProblemUtilityAware {
 
   /**
    * Replaces the {@link MethodValidationResultSupport} used by this resolver.

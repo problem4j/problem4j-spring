@@ -27,7 +27,7 @@ package io.github.problem4j.spring.web;
  * @see TypeNameMapper
  * @since 3.1.0
  */
-public interface TypeNameMapperAware extends ProblemSupportAware {
+public interface TypeNameMapperAware extends ProblemUtilityAware {
 
   /**
    * Replaces the {@link TypeNameMapper} used by this resolver.

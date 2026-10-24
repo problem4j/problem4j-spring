@@ -18,7 +18,7 @@ package io.github.problem4j.spring.web.config;
 
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormatAware;
-import io.github.problem4j.spring.web.ProblemSupportAware;
+import io.github.problem4j.spring.web.ProblemUtilityAware;
 import io.github.problem4j.spring.web.TypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapperAware;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
@@ -57,7 +57,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
  * null} result leaves the bean untouched.
  *
  * <p>Beans that implement none of the callbacks are skipped with a single {@link
- * ProblemSupportAware} {@code instanceof} check, since every callback extends it.
+ * ProblemUtilityAware} {@code instanceof} check, since every callback extends it.
  *
  * @since 3.1.0
  */

@@ -25,4 +25,4 @@ package io.github.problem4j.spring.web;
  *
  * @since 3.1.0
  */
-public interface ProblemSupportAware {}
+public interface ProblemUtilityAware {}

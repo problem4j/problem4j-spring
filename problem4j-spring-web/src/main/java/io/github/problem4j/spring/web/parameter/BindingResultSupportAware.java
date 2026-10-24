@@ -16,7 +16,7 @@
 
 package io.github.problem4j.spring.web.parameter;
 
-import io.github.problem4j.spring.web.ProblemSupportAware;
+import io.github.problem4j.spring.web.ProblemUtilityAware;
 
 /**
  * Callback interface for components that want to be configured with a {@link BindingResultSupport}
@@ -29,7 +29,7 @@ import io.github.problem4j.spring.web.ProblemSupportAware;
  * @see BindingResultSupport
  * @since 3.1.0
  */
-public interface BindingResultSupportAware extends ProblemSupportAware {
+public interface BindingResultSupportAware extends ProblemUtilityAware {
 
   /**
    * Replaces the {@link BindingResultSupport} used by this resolver.

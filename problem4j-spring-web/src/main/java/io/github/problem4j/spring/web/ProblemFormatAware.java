@@ -27,7 +27,7 @@ package io.github.problem4j.spring.web;
  * @see ProblemFormat
  * @since 3.1.0
  */
-public interface ProblemFormatAware extends ProblemSupportAware {
+public interface ProblemFormatAware extends ProblemUtilityAware {
 
   /**
    * Replaces the {@link ProblemFormat} used by this resolver.
