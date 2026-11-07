@@ -1,4 +1,4 @@
-name: Gradle Publish [release]
+name: Release
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 jobs:
   publish-release:
     name: Publish Release
-    uses: problem4j/problem4j-workflows/.github/workflows/gradle-publish-release.yml@main
+    uses: problem4j/problem4j-workflows/.github/workflows/release.yml@v1
     with:
       publish-task: publishAggregationToCentralPortal
     secrets: inherit
