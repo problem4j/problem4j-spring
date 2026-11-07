@@ -1,7 +1,7 @@
 # Problem4J Spring
 
 [![Codecov](https://codecov.io/gh/problem4j/problem4j-spring/branch/release-v2.2.x/graph/badge.svg?token=S2DOKHIXMH)](https://codecov.io/gh/problem4j/problem4j-spring)
-[![Build Status](https://github.com/problem4j/problem4j-spring/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/problem4j/problem4j-spring/actions/workflows/gradle-build.yml)
+[![Build Status](https://github.com/problem4j/problem4j-spring/actions/workflows/ci.yml/badge.svg)](https://github.com/problem4j/problem4j-spring/actions/workflows/ci.yml)
 [![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=2.2.*)][maven-central]
 [![License](https://img.shields.io/badge/license-Apache%202.0-green)](https://github.com/problem4j/problem4j-spring/blob/main/LICENSE)
 
@@ -251,8 +251,13 @@ task. **Note** that **building will fail** if code is not properly formatted.
 ./gradlew spotlessApply
 ```
 
+**Note** that **Java 21+** (`21` or `25`) is recommended for local development. Formatters (such as
+`google-java-format`) resolve to different versions depending on the Java version Gradle runs on. Building on **Java 17**
+works as well, but code style check may fail even for properly formatted code. CI verifies code style only on **Java 21**
+and **Java 25**.
+
 **Note** that if the year has changed, add `-Pspotless.license-year-enabled` flag to update the year in license headers.
-The [publishing GitHub Action](.github/workflows/gradle-publish-release.yml) will fail if the year is not updated, but
+The [publishing GitHub Action](.github/workflows/release.yml) will fail if the year is not updated, but
 for local development and builds you can choose to skip it and update the year later.
 
 ```bash
