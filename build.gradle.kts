@@ -3,7 +3,7 @@ import com.diffplug.spotless.LineEnding
 plugins {
     id("internal.idea-convention")
     alias(libs.plugins.kover)
-    alias(libs.plugins.nmcp).apply(false)
+    alias(libs.plugins.nmcp) apply false
     alias(libs.plugins.nmcp.aggregation)
     alias(libs.plugins.spotless)
 }
@@ -90,7 +90,7 @@ spotless {
 }
 
 // Aggregated coverage of all modules, merged by Kover into `build/reports/kover` - uploaded to Codecov from CI.
-tasks.named<Task>("check").configure {
+tasks.named<Task>("check") {
     finalizedBy(tasks.named("koverHtmlReport"), tasks.named("koverXmlReport"))
 }
 

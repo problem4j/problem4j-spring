@@ -55,7 +55,7 @@ tasks.withType<JavaCompile>().configureEach {
         option("NullAway:JSpecifyMode", "true")
     }
 }
-tasks.named<JavaCompile>("compileJava").configure {
+tasks.named<JavaCompile>("compileJava") {
     options.release = javaTargetVersion
     // spring-boot-configuration-processor merges META-INF/additional-spring-configuration-metadata.json
     // only if resources are processed before compilation
@@ -78,7 +78,7 @@ tasks.withType<KotlinCompile>().configureEach {
         javaParameters = true
     }
 }
-tasks.named<KotlinCompile>("compileKotlin").configure {
+tasks.named<KotlinCompile>("compileKotlin") {
     compilerOptions {
         jvmTarget = JvmTarget.fromTarget(javaTargetVersion.toString())
         freeCompilerArgs.add("-Xjdk-release=$javaTargetVersion")
@@ -116,7 +116,7 @@ tasks.withType<Test>().configureEach {
     systemProperty("spring.test.context.cache.maxSize", 5)
 }
 
-tasks.named<Task>("check").configure {
+tasks.named<Task>("check") {
     finalizedBy(tasks.named("koverHtmlReport"), tasks.named("koverXmlReport"))
 }
 
