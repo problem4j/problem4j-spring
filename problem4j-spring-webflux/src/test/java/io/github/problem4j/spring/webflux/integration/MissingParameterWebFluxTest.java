@@ -52,17 +52,16 @@ class MissingParameterWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .consumeWith(
-            res -> {
-              Problem problem = res.getResponseBody();
-              assertThat(problem)
-                  .isEqualTo(
-                      Problem.builder()
-                          .status(HttpStatus.BAD_REQUEST.value())
-                          .detail("missing path variable")
-                          .extension("name", "var")
-                          .build());
-            });
+        .consumeWith(res -> {
+          Problem problem = res.getResponseBody();
+          assertThat(problem)
+              .isEqualTo(
+                  Problem.builder()
+                      .status(HttpStatus.BAD_REQUEST.value())
+                      .detail("missing path variable")
+                      .extension("name", "var")
+                      .build());
+        });
   }
 
   @Test
@@ -88,30 +87,24 @@ class MissingParameterWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .consumeWith(
-            res -> {
-              Problem problem = res.getResponseBody();
-              assertThat(problem)
-                  .isEqualTo(
-                      Problem.builder()
-                          .status(HttpStatus.BAD_REQUEST.value())
-                          .detail("missing request param")
-                          .extension("param", "param")
-                          .extension("kind", "string")
-                          .build());
-            });
+        .consumeWith(res -> {
+          Problem problem = res.getResponseBody();
+          assertThat(problem)
+              .isEqualTo(
+                  Problem.builder()
+                      .status(HttpStatus.BAD_REQUEST.value())
+                      .detail("missing request param")
+                      .extension("param", "param")
+                      .extension("kind", "string")
+                      .build());
+        });
   }
 
   @Test
   void givenRequestWithRequestParam_shouldReturnOk() {
     webTestClient
         .get()
-        .uri(
-            uriBuilder ->
-                uriBuilder
-                    .path("/missing-parameter/request-param")
-                    .queryParam("param", "value")
-                    .build())
+        .uri(uriBuilder -> uriBuilder.path("/missing-parameter/request-param").queryParam("param", "value").build())
         .exchange()
         .expectStatus()
         .isOk()
@@ -130,17 +123,16 @@ class MissingParameterWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .consumeWith(
-            res -> {
-              Problem problem = res.getResponseBody();
-              assertThat(problem)
-                  .isEqualTo(
-                      Problem.builder()
-                          .status(HttpStatus.BAD_REQUEST.value())
-                          .detail("missing request part")
-                          .extension("param", "file")
-                          .build());
-            });
+        .consumeWith(res -> {
+          Problem problem = res.getResponseBody();
+          assertThat(problem)
+              .isEqualTo(
+                  Problem.builder()
+                      .status(HttpStatus.BAD_REQUEST.value())
+                      .detail("missing request part")
+                      .extension("param", "file")
+                      .build());
+        });
   }
 
   @Test
@@ -178,17 +170,16 @@ class MissingParameterWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .consumeWith(
-            res -> {
-              Problem problem = res.getResponseBody();
-              assertThat(problem)
-                  .isEqualTo(
-                      Problem.builder()
-                          .status(HttpStatus.BAD_REQUEST.value())
-                          .detail("missing header")
-                          .extension("header", "X-Custom-Header")
-                          .build());
-            });
+        .consumeWith(res -> {
+          Problem problem = res.getResponseBody();
+          assertThat(problem)
+              .isEqualTo(
+                  Problem.builder()
+                      .status(HttpStatus.BAD_REQUEST.value())
+                      .detail("missing header")
+                      .extension("header", "X-Custom-Header")
+                      .build());
+        });
   }
 
   @Test
@@ -215,17 +206,16 @@ class MissingParameterWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .consumeWith(
-            res -> {
-              Problem problem = res.getResponseBody();
-              assertThat(problem)
-                  .isEqualTo(
-                      Problem.builder()
-                          .status(HttpStatus.BAD_REQUEST.value())
-                          .detail("missing cookie")
-                          .extension("cookie", "x_session")
-                          .build());
-            });
+        .consumeWith(res -> {
+          Problem problem = res.getResponseBody();
+          assertThat(problem)
+              .isEqualTo(
+                  Problem.builder()
+                      .status(HttpStatus.BAD_REQUEST.value())
+                      .detail("missing cookie")
+                      .extension("cookie", "x_session")
+                      .build());
+        });
   }
 
   @Test
@@ -252,17 +242,16 @@ class MissingParameterWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .consumeWith(
-            res -> {
-              Problem problem = res.getResponseBody();
-              assertThat(problem)
-                  .isEqualTo(
-                      Problem.builder()
-                          .status(HttpStatus.BAD_REQUEST.value())
-                          .detail("missing request attribute")
-                          .extension("attribute", "attr")
-                          .build());
-            });
+        .consumeWith(res -> {
+          Problem problem = res.getResponseBody();
+          assertThat(problem)
+              .isEqualTo(
+                  Problem.builder()
+                      .status(HttpStatus.BAD_REQUEST.value())
+                      .detail("missing request attribute")
+                      .extension("attribute", "attr")
+                      .build());
+        });
   }
 
   @Test

@@ -29,8 +29,8 @@ import org.springframework.context.annotation.Bean;
 /**
  * Spring Boot autoconfiguration registering Problem4J serialization support for Gson.
  *
- * <p>It does not require a web application, so {@code Problem} objects are serialized consistently
- * also in non-web applications (e.g. those consuming Problem responses through an HTTP client).
+ * <p>It does not require a web application, so {@code Problem} objects are serialized consistently also in non-web
+ * applications (e.g. those consuming Problem responses through an HTTP client).
  *
  * @since 3.1.0
  */
@@ -47,8 +47,8 @@ public class ProblemGsonAutoConfiguration {
   public ProblemGsonAutoConfiguration() {}
 
   /**
-   * Creates a {@link ProblemGsonBuilderCustomizer} to register the {@code
-   * ProblemTypeAdapterFactory} in the Gson builder for consistent Problem serialization.
+   * Creates a {@link ProblemGsonBuilderCustomizer} to register the {@code ProblemTypeAdapterFactory} in the Gson
+   * builder for consistent Problem serialization.
    *
    * @return a new ProblemGsonBuilderCustomizer bean
    * @see io.github.problem4j.gson.ProblemTypeAdapterFactory

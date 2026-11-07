@@ -28,19 +28,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Configures MVC error handling to return {@code application/problem+json} responses according to
- * RFC 7807.
+ * Configures MVC error handling to return {@code application/problem+json} responses according to RFC 7807.
  *
- * <p>This setup replaces Spring Boot's default error controller {@code ErrorMvcAutoConfiguration}
- * with {@link ProblemErrorController}, which renders {@code Problem} objects instead of HTML or
- * plain JSON errors.
+ * <p>This setup replaces Spring Boot's default error controller {@code ErrorMvcAutoConfiguration} with {@link
+ * ProblemErrorController}, which renders {@code Problem} objects instead of HTML or plain JSON errors.
  *
  * @see io.github.problem4j.core.Problem
  * @see org.springframework.boot.webmvc.autoconfigure.error.ErrorMvcAutoConfiguration
  */
-@ConditionalOnBooleanProperty(
-    name = "problem4j.webmvc.error-controller.enabled",
-    matchIfMissing = true)
+@ConditionalOnBooleanProperty(name = "problem4j.webmvc.error-controller.enabled", matchIfMissing = true)
 @ConditionalOnClass(ErrorController.class)
 @Configuration(proxyBeanMethods = false)
 class ProblemErrorMvcConfiguration {
@@ -72,8 +68,7 @@ class ProblemErrorMvcConfiguration {
    */
   @ConditionalOnMissingBean(ErrorController.class)
   @Bean
-  ErrorController problemErrorController(
-      ProblemPostProcessor problemPostProcessor, ErrorAttributes errorAttributes) {
+  ErrorController problemErrorController(ProblemPostProcessor problemPostProcessor, ErrorAttributes errorAttributes) {
     return new ProblemErrorController(problemPostProcessor, errorAttributes);
   }
 }

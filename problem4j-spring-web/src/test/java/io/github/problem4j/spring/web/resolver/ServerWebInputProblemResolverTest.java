@@ -57,24 +57,21 @@ class ServerWebInputProblemResolverTest {
   }
 
   @Test
-  void
-      givenTypeNameMapperSetAfterConstruction_whenResolvingTypeMismatch_thenCascadesToNestedResolver() {
+  void givenTypeNameMapperSetAfterConstruction_whenResolvingTypeMismatch_thenCascadesToNestedResolver() {
     serverWebInputMapping.setTypeNameMapper(type -> Optional.of("custom"));
     TypeMismatchException cause = new TypeMismatchException("42", Boolean.class);
     cause.initPropertyName("flag");
     ServerWebInputException ex = new ServerWebInputException("irrelevant reason", null, cause);
 
     Problem problem =
-        serverWebInputMapping.resolve(
-            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+        serverWebInputMapping.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
 
     assertThat(problem.getExtensions()).containsEntry("kind", "custom");
   }
 
   @Test
-  void
-      givenMethodParameterSupportSetAfterConstruction_whenResolvingWithoutPropertyName_thenUsesNewSupport()
-          throws NoSuchMethodException {
+  void givenMethodParameterSupportSetAfterConstruction_whenResolvingWithoutPropertyName_thenUsesNewSupport()
+      throws NoSuchMethodException {
     Method method = DummyController.class.getMethod("paramMethod", Boolean.class);
     MethodParameter parameter = new MethodParameter(method, 0);
     parameter.initParameterNameDiscovery(new DefaultParameterNameDiscoverer());
@@ -84,8 +81,7 @@ class ServerWebInputProblemResolverTest {
     ServerWebInputException ex = new ServerWebInputException("irrelevant reason", parameter, cause);
 
     Problem problem =
-        serverWebInputMapping.resolve(
-            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+        serverWebInputMapping.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
 
     assertThat(problem.getExtensions()).containsEntry("property", "custom-name");
   }
@@ -98,8 +94,7 @@ class ServerWebInputProblemResolverTest {
     ServerWebInputException ex = new ServerWebInputException("irrelevant reason", null, cause);
 
     Problem problem =
-        serverWebInputMapping.resolve(
-            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+        serverWebInputMapping.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
 
     assertThat(problem.getDetail()).isEqualTo("TYPE MISMATCH");
   }
@@ -124,15 +119,10 @@ class ServerWebInputProblemResolverTest {
             new ServerWebInputProblemResolver(ProblemFormat.identity()),
             new ServerWebInputProblemResolver(ProblemFormat.identity(), support),
             new ServerWebInputProblemResolver(
-                ProblemFormat.identity(),
-                new TypeMismatchProblemResolver(),
-                support,
-                new SimpleTypeNameMapper()));
+                ProblemFormat.identity(), new TypeMismatchProblemResolver(), support, new SimpleTypeNameMapper()));
 
     for (ServerWebInputProblemResolver resolver : resolvers) {
-      Problem problem =
-          resolver.resolve(
-              ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+      Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
       assertThat(problem).isEqualTo(expected);
     }
   }
@@ -150,10 +140,7 @@ class ServerWebInputProblemResolverTest {
 
     Problem problem =
         serverWebInputMapping.resolve(
-            ProblemContext.create().put("traceId", "traceId"),
-            ex,
-            new HttpHeaders(),
-            HttpStatusCode.valueOf(400));
+            ProblemContext.create().put("traceId", "traceId"), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
 
     assertThat(problem)
         .isEqualTo(
@@ -174,10 +161,7 @@ class ServerWebInputProblemResolverTest {
 
     Problem problem =
         serverWebInputMapping.resolve(
-            ProblemContext.create().put("traceId", "traceId"),
-            ex,
-            new HttpHeaders(),
-            HttpStatusCode.valueOf(400));
+            ProblemContext.create().put("traceId", "traceId"), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
 
     assertThat(problem)
         .isEqualTo(
@@ -190,8 +174,7 @@ class ServerWebInputProblemResolverTest {
   }
 
   @Test
-  void givenDecodingExceptionWithMismatchedInputCause_whenResolve_thenResolvesMismatchedInput()
-      throws IOException {
+  void givenDecodingExceptionWithMismatchedInputCause_whenResolve_thenResolvesMismatchedInput() throws IOException {
     serverWebInputMapping.setTypeNameMapper(type -> Optional.of("custom-int"));
     MismatchedInputException cause;
     try (JsonParser parser = JsonMapper.builder().build().createParser("{}")) {
@@ -200,28 +183,21 @@ class ServerWebInputProblemResolverTest {
       cause.prependPath(ServerWebInputProblemResolverTest.class, "age");
     }
     ServerWebInputException ex =
-        new ServerWebInputException(
-            "irrelevant reason", null, new DecodingException("decoding failed", cause));
+        new ServerWebInputException("irrelevant reason", null, new DecodingException("decoding failed", cause));
 
     Problem problem =
-        serverWebInputMapping.resolve(
-            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+        serverWebInputMapping.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
 
-    assertThat(problem.getExtensions())
-        .containsEntry("property", "age")
-        .containsEntry("kind", "custom-int");
+    assertThat(problem.getExtensions()).containsEntry("property", "age").containsEntry("kind", "custom-int");
   }
 
   @Test
-  void
-      givenDecodingExceptionWithoutMismatchedInputCause_whenResolve_thenReturnsBadRequestProblem() {
+  void givenDecodingExceptionWithoutMismatchedInputCause_whenResolve_thenReturnsBadRequestProblem() {
     ServerWebInputException ex =
-        new ServerWebInputException(
-            "irrelevant reason", null, new DecodingException("decoding failed"));
+        new ServerWebInputException("irrelevant reason", null, new DecodingException("decoding failed"));
 
     Problem problem =
-        serverWebInputMapping.resolve(
-            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+        serverWebInputMapping.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
 
     assertThat(problem).isEqualTo(Problem.of(HttpStatus.BAD_REQUEST.value()));
   }
@@ -232,10 +208,7 @@ class ServerWebInputProblemResolverTest {
 
     Problem problem =
         serverWebInputMapping.resolve(
-            ProblemContext.create().put("traceId", "traceId"),
-            ex,
-            new HttpHeaders(),
-            ex.getStatusCode());
+            ProblemContext.create().put("traceId", "traceId"), ex, new HttpHeaders(), ex.getStatusCode());
 
     assertThat(problem).isEqualTo(Problem.of(ex.getStatusCode().value()));
   }

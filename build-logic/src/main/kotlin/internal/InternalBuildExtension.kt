@@ -23,8 +23,8 @@ import org.gradle.api.provider.Property
 /**
  * Gradle extension describing a publishable artifact.
  *
- * This extension is intended to be used from build scripts to configure artifact-level metadata in
- * a lazy, configuration-cache-friendly way.
+ * This extension is intended to be used from build scripts to configure artifact-level metadata in a lazy,
+ * configuration-cache-friendly way.
  *
  * All properties are modeled using Gradle [org.gradle.api.provider.Property] to:
  * - support lazy evaluation
@@ -35,14 +35,12 @@ import org.gradle.api.provider.Property
  */
 abstract class InternalBuildExtension @Inject constructor(objects: ObjectFactory) {
 
-  /**
-   * Human-readable display name of the artifact. Used for publishing metadata and documentation.
-   */
+  /** Human-readable display name of the artifact. Used for publishing metadata and documentation. */
   val displayName: Property<String> = objects.property(String::class.java)
 
   /**
-   * Description of the artifact. Appears in generated POM metadata and repository listings. Adds
-   * context for consumers about the purpose and content of the artifact.
+   * Description of the artifact. Appears in generated POM metadata and repository listings. Adds context for consumers
+   * about the purpose and content of the artifact.
    */
   val description: Property<String> = objects.property(String::class.java)
 }

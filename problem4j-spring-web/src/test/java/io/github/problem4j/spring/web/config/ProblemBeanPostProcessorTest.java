@@ -50,8 +50,7 @@ import org.springframework.validation.method.MethodValidationResult;
 
 class ProblemBeanPostProcessorTest {
 
-  private final ProblemFormat problemFormat =
-      detail -> detail == null ? null : detail.toUpperCase();
+  private final ProblemFormat problemFormat = detail -> detail == null ? null : detail.toUpperCase();
   private final TypeNameMapper typeNameMapper = type -> Optional.of("mapped");
   private final BindingResultSupport bindingResultSupport = new DefaultBindingResultSupport();
   private final MethodValidationResultSupport methodValidationResultSupport = result -> List.of();
@@ -81,8 +80,7 @@ class ProblemBeanPostProcessorTest {
   }
 
   @Test
-  void
-      givenBeanImplementingOnlyOneAwareInterface_whenPostProcess_thenInjectsOnlyThatCollaborator() {
+  void givenBeanImplementingOnlyOneAwareInterface_whenPostProcess_thenInjectsOnlyThatCollaborator() {
     StubProblemFormatAware bean = new StubProblemFormatAware();
 
     Object result = processor.postProcessBeforeInitialization(bean, "bean");
@@ -189,8 +187,7 @@ class ProblemBeanPostProcessorTest {
   @Nested
   class DebugLogging {
 
-    private final Logger logger =
-        (Logger) LoggerFactory.getLogger(DefaultProblemBeanPostProcessor.class);
+    private final Logger logger = (Logger) LoggerFactory.getLogger(DefaultProblemBeanPostProcessor.class);
     private final ListAppender<ILoggingEvent> appender = new ListAppender<>();
 
     private final ProblemBeanPostProcessor debugProcessor =
@@ -223,16 +220,12 @@ class ProblemBeanPostProcessorTest {
       assertThat(appender.list)
           .singleElement()
           .extracting(ILoggingEvent::getFormattedMessage)
-          .isEqualTo(
-              "Enhanced 'bean' ["
-                  + StubProblemFormatAware.class.getName()
-                  + "] bean with NamedProblemFormat");
+          .isEqualTo("Enhanced 'bean' [" + StubProblemFormatAware.class.getName() + "] bean with NamedProblemFormat");
     }
 
     @Test
     void givenTwoCollaborators_whenPostProcess_thenJoinsNamesWithAnd() {
-      debugProcessor.postProcessBeforeInitialization(
-          new StubProblemFormatAndTypeNameAware(), "bean");
+      debugProcessor.postProcessBeforeInitialization(new StubProblemFormatAndTypeNameAware(), "bean");
 
       assertThat(appender.list)
           .singleElement()
@@ -305,8 +298,7 @@ class ProblemBeanPostProcessorTest {
   }
 
   @NullMarked
-  private static final class NamedMethodValidationResultSupport
-      implements MethodValidationResultSupport {
+  private static final class NamedMethodValidationResultSupport implements MethodValidationResultSupport {
     @Override
     public List<Violation> fetchViolations(MethodValidationResult result) {
       return List.of();
@@ -322,8 +314,7 @@ class ProblemBeanPostProcessorTest {
   }
 
   @NullMarked
-  private static final class StubProblemFormatAndTypeNameAware
-      implements ProblemFormatAware, TypeNameMapperAware {
+  private static final class StubProblemFormatAndTypeNameAware implements ProblemFormatAware, TypeNameMapperAware {
 
     private @Nullable ProblemFormat problemFormat;
     private @Nullable TypeNameMapper typeNameMapper;
@@ -380,8 +371,7 @@ class ProblemBeanPostProcessorTest {
     }
 
     @Override
-    public void setMethodValidationResultSupport(
-        MethodValidationResultSupport methodValidationResultSupport) {
+    public void setMethodValidationResultSupport(MethodValidationResultSupport methodValidationResultSupport) {
       this.methodValidationResultSupport = methodValidationResultSupport;
     }
 

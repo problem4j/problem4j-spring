@@ -32,8 +32,8 @@ public class HttpStatusTitleResolver implements StatusTitleResolver, Serializabl
   @Serial private static final long serialVersionUID = 1L;
 
   /**
-   * The priority of this resolver. Resolvers with lower priority values will be preferred over
-   * those with higher values.
+   * The priority of this resolver. Resolvers with lower priority values will be preferred over those with higher
+   * values.
    *
    * @since 3.0.0
    */
@@ -47,12 +47,11 @@ public class HttpStatusTitleResolver implements StatusTitleResolver, Serializabl
   public HttpStatusTitleResolver() {}
 
   /**
-   * Resolves the title for a given status code. If the resolver does not have a title for the
-   * status, it should return an empty {@code Optional}.
+   * Resolves the title for a given status code. If the resolver does not have a title for the status, it should return
+   * an empty {@code Optional}.
    *
    * @param status the HTTP status code for which to resolve the title
-   * @return an {@code Optional} containing the resolved title, or empty if no title is available
-   *     for the status
+   * @return an {@code Optional} containing the resolved title, or empty if no title is available for the status
    * @since 3.0.0
    */
   @Override
@@ -61,9 +60,9 @@ public class HttpStatusTitleResolver implements StatusTitleResolver, Serializabl
   }
 
   /**
-   * Returns the priority of this resolver. Resolvers with lower priority values will be preferred
-   * over those with higher values. The implementation returns {@code Integer.MAX_VALUE - 1000},
-   * which means that all resolvers will have the same priority unless overridden.
+   * Returns the priority of this resolver. Resolvers with lower priority values will be preferred over those with
+   * higher values. The implementation returns {@code Integer.MAX_VALUE - 1000}, which means that all resolvers will
+   * have the same priority unless overridden.
    *
    * @return the priority of this resolver
    * @since 3.0.0

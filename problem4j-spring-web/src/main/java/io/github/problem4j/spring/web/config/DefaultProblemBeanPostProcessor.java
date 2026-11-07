@@ -69,10 +69,7 @@ final class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor 
 
     if (log.isDebugEnabled() && !auditLog.isEmpty()) {
       log.debug(
-          "Enhanced '{}' [{}] bean with {}",
-          beanName,
-          AopUtils.getTargetClass(bean).getName(),
-          asLogLine(auditLog));
+          "Enhanced '{}' [{}] bean with {}", beanName, AopUtils.getTargetClass(bean).getName(), asLogLine(auditLog));
     }
     return bean;
   }
@@ -80,55 +77,50 @@ final class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor 
   private void maybeAddProblemFormatAware(Object bean, List<String> auditLog) {
     if (bean instanceof ProblemFormatAware aware) {
       Optional.ofNullable(problemFormat.get())
-          .ifPresent(
-              object -> {
-                saveAuditLog(auditLog, object);
-                aware.setProblemFormat(object);
-              });
+          .ifPresent(object -> {
+            saveAuditLog(auditLog, object);
+            aware.setProblemFormat(object);
+          });
     }
   }
 
   private void maybeAddTypeNameMapper(Object bean, List<String> auditLog) {
     if (bean instanceof TypeNameMapperAware aware) {
       Optional.ofNullable(typeNameMapper.get())
-          .ifPresent(
-              object -> {
-                saveAuditLog(auditLog, object);
-                aware.setTypeNameMapper(object);
-              });
+          .ifPresent(object -> {
+            saveAuditLog(auditLog, object);
+            aware.setTypeNameMapper(object);
+          });
     }
   }
 
   private void maybeAddBindingResultSupport(Object bean, List<String> auditLog) {
     if (bean instanceof BindingResultSupportAware aware) {
       Optional.ofNullable(bindingResultSupport.get())
-          .ifPresent(
-              object -> {
-                saveAuditLog(auditLog, object);
-                aware.setBindingResultSupport(object);
-              });
+          .ifPresent(object -> {
+            saveAuditLog(auditLog, object);
+            aware.setBindingResultSupport(object);
+          });
     }
   }
 
   private void maybeAddMethodValidationResultSupport(Object bean, List<String> auditLog) {
     if (bean instanceof MethodValidationResultSupportAware aware) {
       Optional.ofNullable(methodValidationResultSupport.get())
-          .ifPresent(
-              object -> {
-                saveAuditLog(auditLog, object);
-                aware.setMethodValidationResultSupport(object);
-              });
+          .ifPresent(object -> {
+            saveAuditLog(auditLog, object);
+            aware.setMethodValidationResultSupport(object);
+          });
     }
   }
 
   private void maybeAddMethodParameterSupport(Object bean, List<String> auditLog) {
     if (bean instanceof MethodParameterSupportAware aware) {
       Optional.ofNullable(methodParameterSupport.get())
-          .ifPresent(
-              object -> {
-                saveAuditLog(auditLog, object);
-                aware.setMethodParameterSupport(object);
-              });
+          .ifPresent(object -> {
+            saveAuditLog(auditLog, object);
+            aware.setMethodParameterSupport(object);
+          });
     }
   }
 
@@ -141,9 +133,7 @@ final class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor 
       case 1 -> auditLog.get(0);
       case 2 -> String.join(" and ", auditLog);
       default ->
-          String.join(", ", auditLog.subList(0, auditLog.size() - 1))
-              + " and "
-              + auditLog.get(auditLog.size() - 1);
+          String.join(", ", auditLog.subList(0, auditLog.size() - 1)) + " and " + auditLog.get(auditLog.size() - 1);
     };
   }
 
@@ -152,8 +142,7 @@ final class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor 
     private Supplier<@Nullable ProblemFormat> problemFormat = () -> null;
     private Supplier<@Nullable TypeNameMapper> typeNameMapper = () -> null;
     private Supplier<@Nullable BindingResultSupport> bindingResultSupport = () -> null;
-    private Supplier<@Nullable MethodValidationResultSupport> methodValidationResultSupport =
-        () -> null;
+    private Supplier<@Nullable MethodValidationResultSupport> methodValidationResultSupport = () -> null;
     private Supplier<@Nullable MethodParameterSupport> methodParameterSupport = () -> null;
 
     DefaultBuilder() {}
@@ -171,8 +160,7 @@ final class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor 
     }
 
     @Override
-    public Builder bindingResultSupport(
-        Supplier<@Nullable BindingResultSupport> bindingResultSupport) {
+    public Builder bindingResultSupport(Supplier<@Nullable BindingResultSupport> bindingResultSupport) {
       this.bindingResultSupport = bindingResultSupport;
       return this;
     }
@@ -186,8 +174,7 @@ final class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor 
     }
 
     @Override
-    public Builder methodParameterSupport(
-        Supplier<@Nullable MethodParameterSupport> methodParameterSupport) {
+    public Builder methodParameterSupport(Supplier<@Nullable MethodParameterSupport> methodParameterSupport) {
       this.methodParameterSupport = methodParameterSupport;
       return this;
     }

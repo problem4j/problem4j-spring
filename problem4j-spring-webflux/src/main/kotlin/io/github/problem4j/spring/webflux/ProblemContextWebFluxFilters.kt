@@ -34,8 +34,8 @@ import reactor.util.context.Context
 public interface ProblemContextWebFluxFilterSpec {
 
   /**
-   * Replaces the default trace identifier generation (random UUID without dashes). Used only when
-   * no trace identifier is found in exchange attributes or in the configured tracing header.
+   * Replaces the default trace identifier generation (random UUID without dashes). Used only when no trace identifier
+   * is found in exchange attributes or in the configured tracing header.
    *
    * @param create generates a new trace identifier
    * @since 3.1.0
@@ -43,8 +43,8 @@ public interface ProblemContextWebFluxFilterSpec {
   public fun createTraceId(create: (ServerWebExchange) -> String)
 
   /**
-   * Registers a callback invoked after the [ProblemContext] is assigned to exchange attributes and
-   * before the rest of the filter chain is subscribed to. Callbacks run in registration order.
+   * Registers a callback invoked after the [ProblemContext] is assigned to exchange attributes and before the rest of
+   * the filter chain is subscribed to. Callbacks run in registration order.
    *
    * @param callback receives the exchange and the assigned [ProblemContext]
    * @since 3.1.0
@@ -52,9 +52,8 @@ public interface ProblemContextWebFluxFilterSpec {
   public fun onContext(callback: (ServerWebExchange, ProblemContext) -> Unit)
 
   /**
-   * Registers a function enriching the Reactor [Context] propagated to the rest of the filter
-   * chain, applied after the default problem context and trace ID entries are written. Functions
-   * are applied in registration order.
+   * Registers a function enriching the Reactor [Context] propagated to the rest of the filter chain, applied after the
+   * default problem context and trace ID entries are written. Functions are applied in registration order.
    *
    * @param write returns the updated Reactor [Context]
    * @since 3.1.0
@@ -62,8 +61,8 @@ public interface ProblemContextWebFluxFilterSpec {
   public fun contextWrite(write: (Context, ServerWebExchange, ProblemContext) -> Context)
 
   /**
-   * Registers a callback invoked when the rest of the filter chain terminates, whether it
-   * completed, failed or was cancelled. Callbacks run in registration order.
+   * Registers a callback invoked when the rest of the filter chain terminates, whether it completed, failed or was
+   * cancelled. Callbacks run in registration order.
    *
    * @param callback receives the exchange and the assigned [ProblemContext]
    * @since 3.1.0

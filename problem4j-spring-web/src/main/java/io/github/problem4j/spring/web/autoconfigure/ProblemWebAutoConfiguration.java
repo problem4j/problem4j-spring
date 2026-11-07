@@ -47,11 +47,10 @@ import org.springframework.validation.method.MethodValidationResult;
 /**
  * Spring Boot autoconfiguration for Problem4J web integration.
  *
- * <p>This class wires beans for producing standardized {@code Problem} responses from Spring
- * controllers, such as {@link ProblemResolver} implementations for Spring's web exceptions, {@link
- * ProblemResolverStore} aggregating them and parameter support components (method parameter name
- * resolution and binding / method validation result conversion). Generic beans are wired by {@link
- * ProblemAutoConfiguration}.
+ * <p>This class wires beans for producing standardized {@code Problem} responses from Spring controllers, such as
+ * {@link ProblemResolver} implementations for Spring's web exceptions, {@link ProblemResolverStore} aggregating them
+ * and parameter support components (method parameter name resolution and binding / method validation result
+ * conversion). Generic beans are wired by {@link ProblemAutoConfiguration}.
  *
  * @since 3.1.0
  */
@@ -70,25 +69,19 @@ public class ProblemWebAutoConfiguration {
   public ProblemWebAutoConfiguration() {}
 
   /**
-   * Provides a {@link ProblemResolverStore} that aggregates all {@link ProblemResolver}
-   * implementations.
+   * Provides a {@link ProblemResolverStore} that aggregates all {@link ProblemResolver} implementations.
    *
-   * @param properties the configuration properties, used to decide whether resolver lookups are
-   *     cached and how resolvers with equal order are handled
-   * @param beanFactory the bean factory, used to resolve {@code @Order} declared on {@code @Bean}
-   *     methods of resolvers
-   * @return {@link DefaultProblemResolverStore}, wrapped in {@link CachingProblemResolverStore} if
-   *     caching is enabled
-   * @throws IllegalStateException if {@link ProblemProperties#getDuplicateResolverPolicy()} is
-   *     {@link DuplicateResolverPolicy#FAIL} and resolvers supporting the same exception class have
-   *     equal order
+   * @param properties the configuration properties, used to decide whether resolver lookups are cached and how
+   *     resolvers with equal order are handled
+   * @param beanFactory the bean factory, used to resolve {@code @Order} declared on {@code @Bean} methods of resolvers
+   * @return {@link DefaultProblemResolverStore}, wrapped in {@link CachingProblemResolverStore} if caching is enabled
+   * @throws IllegalStateException if {@link ProblemProperties#getDuplicateResolverPolicy()} is {@link
+   *     DuplicateResolverPolicy#FAIL} and resolvers supporting the same exception class have equal order
    */
   @ConditionalOnMissingBean(ProblemResolverStore.class)
   @Bean
-  ProblemResolverStore problemResolverStore(
-      ProblemProperties properties, ConfigurableListableBeanFactory beanFactory) {
-    Map<String, ProblemResolver> problemResolvers =
-        beanFactory.getBeansOfType(ProblemResolver.class);
+  ProblemResolverStore problemResolverStore(ProblemProperties properties, ConfigurableListableBeanFactory beanFactory) {
+    Map<String, ProblemResolver> problemResolvers = beanFactory.getBeansOfType(ProblemResolver.class);
     Comparator<Object> orderComparator = ResolverOrdering.comparator(beanFactory, problemResolvers);
 
     if (properties.getDuplicateResolverPolicy() == DuplicateResolverPolicy.FAIL) {
@@ -128,9 +121,7 @@ public class ProblemWebAutoConfiguration {
     return new DefaultBindingResultSupport();
   }
 
-  /**
-   * Configuration for method validation support, active when Spring's method validation is present.
-   */
+  /** Configuration for method validation support, active when Spring's method validation is present. */
   @ConditionalOnClass(MethodValidationResult.class)
   @Configuration(proxyBeanMethods = false)
   static class ProblemMethodValidationConfiguration {
@@ -145,8 +136,7 @@ public class ProblemWebAutoConfiguration {
      */
     @ConditionalOnMissingBean(MethodValidationResultSupport.class)
     @Bean
-    MethodValidationResultSupport problemMethodValidationResultSupport(
-        MethodParameterSupport methodParameterSupport) {
+    MethodValidationResultSupport problemMethodValidationResultSupport(MethodParameterSupport methodParameterSupport) {
       return new DefaultMethodValidationResultSupport(methodParameterSupport);
     }
   }

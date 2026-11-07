@@ -32,8 +32,8 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.databind.exc.MismatchedInputException;
 
 /**
- * Utility for Jackson exceptions used in situations where these exceptions are the {@code cause} of
- * the exception that is being resolved.
+ * Utility for Jackson exceptions used in situations where these exceptions are the {@code cause} of the exception that
+ * is being resolved.
  */
 final class JacksonErrorHelper {
 
@@ -50,14 +50,13 @@ final class JacksonErrorHelper {
 
     ProblemBuilder builder = Problem.builder().status(HttpStatus.BAD_REQUEST.value());
 
-    optionalProperty.ifPresent(
-        property -> {
-          String kind = typeNameMapper.map(e.getTargetType()).orElse(null);
+    optionalProperty.ifPresent(property -> {
+      String kind = typeNameMapper.map(e.getTargetType()).orElse(null);
 
-          builder.detail(problemFormat.formatDetail(TYPE_MISMATCH_DETAIL));
-          builder.extension(PROPERTY_EXTENSION, property);
-          builder.extension(KIND_EXTENSION, kind);
-        });
+      builder.detail(problemFormat.formatDetail(TYPE_MISMATCH_DETAIL));
+      builder.extension(PROPERTY_EXTENSION, property);
+      builder.extension(KIND_EXTENSION, kind);
+    });
 
     return builder.build();
   }

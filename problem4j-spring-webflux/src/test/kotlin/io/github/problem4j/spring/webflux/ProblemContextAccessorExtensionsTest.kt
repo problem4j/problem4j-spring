@@ -31,8 +31,7 @@ import reactor.util.context.Context
 class ProblemContextAccessorExtensionsTest {
 
   private val context: ProblemContext = ProblemContext.create()
-  private val request: ServerWebExchange =
-      MockServerWebExchange.from(MockServerHttpRequest.get("/"))
+  private val request: ServerWebExchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"))
 
   @Test
   fun givenContextAttribute_whenReadingFromExchange_thenContextIsReturned() {

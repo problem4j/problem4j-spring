@@ -30,8 +30,6 @@ public class ErrorResponseController {
   @GetMapping
   public String errorResponse() {
     throw new ErrorResponseException(
-        HttpStatus.CONFLICT,
-        ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, "this is detail"),
-        null);
+        HttpStatus.CONFLICT, ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, "this is detail"), null);
   }
 }

@@ -30,23 +30,22 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 /**
- * Handles {@link TypeMismatchException} thrown when a request parameter, path variable, or property
- * cannot be converted to the required type.
+ * Handles {@link TypeMismatchException} thrown when a request parameter, path variable, or property cannot be converted
+ * to the required type.
  *
- * <p>This typically occurs when the client sends a value that cannot be converted to the expected
- * Java type, for example passing a string where an integer is required.
+ * <p>This typically occurs when the client sends a value that cannot be converted to the expected Java type, for
+ * example passing a string where an integer is required.
  *
- * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to
- * indicate that the provided input has an invalid type.
+ * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to indicate that the
+ * provided input has an invalid type.
  *
- * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
- * AbstractProblemResolver}, the {@link TypeNameMapper} is assigned after construction by {@link
- * ProblemBeanPostProcessor} through {@link #setTypeNameMapper(TypeNameMapper)}.
+ * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link AbstractProblemResolver},
+ * the {@link TypeNameMapper} is assigned after construction by {@link ProblemBeanPostProcessor} through {@link
+ * #setTypeNameMapper(TypeNameMapper)}.
  *
  * @since 1.2.0
  */
-public class TypeMismatchProblemResolver extends AbstractProblemResolver
-    implements TypeNameMapperAware {
+public class TypeMismatchProblemResolver extends AbstractProblemResolver implements TypeNameMapperAware {
 
   private final TypeMismatchHelper typeMismatchHelper;
 
@@ -57,8 +56,7 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
    */
   public TypeMismatchProblemResolver() {
     super(TypeMismatchException.class);
-    this.typeMismatchHelper =
-        new TypeMismatchHelper(ProblemFormat.identity(), new SimpleTypeNameMapper());
+    this.typeMismatchHelper = new TypeMismatchHelper(ProblemFormat.identity(), new SimpleTypeNameMapper());
   }
 
   /**
@@ -66,8 +64,8 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
-   *     construction; use {@link #TypeMismatchProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after construction; use
+   *     {@link #TypeMismatchProblemResolver()}
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
   public TypeMismatchProblemResolver(ProblemFormat problemFormat) {
@@ -75,14 +73,13 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
   }
 
   /**
-   * Creates a new {@link TypeMismatchProblemResolver} with the specified problem format and type
-   * name mapper.
+   * Creates a new {@link TypeMismatchProblemResolver} with the specified problem format and type name mapper.
    *
    * @param problemFormat the problem format to use
    * @param typeNameMapper the type name mapper to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
-   *     construction; use {@link #TypeMismatchProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after construction; use
+   *     {@link #TypeMismatchProblemResolver()}
    */
   @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)
@@ -115,20 +112,18 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
   }
 
   /**
-   * Resolves a {@link TypeMismatchException} (also {@link MethodArgumentTypeMismatchException})
-   * into an immutable {@link Problem} with status {@link HttpStatus#BAD_REQUEST}, a standardized
-   * detail ({@code ViolationSupport#TYPE_MISMATCH_DETAIL}), and optional extensions:
+   * Resolves a {@link TypeMismatchException} (also {@link MethodArgumentTypeMismatchException}) into an immutable
+   * {@link Problem} with status {@link HttpStatus#BAD_REQUEST}, a standardized detail ({@code
+   * ViolationSupport#TYPE_MISMATCH_DETAIL}), and optional extensions:
    *
    * <ul>
-   *   <li>{@code property} ({@code ViolationSupport#PROPERTY_EXTENSION}) - name of the parameter /
-   *       property that failed conversion
-   *   <li>{@code kind} ({@code ViolationSupport#KIND_EXTENSION}) - required target type in
-   *       lowercase simple form
+   *   <li>{@code property} ({@code ViolationSupport#PROPERTY_EXTENSION}) - name of the parameter / property that failed
+   *       conversion
+   *   <li>{@code kind} ({@code ViolationSupport#KIND_EXTENSION}) - required target type in lowercase simple form
    * </ul>
    *
-   * <p>Older Spring versions may not populate {@code propertyName} for {@link
-   * MethodArgumentTypeMismatchException}; in that case this resolver falls back to {@link
-   * MethodArgumentTypeMismatchException#getName()}.
+   * <p>Older Spring versions may not populate {@code propertyName} for {@link MethodArgumentTypeMismatchException}; in
+   * that case this resolver falls back to {@link MethodArgumentTypeMismatchException#getName()}.
    *
    * @param context problem context (unused)
    * @param ex the triggering type mismatch exception
@@ -139,8 +134,7 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     return typeMismatchHelper.toProblem((TypeMismatchException) ex);
   }
 }

@@ -49,8 +49,7 @@ class ProblemExceptionWebFluxAdviceTest {
 
   @Test
   void whileHandlingException_shouldHitInspector() {
-    advice.handleProblemException(
-        new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), exchange());
+    advice.handleProblemException(new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), exchange());
 
     assertThat(hits.get()).isEqualTo(1);
   }
@@ -61,40 +60,33 @@ class ProblemExceptionWebFluxAdviceTest {
         requireNonNull(
             advice
                 .handleProblemException(
-                    new ProblemException(Problem.of(HttpStatus.UNPROCESSABLE_ENTITY.value())),
-                    exchange())
+                    new ProblemException(Problem.of(HttpStatus.UNPROCESSABLE_ENTITY.value())), exchange())
                 .block());
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT);
-    assertThat(requireNonNull(response.getBody()).getStatus())
-        .isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT.value());
+    assertThat(requireNonNull(response.getBody()).getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT.value());
   }
 
   @Test
-  void
-      givenAnyProblemException_whenHandleProblemException_thenSetsApplicationProblemJsonContentType() {
+  void givenAnyProblemException_whenHandleProblemException_thenSetsApplicationProblemJsonContentType() {
     ResponseEntity<Problem> response =
         requireNonNull(
             advice
-                .handleProblemException(
-                    new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), exchange())
+                .handleProblemException(new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), exchange())
                 .block());
 
-    assertThat(response.getHeaders().getContentType())
-        .isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
+    assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
 
   @Test
   void givenPostProcessor_whenHandleProblemException_thenPostProcessorIsApplied() {
     advice =
-        new ProblemExceptionWebFluxAdvice(
-            (ctx, problem) -> problem.toBuilder().detail("processed").build(), List.of());
+        new ProblemExceptionWebFluxAdvice((ctx, problem) -> problem.toBuilder().detail("processed").build(), List.of());
 
     ResponseEntity<Problem> response =
         requireNonNull(
             advice
-                .handleProblemException(
-                    new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), exchange())
+                .handleProblemException(new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), exchange())
                 .block());
 
     assertThat(requireNonNull(response.getBody()).getDetail()).isEqualTo("processed");
@@ -112,8 +104,7 @@ class ProblemExceptionWebFluxAdviceTest {
     ResponseEntity<Problem> response =
         requireNonNull(
             advice
-                .handleProblemException(
-                    new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), exchange())
+                .handleProblemException(new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), exchange())
                 .block());
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -20,8 +20,8 @@ import java.util.List;
 import org.springframework.validation.method.MethodValidationResult;
 
 /**
- * Support for converting Spring {@link MethodValidationResult}s into a {@link List} containing
- * {@link Violation} objects.
+ * Support for converting Spring {@link MethodValidationResult}s into a {@link List} containing {@link Violation}
+ * objects.
  *
  * @since 1.2.0
  */
@@ -29,10 +29,9 @@ import org.springframework.validation.method.MethodValidationResult;
 public interface MethodValidationResultSupport {
 
   /**
-   * Builds a {@link Violation}s list from a {@link MethodValidationResult} produced by method /
-   * parameter validation (e.g. {@code @Validated} on a controller). Each parameter violation is
-   * mapped to a {@link Violation} whose name is the resolved method parameter name and message is
-   * the constraint message.
+   * Builds a {@link Violation}s list from a {@link MethodValidationResult} produced by method / parameter validation
+   * (e.g. {@code @Validated} on a controller). Each parameter violation is mapped to a {@link Violation} whose name is
+   * the resolved method parameter name and message is the constraint message.
    *
    * @param result aggregated method validation result (must not be {@code null})
    * @return list of violations extracted from the validation result

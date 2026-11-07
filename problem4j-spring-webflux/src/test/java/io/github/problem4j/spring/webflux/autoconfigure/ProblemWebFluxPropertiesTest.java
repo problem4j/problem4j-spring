@@ -32,14 +32,12 @@ class ProblemWebFluxPropertiesTest {
 
   @Test
   void givenDeprecatedDefaultEnabledValues_whenRead_thenMatchDefaultEnabled() {
-    assertThat(ExceptionAdvice.DEFAULT_ENABLED_VALUE)
-        .isEqualTo(String.valueOf(ExceptionAdvice.DEFAULT_ENABLED));
+    assertThat(ExceptionAdvice.DEFAULT_ENABLED_VALUE).isEqualTo(String.valueOf(ExceptionAdvice.DEFAULT_ENABLED));
     assertThat(ProblemExceptionAdvice.DEFAULT_ENABLED_VALUE)
         .isEqualTo(String.valueOf(ProblemExceptionAdvice.DEFAULT_ENABLED));
     assertThat(ProblemContextFilter.DEFAULT_ENABLED_VALUE)
         .isEqualTo(String.valueOf(ProblemContextFilter.DEFAULT_ENABLED));
-    assertThat(ExceptionHandler.DEFAULT_ENABLED_VALUE)
-        .isEqualTo(String.valueOf(ExceptionHandler.DEFAULT_ENABLED));
+    assertThat(ExceptionHandler.DEFAULT_ENABLED_VALUE).isEqualTo(String.valueOf(ExceptionHandler.DEFAULT_ENABLED));
     assertThat(ErrorWebExceptionHandler.DEFAULT_ENABLED_VALUE)
         .isEqualTo(String.valueOf(ErrorWebExceptionHandler.DEFAULT_ENABLED));
   }
@@ -49,14 +47,10 @@ class ProblemWebFluxPropertiesTest {
     ProblemWebFluxProperties properties = new ProblemWebFluxProperties();
 
     assertThat(properties.isEnabled()).isTrue();
-    assertThat(properties.getExceptionAdvice().isEnabled())
-        .isEqualTo(ExceptionAdvice.DEFAULT_ENABLED);
-    assertThat(properties.getProblemExceptionAdvice().isEnabled())
-        .isEqualTo(ProblemExceptionAdvice.DEFAULT_ENABLED);
-    assertThat(properties.getProblemContextFilter().isEnabled())
-        .isEqualTo(ProblemContextFilter.DEFAULT_ENABLED);
-    assertThat(properties.getExceptionHandler().isEnabled())
-        .isEqualTo(ExceptionHandler.DEFAULT_ENABLED);
+    assertThat(properties.getExceptionAdvice().isEnabled()).isEqualTo(ExceptionAdvice.DEFAULT_ENABLED);
+    assertThat(properties.getProblemExceptionAdvice().isEnabled()).isEqualTo(ProblemExceptionAdvice.DEFAULT_ENABLED);
+    assertThat(properties.getProblemContextFilter().isEnabled()).isEqualTo(ProblemContextFilter.DEFAULT_ENABLED);
+    assertThat(properties.getExceptionHandler().isEnabled()).isEqualTo(ExceptionHandler.DEFAULT_ENABLED);
     assertThat(properties.getErrorWebExceptionHandler().isEnabled())
         .isEqualTo(ErrorWebExceptionHandler.DEFAULT_ENABLED);
   }
@@ -117,17 +111,12 @@ class ProblemWebFluxPropertiesTest {
 
   @Test
   void givenDeprecatedConstructor_whenNestedGroupsNull_thenDefaultsRetained() {
-    ProblemWebFluxProperties properties =
-        new ProblemWebFluxProperties(true, null, null, null, null, null);
+    ProblemWebFluxProperties properties = new ProblemWebFluxProperties(true, null, null, null, null, null);
 
-    assertThat(properties.getExceptionAdvice().isEnabled())
-        .isEqualTo(ExceptionAdvice.DEFAULT_ENABLED);
-    assertThat(properties.getProblemExceptionAdvice().isEnabled())
-        .isEqualTo(ProblemExceptionAdvice.DEFAULT_ENABLED);
-    assertThat(properties.getProblemContextFilter().isEnabled())
-        .isEqualTo(ProblemContextFilter.DEFAULT_ENABLED);
-    assertThat(properties.getExceptionHandler().isEnabled())
-        .isEqualTo(ExceptionHandler.DEFAULT_ENABLED);
+    assertThat(properties.getExceptionAdvice().isEnabled()).isEqualTo(ExceptionAdvice.DEFAULT_ENABLED);
+    assertThat(properties.getProblemExceptionAdvice().isEnabled()).isEqualTo(ProblemExceptionAdvice.DEFAULT_ENABLED);
+    assertThat(properties.getProblemContextFilter().isEnabled()).isEqualTo(ProblemContextFilter.DEFAULT_ENABLED);
+    assertThat(properties.getExceptionHandler().isEnabled()).isEqualTo(ExceptionHandler.DEFAULT_ENABLED);
     assertThat(properties.getErrorWebExceptionHandler().isEnabled())
         .isEqualTo(ErrorWebExceptionHandler.DEFAULT_ENABLED);
   }

@@ -77,8 +77,7 @@ class ProblemContextWebMvcFiltersTest {
 
     filter.doFilter(MockHttpServletRequest(), MockHttpServletResponse(), chain)
 
-    assertThat(events)
-        .containsExactly("context1:abc", "context2", "chain", "complete1:abc", "complete2")
+    assertThat(events).containsExactly("context1:abc", "context2", "chain", "complete1:abc", "complete2")
   }
 
   @Test
@@ -123,8 +122,7 @@ class ProblemContextWebMvcFiltersTest {
           onContext { _, _, context -> captured.add(context) }
           onComplete { _, _, context -> captured.add(context) }
         }
-    val request =
-        MockHttpServletRequest().apply { setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, existing) }
+    val request = MockHttpServletRequest().apply { setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, existing) }
 
     filter.doFilter(request, MockHttpServletResponse(), MockFilterChain())
 

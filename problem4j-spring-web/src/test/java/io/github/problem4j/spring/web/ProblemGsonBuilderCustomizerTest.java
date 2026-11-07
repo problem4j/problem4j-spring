@@ -51,8 +51,7 @@ class ProblemGsonBuilderCustomizerTest {
               .extension("orderId", "1")
               .build();
 
-      JsonObject json =
-          JsonParser.parseString(gson.toJson(problem, Problem.class)).getAsJsonObject();
+      JsonObject json = JsonParser.parseString(gson.toJson(problem, Problem.class)).getAsJsonObject();
 
       assertThat(json.get("type").getAsString()).isEqualTo("https://example.org/errors/not-found");
       assertThat(json.get("title").getAsString()).isEqualTo("Not Found");
@@ -66,8 +65,7 @@ class ProblemGsonBuilderCustomizerTest {
     void givenProblemWithBlankType_whenSerializing_thenOmitsType() {
       Problem problem = Problem.builder().title("Bad Request").status(400).build();
 
-      JsonObject json =
-          JsonParser.parseString(gson.toJson(problem, Problem.class)).getAsJsonObject();
+      JsonObject json = JsonParser.parseString(gson.toJson(problem, Problem.class)).getAsJsonObject();
 
       assertThat(json.has("type")).isFalse();
       assertThat(json.has("detail")).isFalse();
@@ -135,8 +133,7 @@ class ProblemGsonBuilderCustomizerTest {
 
     @Test
     void givenProblem4jDisabled_whenDeserializingProblem_thenThrows() {
-      assertThatThrownBy(() -> gson.fromJson("{\"status\":400}", Problem.class))
-          .isInstanceOf(RuntimeException.class);
+      assertThatThrownBy(() -> gson.fromJson("{\"status\":400}", Problem.class)).isInstanceOf(RuntimeException.class);
     }
   }
 }

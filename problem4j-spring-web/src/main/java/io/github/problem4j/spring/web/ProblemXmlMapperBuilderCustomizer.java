@@ -22,9 +22,8 @@ import org.springframework.boot.jackson.autoconfigure.XmlMapperBuilderCustomizer
 import tools.jackson.dataformat.xml.XmlMapper;
 
 /**
- * Customizes Spring Boot's XML ObjectMapper by registering a mix-in for the {@link Problem}
- * interface. Ensures that all Problem objects are serialized and deserialized consistently
- * according to {@link ProblemJacksonMixIn}.
+ * Customizes Spring Boot's XML ObjectMapper by registering a mix-in for the {@link Problem} interface. Ensures that all
+ * Problem objects are serialized and deserialized consistently according to {@link ProblemJacksonMixIn}.
  *
  * @since 2.1.0
  */
@@ -38,8 +37,8 @@ public class ProblemXmlMapperBuilderCustomizer implements XmlMapperBuilderCustom
   public ProblemXmlMapperBuilderCustomizer() {}
 
   /**
-   * Adds the {@link ProblemJacksonMixIn} to the XML mapper builder for proper serialization and
-   * deserialization of {@link Problem} objects.
+   * Adds the {@link ProblemJacksonMixIn} to the XML mapper builder for proper serialization and deserialization of
+   * {@link Problem} objects.
    *
    * @param builder the JSON mapper builder to customize
    * @since 2.1.0

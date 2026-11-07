@@ -19,9 +19,9 @@ package io.github.problem4j.spring.web;
 /**
  * Strategy for calculating the inheritance distance between two Java classes or interfaces.
  *
- * <p>The distance counts the number of steps in the class and interface hierarchy from a target
- * class to a base class. Both superclass chains and implemented or extended interfaces are
- * considered, and the minimal distance is returned if multiple paths exist.
+ * <p>The distance counts the number of steps in the class and interface hierarchy from a target class to a base class.
+ * Both superclass chains and implemented or extended interfaces are considered, and the minimal distance is returned if
+ * multiple paths exist.
  *
  * <p>Methods allow specifying a maximum depth to avoid stack overflow, or use a default depth.
  *
@@ -66,8 +66,7 @@ public interface ClassDistanceEvaluation {
   /**
    * Returns the default maximum depth used when calculating inheritance distance.
    *
-   * <p>This limit helps prevent stack overflow when traversing deep or complex class/interface
-   * hierarchies.
+   * <p>This limit helps prevent stack overflow when traversing deep or complex class/interface hierarchies.
    *
    * @return the default maximum depth
    * @since 1.2.0

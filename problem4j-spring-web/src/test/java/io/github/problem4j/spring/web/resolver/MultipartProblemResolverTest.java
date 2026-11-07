@@ -44,8 +44,7 @@ class MultipartProblemResolverTest {
   void givenMultipartException_whenResolve_thenReturnsBadRequestProblem() {
     MultipartException ex = new MultipartException("parse failure");
 
-    Problem problem =
-        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
   }
@@ -55,8 +54,7 @@ class MultipartProblemResolverTest {
     MultipartException ex = new MultipartException("parse failure");
 
     Problem problem =
-        resolver.resolve(
-            ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
   }

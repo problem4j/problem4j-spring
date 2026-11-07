@@ -58,9 +58,7 @@ public final class Violation implements Serializable {
    * @since 1.2.0
    */
   @JsonCreator
-  public Violation(
-      @JsonProperty("field") @Nullable String field,
-      @JsonProperty("error") @Nullable String error) {
+  public Violation(@JsonProperty("field") @Nullable String field, @JsonProperty("error") @Nullable String error) {
     this.field = field;
     this.error = error;
   }
@@ -88,8 +86,8 @@ public final class Violation implements Serializable {
   }
 
   /**
-   * Indicates whether some other object is "equal to" this one. Two violations are considered equal
-   * if they have the same field and error message.
+   * Indicates whether some other object is "equal to" this one. Two violations are considered equal if they have the
+   * same field and error message.
    *
    * @param obj the reference object with which to compare.
    * @return {@code true} if this object is the same as the obj argument; {@code false} otherwise.

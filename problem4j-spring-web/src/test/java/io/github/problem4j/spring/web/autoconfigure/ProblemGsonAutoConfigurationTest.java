@@ -35,39 +35,34 @@ class ProblemGsonAutoConfigurationTest {
 
   private final WebApplicationContextRunner contextRunner =
       new WebApplicationContextRunner()
-          .withConfiguration(
-              AutoConfigurations.of(
-                  GsonAutoConfiguration.class, ProblemGsonAutoConfiguration.class));
+          .withConfiguration(AutoConfigurations.of(GsonAutoConfiguration.class, ProblemGsonAutoConfiguration.class));
 
   @Test
   void givenGsonOnClasspath_whenContextStarts_thenRegistersCustomizer() {
-    contextRunner.run(
-        context -> assertThat(context).hasSingleBean(ProblemGsonBuilderCustomizer.class));
+    contextRunner.run(context -> assertThat(context).hasSingleBean(ProblemGsonBuilderCustomizer.class));
   }
 
   @Test
   void givenGsonOnClasspath_whenContextStarts_thenGsonSerializesProblem() {
-    contextRunner.run(
-        context -> {
-          Gson gson = context.getBean(Gson.class);
-          Problem problem = Problem.builder().title("Bad Request").status(400).build();
+    contextRunner.run(context -> {
+      Gson gson = context.getBean(Gson.class);
+      Problem problem = Problem.builder().title("Bad Request").status(400).build();
 
-          Problem result = gson.fromJson(gson.toJson(problem, Problem.class), Problem.class);
+      Problem result = gson.fromJson(gson.toJson(problem, Problem.class), Problem.class);
 
-          assertThat(result).isEqualTo(problem);
-        });
+      assertThat(result).isEqualTo(problem);
+    });
   }
 
   @Test
   void givenUserDefinedCustomizer_whenContextStarts_thenBacksOff() {
     contextRunner
         .withUserConfiguration(CustomCustomizerConfiguration.class)
-        .run(
-            context -> {
-              assertThat(context).hasSingleBean(ProblemGsonBuilderCustomizer.class);
-              assertThat(context.getBean(ProblemGsonBuilderCustomizer.class))
-                  .isSameAs(context.getBean("customProblemGsonBuilderCustomizer"));
-            });
+        .run(context -> {
+          assertThat(context).hasSingleBean(ProblemGsonBuilderCustomizer.class);
+          assertThat(context.getBean(ProblemGsonBuilderCustomizer.class))
+              .isSameAs(context.getBean("customProblemGsonBuilderCustomizer"));
+        });
   }
 
   @Test
@@ -81,12 +76,11 @@ class ProblemGsonAutoConfigurationTest {
   void givenProblem4jGsonNotOnClasspath_whenContextStarts_thenDoesNotRegisterCustomizer() {
     contextRunner
         .withClassLoader(new FilteredClassLoader(ProblemTypeAdapterFactory.class))
-        .run(
-            context -> {
-              assertThat(context).hasNotFailed();
-              assertThat(context).doesNotHaveBean(ProblemGsonBuilderCustomizer.class);
-              assertThat(context).hasSingleBean(Gson.class);
-            });
+        .run(context -> {
+          assertThat(context).hasNotFailed();
+          assertThat(context).doesNotHaveBean(ProblemGsonBuilderCustomizer.class);
+          assertThat(context).hasSingleBean(Gson.class);
+        });
   }
 
   @Test
@@ -99,8 +93,7 @@ class ProblemGsonAutoConfigurationTest {
   @Test
   void givenNonWebApplication_whenContextStarts_thenRegistersCustomizer() {
     new ApplicationContextRunner()
-        .withConfiguration(
-            AutoConfigurations.of(GsonAutoConfiguration.class, ProblemGsonAutoConfiguration.class))
+        .withConfiguration(AutoConfigurations.of(GsonAutoConfiguration.class, ProblemGsonAutoConfiguration.class))
         .run(context -> assertThat(context).hasSingleBean(ProblemGsonBuilderCustomizer.class));
   }
 

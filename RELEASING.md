@@ -13,7 +13,7 @@
 
 ## Maven Central
 
-[![Publish Release Status](https://github.com/problem4j/problem4j-spring/actions/workflows/gradle-publish-release.yml/badge.svg)][gradle-publish-release]
+[![Publish Release Status](https://github.com/problem4j/problem4j-spring/actions/workflows/release.yml/badge.svg)][release]
 [![Sonatype](https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=!*-*)][maven-central]
 
 1. Keep Git tags with `vX.Y.Z-suffix` format. GitHub Actions job will only trigger on such tags and will remove `v`
@@ -21,7 +21,7 @@
 2. The releasing procedure only uploads the artifacts to Sonatype repository. You need to manually log in to Sonatype to
    push the artifacts to Maven Central.
 
-See [`gradle-publish-release.yml`][gradle-publish-release.yml] for publishing release versions instructions.
+See [`release.yml`][release.yml] for publishing release versions instructions.
 
 Set the following environment variables in your CI/CD (GitHub Actions, etc.):
 
@@ -43,8 +43,8 @@ Artifacts are published to Maven Central via Sonatype, using following Gradle ta
 
 This command uses `nmcp` Gradle plugin - [link](https://github.com/GradleUp/nmcp).
 
-[gradle-publish-release]: https://github.com/problem4j/problem4j-spring/actions/workflows/gradle-publish-release.yml
+[release]: https://github.com/problem4j/problem4j-spring/actions/workflows/release.yml
 
-[gradle-publish-release.yml]: .github/workflows/gradle-publish-release.yml
+[release.yml]: .github/workflows/release.yml
 
 [maven-central]: https://central.sonatype.com/namespace/io.github.problem4j

@@ -52,8 +52,7 @@ class CachingProblemResolverStoreTest {
     }
 
     @Override
-    public Problem resolve(
-        ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+    public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
       return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
   }
@@ -89,11 +88,10 @@ class CachingProblemResolverStoreTest {
     AtomicInteger computeCounter = new AtomicInteger(0);
 
     CachingProblemResolverStore store =
-        new CachingProblemResolverStore(
-            clazz -> {
-              computeCounter.incrementAndGet();
-              return Optional.empty();
-            });
+        new CachingProblemResolverStore(clazz -> {
+          computeCounter.incrementAndGet();
+          return Optional.empty();
+        });
 
     Optional<ProblemResolver> first = store.findResolver(TestException.class);
     assertTrue(first.isEmpty(), "should be empty for unmapped exception");
@@ -109,8 +107,7 @@ class CachingProblemResolverStoreTest {
     }
 
     @Override
-    public Problem resolve(
-        ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+    public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
       return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
   }
@@ -123,11 +120,10 @@ class CachingProblemResolverStoreTest {
     DummyResolver resolver = new DummyResolver(IOException.class);
 
     CachingProblemResolverStore store =
-        new CachingProblemResolverStore(
-            clazz -> {
-              computeCounter.incrementAndGet();
-              return Optional.of(resolver);
-            });
+        new CachingProblemResolverStore(clazz -> {
+          computeCounter.incrementAndGet();
+          return Optional.of(resolver);
+        });
 
     int threadCount = 20;
 
@@ -158,11 +154,10 @@ class CachingProblemResolverStoreTest {
     Exception anonymous = new RuntimeException() {};
 
     CachingProblemResolverStore store =
-        new CachingProblemResolverStore(
-            clazz -> {
-              computeCounter.incrementAndGet();
-              return delegate.findResolver(clazz);
-            });
+        new CachingProblemResolverStore(clazz -> {
+          computeCounter.incrementAndGet();
+          return delegate.findResolver(clazz);
+        });
 
     Optional<ProblemResolver> first = store.findResolver(anonymous.getClass());
     Optional<ProblemResolver> second = store.findResolver(anonymous.getClass());
@@ -181,11 +176,10 @@ class CachingProblemResolverStoreTest {
     Exception secondAnonymous = new RuntimeException() {};
 
     CachingProblemResolverStore store =
-        new CachingProblemResolverStore(
-            clazz -> {
-              computeCounter.incrementAndGet();
-              return Optional.of(resolver);
-            });
+        new CachingProblemResolverStore(clazz -> {
+          computeCounter.incrementAndGet();
+          return Optional.of(resolver);
+        });
 
     store.findResolver(firstAnonymous.getClass());
     store.findResolver(secondAnonymous.getClass());
@@ -197,19 +191,16 @@ class CachingProblemResolverStoreTest {
   }
 
   @Test
-  void
-      givenAnonymousInnerExceptionWithoutMatchingResolver_whenFindingResolverTwice_thenEmptyResultIsCached() {
+  void givenAnonymousInnerExceptionWithoutMatchingResolver_whenFindingResolverTwice_thenEmptyResultIsCached() {
     AtomicInteger computeCounter = new AtomicInteger(0);
     Exception anonymous = new IllegalStateException() {};
 
     CachingProblemResolverStore store =
-        new CachingProblemResolverStore(
-            clazz -> {
-              computeCounter.incrementAndGet();
-              return new DefaultProblemResolverStore(
-                      List.of(new DummyResolver(IllegalArgumentException.class)))
-                  .findResolver(clazz);
-            });
+        new CachingProblemResolverStore(clazz -> {
+          computeCounter.incrementAndGet();
+          return new DefaultProblemResolverStore(List.of(new DummyResolver(IllegalArgumentException.class)))
+              .findResolver(clazz);
+        });
 
     Optional<ProblemResolver> first = store.findResolver(anonymous.getClass());
     Optional<ProblemResolver> second = store.findResolver(anonymous.getClass());

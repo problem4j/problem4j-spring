@@ -50,8 +50,7 @@ public class ValidateMethodArgumentController {
   }
 
   @GetMapping(path = "/request-header")
-  public String validateRequestHeader(
-      @RequestHeader("X-Custom-Header") @Size(min = 5) String xCustomHeader) {
+  public String validateRequestHeader(@RequestHeader("X-Custom-Header") @Size(min = 5) String xCustomHeader) {
     return "OK";
   }
 
@@ -68,8 +67,7 @@ public class ValidateMethodArgumentController {
 
   @GetMapping(path = "/two-arg")
   public String validateTwoArguments(
-      @RequestParam("first") @Size(min = 5) String firstParam,
-      @RequestParam("second") String secondParam) {
+      @RequestParam("first") @Size(min = 5) String firstParam, @RequestParam("second") String secondParam) {
     return "OK";
   }
 

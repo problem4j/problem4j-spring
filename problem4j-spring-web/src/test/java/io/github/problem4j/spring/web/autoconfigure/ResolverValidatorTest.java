@@ -207,8 +207,7 @@ class ResolverValidatorTest {
     }
 
     @Override
-    public Problem resolve(
-        ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+    public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
       return Problem.builder().status(400).build();
     }
   }

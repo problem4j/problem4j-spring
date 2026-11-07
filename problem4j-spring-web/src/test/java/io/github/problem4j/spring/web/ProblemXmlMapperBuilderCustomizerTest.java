@@ -65,10 +65,7 @@ class ProblemXmlMapperBuilderCustomizerTest {
 
       String xml = xmlMapper.writeValueAsString(problem);
 
-      assertThat(xml)
-          .doesNotContain("<type>")
-          .doesNotContain("<detail>")
-          .doesNotContain("<instance>");
+      assertThat(xml).doesNotContain("<type>").doesNotContain("<detail>").doesNotContain("<instance>");
     }
 
     @Test
@@ -124,8 +121,7 @@ class ProblemXmlMapperBuilderCustomizerTest {
 
     @Test
     void givenProblem4jDisabled_whenDeserializingProblem_thenThrows() {
-      assertThatThrownBy(
-              () -> xmlMapper.readValue("<problem><status>400</status></problem>", Problem.class))
+      assertThatThrownBy(() -> xmlMapper.readValue("<problem><status>400</status></problem>", Problem.class))
           .isInstanceOf(RuntimeException.class);
     }
   }

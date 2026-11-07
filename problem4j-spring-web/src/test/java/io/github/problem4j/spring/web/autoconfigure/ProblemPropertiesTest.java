@@ -30,8 +30,7 @@ class ProblemPropertiesTest {
 
   @Test
   void givenDeprecatedDefaultEnabledValues_whenRead_thenMatchDefaultEnabled() {
-    assertThat(ResolverCaching.DEFAULT_ENABLED_VALUE)
-        .isEqualTo(String.valueOf(ResolverCaching.DEFAULT_ENABLED));
+    assertThat(ResolverCaching.DEFAULT_ENABLED_VALUE).isEqualTo(String.valueOf(ResolverCaching.DEFAULT_ENABLED));
   }
 
   @Test
@@ -46,8 +45,7 @@ class ProblemPropertiesTest {
     assertThat(properties.getInstanceOverride()).isNull();
     assertThat(properties.getResolverCaching()).isNotNull();
     assertThat(properties.getDuplicateResolverPolicy()).isEqualTo(DuplicateResolverPolicy.FAIL);
-    assertThat(properties.getResolverCaching().isEnabled())
-        .isEqualTo(ResolverCaching.DEFAULT_ENABLED);
+    assertThat(properties.getResolverCaching().isEnabled()).isEqualTo(ResolverCaching.DEFAULT_ENABLED);
   }
 
   @Test
@@ -81,8 +79,7 @@ class ProblemPropertiesTest {
     ResolverCaching caching = new ResolverCaching(true);
 
     ProblemProperties properties =
-        new ProblemProperties(
-            false, DetailFormat.LOWERCASE, "X-Trace-Id", "t", "ti", "in", caching);
+        new ProblemProperties(false, DetailFormat.LOWERCASE, "X-Trace-Id", "t", "ti", "in", caching);
 
     assertThat(properties.isEnabled()).isFalse();
     assertThat(properties.getDetailFormat()).isEqualTo(DetailFormat.LOWERCASE);
@@ -96,12 +93,10 @@ class ProblemPropertiesTest {
 
   @Test
   void givenDeprecatedConstructor_whenResolverCachingNull_thenDefaultRetained() {
-    ProblemProperties properties =
-        new ProblemProperties(true, DetailFormat.CAPITALIZED, null, null, null, null, null);
+    ProblemProperties properties = new ProblemProperties(true, DetailFormat.CAPITALIZED, null, null, null, null, null);
 
     assertThat(properties.getResolverCaching()).isNotNull();
-    assertThat(properties.getResolverCaching().isEnabled())
-        .isEqualTo(ResolverCaching.DEFAULT_ENABLED);
+    assertThat(properties.getResolverCaching().isEnabled()).isEqualTo(ResolverCaching.DEFAULT_ENABLED);
   }
 
   @Test

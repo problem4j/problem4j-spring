@@ -46,8 +46,8 @@ import reactor.core.publisher.Mono;
 /**
  * Fallback exception handler for uncaught {@link Exception}s in Spring REST controllers.
  *
- * <p>This class uses {@link RestControllerAdvice} to intercept any exceptions not handled by more
- * specific exception handlers. It converts them into a standardized {@link Problem} response with:
+ * <p>This class uses {@link RestControllerAdvice} to intercept any exceptions not handled by more specific exception
+ * handlers. It converts them into a standardized {@link Problem} response with:
  *
  * <ul>
  *   <li>HTTP status: {@link HttpStatus#INTERNAL_SERVER_ERROR}
@@ -55,9 +55,9 @@ import reactor.core.publisher.Mono;
  *   <li>Content type: {@code application/problem+json}
  * </ul>
  *
- * <p>Intended as a <b>generic fallback</b>, it ensures that unexpected exceptions still produce a
- * consistent {@link Problem} response. For more specific exception handling, use {@link
- * ProblemEnhancedWebFluxHandler}, {@link ProblemExceptionWebFluxAdvice}.
+ * <p>Intended as a <b>generic fallback</b>, it ensures that unexpected exceptions still produce a consistent {@link
+ * Problem} response. For more specific exception handling, use {@link ProblemEnhancedWebFluxHandler}, {@link
+ * ProblemExceptionWebFluxAdvice}.
  *
  * @since 1.2.0
  */
@@ -93,9 +93,8 @@ public class ExceptionWebFluxAdvice {
   }
 
   /**
-   * Generic fallback handler converting any uncaught exception into a {@link Problem} response.
-   * Chooses a resolver, {@code @ProblemMapping}, {@code @ResponseStatus}, or defaults to {@code
-   * INTERNAL_SERVER_ERROR}.
+   * Generic fallback handler converting any uncaught exception into a {@link Problem} response. Chooses a resolver,
+   * {@code @ProblemMapping}, {@code @ResponseStatus}, or defaults to {@code INTERNAL_SERVER_ERROR}.
    *
    * @param ex the exception to handle
    * @param exchange the current server web exchange
@@ -104,8 +103,7 @@ public class ExceptionWebFluxAdvice {
    */
   @ExceptionHandler(Exception.class)
   public Mono<ResponseEntity<Problem>> handleException(Exception ex, ServerWebExchange exchange) {
-    ProblemContext context =
-        exchange.getAttributeOrDefault(PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create());
+    ProblemContext context = exchange.getAttributeOrDefault(PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create());
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
@@ -120,8 +118,7 @@ public class ExceptionWebFluxAdvice {
     }
 
     HttpStatus status =
-        Optional.ofNullable(HttpStatus.resolve(problem.getStatus()))
-            .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional.ofNullable(HttpStatus.resolve(problem.getStatus())).orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
     for (AdviceWebFluxInspector inspector : adviceWebFluxInspectors) {
       inspector.inspect(context, problem, ex, headers, status, exchange);
@@ -138,8 +135,7 @@ public class ExceptionWebFluxAdvice {
     if (optionalResolver.isPresent()) {
       return optionalResolver.get().resolve(context, ex, headers, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    ResponseStatus responseStatus =
-        AnnotatedElementUtils.findMergedAnnotation(ex.getClass(), ResponseStatus.class);
+    ResponseStatus responseStatus = AnnotatedElementUtils.findMergedAnnotation(ex.getClass(), ResponseStatus.class);
     if (responseStatus != null) {
       ProblemBuilder builder = Problem.builder().status(responseStatus.code().value());
       if (StringUtils.hasLength(responseStatus.reason())) {

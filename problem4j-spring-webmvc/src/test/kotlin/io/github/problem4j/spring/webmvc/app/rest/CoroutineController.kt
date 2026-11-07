@@ -47,8 +47,7 @@ class CoroutineController {
   }
 
   @GetMapping(path = ["/resolver"])
-  suspend fun resolver(): String =
-      withContext(Dispatchers.IO) { throw CoroutineException("coroutine failure") }
+  suspend fun resolver(): String = withContext(Dispatchers.IO) { throw CoroutineException("coroutine failure") }
 
   @GetMapping(path = ["/unresolvable"])
   suspend fun unresolvable(): String {

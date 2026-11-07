@@ -121,8 +121,7 @@ class SimpleTypeNameMapperTest {
 
   @Test
   void givenCustomMappingForInterface_whenMappingImplementation_thenCustomNameIsReturned() {
-    TypeNameMapper mapper =
-        new SimpleTypeNameMapper(new TypeNameEntry(Temporal.class, "date-time"));
+    TypeNameMapper mapper = new SimpleTypeNameMapper(new TypeNameEntry(Temporal.class, "date-time"));
 
     assertThat(mapper.map(LocalDate.class)).hasValue("date-time");
   }
@@ -138,8 +137,7 @@ class SimpleTypeNameMapperTest {
   void givenSpecificTypeBeforeSupertype_whenMapping_thenEachTypeMatchesItsOwnMapping() {
     TypeNameMapper mapper =
         new SimpleTypeNameMapper(
-            new TypeNameEntry(LocalDate.class, "date"),
-            new TypeNameEntry(Temporal.class, "date-time"));
+            new TypeNameEntry(LocalDate.class, "date"), new TypeNameEntry(Temporal.class, "date-time"));
 
     assertThat(mapper.map(LocalDate.class)).hasValue("date");
     assertThat(mapper.map(LocalDateTime.class)).hasValue("date-time");
@@ -149,8 +147,7 @@ class SimpleTypeNameMapperTest {
   void givenSupertypeBeforeSpecificType_whenMapping_thenSupertypeMappingWins() {
     TypeNameMapper mapper =
         new SimpleTypeNameMapper(
-            new TypeNameEntry(Temporal.class, "date-time"),
-            new TypeNameEntry(LocalDate.class, "date"));
+            new TypeNameEntry(Temporal.class, "date-time"), new TypeNameEntry(LocalDate.class, "date"));
 
     assertThat(mapper.map(LocalDate.class)).hasValue("date-time");
   }
@@ -159,8 +156,7 @@ class SimpleTypeNameMapperTest {
   void givenMultipleMatchingInterfaces_whenMapping_thenFirstGivenMappingWins() {
     TypeNameMapper mapper =
         new SimpleTypeNameMapper(
-            new TypeNameEntry(SecondInterface.class, "second"),
-            new TypeNameEntry(FirstInterface.class, "first"));
+            new TypeNameEntry(SecondInterface.class, "second"), new TypeNameEntry(FirstInterface.class, "first"));
 
     assertThat(mapper.map(BothInterfaces.class)).hasValue("second");
   }
@@ -233,9 +229,7 @@ class SimpleTypeNameMapperTest {
   void givenListOfEntries_whenMapping_thenEntriesAreComparedInListOrder() {
     TypeNameMapper mapper =
         new SimpleTypeNameMapper(
-            List.of(
-                new TypeNameEntry(LocalDate.class, "date"),
-                new TypeNameEntry(Temporal.class, "date-time")));
+            List.of(new TypeNameEntry(LocalDate.class, "date"), new TypeNameEntry(Temporal.class, "date-time")));
 
     assertThat(mapper.map(LocalDate.class)).hasValue("date");
     assertThat(mapper.map(LocalDateTime.class)).hasValue("date-time");

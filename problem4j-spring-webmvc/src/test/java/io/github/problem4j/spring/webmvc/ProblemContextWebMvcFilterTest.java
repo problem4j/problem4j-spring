@@ -26,8 +26,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 class ProblemContextWebMvcFilterTest {
 
   @Test
-  void givenNoTracingHeaderName_whenFilter_thenGeneratedTraceIdIsLowercase32HexCharacters()
-      throws Exception {
+  void givenNoTracingHeaderName_whenFilter_thenGeneratedTraceIdIsLowercase32HexCharacters() throws Exception {
     ProblemContextWebMvcFilter filter = new ProblemContextWebMvcFilter(() -> null);
     MockHttpServletRequest request = new MockHttpServletRequest();
     MockHttpServletResponse response = new MockHttpServletResponse();
@@ -38,9 +37,8 @@ class ProblemContextWebMvcFilterTest {
   }
 
   @Test
-  void
-      givenTracingHeaderNameConfigured_whenNoHeaderInRequest_thenGeneratedTraceIdIsLowercase32HexCharacters()
-          throws Exception {
+  void givenTracingHeaderNameConfigured_whenNoHeaderInRequest_thenGeneratedTraceIdIsLowercase32HexCharacters()
+      throws Exception {
     ProblemContextWebMvcFilter filter = new ProblemContextWebMvcFilter(() -> "X-Trace-Id");
     MockHttpServletRequest request = new MockHttpServletRequest();
     MockHttpServletResponse response = new MockHttpServletResponse();
@@ -51,8 +49,7 @@ class ProblemContextWebMvcFilterTest {
   }
 
   @Test
-  void givenTracingHeaderNameConfigured_whenHeaderPresentInRequest_thenUsesRequestHeaderAsTraceId()
-      throws Exception {
+  void givenTracingHeaderNameConfigured_whenHeaderPresentInRequest_thenUsesRequestHeaderAsTraceId() throws Exception {
     ProblemContextWebMvcFilter filter = new ProblemContextWebMvcFilter(() -> "X-Trace-Id");
     MockHttpServletRequest request = new MockHttpServletRequest();
     request.addHeader("X-Trace-Id", "custom-trace-id");

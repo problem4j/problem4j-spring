@@ -32,23 +32,22 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.support.WebExchangeBindException;
 
 /**
- * Handles {@link WebExchangeBindException} thrown when binding and validation of request data in a
- * WebFlux application fails.
+ * Handles {@link WebExchangeBindException} thrown when binding and validation of request data in a WebFlux application
+ * fails.
  *
- * <p>This typically occurs when request parameters, path variables, or body content cannot be bound
- * to a target object or violate validation constraints.
+ * <p>This typically occurs when request parameters, path variables, or body content cannot be bound to a target object
+ * or violate validation constraints.
  *
- * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response, often
- * including details about which fields failed binding or validation.
+ * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response, often including details
+ * about which fields failed binding or validation.
  *
- * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
- * AbstractProblemResolver}, the {@link BindingResultSupport} is assigned after construction by
- * {@link ProblemBeanPostProcessor} through {@link #setBindingResultSupport(BindingResultSupport)}.
+ * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link AbstractProblemResolver},
+ * the {@link BindingResultSupport} is assigned after construction by {@link ProblemBeanPostProcessor} through {@link
+ * #setBindingResultSupport(BindingResultSupport)}.
  *
  * @since 1.2.0
  */
-public class WebExchangeBindProblemResolver extends AbstractProblemResolver
-    implements BindingResultSupportAware {
+public class WebExchangeBindProblemResolver extends AbstractProblemResolver implements BindingResultSupportAware {
 
   private BindingResultSupport bindingResultSupport;
 
@@ -67,8 +66,8 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
-   *     construction; use {@link #WebExchangeBindProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after construction; use
+   *     {@link #WebExchangeBindProblemResolver()}
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
   public WebExchangeBindProblemResolver(ProblemFormat problemFormat) {
@@ -76,19 +75,17 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver
   }
 
   /**
-   * Creates a new {@link WebExchangeBindProblemResolver} with the specified problem format and
-   * binding result support.
+   * Creates a new {@link WebExchangeBindProblemResolver} with the specified problem format and binding result support.
    *
    * @param problemFormat the problem format to use
    * @param bindingResultSupport the support for extracting bind results
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
-   *     construction; use {@link #WebExchangeBindProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after construction; use
+   *     {@link #WebExchangeBindProblemResolver()}
    */
   @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)
-  public WebExchangeBindProblemResolver(
-      ProblemFormat problemFormat, BindingResultSupport bindingResultSupport) {
+  public WebExchangeBindProblemResolver(ProblemFormat problemFormat, BindingResultSupport bindingResultSupport) {
     super(WebExchangeBindException.class, problemFormat);
     this.bindingResultSupport = bindingResultSupport;
   }
@@ -105,9 +102,8 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver
   }
 
   /**
-   * Converts the {@link WebExchangeBindException} into a {@link Problem} with status {@link
-   * HttpStatus#BAD_REQUEST} and an {@code errors} extension listing field/global validation
-   * violations extracted from its {@code BindingResult}.
+   * Converts the {@link WebExchangeBindException} into a {@link Problem} with status {@link HttpStatus#BAD_REQUEST} and
+   * an {@code errors} extension listing field/global validation violations extracted from its {@code BindingResult}.
    *
    * @param context problem context (unused)
    * @param ex the triggering {@link WebExchangeBindException}
@@ -118,15 +114,12 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     WebExchangeBindException e = (WebExchangeBindException) ex;
     return Problem.builder()
         .status(HttpStatus.BAD_REQUEST.value())
         .detail(formatDetail(VALIDATION_FAILED_DETAIL))
-        .extension(
-            ViolationSupport.ERRORS_EXTENSION,
-            bindingResultSupport.fetchViolations(e.getBindingResult()))
+        .extension(ViolationSupport.ERRORS_EXTENSION, bindingResultSupport.fetchViolations(e.getBindingResult()))
         .build();
   }
 }

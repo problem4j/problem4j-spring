@@ -32,41 +32,35 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
- * Single {@link BeanPostProcessor} that injects the container's Problem4J collaborators into every
- * bean that opts in through one of the {@code *Aware} callback interfaces, right after
- * construction.
+ * Single {@link BeanPostProcessor} that injects the container's Problem4J collaborators into every bean that opts in
+ * through one of the {@code *Aware} callback interfaces, right after construction.
  *
- * <p>This lets each {@code ProblemResolver} be created with its default (no-arg) constructor - the
- * dependencies it needs are pushed in afterward instead of being threaded through constructors. The
- * following callbacks are handled:
+ * <p>This lets each {@code ProblemResolver} be created with its default (no-arg) constructor - the dependencies it
+ * needs are pushed in afterward instead of being threaded through constructors. The following callbacks are handled:
  *
  * <ul>
  *   <li>{@link ProblemFormatAware} - configured with the {@link ProblemFormat} bean
  *   <li>{@link TypeNameMapperAware} - configured with the {@link TypeNameMapper} bean
  *   <li>{@link BindingResultSupportAware} - configured with the {@link BindingResultSupport} bean
- *   <li>{@link MethodValidationResultSupportAware} - configured with the {@link
- *       MethodValidationResultSupport} bean
- *   <li>{@link MethodParameterSupportAware} - configured with the {@link MethodParameterSupport}
- *       bean
+ *   <li>{@link MethodValidationResultSupportAware} - configured with the {@link MethodValidationResultSupport} bean
+ *   <li>{@link MethodParameterSupportAware} - configured with the {@link MethodParameterSupport} bean
  * </ul>
  *
  * <p>Every collaborator is taken via a {@link Supplier} (resolved lazily, on first use, e.g. {@code
- * ObjectProvider::getIfAvailable}) rather than direct constructor injection, so that registering
- * this processor as a bean does not force early instantiation of the collaborator beans. A supplier
- * is only queried when a bean actually implements the matching callback interface, and a {@code
- * null} result leaves the bean untouched.
+ * ObjectProvider::getIfAvailable}) rather than direct constructor injection, so that registering this processor as a
+ * bean does not force early instantiation of the collaborator beans. A supplier is only queried when a bean actually
+ * implements the matching callback interface, and a {@code null} result leaves the bean untouched.
  *
- * <p>Beans that implement none of the callbacks are skipped with a single {@link
- * ProblemUtilityAware} {@code instanceof} check, since every callback extends it.
+ * <p>Beans that implement none of the callbacks are skipped with a single {@link ProblemUtilityAware} {@code
+ * instanceof} check, since every callback extends it.
  *
  * @since 3.1.0
  */
 public interface ProblemBeanPostProcessor extends BeanPostProcessor {
 
   /**
-   * Creates a new {@link Builder} for {@link ProblemBeanPostProcessor}. Every collaborator supplier
-   * defaults to one returning {@code null}, so a bean implementing the matching callback is left
-   * untouched unless the supplier is set.
+   * Creates a new {@link Builder} for {@link ProblemBeanPostProcessor}. Every collaborator supplier defaults to one
+   * returning {@code null}, so a bean implementing the matching callback is left untouched unless the supplier is set.
    *
    * @return a new {@link Builder}
    * @since 3.1.0
@@ -87,8 +81,7 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
   Object postProcessBeforeInitialization(Object bean, String beanName);
 
   /**
-   * Builder for {@link ProblemBeanPostProcessor}. Every collaborator supplier not set explicitly
-   * returns {@code null}.
+   * Builder for {@link ProblemBeanPostProcessor}. Every collaborator supplier not set explicitly returns {@code null}.
    *
    * @since 3.1.0
    */
@@ -124,8 +117,7 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
     /**
      * Sets the supplier of the {@link MethodValidationResultSupport} bean.
      *
-     * @param methodValidationResultSupport supplier of the {@link MethodValidationResultSupport}
-     *     bean
+     * @param methodValidationResultSupport supplier of the {@link MethodValidationResultSupport} bean
      * @return this builder
      * @since 3.1.0
      */
@@ -139,8 +131,7 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
      * @return this builder
      * @since 3.1.0
      */
-    Builder methodParameterSupport(
-        Supplier<@Nullable MethodParameterSupport> methodParameterSupport);
+    Builder methodParameterSupport(Supplier<@Nullable MethodParameterSupport> methodParameterSupport);
 
     /**
      * Builds a new {@link ProblemBeanPostProcessor} from the configured suppliers.

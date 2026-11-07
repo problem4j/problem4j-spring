@@ -26,14 +26,14 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 
 /**
- * Handles {@link HttpMediaTypeNotAcceptableException} thrown when a client requests a response
- * media type that the server cannot produce.
+ * Handles {@link HttpMediaTypeNotAcceptableException} thrown when a client requests a response media type that the
+ * server cannot produce.
  *
- * <p>This typically occurs when the {@code Accept} header in the HTTP request does not match any of
- * the media types supported by the controller method or configured message converters.
+ * <p>This typically occurs when the {@code Accept} header in the HTTP request does not match any of the media types
+ * supported by the controller method or configured message converters.
  *
- * <p>The handler is responsible for returning an appropriate HTTP 406 (Not Acceptable) response to
- * inform the client that the requested content type is not available.
+ * <p>The handler is responsible for returning an appropriate HTTP 406 (Not Acceptable) response to inform the client
+ * that the requested content type is not available.
  *
  * @since 1.2.0
  */
@@ -49,13 +49,12 @@ public class HttpMediaTypeNotAcceptableProblemResolver extends AbstractProblemRe
   }
 
   /**
-   * Creates a new {@link HttpMediaTypeNotAcceptableProblemResolver} with the specified problem
-   * format.
+   * Creates a new {@link HttpMediaTypeNotAcceptableProblemResolver} with the specified problem format.
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link
-   *     ProblemFormat} after construction; use {@link #HttpMediaTypeNotAcceptableProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link ProblemFormat} after
+   *     construction; use {@link #HttpMediaTypeNotAcceptableProblemResolver()}
    */
   @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)
@@ -64,9 +63,9 @@ public class HttpMediaTypeNotAcceptableProblemResolver extends AbstractProblemRe
   }
 
   /**
-   * Returns a {@link Problem} with {@link HttpStatus#NOT_ACCEPTABLE} (HTTP 406). Other parameters
-   * ({@code context}, {@code headers}, {@code status}) are ignored because the status is dictated
-   * by the semantics of {@link HttpMediaTypeNotAcceptableException}.
+   * Returns a {@link Problem} with {@link HttpStatus#NOT_ACCEPTABLE} (HTTP 406). Other parameters ({@code context},
+   * {@code headers}, {@code status}) are ignored because the status is dictated by the semantics of {@link
+   * HttpMediaTypeNotAcceptableException}.
    *
    * @param context problem context (unused)
    * @param ex the triggering {@link HttpMediaTypeNotAcceptableException}
@@ -76,8 +75,7 @@ public class HttpMediaTypeNotAcceptableProblemResolver extends AbstractProblemRe
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     return Problem.of(HttpStatus.NOT_ACCEPTABLE.value());
   }
 }

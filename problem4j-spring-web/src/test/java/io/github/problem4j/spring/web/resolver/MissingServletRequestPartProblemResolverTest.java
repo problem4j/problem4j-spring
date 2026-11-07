@@ -36,8 +36,7 @@ class MissingServletRequestPartProblemResolverTest {
   }
 
   @Test
-  void
-      givenDefaultConstructor_whenGetExceptionClass_thenReturnsMissingServletRequestPartException() {
+  void givenDefaultConstructor_whenGetExceptionClass_thenReturnsMissingServletRequestPartException() {
     assertThat(resolver.getExceptionClass()).isEqualTo(MissingServletRequestPartException.class);
   }
 
@@ -45,8 +44,7 @@ class MissingServletRequestPartProblemResolverTest {
   void givenMissingServletRequestPartException_whenResolve_thenReturnsBadRequestWithPartName() {
     MissingServletRequestPartException ex = new MissingServletRequestPartException("avatar");
 
-    Problem problem =
-        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getDetail()).isEqualTo("Missing request part");

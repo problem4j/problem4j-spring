@@ -51,40 +51,38 @@ class ProblemWebAutoConfigurationTest {
   void givenWebApplication_whenContextStarts_thenRegistersGenericAndWebBeans() {
     new WebApplicationContextRunner()
         .withConfiguration(autoConfigurations)
-        .run(
-            context -> {
-              assertThat(context).hasSingleBean(ProblemAutoConfiguration.class);
-              assertThat(context).hasSingleBean(ProblemWebAutoConfiguration.class);
-              assertThat(context).hasSingleBean(ProblemFormat.class);
-              assertThat(context).hasSingleBean(ProblemResolverStore.class);
-              assertThat(context).hasSingleBean(MethodParameterSupport.class);
-              assertThat(context).hasSingleBean(BindingResultSupport.class);
-              assertThat(context).hasSingleBean(MethodValidationResultSupport.class);
-              assertThat(context.getBeansOfType(ProblemResolver.class)).isNotEmpty();
-            });
+        .run(context -> {
+          assertThat(context).hasSingleBean(ProblemAutoConfiguration.class);
+          assertThat(context).hasSingleBean(ProblemWebAutoConfiguration.class);
+          assertThat(context).hasSingleBean(ProblemFormat.class);
+          assertThat(context).hasSingleBean(ProblemResolverStore.class);
+          assertThat(context).hasSingleBean(MethodParameterSupport.class);
+          assertThat(context).hasSingleBean(BindingResultSupport.class);
+          assertThat(context).hasSingleBean(MethodValidationResultSupport.class);
+          assertThat(context.getBeansOfType(ProblemResolver.class)).isNotEmpty();
+        });
   }
 
   @Test
   void givenNonWebApplication_whenContextStarts_thenRegistersOnlyGenericBeans() {
     new ApplicationContextRunner()
         .withConfiguration(autoConfigurations)
-        .run(
-            context -> {
-              assertThat(context).hasSingleBean(ProblemAutoConfiguration.class);
-              assertThat(context).hasSingleBean(ProblemProperties.class);
-              assertThat(context).hasSingleBean(ProblemMapper.class);
-              assertThat(context).hasSingleBean(ProblemFormat.class);
-              assertThat(context).hasSingleBean(ProblemPostProcessor.class);
-              assertThat(context).hasSingleBean(TypeNameMapper.class);
-              assertThat(context).hasSingleBean(ProblemBeanPostProcessor.class);
+        .run(context -> {
+          assertThat(context).hasSingleBean(ProblemAutoConfiguration.class);
+          assertThat(context).hasSingleBean(ProblemProperties.class);
+          assertThat(context).hasSingleBean(ProblemMapper.class);
+          assertThat(context).hasSingleBean(ProblemFormat.class);
+          assertThat(context).hasSingleBean(ProblemPostProcessor.class);
+          assertThat(context).hasSingleBean(TypeNameMapper.class);
+          assertThat(context).hasSingleBean(ProblemBeanPostProcessor.class);
 
-              assertThat(context).doesNotHaveBean(ProblemWebAutoConfiguration.class);
-              assertThat(context).doesNotHaveBean(ProblemResolverStore.class);
-              assertThat(context).doesNotHaveBean(ProblemResolver.class);
-              assertThat(context).doesNotHaveBean(MethodParameterSupport.class);
-              assertThat(context).doesNotHaveBean(BindingResultSupport.class);
-              assertThat(context).doesNotHaveBean(MethodValidationResultSupport.class);
-            });
+          assertThat(context).doesNotHaveBean(ProblemWebAutoConfiguration.class);
+          assertThat(context).doesNotHaveBean(ProblemResolverStore.class);
+          assertThat(context).doesNotHaveBean(ProblemResolver.class);
+          assertThat(context).doesNotHaveBean(MethodParameterSupport.class);
+          assertThat(context).doesNotHaveBean(BindingResultSupport.class);
+          assertThat(context).doesNotHaveBean(MethodValidationResultSupport.class);
+        });
   }
 
   @Test
@@ -92,13 +90,12 @@ class ProblemWebAutoConfigurationTest {
     new WebApplicationContextRunner()
         .withConfiguration(autoConfigurations)
         .withPropertyValues("problem4j.enabled=false")
-        .run(
-            context -> {
-              assertThat(context).doesNotHaveBean(ProblemAutoConfiguration.class);
-              assertThat(context).doesNotHaveBean(ProblemWebAutoConfiguration.class);
-              assertThat(context).doesNotHaveBean(ProblemFormat.class);
-              assertThat(context).doesNotHaveBean(ProblemResolverStore.class);
-            });
+        .run(context -> {
+          assertThat(context).doesNotHaveBean(ProblemAutoConfiguration.class);
+          assertThat(context).doesNotHaveBean(ProblemWebAutoConfiguration.class);
+          assertThat(context).doesNotHaveBean(ProblemFormat.class);
+          assertThat(context).doesNotHaveBean(ProblemResolverStore.class);
+        });
   }
 
   @Test
@@ -107,15 +104,11 @@ class ProblemWebAutoConfigurationTest {
         .withConfiguration(autoConfigurations)
         .withUserConfiguration(EqualOrderResolversConfiguration.class)
         .withPropertyValues("problem4j.duplicate-resolver-policy=first")
-        .run(
-            context -> {
-              assertThat(context).hasNotFailed();
-              assertThat(
-                      context
-                          .getBean(ProblemResolverStore.class)
-                          .findResolver(DuplicatedException.class))
-                  .containsSame(context.getBean("firstDuplicatedResolver", ProblemResolver.class));
-            });
+        .run(context -> {
+          assertThat(context).hasNotFailed();
+          assertThat(context.getBean(ProblemResolverStore.class).findResolver(DuplicatedException.class))
+              .containsSame(context.getBean("firstDuplicatedResolver", ProblemResolver.class));
+        });
   }
 
   @Test
@@ -123,13 +116,12 @@ class ProblemWebAutoConfigurationTest {
     new WebApplicationContextRunner()
         .withConfiguration(autoConfigurations)
         .withUserConfiguration(EqualOrderResolversConfiguration.class)
-        .run(
-            context ->
-                assertThat(context)
-                    .getFailure()
-                    .rootCause()
-                    .isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining(DuplicatedException.class.getName()));
+        .run(context ->
+            assertThat(context)
+                .getFailure()
+                .rootCause()
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining(DuplicatedException.class.getName()));
   }
 
   @Test
@@ -138,15 +130,14 @@ class ProblemWebAutoConfigurationTest {
         .withConfiguration(autoConfigurations)
         .withUserConfiguration(EqualOrderResolversConfiguration.class)
         .withPropertyValues("problem4j.duplicate-resolver-policy=fail")
-        .run(
-            context ->
-                assertThat(context)
-                    .getFailure()
-                    .rootCause()
-                    .isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining(DuplicatedException.class.getName())
-                    .hasMessageContaining("'firstDuplicatedResolver'")
-                    .hasMessageContaining("'secondDuplicatedResolver'"));
+        .run(context ->
+            assertThat(context)
+                .getFailure()
+                .rootCause()
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining(DuplicatedException.class.getName())
+                .hasMessageContaining("'firstDuplicatedResolver'")
+                .hasMessageContaining("'secondDuplicatedResolver'"));
   }
 
   @Test
@@ -155,14 +146,10 @@ class ProblemWebAutoConfigurationTest {
         .withConfiguration(autoConfigurations)
         .withUserConfiguration(DifferentOrderResolversConfiguration.class)
         .withPropertyValues("problem4j.duplicate-resolver-policy=fail")
-        .run(
-            context ->
-                assertThat(
-                        context
-                            .getBean(ProblemResolverStore.class)
-                            .findResolver(DuplicatedException.class))
-                    .get()
-                    .isInstanceOf(PrioritizedResolver.class));
+        .run(context ->
+            assertThat(context.getBean(ProblemResolverStore.class).findResolver(DuplicatedException.class))
+                .get()
+                .isInstanceOf(PrioritizedResolver.class));
   }
 
   @Test
@@ -171,14 +158,10 @@ class ProblemWebAutoConfigurationTest {
         .withConfiguration(autoConfigurations)
         .withUserConfiguration(BeanMethodOrderResolversConfiguration.class)
         .withPropertyValues("problem4j.duplicate-resolver-policy=fail")
-        .run(
-            context ->
-                assertThat(
-                        context
-                            .getBean(ProblemResolverStore.class)
-                            .findResolver(DuplicatedException.class))
-                    .get()
-                    .isSameAs(context.getBean("prioritizedBeanMethodResolver")));
+        .run(context ->
+            assertThat(context.getBean(ProblemResolverStore.class).findResolver(DuplicatedException.class))
+                .get()
+                .isSameAs(context.getBean("prioritizedBeanMethodResolver")));
   }
 
   @Test
@@ -187,14 +170,10 @@ class ProblemWebAutoConfigurationTest {
         .withConfiguration(autoConfigurations)
         .withUserConfiguration(BeanMethodAndClassOrderResolversConfiguration.class)
         .withPropertyValues("problem4j.duplicate-resolver-policy=fail")
-        .run(
-            context ->
-                assertThat(
-                        context
-                            .getBean(ProblemResolverStore.class)
-                            .findResolver(DuplicatedException.class))
-                    .get()
-                    .isSameAs(context.getBean("beanMethodOrderedResolver")));
+        .run(context ->
+            assertThat(context.getBean(ProblemResolverStore.class).findResolver(DuplicatedException.class))
+                .get()
+                .isSameAs(context.getBean("beanMethodOrderedResolver")));
   }
 
   @Test
@@ -206,14 +185,10 @@ class ProblemWebAutoConfigurationTest {
           .withConfiguration(autoConfigurations)
           .withUserConfiguration(ChildPlainResolverConfiguration.class)
           .withPropertyValues("problem4j.duplicate-resolver-policy=fail")
-          .run(
-              context ->
-                  assertThat(
-                          context
-                              .getBean(ProblemResolverStore.class)
-                              .findResolver(DuplicatedException.class))
-                      .get()
-                      .isSameAs(context.getBean("childPlainResolver")));
+          .run(context ->
+              assertThat(context.getBean(ProblemResolverStore.class).findResolver(DuplicatedException.class))
+                  .get()
+                  .isSameAs(context.getBean("childPlainResolver")));
     }
   }
 
@@ -224,13 +199,9 @@ class ProblemWebAutoConfigurationTest {
       new WebApplicationContextRunner()
           .withParent(parent)
           .withConfiguration(autoConfigurations)
-          .run(
-              context ->
-                  assertThat(
-                          context
-                              .getBean(ProblemResolverStore.class)
-                              .findResolver(DuplicatedException.class))
-                      .isEmpty());
+          .run(context ->
+              assertThat(context.getBean(ProblemResolverStore.class).findResolver(DuplicatedException.class))
+                  .isEmpty());
     }
   }
 
@@ -239,17 +210,13 @@ class ProblemWebAutoConfigurationTest {
     new WebApplicationContextRunner()
         .withConfiguration(autoConfigurations)
         .withUserConfiguration(DifferentOrderResolversConfiguration.class)
-        .withPropertyValues(
-            "problem4j.duplicate-resolver-policy=fail", "problem4j.resolver-caching.enabled=true")
-        .run(
-            context -> {
-              ProblemResolverStore store = context.getBean(ProblemResolverStore.class);
+        .withPropertyValues("problem4j.duplicate-resolver-policy=fail", "problem4j.resolver-caching.enabled=true")
+        .run(context -> {
+          ProblemResolverStore store = context.getBean(ProblemResolverStore.class);
 
-              assertThat(store).isInstanceOf(CachingProblemResolverStore.class);
-              assertThat(store.findResolver(DuplicatedException.class))
-                  .get()
-                  .isInstanceOf(PrioritizedResolver.class);
-            });
+          assertThat(store).isInstanceOf(CachingProblemResolverStore.class);
+          assertThat(store.findResolver(DuplicatedException.class)).get().isInstanceOf(PrioritizedResolver.class);
+        });
   }
 
   @Configuration(proxyBeanMethods = false)
@@ -337,8 +304,7 @@ class ProblemWebAutoConfigurationTest {
     }
 
     @Override
-    public Problem resolve(
-        ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+    public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
       return Problem.builder().status(400).build();
     }
   }

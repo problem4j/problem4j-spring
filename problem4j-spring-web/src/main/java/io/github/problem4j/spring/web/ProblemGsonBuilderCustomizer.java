@@ -22,9 +22,8 @@ import io.github.problem4j.gson.ProblemTypeAdapterFactory;
 import org.springframework.boot.gson.autoconfigure.GsonBuilderCustomizer;
 
 /**
- * Customizes Spring Boot's {@code Gson} instance by registering a {@link
- * ProblemTypeAdapterFactory}. Ensures that all {@link Problem} objects are serialized and
- * deserialized consistently according to the RFC 7807 representation.
+ * Customizes Spring Boot's {@code Gson} instance by registering a {@link ProblemTypeAdapterFactory}. Ensures that all
+ * {@link Problem} objects are serialized and deserialized consistently according to the RFC 7807 representation.
  *
  * @since 3.1.0
  */
@@ -38,8 +37,8 @@ public class ProblemGsonBuilderCustomizer implements GsonBuilderCustomizer {
   public ProblemGsonBuilderCustomizer() {}
 
   /**
-   * Registers the {@link ProblemTypeAdapterFactory} in the Gson builder for proper serialization
-   * and deserialization of {@link Problem} objects.
+   * Registers the {@link ProblemTypeAdapterFactory} in the Gson builder for proper serialization and deserialization of
+   * {@link Problem} objects.
    *
    * @param gsonBuilder the Gson builder to customize
    * @since 3.1.0

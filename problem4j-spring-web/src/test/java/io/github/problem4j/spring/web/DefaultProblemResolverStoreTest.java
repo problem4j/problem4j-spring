@@ -54,8 +54,7 @@ class DefaultProblemResolverStoreTest {
     }
 
     @Override
-    public Problem resolve(
-        ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+    public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
       return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
   }
@@ -106,11 +105,9 @@ class DefaultProblemResolverStoreTest {
     ProblemResolver high = new HighPriorityResolver();
     ProblemResolver low = new LowPriorityResolver();
 
-    assertThat(
-            new DefaultProblemResolverStore(List.of(low, high)).findResolver(MyBaseException.class))
+    assertThat(new DefaultProblemResolverStore(List.of(low, high)).findResolver(MyBaseException.class))
         .containsSame(high);
-    assertThat(
-            new DefaultProblemResolverStore(List.of(high, low)).findResolver(MyBaseException.class))
+    assertThat(new DefaultProblemResolverStore(List.of(high, low)).findResolver(MyBaseException.class))
         .containsSame(high);
   }
 
@@ -119,11 +116,9 @@ class DefaultProblemResolverStoreTest {
     ProblemResolver high = new OrderedResolver(1);
     ProblemResolver low = new OrderedResolver(2);
 
-    assertThat(
-            new DefaultProblemResolverStore(List.of(low, high)).findResolver(MyBaseException.class))
+    assertThat(new DefaultProblemResolverStore(List.of(low, high)).findResolver(MyBaseException.class))
         .containsSame(high);
-    assertThat(
-            new DefaultProblemResolverStore(List.of(high, low)).findResolver(MyBaseException.class))
+    assertThat(new DefaultProblemResolverStore(List.of(high, low)).findResolver(MyBaseException.class))
         .containsSame(high);
   }
 
@@ -132,24 +127,18 @@ class DefaultProblemResolverStoreTest {
     ProblemResolver ordered = new OrderedResolver(0);
     ProblemResolver unordered = new TestResolver(MyBaseException.class);
 
-    assertThat(
-            new DefaultProblemResolverStore(List.of(unordered, ordered))
-                .findResolver(MyBaseException.class))
+    assertThat(new DefaultProblemResolverStore(List.of(unordered, ordered)).findResolver(MyBaseException.class))
         .containsSame(ordered);
-    assertThat(
-            new DefaultProblemResolverStore(List.of(ordered, unordered))
-                .findResolver(MyBaseException.class))
+    assertThat(new DefaultProblemResolverStore(List.of(ordered, unordered)).findResolver(MyBaseException.class))
         .containsSame(ordered);
   }
 
   @Test
-  void
-      givenOrderedResolversForDifferentExceptions_whenFindingResolver_thenOrderDoesNotAffectMatching() {
+  void givenOrderedResolversForDifferentExceptions_whenFindingResolver_thenOrderDoesNotAffectMatching() {
     ProblemResolver base = new OrderedResolver(0);
     ProblemResolver sub = new TestResolver(MySubException.class);
 
-    assertThat(
-            new DefaultProblemResolverStore(List.of(base, sub)).findResolver(MySubException.class))
+    assertThat(new DefaultProblemResolverStore(List.of(base, sub)).findResolver(MySubException.class))
         .containsSame(sub);
   }
 
@@ -158,13 +147,9 @@ class DefaultProblemResolverStoreTest {
     ProblemResolver first = new TestResolver(MyBaseException.class);
     ProblemResolver second = new TestResolver(MyBaseException.class);
 
-    assertThat(
-            new DefaultProblemResolverStore(List.of(first, second))
-                .findResolver(MyBaseException.class))
+    assertThat(new DefaultProblemResolverStore(List.of(first, second)).findResolver(MyBaseException.class))
         .containsSame(first);
-    assertThat(
-            new DefaultProblemResolverStore(List.of(second, first))
-                .findResolver(MyBaseException.class))
+    assertThat(new DefaultProblemResolverStore(List.of(second, first)).findResolver(MyBaseException.class))
         .containsSame(second);
   }
 
@@ -173,13 +158,9 @@ class DefaultProblemResolverStoreTest {
     ProblemResolver high = new HighPriorityResolver();
     ProblemResolver low = new LowPriorityResolver();
 
-    assertThat(
-            new DefaultProblemResolverStore(beans("low", low, "high", high))
-                .findResolver(MyBaseException.class))
+    assertThat(new DefaultProblemResolverStore(beans("low", low, "high", high)).findResolver(MyBaseException.class))
         .containsSame(high);
-    assertThat(
-            new DefaultProblemResolverStore(beans("high", high, "low", low))
-                .findResolver(MyBaseException.class))
+    assertThat(new DefaultProblemResolverStore(beans("high", high, "low", low)).findResolver(MyBaseException.class))
         .containsSame(high);
   }
 

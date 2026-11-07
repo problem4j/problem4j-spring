@@ -34,8 +34,7 @@ class ProblemContextAccessorExtensionsTest {
 
   @Test
   fun givenContextAttribute_whenReadingFromServletRequest_thenContextIsReturned() {
-    val request =
-        MockHttpServletRequest().apply { setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, context) }
+    val request = MockHttpServletRequest().apply { setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, context) }
 
     assertThat(request.problemContext).isSameAs(context)
   }
@@ -54,8 +53,7 @@ class ProblemContextAccessorExtensionsTest {
 
   @Test
   fun givenContextAttribute_whenReadingFromWebRequest_thenContextIsReturned() {
-    val servletRequest =
-        MockHttpServletRequest().apply { setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, context) }
+    val servletRequest = MockHttpServletRequest().apply { setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, context) }
 
     assertThat(ServletWebRequest(servletRequest).problemContext).isSameAs(context)
   }
@@ -67,8 +65,7 @@ class ProblemContextAccessorExtensionsTest {
 
   @Test
   fun givenNonContextAttribute_whenReadingFromWebRequest_thenNullIsReturned() {
-    val servletRequest =
-        MockHttpServletRequest().apply { setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, "text") }
+    val servletRequest = MockHttpServletRequest().apply { setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, "text") }
 
     assertThat(ServletWebRequest(servletRequest).problemContext).isNull()
   }

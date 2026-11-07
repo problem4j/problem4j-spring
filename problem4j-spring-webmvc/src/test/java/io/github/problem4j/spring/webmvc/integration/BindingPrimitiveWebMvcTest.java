@@ -63,8 +63,7 @@ class BindingPrimitiveWebMvcTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    ResponseEntity<String> response =
-        restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
@@ -114,8 +113,7 @@ class BindingPrimitiveWebMvcTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    ResponseEntity<String> response =
-        restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -160,8 +158,7 @@ class BindingPrimitiveWebMvcTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    ResponseEntity<String> response =
-        restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
@@ -211,8 +208,7 @@ class BindingPrimitiveWebMvcTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    ResponseEntity<String> response =
-        restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -254,8 +250,7 @@ class BindingPrimitiveWebMvcTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    ResponseEntity<String> response =
-        restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -294,8 +289,7 @@ class BindingPrimitiveWebMvcTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    ResponseEntity<String> response =
-        restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -322,9 +316,7 @@ class BindingPrimitiveWebMvcTest {
 
     ResponseEntity<String> response =
         restTemplate.postForEntity(
-            "/binding-primitive/int",
-            new HttpEntity<>("{ \"value\": null }", headers),
-            String.class);
+            "/binding-primitive/int", new HttpEntity<>("{ \"value\": null }", headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -360,8 +352,7 @@ class BindingPrimitiveWebMvcTest {
     headers.setContentType(MediaType.APPLICATION_JSON);
 
     ResponseEntity<String> response =
-        restTemplate.postForEntity(
-            "/binding-primitive/complex", new HttpEntity<>(json, headers), String.class);
+        restTemplate.postForEntity("/binding-primitive/complex", new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
@@ -382,8 +373,7 @@ class BindingPrimitiveWebMvcTest {
     headers.setContentType(MediaType.APPLICATION_JSON);
 
     ResponseEntity<String> response =
-        restTemplate.postForEntity(
-            "/binding-primitive/complex", new HttpEntity<>(json, headers), String.class);
+        restTemplate.postForEntity("/binding-primitive/complex", new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);

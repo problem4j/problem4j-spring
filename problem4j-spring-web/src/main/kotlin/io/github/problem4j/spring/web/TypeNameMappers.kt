@@ -19,14 +19,13 @@ package io.github.problem4j.spring.web
 import kotlin.reflect.KClass
 
 /**
- * Creates a [SimpleTypeNameMapper] with custom mappings from `type to name` pairs, taking
- * precedence over its default mappings (see [SimpleTypeNameMapper]). Pairs are compared in given
- * order and the first one matching wins. A pair matches its own type and all of its subtypes, so
- * pairs for more specific types should be given before pairs for their supertypes. For types with a
- * primitive counterpart, such as [Int], both the primitive and the boxed Java type are matched. If
- * the same type is given more than once, the last name wins, keeping the position of the first
- * occurrence. As pairs are consulted before the default mappings, a pair for a broad type (e.g.
- * [Number] or [Any]) hides default mappings of its subtypes.
+ * Creates a [SimpleTypeNameMapper] with custom mappings from `type to name` pairs, taking precedence over its default
+ * mappings (see [SimpleTypeNameMapper]). Pairs are compared in given order and the first one matching wins. A pair
+ * matches its own type and all of its subtypes, so pairs for more specific types should be given before pairs for their
+ * supertypes. For types with a primitive counterpart, such as [Int], both the primitive and the boxed Java type are
+ * matched. If the same type is given more than once, the last name wins, keeping the position of the first occurrence.
+ * As pairs are consulted before the default mappings, a pair for a broad type (e.g. [Number] or [Any]) hides default
+ * mappings of its subtypes.
  *
  * Example:
  * ```

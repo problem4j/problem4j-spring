@@ -41,8 +41,7 @@ class NotFoundNoResourceFoundWebMvcTest {
 
   @Test
   void givenMissingStaticResource_shouldReturnProblem() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/not-resource-found.html", String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/not-resource-found.html", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);

@@ -22,8 +22,8 @@ import java.net.URI
 import org.springframework.http.HttpStatusCode
 
 /**
- * Marks the Kotlin DSLs of problem4j-spring. Prevents calling members of an outer DSL receiver
- * implicitly from within a nested DSL block.
+ * Marks the Kotlin DSLs of problem4j-spring. Prevents calling members of an outer DSL receiver implicitly from within a
+ * nested DSL block.
  *
  * @since 3.1.0
  */
@@ -32,9 +32,9 @@ import org.springframework.http.HttpStatusCode
 public annotation class ProblemDsl
 
 /**
- * Mutable DSL receiver used by [buildProblem] functions. Exposes all configuration methods of
- * [ProblemBuilder] except `build()`, which is invoked by [buildProblem] once the DSL block
- * completes. Each call in the block is applied, so methods do not need to be chained.
+ * Mutable DSL receiver used by [buildProblem] functions. Exposes all configuration methods of [ProblemBuilder] except
+ * `build()`, which is invoked by [buildProblem] once the DSL block completes. Each call in the block is applied, so
+ * methods do not need to be chained.
  *
  * Example:
  * ```
@@ -64,16 +64,15 @@ public interface ProblemBuilderSpec {
   /**
    * Sets the problem type from a string representation of a URI.
    *
-   * @param type string URI identifying the problem type, or `null` to fall back to
-   *   [Problem.BLANK_TYPE]
+   * @param type string URI identifying the problem type, or `null` to fall back to [Problem.BLANK_TYPE]
    * @throws IllegalArgumentException if [type] is not a valid URI
    * @since 3.1.0
    */
   public fun type(type: String?)
 
   /**
-   * Sets the short, human-readable summary of the problem type. When not set or `null`, the title
-   * is resolved from the HTTP status, if it corresponds to a known one.
+   * Sets the short, human-readable summary of the problem type. When not set or `null`, the title is resolved from the
+   * HTTP status, if it corresponds to a known one.
    *
    * @param title the problem title, or `null` to unset it
    * @since 3.1.0
@@ -122,8 +121,8 @@ public interface ProblemBuilderSpec {
   public fun instance(instance: String?)
 
   /**
-   * Adds a single custom extension member. If [value] is `null`, an existing extension with the
-   * same [name] is removed instead.
+   * Adds a single custom extension member. If [value] is `null`, an existing extension with the same [name] is removed
+   * instead.
    *
    * @param name the extension key
    * @param value the extension value, or `null` to remove the extension
@@ -132,8 +131,8 @@ public interface ProblemBuilderSpec {
   public fun extension(name: String, value: Any?)
 
   /**
-   * Adds a single custom extension member from a [Problem.Extension]. If its value is `null`, an
-   * existing extension with the same name is removed instead.
+   * Adds a single custom extension member from a [Problem.Extension]. If its value is `null`, an existing extension
+   * with the same name is removed instead.
    *
    * @param extension the extension to add
    * @since 3.1.0
@@ -141,8 +140,8 @@ public interface ProblemBuilderSpec {
   public fun extension(extension: Problem.Extension)
 
   /**
-   * Adds multiple custom extension members from a map. Entries with `null` values remove existing
-   * extensions with the same key instead.
+   * Adds multiple custom extension members from a map. Entries with `null` values remove existing extensions with the
+   * same key instead.
    *
    * @param extensions map of extension keys and values
    * @since 3.1.0
@@ -150,8 +149,8 @@ public interface ProblemBuilderSpec {
   public fun extensions(extensions: Map<String, Any?>)
 
   /**
-   * Adds multiple custom extension members from varargs of [Problem.Extension]. Extensions with
-   * `null` values remove existing extensions with the same name instead.
+   * Adds multiple custom extension members from varargs of [Problem.Extension]. Extensions with `null` values remove
+   * existing extensions with the same name instead.
    *
    * @param extensions extensions to add
    * @since 3.1.0
@@ -159,8 +158,8 @@ public interface ProblemBuilderSpec {
   public fun extensions(vararg extensions: Problem.Extension)
 
   /**
-   * Adds multiple custom extension members from a collection of [Problem.Extension]. Extensions
-   * with `null` values remove existing extensions with the same name instead.
+   * Adds multiple custom extension members from a collection of [Problem.Extension]. Extensions with `null` values
+   * remove existing extensions with the same name instead.
    *
    * @param extensions extensions to add
    * @since 3.1.0
@@ -168,8 +167,8 @@ public interface ProblemBuilderSpec {
   public fun extensions(extensions: Iterable<Problem.Extension>)
 
   /**
-   * Adds multiple custom extension members from varargs of [Pair], where each pair is a key and a
-   * value. Pairs with `null` values remove existing extensions with the same key instead.
+   * Adds multiple custom extension members from varargs of [Pair], where each pair is a key and a value. Pairs with
+   * `null` values remove existing extensions with the same key instead.
    *
    * Example:
    * ```
@@ -203,8 +202,7 @@ public interface ProblemBuilderSpec {
  * @return the built [Problem]
  * @since 3.1.0
  */
-public fun buildProblem(block: ProblemBuilderSpec.() -> Unit): Problem =
-    Problem.builder().applySpec(block)
+public fun buildProblem(block: ProblemBuilderSpec.() -> Unit): Problem = Problem.builder().applySpec(block)
 
 internal class ProblemBuilderSpecImpl(private var builder: ProblemBuilder) : ProblemBuilderSpec {
 

@@ -83,23 +83,21 @@ class ValidateRequestBodyWebFluxTest {
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
-        .value(
-            problem -> {
-              Map<String, String> error = new HashMap<>();
-              error.put("error", "always invalid");
-              Assertions.assertThat(problem)
-                  .isEqualTo(
-                      Problem.builder()
-                          .status(HttpStatus.BAD_REQUEST.value())
-                          .detail("validation failed")
-                          .extension("errors", List.of(error))
-                          .build());
-            });
+        .value(problem -> {
+          Map<String, String> error = new HashMap<>();
+          error.put("error", "always invalid");
+          Assertions.assertThat(problem)
+              .isEqualTo(
+                  Problem.builder()
+                      .status(HttpStatus.BAD_REQUEST.value())
+                      .detail("validation failed")
+                      .extension("errors", List.of(error))
+                      .build());
+        });
   }
 
   @ParameterizedTest
-  @ValueSource(
-      strings = {"{ \"name\": \"Alice\"", "not a json", "123", "[1, 2, 3]", "\"just a string\""})
+  @ValueSource(strings = {"{ \"name\": \"Alice\"", "not a json", "123", "[1, 2, 3]", "\"just a string\""})
   @NullSource
   void givenMalformedRequestBody_shouldReturnProblem(String json) {
     WebTestClient.RequestBodySpec spec =

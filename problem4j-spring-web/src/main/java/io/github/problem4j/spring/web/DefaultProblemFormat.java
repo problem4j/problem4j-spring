@@ -22,14 +22,13 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.util.StringUtils;
 
 /**
- * Default implementation of {@link ProblemFormat} that applies text transformations to problem
- * details according to a configured format.
+ * Default implementation of {@link ProblemFormat} that applies text transformations to problem details according to a
+ * configured format.
  *
- * <p>Property {@link ProblemProperties#getDetailFormat()} determines formatting behavior -
- * lowercase, capitalized, or uppercase.
+ * <p>Property {@link ProblemProperties#getDetailFormat()} determines formatting behavior - lowercase, capitalized, or
+ * uppercase.
  *
- * <p>This class is typically registered automatically as a Spring bean, but can also be
- * instantiated directly.
+ * <p>This class is typically registered automatically as a Spring bean, but can also be instantiated directly.
  *
  * @see ProblemFormat
  * @see ProblemProperties.DetailFormat

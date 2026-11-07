@@ -32,8 +32,7 @@ class ProblemBuilderExtensionsTest {
 
   @Test
   fun givenVarargPairs_whenAddingExtensionsToBuilder_thenAllExtensionsArePresent() {
-    val result =
-        Problem.builder().status(400).extensions("field" to "email", "reason" to "blank").build()
+    val result = Problem.builder().status(400).extensions("field" to "email", "reason" to "blank").build()
 
     assertThat(result.extensions).containsEntry("field", "email").containsEntry("reason", "blank")
   }
