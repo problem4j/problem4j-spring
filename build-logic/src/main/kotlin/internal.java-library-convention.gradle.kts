@@ -1,3 +1,6 @@
+import internal.getIntProperty
+import internal.isTestTask
+import net.ltgt.gradle.errorprone.errorprone
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.kotlin.dsl.named
@@ -8,7 +11,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("java-library")
+    id("net.ltgt.errorprone")
     id("org.jetbrains.kotlin.jvm")
+    id("org.jetbrains.kotlinx.kover")
     id("io.github.malczuuu.nullmarked")
 }
 
@@ -26,8 +31,8 @@ plugins {
 //
 // The project also includes interop utilities between Java and Kotlin.
 
-val javaToolchainVersion = 25
-val javaTargetVersion = 17
+val javaToolchainVersion = project.getIntProperty("internal.java.toolchain-version")
+val javaTargetVersion = project.getIntProperty("internal.java.target-version")
 
 java {
     toolchain {
@@ -39,6 +44,16 @@ java {
 tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.add("-parameters")
     options.encoding = "UTF-8"
+
+    options.errorprone {
+        if (isTestTask()) {
+            disableAllChecks = true
+        }
+
+        error("NullAway")
+        option("NullAway:OnlyNullMarked", "true")
+        option("NullAway:JSpecifyMode", "true")
+    }
 }
 tasks.named<JavaCompile>("compileJava").configure {
     options.release = javaTargetVersion
@@ -101,8 +116,12 @@ tasks.withType<Test>().configureEach {
     systemProperty("spring.test.context.cache.maxSize", 5)
 }
 
+tasks.named<Task>("check").configure {
+    finalizedBy(tasks.named("koverHtmlReport"), tasks.named("koverXmlReport"))
+}
+
 tasks.withType<Javadoc>().configureEach {
-    javadocTool = javaToolchains.javadocToolFor { languageVersion = JavaLanguageVersion.of(17) }
+    javadocTool = javaToolchains.javadocToolFor { languageVersion = JavaLanguageVersion.of(javaTargetVersion) }
 }
 
 // Assert that each package has a package-info.java with @NullMarked annotation on it.

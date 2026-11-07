@@ -18,6 +18,7 @@ package internal
 
 // This file contains internal extensions for Gradle API.
 
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
 
@@ -144,6 +145,19 @@ fun Project.findLicenses(): List<License> {
  */
 fun Project.getBooleanProperty(name: String, defaultValue: Boolean = false): Boolean {
   return if (hasProperty(name)) findProperty(name)?.toString() != "false" else defaultValue
+}
+
+/**
+ * Retrieves a required integer property from the project.
+ *
+ * @param name The name of the property to retrieve.
+ * @return The integer value of the property.
+ * @receiver Gradle [Project] from which the property is read.
+ * @throws GradleException if the property is not set.
+ */
+fun Project.getIntProperty(name: String): Int {
+  return findProperty(name)?.toString()?.toInt()
+      ?: throw GradleException("Missing required property: $name")
 }
 
 /**

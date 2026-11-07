@@ -1,4 +1,4 @@
-import internal.InternalPublishingExtension
+import internal.InternalBuildExtension
 import internal.findDevelopers
 import internal.findLicenses
 import internal.getBooleanProperty
@@ -8,9 +8,9 @@ plugins {
     id("signing")
 }
 
-val internalPublishing: InternalPublishingExtension = extensions.create(
-    "internalPublishing",
-    InternalPublishingExtension::class.java,
+val internalBuild: InternalBuildExtension = extensions.create(
+    "internalBuild",
+    InternalBuildExtension::class.java,
 )
 
 publishing {
@@ -29,8 +29,8 @@ publishing {
             }
 
             pom {
-                name = internalPublishing.displayName
-                description = internalPublishing.description
+                name = internalBuild.displayName
+                description = internalBuild.description
                 url = findProperty("internal.pom.url") as? String
                 inceptionYear = findProperty("internal.pom.inception-year") as? String
                 licenses {

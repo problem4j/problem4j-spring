@@ -1,7 +1,5 @@
 plugins {
-    id("internal.errorprone-convention")
     id("internal.java-library-convention")
-    id("internal.kover-convention")
     id("internal.publishing-convention")
     alias(libs.plugins.nmcp)
 }
@@ -61,7 +59,7 @@ dependencies {
 }
 
 // see build-logic/src/main/kotlin/internal.publishing-convention.gradle.kts
-internalPublishing {
+internalBuild {
     displayName = "Problem4J Spring Web"
     description = "Spring Web integration for library implementing RFC7807 (and RFC9457)"
 }
