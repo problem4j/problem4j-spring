@@ -30,33 +30,25 @@ flexible enough for custom exceptions and business-specific details.
 
 ## Why bother with Problem4J
 
-Even though Spring provides `ProblemDetail` and `ErrorResponseException` for [**RFC 7807**][rfc7807]-compliant error
-responses, it takes a different approach than this library offers. It revolves around throwing `ErrorResponseException`
-(or any exception that implements the `ErrorResponse` interface) or returning `ProblemDetail` from `@ExceptionHandler`
-methods. Spring includes default exception handlers in `ResponseEntityExceptionHandler`, but those exceptions usually
-return the exact `getMessage()` in the `detail` field, which may leak framework internals to client applications.
+Spring already supports [**RFC 7807**][rfc7807] with `ProblemDetail`, `ErrorResponse` and
+`ResponseEntityExceptionHandler`. It works well for framework exceptions and for exceptions written as `ErrorResponse`,
+but leaves a few gaps that **Problem4J** fills:
 
-The **Problem4J** library was created to:
-
-- Provide a **fully immutable, fluent `Problem` model** with support for extensions.
-- Support **declarative exception mapping** via `@ProblemMapping` or **imperative one** via `ProblemException` (as a
-  base class).
-- Provides a lightweight `ProblemResolver`-based, `Exception`-to-`Problem` transformation framework, backed by built-in
-  `@RestControllerAdvice` components.
-- Interpolate exception fields and context metadata (e.g., `context.traceId`) when using the declarative approach.
-- Provide a post-processing engine, to alter final response by configured rules in a consistent way (via application
-  properties). The post-processing can integrate with tracing to inject a `traceId` (or `requestId`) to the final
-  response.
-- Offer **consistent error responses** across WebMVC and WebFlux, including validation and framework exceptions. The
-  built-in exceptions are resolved in a way that hides the internals of the framework or libraries.
-- Allow **custom extensions** without boilerplate, making structured errors easier to trace and consume.
-- Provide a predefined set of `@RestControllerAdvice` implementations to override default Spring Boot responses, so
-  framework details (such as full exception messages) are not leaked to client applications.
-- Integrate seamlessly with existing Spring Boot applications, with the ability to enable only selected components (via
-  `@ConditionalOnMissingBean` or application properties).
-- Include support for Spring's `ErrorResponseException` for compatibility.
-
-Problem4J is designed for robust, traceable, and fully configurable REST API errors.
+- **Domain exceptions without boilerplate.** In Spring, each custom exception has to extend `ErrorResponseException`
+  (or implement `ErrorResponse`), or needs its own `@ExceptionHandler`. Problem4J maps exceptions declaratively with
+  `@ProblemMapping` - with `type`, `title`, `detail` and extensions interpolated from exception fields and request
+  context (e.g. `{context.traceId}`) - or imperatively with `ProblemException`.
+- **Actionable details for framework errors.** Spring's built-in responses use generic details (e.g. `Invalid request
+  content.`) and do not tell which field or parameter was wrong. Problem4J adds structured extensions, such as `errors`
+  with field violations, or `param`, `header` and `property` naming the invalid input - without exposing raw exception
+  messages.
+- **One place for cross-cutting rules.** Application properties can override `type`, `title` and `instance` with
+  templates, and inject a trace ID from a request header into every response.
+- **Immutable, framework-independent model.** `Problem` is immutable (unlike `ProblemDetail`) and comes from
+  [`problem4j-core`][problem4j-core], so the same model and JSON mapping (Jackson, Gson) can be used outside Spring,
+  e.g. in API clients.
+- **Same behavior in WebMVC and WebFlux**, auto-configured for Spring Boot. Every component can be replaced
+  (`@ConditionalOnMissingBean`) or disabled via properties, and existing `ErrorResponse` exceptions keep working.
 
 ## Usage
 
