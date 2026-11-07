@@ -223,10 +223,6 @@ dependency.
 
 **Note** that **Java 21+** is recommended for local development.
 
-Gradle **9.x+** requires **Java 17+** to run, but higher Java versions can also be used. All modules of this project are
-compiled using a **Java 17 toolchain**, so the produced artifacts are compatible with **Java 17**, regardless of the
-Java version Gradle runs on.
-
 ```bash
 ./gradlew build
 ```
