@@ -1,7 +1,7 @@
 [versions]
 archunit = "1.5.1"
 errorprone = "2.52.0"
-errorprone-plugin = "5.1.1"
+errorprone-plugin = "5.2.0"
 idea-ext = "1.4.1"
 jspecify = "1.0.1"
 junit = "6.1.3"
