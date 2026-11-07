@@ -1,4 +1,4 @@
-name: Gradle Build
+name: CI
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
       - "main"
       - "release-*"
     paths:
-      - ".github/workflows/gradle-build.yml"
+      - ".github/workflows/ci.yml"
       - "gradle/**"
       - "**/src/**"
       - "**/*.gradle.kts"
@@ -24,7 +24,7 @@ on:
 jobs:
   build:
     name: Build
-    uses: problem4j/problem4j-workflows/.github/workflows/gradle-build.yml@main
+    uses: problem4j/problem4j-workflows/.github/workflows/ci.yml@v1
     with:
       codecov-enabled: true
       codecov-files: "build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"

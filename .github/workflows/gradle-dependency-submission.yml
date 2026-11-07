@@ -19,4 +19,4 @@ jobs:
     name: Dependency Submission
     permissions:
       contents: write
-    uses: problem4j/problem4j-workflows/.github/workflows/gradle-dependency-submission.yml@main
+    uses: problem4j/problem4j-workflows/.github/workflows/gradle-dependency-submission.yml@v1
