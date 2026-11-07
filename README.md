@@ -247,6 +247,8 @@ dependency.
 <details>
 <summary><b>Expand...</b></summary>
 
+**Note** that **Java 21+** is recommended for local development.
+
 Gradle **9.x+** requires **Java 17** or higher to run. For building the project, Gradle automatically picks up **Java
 25** via **toolchains** and the `foojay-resolver-convention` plugin. This Java version is needed because the project
 uses **ErrorProne** and **NullAway** for static nullness analysis.
@@ -277,11 +279,6 @@ task. **Note** that **building will fail** if code is not properly formatted.
 ```bash
 ./gradlew spotlessApply
 ```
-
-**Note** that **Java 21+** (`21` or `25`) is recommended for local development. Formatters (such as
-`google-java-format`) resolve to different versions depending on the Java version Gradle runs on. Building on **Java 17**
-works as well, but code style check may fail even for properly formatted code. CI verifies code style only on **Java 21**
-and **Java 25**.
 
 To **publish** the built artifacts to **local Maven repository**, use `publishToMavenLocal` task.
 
