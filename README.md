@@ -222,10 +222,6 @@ dependency.
 
 **Note** that **Java 21+** is recommended for local development.
 
-Gradle **9.x+** requires **Java 17** or higher to run. For building the project, Gradle automatically picks up **Java
-25** via **toolchains** and the `foojay-resolver-convention` plugin. This Java version is needed because the project
-uses **ErrorProne** and **NullAway** for static nullness analysis.
-
 The produced artifacts are compatible with **Java 17** thanks to `options.release = 17` in Gradle `JavaCompile` tasks.
 This means that regardless of the Java version used to run Gradle, the resulting bytecode remains compatible.
 
