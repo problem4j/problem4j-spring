@@ -58,7 +58,9 @@ class ProblemOverrideWebFluxTest {
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> Assertions.assertThat(v).isNotNull())
-        .value(problem -> assertThat(problem.getType()).isEqualTo(URI.create("https://example.org/type/not-blank")));
+        .value(problem ->
+            assertThat(problem.getType())
+                .isEqualTo(URI.create("https://example.org/type/not-blank")));
   }
 
   @Test
@@ -96,7 +98,8 @@ class ProblemOverrideWebFluxTest {
         .value("X-Trace-Id", v -> assertThat(v).isEqualTo(traceId))
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
-        .value(
-            problem -> assertThat(problem.getInstance()).isEqualTo(URI.create("https://example.org/trace/" + traceId)));
+        .value(problem ->
+            assertThat(problem.getInstance())
+                .isEqualTo(URI.create("https://example.org/trace/" + traceId)));
   }
 }

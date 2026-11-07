@@ -59,7 +59,8 @@ class BindingKotlinWebMvcTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    ResponseEntity<String> response = restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
+    ResponseEntity<String> response =
+        restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -98,7 +99,8 @@ class BindingKotlinWebMvcTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    ResponseEntity<String> response = restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
+    ResponseEntity<String> response =
+        restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -141,7 +143,8 @@ class BindingKotlinWebMvcTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    ResponseEntity<String> response = restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
+    ResponseEntity<String> response =
+        restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -172,7 +175,8 @@ class BindingKotlinWebMvcTest {
     headers.setContentType(MediaType.APPLICATION_JSON);
 
     ResponseEntity<String> response =
-        restTemplate.postForEntity("/binding-kotlin/complex", new HttpEntity<>(json, headers), String.class);
+        restTemplate.postForEntity(
+            "/binding-kotlin/complex", new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -196,7 +200,9 @@ class BindingKotlinWebMvcTest {
 
     ResponseEntity<String> response =
         restTemplate.postForEntity(
-            "/binding-kotlin/nullable", new HttpEntity<>("{ \"value\": null }", headers), String.class);
+            "/binding-kotlin/nullable",
+            new HttpEntity<>("{ \"value\": null }", headers),
+            String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
@@ -207,7 +213,8 @@ class BindingKotlinWebMvcTest {
     headers.setContentType(MediaType.APPLICATION_JSON);
 
     ResponseEntity<String> response =
-        restTemplate.postForEntity("/binding-kotlin/default", new HttpEntity<>("{}", headers), String.class);
+        restTemplate.postForEntity(
+            "/binding-kotlin/default", new HttpEntity<>("{}", headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
@@ -302,7 +309,8 @@ class BindingKotlinWebMvcTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    ResponseEntity<String> response = restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
+    ResponseEntity<String> response =
+        restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
@@ -352,7 +360,8 @@ class BindingKotlinWebMvcTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    ResponseEntity<String> response = restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
+    ResponseEntity<String> response =
+        restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -397,7 +406,8 @@ class BindingKotlinWebMvcTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    ResponseEntity<String> response = restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
+    ResponseEntity<String> response =
+        restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
@@ -447,7 +457,8 @@ class BindingKotlinWebMvcTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    ResponseEntity<String> response = restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
+    ResponseEntity<String> response =
+        restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -489,7 +500,8 @@ class BindingKotlinWebMvcTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    ResponseEntity<String> response = restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
+    ResponseEntity<String> response =
+        restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -528,7 +540,8 @@ class BindingKotlinWebMvcTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    ResponseEntity<String> response = restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
+    ResponseEntity<String> response =
+        restTemplate.postForEntity(path, new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -565,7 +578,8 @@ class BindingKotlinWebMvcTest {
     headers.setContentType(MediaType.APPLICATION_JSON);
 
     ResponseEntity<String> response =
-        restTemplate.postForEntity("/binding-kotlin/complex", new HttpEntity<>(json, headers), String.class);
+        restTemplate.postForEntity(
+            "/binding-kotlin/complex", new HttpEntity<>(json, headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");

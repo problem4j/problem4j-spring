@@ -51,13 +51,15 @@ class NotAcceptableWebMvcTest {
 
     HttpEntity<Void> request = new HttpEntity<>(headers);
 
-    ResponseEntity<String> response = restTemplate.exchange("/not-acceptable", HttpMethod.GET, request, String.class);
+    ResponseEntity<String> response =
+        restTemplate.exchange("/not-acceptable", HttpMethod.GET, request, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem).isEqualTo(Problem.builder().status(HttpStatus.NOT_ACCEPTABLE.value()).build());
+    assertThat(problem)
+        .isEqualTo(Problem.builder().status(HttpStatus.NOT_ACCEPTABLE.value()).build());
   }
 }

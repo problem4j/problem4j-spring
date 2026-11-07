@@ -38,6 +38,11 @@ class CoroutineExceptionResolverConfiguration {
         ex: Exception,
         headers: HttpHeaders,
         status: HttpStatusCode,
-    ): Problem = Problem.builder().type("https://example.org/coroutine").status(409).detail(ex.message).build()
+    ): Problem =
+        Problem.builder()
+            .type("https://example.org/coroutine")
+            .status(409)
+            .detail(ex.message)
+            .build()
   }
 }

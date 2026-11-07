@@ -19,11 +19,11 @@ package io.github.problem4j.spring.web;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Defines a contract for formatting problem detail field and property names (mostly before they are included in a
- * {@code Problem} response).
+ * Defines a contract for formatting problem detail field and property names (mostly before they are
+ * included in a {@code Problem} response).
  *
- * <p>Implementations can customize how details and property names are presented - for example, by applying
- * localization, case formatting, or message templating.
+ * <p>Implementations can customize how details and property names are presented - for example, by
+ * applying localization, case formatting, or message templating.
  *
  * @see io.github.problem4j.core.Problem
  * @since 1.2.0

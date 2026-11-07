@@ -60,7 +60,11 @@ class ValidateMethodArgumentPassingWebFluxTest {
   void givenValidRequestParam_shouldReturnOk() {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path("/validate-parameter/request-param").queryParam("query", "value").build())
+        .uri(uriBuilder ->
+            uriBuilder
+                .path("/validate-parameter/request-param")
+                .queryParam("query", "value")
+                .build())
         .exchange()
         .expectStatus()
         .isOk()
@@ -157,7 +161,8 @@ class ValidateMethodArgumentPassingWebFluxTest {
   void givenQuerySimpleObjectsWithoutViolations_shouldReturnOk(String baseUrl) {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path(baseUrl).queryParam("text", "fine").queryParam("number", "1").build())
+        .uri(uriBuilder ->
+            uriBuilder.path(baseUrl).queryParam("text", "fine").queryParam("number", "1").build())
         .exchange()
         .expectStatus()
         .isOk()
@@ -176,7 +181,8 @@ class ValidateMethodArgumentPassingWebFluxTest {
   void givenQueryBindObjectsWithoutViolations_shouldReturnOk(String baseUrl) {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path(baseUrl).queryParam("text", "fine").queryParam("num", "1").build())
+        .uri(uriBuilder ->
+            uriBuilder.path(baseUrl).queryParam("text", "fine").queryParam("num", "1").build())
         .exchange()
         .expectStatus()
         .isOk()
@@ -196,7 +202,8 @@ class ValidateMethodArgumentPassingWebFluxTest {
   void givenQueryBindObjectsWithMultipleCtorsWithoutViolations_shouldReturnOk(String baseUrl) {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path(baseUrl).queryParam("text", "fine").queryParam("num", "1").build())
+        .uri(uriBuilder ->
+            uriBuilder.path(baseUrl).queryParam("text", "fine").queryParam("num", "1").build())
         .exchange()
         .expectStatus()
         .isOk()

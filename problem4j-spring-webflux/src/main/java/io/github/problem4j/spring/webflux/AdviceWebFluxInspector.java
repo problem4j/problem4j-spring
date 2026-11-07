@@ -23,11 +23,12 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ServerWebExchange;
 
 /**
- * Provides a hook for observing the details of a Problem response in a WebFlux application before it is returned to the
- * client.
+ * Provides a hook for observing the details of a Problem response in a WebFlux application before
+ * it is returned to the client.
  *
- * <p>Implementations of this interface can peek at the context of a Problem, including the original exception, HTTP
- * headers, status, and the current {@link ServerWebExchange}, without modifying the response.
+ * <p>Implementations of this interface can peek at the context of a Problem, including the original
+ * exception, HTTP headers, status, and the current {@link ServerWebExchange}, without modifying the
+ * response.
  *
  * <p>Typical use cases include logging, monitoring, or auditing error responses.
  *
@@ -39,7 +40,8 @@ public interface AdviceWebFluxInspector {
   /**
    * Observe the details of a Problem response before it is sent to the client.
    *
-   * @param context the {@link ProblemContext} containing information about the current error handling context
+   * @param context the {@link ProblemContext} containing information about the current error
+   *     handling context
    * @param problem the {@link Problem} object representing the response body
    * @param ex the original {@link Exception} that triggered the Problem
    * @param headers the HTTP headers that will be included in the response

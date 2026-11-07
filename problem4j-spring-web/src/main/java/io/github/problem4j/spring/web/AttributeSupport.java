@@ -26,8 +26,8 @@ public final class AttributeSupport {
   /**
    * Request attribute key used to store a trace identifier.
    *
-   * <p>This key is <b>not used in {@code ProblemContext}</b>; it is used exclusively as a request attribute (WebFlux or
-   * WebMVC) and is assigned by framework-specific filters.
+   * <p>This key is <b>not used in {@code ProblemContext}</b>; it is used exclusively as a request
+   * attribute (WebFlux or WebMVC) and is assigned by framework-specific filters.
    *
    * @see io.github.problem4j.core.ProblemContext
    * @since 1.2.0
@@ -35,9 +35,9 @@ public final class AttributeSupport {
   public static final String TRACE_ID_ATTRIBUTE = "io.github.problem4j.spring.web.traceId";
 
   /**
-   * Request attribute key used to store the object associated with the current request. It allows sharing contextual
-   * information (such as trace identifiers or additional diagnostic data) between components involved in problem
-   * handling.
+   * Request attribute key used to store the object associated with the current request. It allows
+   * sharing contextual information (such as trace identifiers or additional diagnostic data)
+   * between components involved in problem handling.
    *
    * @since 1.2.0
    */

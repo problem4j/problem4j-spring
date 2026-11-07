@@ -39,8 +39,8 @@ import reactor.core.publisher.Mono;
 /**
  * Handles {@link ProblemException} thrown by application code.
  *
- * <p>Converts the exception into a {@link Problem} response with the appropriate HTTP status and content type {@code
- * application/problem+json}.
+ * <p>Converts the exception into a {@link Problem} response with the appropriate HTTP status and
+ * content type {@code application/problem+json}.
  *
  * <p>This is intended for application-level exceptions already represented as {@link Problem}.
  *
@@ -63,14 +63,15 @@ public class ProblemExceptionWebFluxAdvice {
    * @since 1.2.0
    */
   public ProblemExceptionWebFluxAdvice(
-      ProblemPostProcessor problemPostProcessor, List<AdviceWebFluxInspector> adviceWebFluxInspectors) {
+      ProblemPostProcessor problemPostProcessor,
+      List<AdviceWebFluxInspector> adviceWebFluxInspectors) {
     this.problemPostProcessor = problemPostProcessor;
     this.adviceWebFluxInspectors = adviceWebFluxInspectors;
   }
 
   /**
-   * Converts a {@link ProblemException} into a {@code Problem} response: processes the embedded {@link Problem}, sets
-   * content type, resolves status, and applies inspectors.
+   * Converts a {@link ProblemException} into a {@code Problem} response: processes the embedded
+   * {@link Problem}, sets content type, resolves status, and applies inspectors.
    *
    * @param ex the ProblemException to handle
    * @param exchange the current server web exchange
@@ -78,8 +79,10 @@ public class ProblemExceptionWebFluxAdvice {
    * @since 1.2.0
    */
   @ExceptionHandler(ProblemException.class)
-  public Mono<ResponseEntity<Problem>> handleProblemException(ProblemException ex, ServerWebExchange exchange) {
-    ProblemContext context = exchange.getAttributeOrDefault(PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create());
+  public Mono<ResponseEntity<Problem>> handleProblemException(
+      ProblemException ex, ServerWebExchange exchange) {
+    ProblemContext context =
+        exchange.getAttributeOrDefault(PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create());
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
@@ -94,7 +97,8 @@ public class ProblemExceptionWebFluxAdvice {
     }
 
     HttpStatus status =
-        Optional.ofNullable(HttpStatus.resolve(problem.getStatus())).orElse(HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional.ofNullable(HttpStatus.resolve(problem.getStatus()))
+            .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
     for (AdviceWebFluxInspector inspector : adviceWebFluxInspectors) {
       inspector.inspect(context, problem, ex, headers, status, exchange);

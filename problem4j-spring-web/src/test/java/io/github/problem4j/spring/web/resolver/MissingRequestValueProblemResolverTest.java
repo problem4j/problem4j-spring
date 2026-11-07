@@ -43,11 +43,13 @@ class MissingRequestValueProblemResolverTest {
   }
 
   @Test
-  void givenQueryParameterMissing_whenResolve_thenReturnsMissingParamProblem() throws NoSuchMethodException {
+  void givenQueryParameterMissing_whenResolve_thenReturnsMissingParamProblem()
+      throws NoSuchMethodException {
     MissingRequestValueException ex =
         new MissingRequestValueException("page", Integer.class, "query parameter", parameter());
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getDetail()).isEqualTo("Missing request param");
@@ -56,11 +58,13 @@ class MissingRequestValueProblemResolverTest {
   }
 
   @Test
-  void givenHeaderMissing_whenResolve_thenReturnsMissingHeaderProblem() throws NoSuchMethodException {
+  void givenHeaderMissing_whenResolve_thenReturnsMissingHeaderProblem()
+      throws NoSuchMethodException {
     MissingRequestValueException ex =
         new MissingRequestValueException("Authorization", String.class, "header", parameter());
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getDetail()).isEqualTo("Missing header");
@@ -68,11 +72,13 @@ class MissingRequestValueProblemResolverTest {
   }
 
   @Test
-  void givenPathVariableMissing_whenResolve_thenReturnsMissingPathVariableProblem() throws NoSuchMethodException {
+  void givenPathVariableMissing_whenResolve_thenReturnsMissingPathVariableProblem()
+      throws NoSuchMethodException {
     MissingRequestValueException ex =
         new MissingRequestValueException("id", String.class, "path parameter", parameter());
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getDetail()).isEqualTo("Missing path variable");
@@ -80,10 +86,13 @@ class MissingRequestValueProblemResolverTest {
   }
 
   @Test
-  void givenCookieMissing_whenResolve_thenReturnsMissingCookieProblem() throws NoSuchMethodException {
-    MissingRequestValueException ex = new MissingRequestValueException("session", String.class, "cookie", parameter());
+  void givenCookieMissing_whenResolve_thenReturnsMissingCookieProblem()
+      throws NoSuchMethodException {
+    MissingRequestValueException ex =
+        new MissingRequestValueException("session", String.class, "cookie", parameter());
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getDetail()).isEqualTo("Missing cookie");

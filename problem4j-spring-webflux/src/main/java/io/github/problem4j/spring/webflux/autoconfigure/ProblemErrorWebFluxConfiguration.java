@@ -34,15 +34,17 @@ import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.web.reactive.result.view.ViewResolver;
 
 /**
- * Configures a custom {@link ErrorWebExceptionHandler} that produces {@code application/problem+json} responses
- * according to RFC 7807.
+ * Configures a custom {@link ErrorWebExceptionHandler} that produces {@code
+ * application/problem+json} responses according to RFC 7807.
  *
  * <p>This configuration replaces Spring Boot's default WebFlux error handler defined in {@code
  * ErrorWebFluxAutoConfiguration}.
  *
  * @see org.springframework.boot.webflux.autoconfigure.error.ErrorWebFluxAutoConfiguration
  */
-@ConditionalOnBooleanProperty(name = "problem4j.webflux.error-web-exception-handler.enabled", matchIfMissing = true)
+@ConditionalOnBooleanProperty(
+    name = "problem4j.webflux.error-web-exception-handler.enabled",
+    matchIfMissing = true)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 @Configuration(proxyBeanMethods = false)
 class ProblemErrorWebFluxConfiguration {
@@ -53,8 +55,8 @@ class ProblemErrorWebFluxConfiguration {
   /**
    * Registers a default {@link ErrorAttributes} bean if none is already defined.
    *
-   * <p>Provides the error details used by the {@link ProblemErrorWebExceptionHandler} to build {@code
-   * application/problem+json} responses.
+   * <p>Provides the error details used by the {@link ProblemErrorWebExceptionHandler} to build
+   * {@code application/problem+json} responses.
    *
    * @return a default {@link DefaultErrorAttributes} instance
    */
@@ -65,9 +67,9 @@ class ProblemErrorWebFluxConfiguration {
   }
 
   /**
-   * Overrides {@link ErrorWebExceptionHandler} defined in {@code ErrorWebFluxAutoConfiguration} to return problem
-   * JSONs. Must be declared with {@code @Order(-2)}, as default one declared in {@code ErrorWebFluxAutoConfiguration}
-   * has {@code @Order(-1)} (the lower value wins).
+   * Overrides {@link ErrorWebExceptionHandler} defined in {@code ErrorWebFluxAutoConfiguration} to
+   * return problem JSONs. Must be declared with {@code @Order(-2)}, as default one declared in
+   * {@code ErrorWebFluxAutoConfiguration} has {@code @Order(-1)} (the lower value wins).
    *
    * @see org.springframework.boot.webflux.autoconfigure.error.ErrorWebFluxAutoConfiguration
    */

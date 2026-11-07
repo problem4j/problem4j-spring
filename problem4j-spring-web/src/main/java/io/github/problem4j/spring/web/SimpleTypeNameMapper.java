@@ -25,7 +25,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Implementation of {@link TypeNameMapper} that maps simple Java types to common, human-readable type names.
+ * Implementation of {@link TypeNameMapper} that maps simple Java types to common, human-readable
+ * type names.
  *
  * @since 1.2.7
  */
@@ -84,10 +85,11 @@ public class SimpleTypeNameMapper implements TypeNameMapper {
    * Maps a Java type to a common type name. Supported mappings include:
    *
    * <ul>
-   *   <li>Integer types ({@code int}, {@code long}, {@code short}, {@code byte}, their wrapper classes, {@code
-   *       BigInteger}, {@code AtomicInteger} and {@code AtomicLong}) to {@code "integer"}
-   *   <li>Decimal types ({@code double}, {@code float}, their wrapper classes and {@code BigDecimal} ) to {@code
-   *       "number"}
+   *   <li>Integer types ({@code int}, {@code long}, {@code short}, {@code byte}, their wrapper
+   *       classes, {@code BigInteger}, {@code AtomicInteger} and {@code AtomicLong}) to {@code
+   *       "integer"}
+   *   <li>Decimal types ({@code double}, {@code float}, their wrapper classes and {@code
+   *       BigDecimal} ) to {@code "number"}
    *   <li>Boolean types ({@code boolean} and {@code Boolean}) to {@code "boolean"}
    *   <li>String type ({@code String}) to {@code "string"}
    *   <li>Enum types to {@code "enum"}
@@ -95,7 +97,8 @@ public class SimpleTypeNameMapper implements TypeNameMapper {
    * </ul>
    *
    * @param type the Java type to map
-   * @return an {@code Optional} containing the mapped string name, or empty if the type cannot be mapped
+   * @return an {@code Optional} containing the mapped string name, or empty if the type cannot be
+   *     mapped
    * @since 1.2.7
    */
   @Override

@@ -76,7 +76,8 @@ class ValidateMethodArgumentFailingWebFluxTest {
   void givenTooShortRequestParam_shouldReturnValidationProblem() {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path("/validate-parameter/request-param").queryParam("query", "v").build())
+        .uri(uriBuilder ->
+            uriBuilder.path("/validate-parameter/request-param").queryParam("query", "v").build())
         .exchange()
         .expectStatus()
         .isBadRequest()
@@ -88,7 +89,8 @@ class ValidateMethodArgumentFailingWebFluxTest {
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .detail("validation failed")
-                .extension("errors", List.of(Map.of("field", "queryParam", "error", VIOLATION_ERROR)))
+                .extension(
+                    "errors", List.of(Map.of("field", "queryParam", "error", VIOLATION_ERROR)))
                 .build());
   }
 
@@ -112,7 +114,8 @@ class ValidateMethodArgumentFailingWebFluxTest {
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .detail("validation failed")
-                .extension("errors", List.of(Map.of("field", "xCustomHeader", "error", VIOLATION_ERROR)))
+                .extension(
+                    "errors", List.of(Map.of("field", "xCustomHeader", "error", VIOLATION_ERROR)))
                 .build());
   }
 
@@ -148,7 +151,11 @@ class ValidateMethodArgumentFailingWebFluxTest {
   void givenValueViolatingAllConstraints_shouldReturnAllErrors() {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path("/validate-parameter/multi-constraint").queryParam("input", "v").build())
+        .uri(uriBuilder ->
+            uriBuilder
+                .path("/validate-parameter/multi-constraint")
+                .queryParam("input", "v")
+                .build())
         .exchange()
         .expectStatus()
         .isBadRequest()
@@ -156,7 +163,8 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
-        .value(problem -> assertThat(problem.getExtensions().get("errors")).asInstanceOf(LIST).hasSize(2));
+        .value(problem ->
+            assertThat(problem.getExtensions().get("errors")).asInstanceOf(LIST).hasSize(2));
   }
 
   /**
@@ -167,7 +175,11 @@ class ValidateMethodArgumentFailingWebFluxTest {
   void givenValueViolatingSingleConstraint_shouldReturnCorrectError(String input) {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path("/validate-parameter/multi-constraint").queryParam("input", input).build())
+        .uri(uriBuilder ->
+            uriBuilder
+                .path("/validate-parameter/multi-constraint")
+                .queryParam("input", input)
+                .build())
         .exchange()
         .expectStatus()
         .isBadRequest()
@@ -175,7 +187,8 @@ class ValidateMethodArgumentFailingWebFluxTest {
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
         .value(v -> assertThat(v).isNotNull())
-        .value(problem -> assertThat(problem.getExtensions().get("errors")).asInstanceOf(LIST).hasSize(1));
+        .value(problem ->
+            assertThat(problem.getExtensions().get("errors")).asInstanceOf(LIST).hasSize(1));
   }
 
   /**
@@ -230,7 +243,8 @@ class ValidateMethodArgumentFailingWebFluxTest {
             assertThat(problem.getExtensions().get("errors"))
                 .asInstanceOf(LIST)
                 .hasSize(1)
-                .allSatisfy(e -> assertThat(((Map<?, ?>) e).get("field")).isEqualTo("secondParam")));
+                .allSatisfy(
+                    e -> assertThat(((Map<?, ?>) e).get("field")).isEqualTo("secondParam")));
   }
 
   @ParameterizedTest
@@ -240,10 +254,12 @@ class ValidateMethodArgumentFailingWebFluxTest {
     "/validate-parameter/query-record/annotated,toolong1,-1",
     "/validate-parameter/query-record/unannotated,toolong1,-1"
   })
-  void givenQuerySimpleObjectsWithViolations_shouldReturnValidationProblem(String baseUrl, String text, String number) {
+  void givenQuerySimpleObjectsWithViolations_shouldReturnValidationProblem(
+      String baseUrl, String text, String number) {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path(baseUrl).queryParam("text", text).queryParam("number", number).build())
+        .uri(uriBuilder ->
+            uriBuilder.path(baseUrl).queryParam("text", text).queryParam("number", number).build())
         .exchange()
         .expectStatus()
         .isBadRequest()
@@ -271,10 +287,12 @@ class ValidateMethodArgumentFailingWebFluxTest {
     "/validate-parameter/query-bind-record/annotated,toolong1,-1",
     "/validate-parameter/query-bind-record/unannotated,toolong1,-1"
   })
-  void givenQueryBindObjectsWithViolations_shouldReturnValidationProblem(String baseUrl, String text, String num) {
+  void givenQueryBindObjectsWithViolations_shouldReturnValidationProblem(
+      String baseUrl, String text, String num) {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path(baseUrl).queryParam("text", text).queryParam("num", num).build())
+        .uri(uriBuilder ->
+            uriBuilder.path(baseUrl).queryParam("text", text).queryParam("num", num).build())
         .exchange()
         .expectStatus()
         .isBadRequest()
@@ -308,7 +326,8 @@ class ValidateMethodArgumentFailingWebFluxTest {
 
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path(baseUrl).queryParam("text", text).queryParam("num", num).build())
+        .uri(uriBuilder ->
+            uriBuilder.path(baseUrl).queryParam("text", text).queryParam("num", num).build())
         .exchange()
         .expectStatus()
         .isBadRequest()

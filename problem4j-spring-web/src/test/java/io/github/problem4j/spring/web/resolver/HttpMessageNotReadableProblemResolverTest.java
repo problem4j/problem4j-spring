@@ -46,7 +46,8 @@ class HttpMessageNotReadableProblemResolverTest {
     HttpMessageNotReadableException ex =
         new HttpMessageNotReadableException("msg", new MockHttpInputMessage(new byte[0]));
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
   }
@@ -57,7 +58,8 @@ class HttpMessageNotReadableProblemResolverTest {
         new HttpMessageNotReadableException("msg", new MockHttpInputMessage(new byte[0]));
 
     Problem problem =
-        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        resolver.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
   }

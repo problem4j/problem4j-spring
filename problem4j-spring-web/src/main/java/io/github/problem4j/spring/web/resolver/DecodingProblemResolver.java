@@ -25,11 +25,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 /**
- * Thrown when the request body cannot be decoded (e.g. malformed JSON or invalid * content type). Maps such errors to a
- * {@link Problem} with {@code 400 Bad Request} status.
+ * Thrown when the request body cannot be decoded (e.g. malformed JSON or invalid * content type).
+ * Maps such errors to a {@link Problem} with {@code 400 Bad Request} status.
  *
- * <p>Maps decoding failures (e.g. malformed JSON or invalid request bodies) to a {@link Problem} response with {@code
- * 400 Bad Request} status.
+ * <p>Maps decoding failures (e.g. malformed JSON or invalid request bodies) to a {@link Problem}
+ * response with {@code 400 Bad Request} status.
  *
  * @since 1.2.0
  */
@@ -55,7 +55,8 @@ public class DecodingProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Returns a {@link Problem} for {@link DecodingException} with {@link HttpStatus#BAD_REQUEST} status.
+   * Returns a {@link Problem} for {@link DecodingException} with {@link HttpStatus#BAD_REQUEST}
+   * status.
    *
    * @param context problem context (unused)
    * @param ex the triggering {@link DecodingException}
@@ -65,7 +66,8 @@ public class DecodingProblemResolver extends AbstractProblemResolver {
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(
+      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     return Problem.of(HttpStatus.BAD_REQUEST.value());
   }
 }

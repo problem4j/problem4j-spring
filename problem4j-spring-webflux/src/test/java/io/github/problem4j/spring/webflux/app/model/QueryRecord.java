@@ -20,4 +20,5 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
-public record QueryRecord(@NotNull @Size(min = 1, max = 5) String text, @NotNull @Positive Integer number) {}
+public record QueryRecord(
+    @NotNull @Size(min = 1, max = 5) String text, @NotNull @Positive Integer number) {}

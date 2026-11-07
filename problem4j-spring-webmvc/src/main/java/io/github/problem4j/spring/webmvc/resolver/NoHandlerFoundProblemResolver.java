@@ -26,14 +26,14 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 /**
- * Handles {@link NoHandlerFoundException} thrown when no matching handler (controller method) is found for a given
- * request.
+ * Handles {@link NoHandlerFoundException} thrown when no matching handler (controller method) is
+ * found for a given request.
  *
- * <p>This typically occurs when the client requests a URL or HTTP method that does not correspond to any mapped
- * controller endpoint.
+ * <p>This typically occurs when the client requests a URL or HTTP method that does not correspond
+ * to any mapped controller endpoint.
  *
- * <p>The handler is responsible for returning an appropriate HTTP 404 (Not Found) response to indicate that the
- * requested resource or endpoint does not exist.
+ * <p>The handler is responsible for returning an appropriate HTTP 404 (Not Found) response to
+ * indicate that the requested resource or endpoint does not exist.
  *
  * @since 1.2.0
  */
@@ -59,9 +59,10 @@ public class NoHandlerFoundProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Returns a {@link Problem} with {@link HttpStatus#NOT_FOUND} (HTTP 404) indicating no controller handler matched the
-   * incoming request (URL + HTTP method). Other parameters ({@code context}, {@code headers}, {@code status}) are
-   * ignored because the semantics of {@link NoHandlerFoundException} unambiguously map to 404.
+   * Returns a {@link Problem} with {@link HttpStatus#NOT_FOUND} (HTTP 404) indicating no controller
+   * handler matched the incoming request (URL + HTTP method). Other parameters ({@code context},
+   * {@code headers}, {@code status}) are ignored because the semantics of {@link
+   * NoHandlerFoundException} unambiguously map to 404.
    *
    * @param context problem context (unused)
    * @param ex the triggering {@link NoHandlerFoundException}
@@ -71,7 +72,8 @@ public class NoHandlerFoundProblemResolver extends AbstractProblemResolver {
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(
+      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     return Problem.of(HttpStatus.NOT_FOUND.value());
   }
 }

@@ -25,14 +25,14 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 
 /**
- * Handles {@link HttpMediaTypeNotSupportedException} thrown when a client sends a request with a media type that the
- * server cannot consume.
+ * Handles {@link HttpMediaTypeNotSupportedException} thrown when a client sends a request with a
+ * media type that the server cannot consume.
  *
- * <p>This typically occurs when the {@code Content-Type} header in the HTTP request does not match any of the media
- * types supported by the controller method or configured message converters.
+ * <p>This typically occurs when the {@code Content-Type} header in the HTTP request does not match
+ * any of the media types supported by the controller method or configured message converters.
  *
- * <p>The handler is responsible for returning an appropriate HTTP 415 (Unsupported Media Type) response to inform the
- * client that the submitted content type is not supported.
+ * <p>The handler is responsible for returning an appropriate HTTP 415 (Unsupported Media Type)
+ * response to inform the client that the submitted content type is not supported.
  *
  * @since 1.2.0
  */
@@ -48,7 +48,8 @@ public class HttpMediaTypeNotSupportedProblemResolver extends AbstractProblemRes
   }
 
   /**
-   * Creates a new {@link HttpMediaTypeNotSupportedProblemResolver} with the specified problem format.
+   * Creates a new {@link HttpMediaTypeNotSupportedProblemResolver} with the specified problem
+   * format.
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
@@ -58,8 +59,9 @@ public class HttpMediaTypeNotSupportedProblemResolver extends AbstractProblemRes
   }
 
   /**
-   * Returns a {@link Problem} with status {@link HttpStatus#UNSUPPORTED_MEDIA_TYPE} (HTTP 415). Other parameters are
-   * ignored because the status is mandated by the semantics of {@link HttpMediaTypeNotSupportedException}.
+   * Returns a {@link Problem} with status {@link HttpStatus#UNSUPPORTED_MEDIA_TYPE} (HTTP 415).
+   * Other parameters are ignored because the status is mandated by the semantics of {@link
+   * HttpMediaTypeNotSupportedException}.
    *
    * @param context problem context (unused)
    * @param ex the triggering {@link HttpMediaTypeNotSupportedException}
@@ -69,7 +71,8 @@ public class HttpMediaTypeNotSupportedProblemResolver extends AbstractProblemRes
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(
+      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     return Problem.of(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value());
   }
 }

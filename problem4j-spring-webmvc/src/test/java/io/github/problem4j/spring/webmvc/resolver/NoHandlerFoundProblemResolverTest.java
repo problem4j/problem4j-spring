@@ -44,7 +44,8 @@ class NoHandlerFoundProblemResolverTest {
   void givenNoHandlerFoundException_whenResolve_thenReturnsNotFoundProblem() {
     NoHandlerFoundException ex = new NoHandlerFoundException("GET", "/missing", new HttpHeaders());
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.NOT_FOUND);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.NOT_FOUND);
 
     assertThat(problem).isEqualTo(Problem.builder().status(HttpStatus.NOT_FOUND.value()).build());
   }
@@ -54,7 +55,8 @@ class NoHandlerFoundProblemResolverTest {
     NoHandlerFoundException ex = new NoHandlerFoundException("GET", "/missing", new HttpHeaders());
 
     Problem problem =
-        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        resolver.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
   }

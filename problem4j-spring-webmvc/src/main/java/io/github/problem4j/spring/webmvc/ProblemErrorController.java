@@ -32,11 +32,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * A simple {@link org.springframework.boot.webmvc.error.ErrorController} implementation that returns HTTP problems (RFC
- * 7807) instead of HTML error pages.
+ * A simple {@link org.springframework.boot.webmvc.error.ErrorController} implementation that
+ * returns HTTP problems (RFC 7807) instead of HTML error pages.
  *
- * <p>It converts generic servlet errors into {@link Problem} responses with the appropriate HTTP status and content
- * type {@code application/problem+json}.
+ * <p>It converts generic servlet errors into {@link Problem} responses with the appropriate HTTP
+ * status and content type {@code application/problem+json}.
  *
  * @since 1.2.0
  */
@@ -53,7 +53,8 @@ public class ProblemErrorController extends AbstractErrorController {
    * @param errorAttributes the error attributes used to obtain error information
    * @since 1.2.0
    */
-  public ProblemErrorController(ProblemPostProcessor problemPostProcessor, ErrorAttributes errorAttributes) {
+  public ProblemErrorController(
+      ProblemPostProcessor problemPostProcessor, ErrorAttributes errorAttributes) {
     super(errorAttributes);
     this.problemPostProcessor = problemPostProcessor;
   }

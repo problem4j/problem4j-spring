@@ -55,7 +55,8 @@ class ResponseStatusExceptionWebFluxTest {
   void givenResponseStatusExceptionWithReason_returnProblemWithStatusOnly() {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path("/response-status-exception").queryParam("reason", "gone").build())
+        .uri(uriBuilder ->
+            uriBuilder.path("/response-status-exception").queryParam("reason", "gone").build())
         .exchange()
         .expectStatus()
         .isEqualTo(HttpStatus.GONE)

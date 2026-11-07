@@ -70,25 +70,30 @@ class ExceptionWebMvcAdviceTest {
 
   @Test
   void givenExceptionWithResponseStatus_whenHandleException_thenReturnsStatusFromAnnotation() {
-    ResponseEntity<Object> response = advice.handleException(new ForbiddenExceptionStub(), request());
+    ResponseEntity<Object> response =
+        advice.handleException(new ForbiddenExceptionStub(), request());
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-    assertThat(requireNonNull((Problem) response.getBody()).getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+    assertThat(requireNonNull((Problem) response.getBody()).getStatus())
+        .isEqualTo(HttpStatus.FORBIDDEN.value());
   }
 
   @Test
   void givenExceptionWithResponseStatusAndReason_whenHandleException_thenUsesReasonAsDetail() {
-    ResponseEntity<Object> response = advice.handleException(new NotFoundWithReasonStub(), request());
+    ResponseEntity<Object> response =
+        advice.handleException(new NotFoundWithReasonStub(), request());
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-    assertThat(requireNonNull((Problem) response.getBody()).getDetail()).isEqualTo("Resource not found");
+    assertThat(requireNonNull((Problem) response.getBody()).getDetail())
+        .isEqualTo("Resource not found");
   }
 
   @Test
   void givenAnyException_whenHandleException_thenSetsApplicationProblemJsonContentType() {
     ResponseEntity<Object> response = advice.handleException(new RuntimeException(), request());
 
-    assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
+    assertThat(response.getHeaders().getContentType())
+        .isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
 
   @Test
@@ -122,7 +127,8 @@ class ExceptionWebMvcAdviceTest {
   }
 
   private static ServletWebRequest request() {
-    return new ServletWebRequest(new MockHttpServletRequest("GET", "/test"), new MockHttpServletResponse());
+    return new ServletWebRequest(
+        new MockHttpServletRequest("GET", "/test"), new MockHttpServletResponse());
   }
 
   @ResponseStatus(code = HttpStatus.FORBIDDEN)

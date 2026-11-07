@@ -37,7 +37,8 @@ class HttpMediaTypeNotAcceptableProblemResolverTest {
   }
 
   @Test
-  void givenDefaultConstructor_whenGetExceptionClass_thenReturnsHttpMediaTypeNotAcceptableException() {
+  void
+      givenDefaultConstructor_whenGetExceptionClass_thenReturnsHttpMediaTypeNotAcceptableException() {
     assertThat(resolver.getExceptionClass()).isEqualTo(HttpMediaTypeNotAcceptableException.class);
   }
 
@@ -45,7 +46,8 @@ class HttpMediaTypeNotAcceptableProblemResolverTest {
   void givenHttpMediaTypeNotAcceptableException_whenResolve_thenReturnsNotAcceptableProblem() {
     HttpMediaTypeNotAcceptableException ex = new HttpMediaTypeNotAcceptableException(List.of());
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.NOT_ACCEPTABLE.value());
   }
@@ -55,7 +57,8 @@ class HttpMediaTypeNotAcceptableProblemResolverTest {
     HttpMediaTypeNotAcceptableException ex = new HttpMediaTypeNotAcceptableException(List.of());
 
     Problem problem =
-        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        resolver.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.NOT_ACCEPTABLE.value());
   }

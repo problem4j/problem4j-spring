@@ -69,12 +69,14 @@ import org.springframework.web.server.ServerErrorException;
 import org.springframework.web.server.ServerWebInputException;
 
 /**
- * Spring configuration for registering {@code ProblemResolver} beans for {@code spring-web} library. Modules {@code
- * problem4j-spring-webflux} and {@code problem4j-spring-webmvc} provide additional {@link Configuration} classes with
- * more resolvers, that originate from other Spring libraries.
+ * Spring configuration for registering {@code ProblemResolver} beans for {@code spring-web}
+ * library. Modules {@code problem4j-spring-webflux} and {@code problem4j-spring-webmvc} provide
+ * additional {@link Configuration} classes with more resolvers, that originate from other Spring
+ * libraries.
  *
- * <p>Each nested configuration class is annotated with {@link ConditionalOnClass} to ensure that only resolvers for
- * classes present on the classpath are created. This design allows the library to remain compatible previous versions.
+ * <p>Each nested configuration class is annotated with {@link ConditionalOnClass} to ensure that
+ * only resolvers for classes present on the classpath are created. This design allows the library
+ * to remain compatible previous versions.
  *
  * @see io.github.problem4j.spring.web.resolver.ProblemResolver
  */
@@ -94,7 +96,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(BindProblemResolver.class)
     @Bean
-    BindProblemResolver bindProblemResolver(ProblemFormat problemFormat, BindingResultSupport bindingResultSupport) {
+    BindProblemResolver bindProblemResolver(
+        ProblemFormat problemFormat, BindingResultSupport bindingResultSupport) {
       return new BindProblemResolver(problemFormat, bindingResultSupport);
     }
   }
@@ -108,7 +111,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(ConstraintViolationProblemResolver.class)
     @Bean
-    ConstraintViolationProblemResolver constraintViolationProblemResolver(ProblemFormat problemFormat) {
+    ConstraintViolationProblemResolver constraintViolationProblemResolver(
+        ProblemFormat problemFormat) {
       return new ConstraintViolationProblemResolver(problemFormat);
     }
   }
@@ -152,7 +156,8 @@ class ProblemResolverConfiguration {
     @Bean
     HandlerMethodValidationProblemResolver handlerMethodValidationProblemResolver(
         ProblemFormat problemFormat, MethodValidationResultSupport methodValidationResultSupport) {
-      return new HandlerMethodValidationProblemResolver(problemFormat, methodValidationResultSupport);
+      return new HandlerMethodValidationProblemResolver(
+          problemFormat, methodValidationResultSupport);
     }
   }
 
@@ -165,7 +170,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(HttpMediaTypeNotAcceptableProblemResolver.class)
     @Bean
-    HttpMediaTypeNotAcceptableProblemResolver httpMediaTypeNotAcceptableProblemResolver(ProblemFormat problemFormat) {
+    HttpMediaTypeNotAcceptableProblemResolver httpMediaTypeNotAcceptableProblemResolver(
+        ProblemFormat problemFormat) {
       return new HttpMediaTypeNotAcceptableProblemResolver(problemFormat);
     }
   }
@@ -179,7 +185,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(HttpMediaTypeNotSupportedProblemResolver.class)
     @Bean
-    HttpMediaTypeNotSupportedProblemResolver httpMediaTypeNotSupportedProblemResolver(ProblemFormat problemFormat) {
+    HttpMediaTypeNotSupportedProblemResolver httpMediaTypeNotSupportedProblemResolver(
+        ProblemFormat problemFormat) {
       return new HttpMediaTypeNotSupportedProblemResolver(problemFormat);
     }
   }
@@ -223,7 +230,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(MaxUploadSizeExceededProblemResolver.class)
     @Bean
-    MaxUploadSizeExceededProblemResolver maxUploadSizeExceededProblemResolver(ProblemFormat problemFormat) {
+    MaxUploadSizeExceededProblemResolver maxUploadSizeExceededProblemResolver(
+        ProblemFormat problemFormat) {
       return new MaxUploadSizeExceededProblemResolver(problemFormat);
     }
   }
@@ -252,7 +260,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(MissingRequestValueProblemResolver.class)
     @Bean
-    MissingRequestValueProblemResolver missingRequestValueProblemResolver(ProblemFormat problemFormat) {
+    MissingRequestValueProblemResolver missingRequestValueProblemResolver(
+        ProblemFormat problemFormat) {
       return new MissingRequestValueProblemResolver(problemFormat);
     }
   }
@@ -266,7 +275,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(MissingServletRequestPartProblemResolver.class)
     @Bean
-    MissingServletRequestPartProblemResolver missingServletRequestPartProblemResolver(ProblemFormat problemFormat) {
+    MissingServletRequestPartProblemResolver missingServletRequestPartProblemResolver(
+        ProblemFormat problemFormat) {
       return new MissingServletRequestPartProblemResolver(problemFormat);
     }
   }
@@ -329,7 +339,10 @@ class ProblemResolverConfiguration {
         MethodParameterSupport methodParameterSupport,
         TypeNameMapper problemTypeNameMapper) {
       return new ServerWebInputProblemResolver(
-          problemFormat, typeMismatchProblemResolver, methodParameterSupport, problemTypeNameMapper);
+          problemFormat,
+          typeMismatchProblemResolver,
+          methodParameterSupport,
+          problemTypeNameMapper);
     }
   }
 
@@ -342,7 +355,8 @@ class ProblemResolverConfiguration {
 
     @ConditionalOnMissingBean(ServletRequestBindingProblemResolver.class)
     @Bean
-    ServletRequestBindingProblemResolver servletRequestBindingProblemResolver(ProblemFormat problemFormat) {
+    ServletRequestBindingProblemResolver servletRequestBindingProblemResolver(
+        ProblemFormat problemFormat) {
       return new ServletRequestBindingProblemResolver(problemFormat);
     }
   }

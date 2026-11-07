@@ -52,7 +52,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
 
   @Test
   void givenTooShortPathVariable_shouldReturnValidationProblem() {
-    ResponseEntity<String> response = restTemplate.getForEntity("/validate-parameter/path-variable/v", String.class);
+    ResponseEntity<String> response =
+        restTemplate.getForEntity("/validate-parameter/path-variable/v", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -83,7 +84,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .detail("validation failed")
-                .extension("errors", List.of(Map.of("field", "queryParam", "error", VIOLATION_ERROR)))
+                .extension(
+                    "errors", List.of(Map.of("field", "queryParam", "error", VIOLATION_ERROR)))
                 .build());
   }
 
@@ -94,7 +96,10 @@ class ValidateMethodArgumentFailingWebMvcTest {
 
     ResponseEntity<String> response =
         restTemplate.exchange(
-            "/validate-parameter/request-header", HttpMethod.GET, new HttpEntity<>(headers), String.class);
+            "/validate-parameter/request-header",
+            HttpMethod.GET,
+            new HttpEntity<>(headers),
+            String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -106,7 +111,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
             Problem.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .detail("validation failed")
-                .extension("errors", List.of(Map.of("field", "xCustomHeader", "error", VIOLATION_ERROR)))
+                .extension(
+                    "errors", List.of(Map.of("field", "xCustomHeader", "error", VIOLATION_ERROR)))
                 .build());
   }
 
@@ -117,7 +123,10 @@ class ValidateMethodArgumentFailingWebMvcTest {
 
     ResponseEntity<String> response =
         restTemplate.exchange(
-            "/validate-parameter/cookie-value", HttpMethod.GET, new HttpEntity<>(headers), String.class);
+            "/validate-parameter/cookie-value",
+            HttpMethod.GET,
+            new HttpEntity<>(headers),
+            String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -150,7 +159,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
   @ValueSource(strings = {"vvvvv", "iiiii"})
   void givenValueViolatingSingleConstraint_shouldReturnCorrectError(String input) {
     ResponseEntity<String> response =
-        restTemplate.getForEntity("/validate-parameter/multi-constraint?input=" + input, String.class);
+        restTemplate.getForEntity(
+            "/validate-parameter/multi-constraint?input=" + input, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -163,7 +173,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
   @Test
   void givenFirstParamTooShort_shouldReturnValidationError() {
     ResponseEntity<String> response =
-        restTemplate.getForEntity("/validate-parameter/two-arg?first=v&second=anything", String.class);
+        restTemplate.getForEntity(
+            "/validate-parameter/two-arg?first=v&second=anything", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -179,7 +190,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
   @Test
   void givenSecondParamTooShort_shouldReturnValidationError() {
     ResponseEntity<String> response =
-        restTemplate.getForEntity("/validate-parameter/three-arg?first=anything&second=v&third=anything", String.class);
+        restTemplate.getForEntity(
+            "/validate-parameter/three-arg?first=anything&second=v&third=anything", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -199,8 +211,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
     "/validate-parameter/query-record/annotated,toolong1,-1",
     "/validate-parameter/query-record/unannotated,toolong1,-1"
   })
-  void givenQuerySimpleObjectsWithViolations_shouldReturnValidationProblem(String baseUrl, String text, String number)
-      throws Exception {
+  void givenQuerySimpleObjectsWithViolations_shouldReturnValidationProblem(
+      String baseUrl, String text, String number) throws Exception {
     ResponseEntity<String> response =
         restTemplate.getForEntity(baseUrl + "?text=" + text + "&number=" + number, String.class);
 
@@ -227,8 +239,8 @@ class ValidateMethodArgumentFailingWebMvcTest {
     "/validate-parameter/query-bind-record/annotated,toolong1,-1",
     "/validate-parameter/query-bind-record/unannotated,toolong1,-1"
   })
-  void givenQueryBindObjectsWithViolations_shouldReturnValidationProblem(String baseUrl, String text, String num)
-      throws Exception {
+  void givenQueryBindObjectsWithViolations_shouldReturnValidationProblem(
+      String baseUrl, String text, String num) throws Exception {
     ResponseEntity<String> response =
         restTemplate.getForEntity(baseUrl + "?text=" + text + "&num=" + num, String.class);
 

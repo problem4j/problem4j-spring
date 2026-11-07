@@ -29,7 +29,8 @@ class DefaultDetailFormatTest {
 
   @Test
   void givenLowercaseFormat_whenFormatting_thenReturnsLowercase() {
-    DefaultProblemFormat format = new DefaultProblemFormat(ProblemProperties.DetailFormat.LOWERCASE);
+    DefaultProblemFormat format =
+        new DefaultProblemFormat(ProblemProperties.DetailFormat.LOWERCASE);
 
     String result = format.formatDetail("TeSt StrIng");
 
@@ -38,7 +39,8 @@ class DefaultDetailFormatTest {
 
   @Test
   void givenUppercaseFormat_whenFormatting_thenReturnsUppercase() {
-    DefaultProblemFormat formatting = new DefaultProblemFormat(ProblemProperties.DetailFormat.UPPERCASE);
+    DefaultProblemFormat formatting =
+        new DefaultProblemFormat(ProblemProperties.DetailFormat.UPPERCASE);
 
     String result = formatting.formatDetail("TeSt StrIng");
 
@@ -47,7 +49,8 @@ class DefaultDetailFormatTest {
 
   @Test
   void givenCapitalizedFormat_whenFormatting_thenReturnsUppercase() {
-    DefaultProblemFormat formatting = new DefaultProblemFormat(ProblemProperties.DetailFormat.CAPITALIZED);
+    DefaultProblemFormat formatting =
+        new DefaultProblemFormat(ProblemProperties.DetailFormat.CAPITALIZED);
 
     String result = formatting.formatDetail("test string");
 

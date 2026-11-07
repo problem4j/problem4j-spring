@@ -33,14 +33,14 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 /**
- * Handles {@link TypeMismatchException} thrown when a request parameter, path variable, or property cannot be converted
- * to the required type.
+ * Handles {@link TypeMismatchException} thrown when a request parameter, path variable, or property
+ * cannot be converted to the required type.
  *
- * <p>This typically occurs when the client sends a value that cannot be converted to the expected Java type, for
- * example passing a string where an integer is required.
+ * <p>This typically occurs when the client sends a value that cannot be converted to the expected
+ * Java type, for example passing a string where an integer is required.
  *
- * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to indicate that the
- * provided input has an invalid type.
+ * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to
+ * indicate that the provided input has an invalid type.
  *
  * @since 1.2.0
  */
@@ -68,7 +68,8 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Creates a new {@link TypeMismatchProblemResolver} with the specified problem format and type name mapper.
+   * Creates a new {@link TypeMismatchProblemResolver} with the specified problem format and type
+   * name mapper.
    *
    * @param problemFormat the problem format to use
    * @param typeNameMapper the type name mapper to use
@@ -80,18 +81,20 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Resolves a {@link TypeMismatchException} (also {@link MethodArgumentTypeMismatchException}) into an immutable
-   * {@link Problem} with status {@link HttpStatus#BAD_REQUEST}, a standardized detail ({@code
-   * ViolationSupport#TYPE_MISMATCH_DETAIL}), and optional extensions:
+   * Resolves a {@link TypeMismatchException} (also {@link MethodArgumentTypeMismatchException})
+   * into an immutable {@link Problem} with status {@link HttpStatus#BAD_REQUEST}, a standardized
+   * detail ({@code ViolationSupport#TYPE_MISMATCH_DETAIL}), and optional extensions:
    *
    * <ul>
-   *   <li>{@code property} ({@code ViolationSupport#PROPERTY_EXTENSION}) - name of the parameter / property that failed
-   *       conversion
-   *   <li>{@code kind} ({@code ViolationSupport#KIND_EXTENSION}) - required target type in lowercase simple form
+   *   <li>{@code property} ({@code ViolationSupport#PROPERTY_EXTENSION}) - name of the parameter /
+   *       property that failed conversion
+   *   <li>{@code kind} ({@code ViolationSupport#KIND_EXTENSION}) - required target type in
+   *       lowercase simple form
    * </ul>
    *
-   * <p>Older Spring versions may not populate {@code propertyName} for {@link MethodArgumentTypeMismatchException}; in
-   * that case this resolver falls back to {@link MethodArgumentTypeMismatchException#getName()}.
+   * <p>Older Spring versions may not populate {@code propertyName} for {@link
+   * MethodArgumentTypeMismatchException}; in that case this resolver falls back to {@link
+   * MethodArgumentTypeMismatchException#getName()}.
    *
    * @param context problem context (unused)
    * @param ex the triggering type mismatch exception
@@ -102,9 +105,12 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver {
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(
+      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ProblemBuilder builder =
-        Problem.builder().status(HttpStatus.BAD_REQUEST.value()).detail(formatDetail(TYPE_MISMATCH_DETAIL));
+        Problem.builder()
+            .status(HttpStatus.BAD_REQUEST.value())
+            .detail(formatDetail(TYPE_MISMATCH_DETAIL));
 
     TypeMismatchException e = (TypeMismatchException) ex;
 

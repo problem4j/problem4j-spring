@@ -30,6 +30,7 @@ public class ProblemXmlController {
 
   @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
   public ResponseEntity<Problem> xmlProblem() {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Problem.of(HttpStatus.BAD_REQUEST.value()));
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body(Problem.of(HttpStatus.BAD_REQUEST.value()));
   }
 }

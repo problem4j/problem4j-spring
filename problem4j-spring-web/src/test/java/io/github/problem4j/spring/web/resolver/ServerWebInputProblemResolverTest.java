@@ -58,7 +58,10 @@ class ServerWebInputProblemResolverTest {
 
     Problem problem =
         serverWebInputMapping.resolve(
-            ProblemContext.create().put("traceId", "traceId"), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+            ProblemContext.create().put("traceId", "traceId"),
+            ex,
+            new HttpHeaders(),
+            HttpStatusCode.valueOf(400));
 
     assertThat(problem)
         .isEqualTo(
@@ -79,7 +82,10 @@ class ServerWebInputProblemResolverTest {
 
     Problem problem =
         serverWebInputMapping.resolve(
-            ProblemContext.create().put("traceId", "traceId"), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+            ProblemContext.create().put("traceId", "traceId"),
+            ex,
+            new HttpHeaders(),
+            HttpStatusCode.valueOf(400));
 
     assertThat(problem)
         .isEqualTo(
@@ -97,7 +103,10 @@ class ServerWebInputProblemResolverTest {
 
     Problem problem =
         serverWebInputMapping.resolve(
-            ProblemContext.create().put("traceId", "traceId"), ex, new HttpHeaders(), ex.getStatusCode());
+            ProblemContext.create().put("traceId", "traceId"),
+            ex,
+            new HttpHeaders(),
+            ex.getStatusCode());
 
     assertThat(problem).isEqualTo(Problem.of(ex.getStatusCode().value()));
   }

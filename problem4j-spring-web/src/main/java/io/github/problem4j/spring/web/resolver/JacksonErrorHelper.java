@@ -31,8 +31,8 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.databind.exc.MismatchedInputException;
 
 /**
- * Utility for Jackson exceptions used in situations where these exceptions are the {@code cause} of the exception that
- * is being resolved.
+ * Utility for Jackson exceptions used in situations where these exceptions are the {@code cause} of
+ * the exception that is being resolved.
  */
 final class JacksonErrorHelper {
 

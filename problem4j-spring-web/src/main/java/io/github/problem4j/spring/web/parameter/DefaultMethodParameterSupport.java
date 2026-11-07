@@ -45,9 +45,10 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
   public DefaultMethodParameterSupport() {}
 
   /**
-   * Resolve a stable logical name for a method parameter, honoring supported Spring binding annotations. If an
-   * annotation supplies an explicit {@code name} or {@code value}, that wins; otherwise falls back to the parameter's
-   * discovered name. Unknown or unsupported annotations are ignored.
+   * Resolve a stable logical name for a method parameter, honoring supported Spring binding
+   * annotations. If an annotation supplies an explicit {@code name} or {@code value}, that wins;
+   * otherwise falls back to the parameter's discovered name. Unknown or unsupported annotations are
+   * ignored.
    *
    * @param parameter Spring {@link org.springframework.core.MethodParameter} (may be {@code null})
    * @return optional parameter name; empty if the input is {@code null}
@@ -92,14 +93,16 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
   }
 
   /**
-   * Derive the effective name for a {@link PathVariable}, preferring {@code name} then {@code value}.
+   * Derive the effective name for a {@link PathVariable}, preferring {@code name} then {@code
+   * value}.
    *
    * @param annotation path variable annotation
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
    * @since 1.2.0
    */
-  protected @Nullable String findPathVariableName(PathVariable annotation, @Nullable String defaultName) {
+  protected @Nullable String findPathVariableName(
+      PathVariable annotation, @Nullable String defaultName) {
     String name = annotation.name();
     if (!StringUtils.hasLength(name)) {
       name = annotation.value();
@@ -108,14 +111,16 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
   }
 
   /**
-   * Derive the effective name for a {@link RequestParam}, preferring {@code name} then {@code value}.
+   * Derive the effective name for a {@link RequestParam}, preferring {@code name} then {@code
+   * value}.
    *
    * @param annotation request param annotation
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
    * @since 1.2.0
    */
-  protected @Nullable String findRequestParamName(RequestParam annotation, @Nullable String defaultName) {
+  protected @Nullable String findRequestParamName(
+      RequestParam annotation, @Nullable String defaultName) {
     String name = annotation.name();
     if (!StringUtils.hasLength(name)) {
       name = annotation.value();
@@ -124,14 +129,16 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
   }
 
   /**
-   * Derive the effective name for a {@link RequestPart}, preferring {@code name} then {@code value}.
+   * Derive the effective name for a {@link RequestPart}, preferring {@code name} then {@code
+   * value}.
    *
    * @param annotation request part annotation
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
    * @since 1.2.0
    */
-  protected @Nullable String findRequestPartName(RequestPart annotation, @Nullable String defaultName) {
+  protected @Nullable String findRequestPartName(
+      RequestPart annotation, @Nullable String defaultName) {
     String name = annotation.name();
     if (!StringUtils.hasLength(name)) {
       name = annotation.value();
@@ -140,14 +147,16 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
   }
 
   /**
-   * Derive the effective name for a {@link RequestHeader}, preferring {@code name} then {@code value}.
+   * Derive the effective name for a {@link RequestHeader}, preferring {@code name} then {@code
+   * value}.
    *
    * @param annotation request header annotation
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
    * @since 1.2.0
    */
-  protected @Nullable String findRequestHeaderName(RequestHeader annotation, @Nullable String defaultName) {
+  protected @Nullable String findRequestHeaderName(
+      RequestHeader annotation, @Nullable String defaultName) {
     String name = annotation.name();
     if (!StringUtils.hasLength(name)) {
       name = annotation.value();
@@ -156,14 +165,16 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
   }
 
   /**
-   * Derive the effective name for a {@link CookieValue}, preferring {@code name} then {@code value}.
+   * Derive the effective name for a {@link CookieValue}, preferring {@code name} then {@code
+   * value}.
    *
    * @param annotation cookie value annotation
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
    * @since 1.2.0
    */
-  protected @Nullable String findCookieValueName(CookieValue annotation, @Nullable String defaultName) {
+  protected @Nullable String findCookieValueName(
+      CookieValue annotation, @Nullable String defaultName) {
     String name = annotation.name();
     if (!StringUtils.hasLength(name)) {
       name = annotation.value();
@@ -172,14 +183,16 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
   }
 
   /**
-   * Derive the effective name for a {@link SessionAttribute}, preferring {@code name} then {@code value}.
+   * Derive the effective name for a {@link SessionAttribute}, preferring {@code name} then {@code
+   * value}.
    *
    * @param annotation session attribute annotation
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
    * @since 1.2.0
    */
-  protected @Nullable String findSessionAttributeName(SessionAttribute annotation, @Nullable String defaultName) {
+  protected @Nullable String findSessionAttributeName(
+      SessionAttribute annotation, @Nullable String defaultName) {
     String name = annotation.name();
     if (!StringUtils.hasLength(name)) {
       name = annotation.value();
@@ -188,14 +201,16 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
   }
 
   /**
-   * Derive the effective name for a {@link RequestAttribute}, preferring {@code name} then {@code value}.
+   * Derive the effective name for a {@link RequestAttribute}, preferring {@code name} then {@code
+   * value}.
    *
    * @param annotation request attribute annotation
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
    * @since 1.2.0
    */
-  protected @Nullable String findRequestAttributeName(RequestAttribute annotation, @Nullable String defaultName) {
+  protected @Nullable String findRequestAttributeName(
+      RequestAttribute annotation, @Nullable String defaultName) {
     String name = annotation.name();
     if (!StringUtils.hasLength(name)) {
       name = annotation.value();
@@ -204,14 +219,16 @@ public class DefaultMethodParameterSupport implements MethodParameterSupport {
   }
 
   /**
-   * Derive the effective name for a {@link MatrixVariable}, preferring {@code name} then {@code value}.
+   * Derive the effective name for a {@link MatrixVariable}, preferring {@code name} then {@code
+   * value}.
    *
    * @param annotation matrix variable annotation
    * @param defaultName fallback (parameter name)
    * @return resolved name or fallback
    * @since 1.2.0
    */
-  protected @Nullable String findMatrixVariableName(MatrixVariable annotation, @Nullable String defaultName) {
+  protected @Nullable String findMatrixVariableName(
+      MatrixVariable annotation, @Nullable String defaultName) {
     String name = annotation.name();
     if (!StringUtils.hasLength(name)) {
       name = annotation.value();

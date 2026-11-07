@@ -22,4 +22,5 @@ import jakarta.validation.constraints.Size;
 import org.springframework.web.bind.annotation.BindParam;
 
 public record QueryBindRecord(
-    @NotNull @Size(min = 1, max = 5) String text, @BindParam("num") @NotNull @Positive Integer number) {}
+    @NotNull @Size(min = 1, max = 5) String text,
+    @BindParam("num") @NotNull @Positive Integer number) {}

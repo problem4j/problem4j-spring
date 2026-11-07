@@ -50,11 +50,12 @@ import org.springframework.web.server.MissingRequestValueException;
 /**
  * Handles {@link MissingRequestValueException} thrown when a required request value is missing.
  *
- * <p>This typically occurs when a controller method expects a path variable, request parameter, or header annotated
- * with {@code @RequestParam}, {@code @PathVariable}, or {@code @RequestHeader}, but the client did not provide it.
+ * <p>This typically occurs when a controller method expects a path variable, request parameter, or
+ * header annotated with {@code @RequestParam}, {@code @PathVariable}, or {@code @RequestHeader},
+ * but the client did not provide it.
  *
- * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to indicate that a
- * required input value is missing.
+ * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to
+ * indicate that a required input value is missing.
  *
  * @since 1.2.0
  */
@@ -80,9 +81,10 @@ public class MissingRequestValueProblemResolver extends AbstractProblemResolver 
   }
 
   /**
-   * Returns a {@link Problem} for a {@link MissingRequestValueException}. Chooses a specific detail message and sets
-   * identifying extensions based on {@link MissingRequestValueException#getLabel()}. Falls back to a bare BAD_REQUEST
-   * if the label is {@code null}.
+   * Returns a {@link Problem} for a {@link MissingRequestValueException}. Chooses a specific detail
+   * message and sets identifying extensions based on {@link
+   * MissingRequestValueException#getLabel()}. Falls back to a bare BAD_REQUEST if the label is
+   * {@code null}.
    *
    * @param context problem context (unused)
    * @param ex the thrown {@link MissingRequestValueException}
@@ -92,7 +94,8 @@ public class MissingRequestValueProblemResolver extends AbstractProblemResolver 
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(
+      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     MissingRequestValueException e = (MissingRequestValueException) ex;
 
     ProblemBuilder builder = Problem.builder().status(HttpStatus.BAD_REQUEST.value());
@@ -105,13 +108,25 @@ public class MissingRequestValueProblemResolver extends AbstractProblemResolver 
                   .extension(PARAM_EXTENSION, e.getName())
                   .extension(KIND_EXTENSION, e.getType().getSimpleName().toLowerCase(Locale.ROOT));
       case REQUEST_PART_LABEL ->
-          builder = builder.detail(formatDetail(MISSING_REQUEST_PART_DETAIL)).extension(PARAM_EXTENSION, e.getName());
+          builder =
+              builder
+                  .detail(formatDetail(MISSING_REQUEST_PART_DETAIL))
+                  .extension(PARAM_EXTENSION, e.getName());
       case HEADER_LABEL ->
-          builder = builder.detail(formatDetail(MISSING_HEADER_DETAIL)).extension(HEADER_EXTENSION, e.getName());
+          builder =
+              builder
+                  .detail(formatDetail(MISSING_HEADER_DETAIL))
+                  .extension(HEADER_EXTENSION, e.getName());
       case PATH_PARAMETER_LABEL ->
-          builder = builder.detail(formatDetail(MISSING_PATH_VARIABLE_DETAIL)).extension(NAME_EXTENSION, e.getName());
+          builder =
+              builder
+                  .detail(formatDetail(MISSING_PATH_VARIABLE_DETAIL))
+                  .extension(NAME_EXTENSION, e.getName());
       case COOKIE_LABEL ->
-          builder = builder.detail(formatDetail(MISSING_COOKIE_DETAIL)).extension(COOKIE_EXTENSION, e.getName());
+          builder =
+              builder
+                  .detail(formatDetail(MISSING_COOKIE_DETAIL))
+                  .extension(COOKIE_EXTENSION, e.getName());
       case REQUEST_ATTRIBUTE_LABEL ->
           builder =
               builder

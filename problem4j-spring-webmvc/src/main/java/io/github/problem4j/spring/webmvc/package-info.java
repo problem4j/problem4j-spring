@@ -17,7 +17,8 @@
 /**
  * Spring WebMVC integration for Problem4J.
  *
- * <p>Extends the core web integration with WebMVC-specific exception handling and reactive response customization.
+ * <p>Extends the core web integration with WebMVC-specific exception handling and reactive response
+ * customization.
  */
 @NullMarked
 package io.github.problem4j.spring.webmvc;

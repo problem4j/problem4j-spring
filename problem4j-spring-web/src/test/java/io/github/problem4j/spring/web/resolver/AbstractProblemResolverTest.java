@@ -41,7 +41,8 @@ class AbstractProblemResolverTest {
     AbstractProblemResolver resolver =
         new AbstractProblemResolver(clazz) {
           @Override
-          public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+          public Problem resolve(
+              ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
             return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
           }
         };
@@ -56,14 +57,18 @@ class AbstractProblemResolverTest {
     AbstractProblemResolver resolver =
         new AbstractProblemResolver(RuntimeException.class) {
           @Override
-          public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+          public Problem resolve(
+              ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
             return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
           }
         };
 
     Problem problem =
         resolver.resolve(
-            ProblemContext.create(), new RuntimeException("boom"), new HttpHeaders(), HttpStatusCode.valueOf(500));
+            ProblemContext.create(),
+            new RuntimeException("boom"),
+            new HttpHeaders(),
+            HttpStatusCode.valueOf(500));
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
   }

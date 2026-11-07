@@ -50,9 +50,10 @@ public class DefaultMethodValidationResultSupport implements MethodValidationRes
   }
 
   /**
-   * Builds a {@link Violation}s list from a {@link MethodValidationResult} produced by method / parameter validation
-   * (e.g. {@code @Validated} on a controller). Each parameter violation is mapped to a {@link Violation} whose name is
-   * the resolved method parameter name and message is the constraint message.
+   * Builds a {@link Violation}s list from a {@link MethodValidationResult} produced by method /
+   * parameter validation (e.g. {@code @Validated} on a controller). Each parameter violation is
+   * mapped to a {@link Violation} whose name is the resolved method parameter name and message is
+   * the constraint message.
    *
    * @param result aggregated method validation result (must not be {@code null})
    * @return list of violations extracted from the validation result
@@ -62,7 +63,8 @@ public class DefaultMethodValidationResultSupport implements MethodValidationRes
   public List<Violation> fetchViolations(MethodValidationResult result) {
     List<Violation> violations = new ArrayList<>();
     for (ParameterValidationResult valueResult : result.getValueResults()) {
-      String fieldName = methodParameterSupport.findParameterName(valueResult.getMethodParameter()).orElse(null);
+      String fieldName =
+          methodParameterSupport.findParameterName(valueResult.getMethodParameter()).orElse(null);
       valueResult
           .getResolvableErrors()
           .forEach(error -> violations.add(new Violation(fieldName, error.getDefaultMessage())));

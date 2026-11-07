@@ -55,7 +55,8 @@ class CoroutineWebMvcTest {
     "/coroutine/resolver, coroutine failure",
     "/coroutine/flow, flow failure"
   })
-  void givenCoroutineThrowingAfterSuspension_whenRequesting_thenProblemIsReturned(String path, String detail) {
+  void givenCoroutineThrowingAfterSuspension_whenRequesting_thenProblemIsReturned(
+      String path, String detail) {
     ResponseEntity<String> response = exchange(path);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
@@ -76,7 +77,8 @@ class CoroutineWebMvcTest {
   }
 
   @Test
-  void givenCoroutineThrowingUnresolvableException_whenRequesting_thenInternalServerErrorProblemIsReturned() {
+  void
+      givenCoroutineThrowingUnresolvableException_whenRequesting_thenInternalServerErrorProblemIsReturned() {
     ResponseEntity<String> response = exchange("/coroutine/unresolvable");
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);

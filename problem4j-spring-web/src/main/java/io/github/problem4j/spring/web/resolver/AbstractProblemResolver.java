@@ -31,7 +31,8 @@ public abstract class AbstractProblemResolver implements ProblemResolver {
   private final ProblemFormat problemFormat;
 
   /**
-   * Creates a resolver for the given exception type using {@link ProblemFormat#identity()} (no detail transformation).
+   * Creates a resolver for the given exception type using {@link ProblemFormat#identity()} (no
+   * detail transformation).
    *
    * @param clazz exception subtype this resolver is responsible for
    * @since 1.2.0
@@ -41,8 +42,8 @@ public abstract class AbstractProblemResolver implements ProblemResolver {
   }
 
   /**
-   * Creates a resolver for the given exception type with a custom {@link ProblemFormat} applied to any detail text via
-   * {@link #formatDetail(String)}.
+   * Creates a resolver for the given exception type with a custom {@link ProblemFormat} applied to
+   * any detail text via {@link #formatDetail(String)}.
    *
    * @param clazz exception subtype this resolver is responsible for
    * @param problemFormat formatting strategy for detail (must not be {@code null})

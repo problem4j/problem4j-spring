@@ -47,7 +47,8 @@ class TypeMismatchProblemResolverTest {
     ex.initPropertyName("age");
 
     Problem problem =
-        typeMismatchMapping.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+        typeMismatchMapping.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
 
     assertThat(problem)
         .isEqualTo(
@@ -64,7 +65,8 @@ class TypeMismatchProblemResolverTest {
     TypeMismatchException ex = new TypeMismatchException("42", Integer.class);
 
     Problem problem =
-        typeMismatchMapping.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+        typeMismatchMapping.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
 
     assertThat(problem)
         .isEqualTo(
@@ -81,7 +83,8 @@ class TypeMismatchProblemResolverTest {
     ex.initPropertyName("field");
 
     Problem problem =
-        typeMismatchMapping.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+        typeMismatchMapping.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
 
     assertThat(problem)
         .isEqualTo(

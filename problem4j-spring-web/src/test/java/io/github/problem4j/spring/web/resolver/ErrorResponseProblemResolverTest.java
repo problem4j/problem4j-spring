@@ -45,7 +45,8 @@ class ErrorResponseProblemResolverTest {
   void givenErrorResponseException_whenResolve_thenCopiesStatusFromException() {
     ErrorResponseException ex = new ErrorResponseException(HttpStatus.CONFLICT);
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.OK);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.OK);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.CONFLICT.value());
   }
@@ -56,7 +57,8 @@ class ErrorResponseProblemResolverTest {
     ErrorResponseException ex = new ErrorResponseException(HttpStatus.BAD_REQUEST, body, null);
 
     Problem problem =
-        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        resolver.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getDetail()).isEqualTo("invalid input");
@@ -67,7 +69,8 @@ class ErrorResponseProblemResolverTest {
     ErrorResponseException ex = new ErrorResponseException(HttpStatus.FORBIDDEN);
 
     Problem problem =
-        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        resolver.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
   }

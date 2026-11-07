@@ -66,7 +66,10 @@ class ValidateMethodArgumentPassingWebMvcTest {
 
     ResponseEntity<String> response =
         restTemplate.exchange(
-            "/validate-parameter/request-header", HttpMethod.GET, new HttpEntity<>(headers), String.class);
+            "/validate-parameter/request-header",
+            HttpMethod.GET,
+            new HttpEntity<>(headers),
+            String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
@@ -79,7 +82,10 @@ class ValidateMethodArgumentPassingWebMvcTest {
 
     ResponseEntity<String> response =
         restTemplate.exchange(
-            "/validate-parameter/cookie-value", HttpMethod.GET, new HttpEntity<>(headers), String.class);
+            "/validate-parameter/cookie-value",
+            HttpMethod.GET,
+            new HttpEntity<>(headers),
+            String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
@@ -88,7 +94,8 @@ class ValidateMethodArgumentPassingWebMvcTest {
   @Test
   void givenBothParamsValid_shouldReturnOk() {
     ResponseEntity<String> response =
-        restTemplate.getForEntity("/validate-parameter/two-arg?first=validVal&second=anything", String.class);
+        restTemplate.getForEntity(
+            "/validate-parameter/two-arg?first=validVal&second=anything", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
@@ -98,7 +105,8 @@ class ValidateMethodArgumentPassingWebMvcTest {
   void givenThreeParamsValid_shouldReturnOk() {
     ResponseEntity<String> response =
         restTemplate.getForEntity(
-            "/validate-parameter/three-arg?first=anything&second=validVal&third=anything", String.class);
+            "/validate-parameter/three-arg?first=anything&second=validVal&third=anything",
+            String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
@@ -113,7 +121,8 @@ class ValidateMethodArgumentPassingWebMvcTest {
         "/validate-parameter/query-record/unannotated",
       })
   void givenQuerySimpleObjectsWithViolations_shouldReturnValidationProblem(String baseUrl) {
-    ResponseEntity<String> response = restTemplate.getForEntity(baseUrl + "?text=fine&number=1", String.class);
+    ResponseEntity<String> response =
+        restTemplate.getForEntity(baseUrl + "?text=fine&number=1", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
@@ -128,7 +137,8 @@ class ValidateMethodArgumentPassingWebMvcTest {
         "/validate-parameter/query-bind-record/unannotated",
       })
   void givenQueryBindObjectsWithViolations_shouldReturnValidationProblem(String baseUrl) {
-    ResponseEntity<String> response = restTemplate.getForEntity(baseUrl + "?text=fine&num=1", String.class);
+    ResponseEntity<String> response =
+        restTemplate.getForEntity(baseUrl + "?text=fine&num=1", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
@@ -143,8 +153,10 @@ class ValidateMethodArgumentPassingWebMvcTest {
         "/validate-parameter/query-bind-ctors-record/annotated",
         "/validate-parameter/query-bind-ctors-record/unannotated",
       })
-  void givenQueryBindObjectsWithMultipleCtorsWithViolations_shouldReturnValidationProblem(String baseUrl) {
-    ResponseEntity<String> response = restTemplate.getForEntity(baseUrl + "?text=fine&num=1", String.class);
+  void givenQueryBindObjectsWithMultipleCtorsWithViolations_shouldReturnValidationProblem(
+      String baseUrl) {
+    ResponseEntity<String> response =
+        restTemplate.getForEntity(baseUrl + "?text=fine&num=1", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");

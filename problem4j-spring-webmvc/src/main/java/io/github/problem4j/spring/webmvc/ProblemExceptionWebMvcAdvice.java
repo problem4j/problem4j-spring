@@ -39,8 +39,8 @@ import org.springframework.web.context.request.WebRequest;
 /**
  * Handles {@link ProblemException} thrown by application code.
  *
- * <p>Converts the exception into a {@link Problem} response with the appropriate HTTP status and content type {@code
- * application/problem+json}.
+ * <p>Converts the exception into a {@link Problem} response with the appropriate HTTP status and
+ * content type {@code application/problem+json}.
  *
  * <p>This is intended for application-level exceptions already represented as {@link Problem}.
  *
@@ -63,14 +63,16 @@ public class ProblemExceptionWebMvcAdvice {
    * @since 1.2.0
    */
   public ProblemExceptionWebMvcAdvice(
-      ProblemPostProcessor problemPostProcessor, List<AdviceWebMvcInspector> adviceWebMvcInspectors) {
+      ProblemPostProcessor problemPostProcessor,
+      List<AdviceWebMvcInspector> adviceWebMvcInspectors) {
     this.problemPostProcessor = problemPostProcessor;
     this.adviceWebMvcInspectors = adviceWebMvcInspectors;
   }
 
   /**
-   * Converts a {@link ProblemException} into a {@code Problem} response. The contained {@link Problem} is
-   * post-processed, headers set to application/problem+json, and status resolved from the problem's status code.
+   * Converts a {@link ProblemException} into a {@code Problem} response. The contained {@link
+   * Problem} is post-processed, headers set to application/problem+json, and status resolved from
+   * the problem's status code.
    *
    * @param ex the ProblemException to handle
    * @param request the web request
@@ -79,7 +81,8 @@ public class ProblemExceptionWebMvcAdvice {
    */
   @ExceptionHandler(ProblemException.class)
   public ResponseEntity<Problem> handleProblemException(ProblemException ex, WebRequest request) {
-    ProblemContext context = (ProblemContext) request.getAttribute(PROBLEM_CONTEXT_ATTRIBUTE, SCOPE_REQUEST);
+    ProblemContext context =
+        (ProblemContext) request.getAttribute(PROBLEM_CONTEXT_ATTRIBUTE, SCOPE_REQUEST);
     if (context == null) {
       context = ProblemContext.create();
     }
@@ -97,7 +100,8 @@ public class ProblemExceptionWebMvcAdvice {
     }
 
     HttpStatus status =
-        Optional.ofNullable(HttpStatus.resolve(problem.getStatus())).orElse(HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional.ofNullable(HttpStatus.resolve(problem.getStatus()))
+            .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
     for (AdviceWebMvcInspector inspector : adviceWebMvcInspectors) {
       inspector.inspect(context, problem, ex, headers, status, request);

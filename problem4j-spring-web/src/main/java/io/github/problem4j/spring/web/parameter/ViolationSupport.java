@@ -17,7 +17,8 @@
 package io.github.problem4j.spring.web.parameter;
 
 /**
- * Central constants used when constructing RFC 7807 problem responses for parameter and validation errors.
+ * Central constants used when constructing RFC 7807 problem responses for parameter and validation
+ * errors.
  *
  * <p>Contains:
  *

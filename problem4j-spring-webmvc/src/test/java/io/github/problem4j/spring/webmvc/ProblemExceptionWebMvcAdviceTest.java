@@ -50,7 +50,8 @@ class ProblemExceptionWebMvcAdviceTest {
 
   @Test
   void whileHandlingException_shouldHitInspector() {
-    advice.handleProblemException(new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), request());
+    advice.handleProblemException(
+        new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), request());
 
     assertThat(hits.get()).isEqualTo(1);
   }
@@ -62,24 +63,30 @@ class ProblemExceptionWebMvcAdviceTest {
             new ProblemException(Problem.of(HttpStatus.UNPROCESSABLE_ENTITY.value())), request());
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT);
-    assertThat(requireNonNull(response.getBody()).getStatus()).isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT.value());
+    assertThat(requireNonNull(response.getBody()).getStatus())
+        .isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT.value());
   }
 
   @Test
-  void givenAnyProblemException_whenHandleProblemException_thenSetsApplicationProblemJsonContentType() {
+  void
+      givenAnyProblemException_whenHandleProblemException_thenSetsApplicationProblemJsonContentType() {
     ResponseEntity<Problem> response =
-        advice.handleProblemException(new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), request());
+        advice.handleProblemException(
+            new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), request());
 
-    assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
+    assertThat(response.getHeaders().getContentType())
+        .isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
 
   @Test
   void givenPostProcessor_whenHandleProblemException_thenPostProcessorIsApplied() {
     advice =
-        new ProblemExceptionWebMvcAdvice((ctx, problem) -> problem.toBuilder().detail("processed").build(), List.of());
+        new ProblemExceptionWebMvcAdvice(
+            (ctx, problem) -> problem.toBuilder().detail("processed").build(), List.of());
 
     ResponseEntity<Problem> response =
-        advice.handleProblemException(new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), request());
+        advice.handleProblemException(
+            new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), request());
 
     assertThat(requireNonNull(response.getBody()).getDetail()).isEqualTo("processed");
   }
@@ -94,12 +101,14 @@ class ProblemExceptionWebMvcAdviceTest {
             List.of());
 
     ResponseEntity<Problem> response =
-        advice.handleProblemException(new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), request());
+        advice.handleProblemException(
+            new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), request());
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   private static ServletWebRequest request() {
-    return new ServletWebRequest(new MockHttpServletRequest("GET", "/test"), new MockHttpServletResponse());
+    return new ServletWebRequest(
+        new MockHttpServletRequest("GET", "/test"), new MockHttpServletResponse());
   }
 }

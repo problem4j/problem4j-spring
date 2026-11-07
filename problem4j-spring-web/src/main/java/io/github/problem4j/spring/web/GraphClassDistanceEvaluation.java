@@ -21,8 +21,9 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Implementation of {@link ClassDistanceEvaluation} that calculates inheritance distance using a recursive graph-based
- * approach. Supports limiting the maximum depth to prevent stack overflow in deep or complex hierarchies.
+ * Implementation of {@link ClassDistanceEvaluation} that calculates inheritance distance using a
+ * recursive graph-based approach. Supports limiting the maximum depth to prevent stack overflow in
+ * deep or complex hierarchies.
  *
  * @since 1.2.0
  */
@@ -32,10 +33,11 @@ public class GraphClassDistanceEvaluation implements ClassDistanceEvaluation {
   private final TraversalStrategy traversal;
 
   /**
-   * Creates a {@link GraphClassDistanceEvaluation} using the default maximum depth and the given traversal modes.
+   * Creates a {@link GraphClassDistanceEvaluation} using the default maximum depth and the given
+   * traversal modes.
    *
-   * <p>Traversal modes define which parts of the inheritance hierarchy may be followed during distance calculation. If
-   * no modes are provided, no traversal will be performed.
+   * <p>Traversal modes define which parts of the inheritance hierarchy may be followed during
+   * distance calculation. If no modes are provided, no traversal will be performed.
    *
    * @param modes the traversal modes to enable
    * @since 1.2.0
@@ -45,11 +47,12 @@ public class GraphClassDistanceEvaluation implements ClassDistanceEvaluation {
   }
 
   /**
-   * Creates a {@link GraphClassDistanceEvaluation} using the default maximum depth and the given collection of
-   * traversal modes.
+   * Creates a {@link GraphClassDistanceEvaluation} using the default maximum depth and the given
+   * collection of traversal modes.
    *
-   * <p>The collection defines which parts of the inheritance hierarchy should be explored during distance calculation.
-   * If the collection is empty, both superclass and interface traversal are enabled by default.
+   * <p>The collection defines which parts of the inheritance hierarchy should be explored during
+   * distance calculation. If the collection is empty, both superclass and interface traversal are
+   * enabled by default.
    *
    * @param modes the traversal modes to enable
    * @since 1.2.0
@@ -59,10 +62,11 @@ public class GraphClassDistanceEvaluation implements ClassDistanceEvaluation {
   }
 
   /**
-   * Creates a {@link GraphClassDistanceEvaluation} with a custom maximum depth and the given traversal modes.
+   * Creates a {@link GraphClassDistanceEvaluation} with a custom maximum depth and the given
+   * traversal modes.
    *
-   * <p>Traversal modes define which hierarchy paths may be traversed, such as superclasses or interfaces. The evaluator
-   * will only explore the paths enabled by these modes.
+   * <p>Traversal modes define which hierarchy paths may be traversed, such as superclasses or
+   * interfaces. The evaluator will only explore the paths enabled by these modes.
    *
    * @param defaultMaxDepth the maximum depth to use for inheritance calculations
    * @param modes the traversal modes to enable
@@ -73,16 +77,19 @@ public class GraphClassDistanceEvaluation implements ClassDistanceEvaluation {
   }
 
   /**
-   * Creates a {@link GraphClassDistanceEvaluation} with a custom maximum depth and a list of traversal modes.
+   * Creates a {@link GraphClassDistanceEvaluation} with a custom maximum depth and a list of
+   * traversal modes.
    *
-   * <p>The collection defines which parts of the inheritance hierarchy should be explored during distance calculation.
-   * If the collection is empty, both superclass and interface traversal are enabled by default.
+   * <p>The collection defines which parts of the inheritance hierarchy should be explored during
+   * distance calculation. If the collection is empty, both superclass and interface traversal are
+   * enabled by default.
    *
    * @param defaultMaxDepth the maximum depth to use for inheritance calculations
    * @param modes the traversal modes to enable
    * @since 1.2.0
    */
-  public GraphClassDistanceEvaluation(int defaultMaxDepth, Collection<HierarchyTraversalMode> modes) {
+  public GraphClassDistanceEvaluation(
+      int defaultMaxDepth, Collection<HierarchyTraversalMode> modes) {
     this.defaultMaxDepth = defaultMaxDepth;
     this.traversal = resolveTraversal(modes);
   }
@@ -90,13 +97,14 @@ public class GraphClassDistanceEvaluation implements ClassDistanceEvaluation {
   /**
    * Calculates the inheritance distance between two class types.
    *
-   * <p>The distance represents how far target type is from the base type in the class hierarchy. If the types are not
-   * compatible, {@link Integer#MAX_VALUE} is returned.
+   * <p>The distance represents how far target type is from the base type in the class hierarchy. If
+   * the types are not compatible, {@link Integer#MAX_VALUE} is returned.
    *
    * @param target the class whose distance is being measured
    * @param base the class to measure distance to
    * @param maxDepth the maximum depth to traverse in the inheritance hierarchy
-   * @return number of superclass steps between the two types, or {@link Integer#MAX_VALUE} if not assignable
+   * @return number of superclass steps between the two types, or {@link Integer#MAX_VALUE} if not
+   *     assignable
    * @since 1.2.0
    */
   @Override
@@ -107,7 +115,8 @@ public class GraphClassDistanceEvaluation implements ClassDistanceEvaluation {
   /**
    * Returns the default maximum depth used when calculating inheritance distance.
    *
-   * <p>This limit helps prevent stack overflow when traversing deep or complex class/interface hierarchies.
+   * <p>This limit helps prevent stack overflow when traversing deep or complex class/interface
+   * hierarchies.
    *
    * @return the default maximum depth
    * @since 1.2.0
@@ -130,12 +139,16 @@ public class GraphClassDistanceEvaluation implements ClassDistanceEvaluation {
   }
 
   private TraversalStrategy resolveTraversal(Collection<HierarchyTraversalMode> modes) {
-    boolean superclassIncluded = modes.isEmpty() || modes.contains(HierarchyTraversalMode.SUPERCLASS);
-    boolean interfacesIncluded = modes.isEmpty() || modes.contains(HierarchyTraversalMode.INTERFACES);
+    boolean superclassIncluded =
+        modes.isEmpty() || modes.contains(HierarchyTraversalMode.SUPERCLASS);
+    boolean interfacesIncluded =
+        modes.isEmpty() || modes.contains(HierarchyTraversalMode.INTERFACES);
 
     if (superclassIncluded && interfacesIncluded) {
       return (target, base, nextDepth, maxDepth) ->
-          Math.min(viaSuperclass(target, base, nextDepth, maxDepth), viaInterfaces(target, base, nextDepth, maxDepth));
+          Math.min(
+              viaSuperclass(target, base, nextDepth, maxDepth),
+              viaInterfaces(target, base, nextDepth, maxDepth));
     }
     if (superclassIncluded) {
       return this::viaSuperclass;

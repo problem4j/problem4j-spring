@@ -32,11 +32,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * {@link OncePerRequestFilter} that ensures each request processed by a Web MVC application has an associated context
- * and trace identifier.
+ * {@link OncePerRequestFilter} that ensures each request processed by a Web MVC application has an
+ * associated context and trace identifier.
  *
- * <p>The filter reads the trace identifier from a configured HTTP header, generates one if missing, and stores it in
- * the {@link HttpServletRequest} attributes, response headers for downstream access.
+ * <p>The filter reads the trace identifier from a configured HTTP header, generates one if missing,
+ * and stores it in the {@link HttpServletRequest} attributes, response headers for downstream
+ * access.
  *
  * @since 1.2.0
  */
@@ -57,8 +58,8 @@ public class ProblemContextWebMvcFilter extends OncePerRequestFilter {
   /**
    * Applies the filter logic.
    *
-   * <p>Ensures that a trace identifier is available for the request, stores it in the exchange attributes, adds it to
-   * the response headers (if configured), and propagates it through.
+   * <p>Ensures that a trace identifier is available for the request, stores it in the exchange
+   * attributes, adds it to the response headers (if configured), and propagates it through.
    *
    * @param request the current server request
    * @param response the current server response
@@ -68,7 +69,8 @@ public class ProblemContextWebMvcFilter extends OncePerRequestFilter {
    * @since 1.2.0
    */
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+  protected void doFilterInternal(
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
     ProblemContext context = buildProblemContext(request, response);
 
@@ -81,19 +83,22 @@ public class ProblemContextWebMvcFilter extends OncePerRequestFilter {
   /**
    * Builds or retrieves an existing {@link ProblemContext} for the given request.
    *
-   * <p>If the exchange already contains a {@link ProblemContext} attribute, that instance is reused. Otherwise, a new
-   * one is created using {@link #findTraceId} and {@link #initTraceId}.
+   * <p>If the exchange already contains a {@link ProblemContext} attribute, that instance is
+   * reused. Otherwise, a new one is created using {@link #findTraceId} and {@link #initTraceId}.
    *
    * @param request the current server request
    * @param response the current server response
    * @return an existing or newly created {@link ProblemContext}
    * @since 1.2.0
    */
-  protected ProblemContext buildProblemContext(HttpServletRequest request, HttpServletResponse response) {
+  protected ProblemContext buildProblemContext(
+      HttpServletRequest request, HttpServletResponse response) {
     return request.getAttribute(PROBLEM_CONTEXT_ATTRIBUTE) instanceof ProblemContext attribute
         ? attribute
         : ProblemContext.create()
-            .put("traceId", findTraceId(request, response).orElseGet(() -> initTraceId(request, response)));
+            .put(
+                "traceId",
+                findTraceId(request, response).orElseGet(() -> initTraceId(request, response)));
   }
 
   /**
@@ -111,8 +116,8 @@ public class ProblemContextWebMvcFilter extends OncePerRequestFilter {
   /**
    * Initializes a new trace identifier for the request if one cannot be found.
    *
-   * <p>If a tracing header name is configured in {@link ProblemContextSettings}, the header value is used if present.
-   * Otherwise, a new one is generated using {@link #createNewTraceId}.
+   * <p>If a tracing header name is configured in {@link ProblemContextSettings}, the header value
+   * is used if present. Otherwise, a new one is generated using {@link #createNewTraceId}.
    *
    * @param request the current server request
    * @param response the current server response
@@ -130,8 +135,8 @@ public class ProblemContextWebMvcFilter extends OncePerRequestFilter {
   /**
    * Generates a new trace identifier.
    *
-   * <p>Subclasses may override this method to customize the trace ID generation logic. By default, it generates a
-   * random UUID and removes dashes, producing a 32-character lowercase hex string.
+   * <p>Subclasses may override this method to customize the trace ID generation logic. By default,
+   * it generates a random UUID and removes dashes, producing a 32-character lowercase hex string.
    *
    * @param request the current server request
    * @param response the current server response
@@ -180,7 +185,8 @@ public class ProblemContextWebMvcFilter extends OncePerRequestFilter {
    * @param context the current {@link ProblemContext}
    * @since 1.2.0
    */
-  protected void assignTracingHeader(HttpServletRequest request, HttpServletResponse response, ProblemContext context) {
+  protected void assignTracingHeader(
+      HttpServletRequest request, HttpServletResponse response, ProblemContext context) {
     if (StringUtils.hasLength(settings.getTracingHeaderName())) {
       response.setHeader(settings.getTracingHeaderName(), context.get("traceId"));
     }

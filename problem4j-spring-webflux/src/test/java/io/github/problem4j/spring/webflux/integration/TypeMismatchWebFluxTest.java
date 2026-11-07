@@ -74,7 +74,8 @@ class TypeMismatchWebFluxTest {
   void givenRequestWithInvalidParameterType_shouldReturnProblem() {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path("/type-mismatch/request-param").queryParam("id", "abc").build())
+        .uri(uriBuilder ->
+            uriBuilder.path("/type-mismatch/request-param").queryParam("id", "abc").build())
         .exchange()
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)
@@ -95,7 +96,8 @@ class TypeMismatchWebFluxTest {
   void givenRequestWithValidParameter_shouldReturnOk() {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path("/type-mismatch/request-param").queryParam("id", "123").build())
+        .uri(uriBuilder ->
+            uriBuilder.path("/type-mismatch/request-param").queryParam("id", "123").build())
         .exchange()
         .expectStatus()
         .isEqualTo(HttpStatus.OK)

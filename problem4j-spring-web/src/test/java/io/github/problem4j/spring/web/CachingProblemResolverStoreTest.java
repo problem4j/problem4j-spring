@@ -52,7 +52,8 @@ class CachingProblemResolverStoreTest {
     }
 
     @Override
-    public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+    public Problem resolve(
+        ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
       return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
   }
@@ -107,7 +108,8 @@ class CachingProblemResolverStoreTest {
     }
 
     @Override
-    public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+    public Problem resolve(
+        ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
       return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
   }
@@ -191,14 +193,16 @@ class CachingProblemResolverStoreTest {
   }
 
   @Test
-  void givenAnonymousInnerExceptionWithoutMatchingResolver_whenFindingResolverTwice_thenEmptyResultIsCached() {
+  void
+      givenAnonymousInnerExceptionWithoutMatchingResolver_whenFindingResolverTwice_thenEmptyResultIsCached() {
     AtomicInteger computeCounter = new AtomicInteger(0);
     Exception anonymous = new IllegalStateException() {};
 
     CachingProblemResolverStore store =
         new CachingProblemResolverStore(clazz -> {
           computeCounter.incrementAndGet();
-          return new DefaultProblemResolverStore(List.of(new DummyResolver(IllegalArgumentException.class)))
+          return new DefaultProblemResolverStore(
+                  List.of(new DummyResolver(IllegalArgumentException.class)))
               .findResolver(clazz);
         });
 

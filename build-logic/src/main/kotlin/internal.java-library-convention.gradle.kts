@@ -114,5 +114,8 @@ tasks.named<Task>("check").configure {
 }
 
 tasks.withType<Javadoc>().configureEach {
-    javadocTool = javaToolchains.javadocToolFor { languageVersion = JavaLanguageVersion.of(javaTargetVersion) }
+    javadocTool =
+        javaToolchains.javadocToolFor {
+            languageVersion = JavaLanguageVersion.of(javaTargetVersion)
+        }
 }
