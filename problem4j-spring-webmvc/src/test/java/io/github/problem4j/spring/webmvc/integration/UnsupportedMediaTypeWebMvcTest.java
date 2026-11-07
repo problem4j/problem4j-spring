@@ -49,8 +49,7 @@ class UnsupportedMediaTypeWebMvcTest {
 
     HttpEntity<String> request = new HttpEntity<>("some text", headers);
 
-    ResponseEntity<String> response =
-        restTemplate.postForEntity("/unsupported-media-type", request, String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity("/unsupported-media-type", request, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);

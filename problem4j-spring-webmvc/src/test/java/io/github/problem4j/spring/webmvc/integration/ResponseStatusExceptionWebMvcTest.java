@@ -41,8 +41,7 @@ class ResponseStatusExceptionWebMvcTest {
 
   @Test
   void givenResponseStatusException_shouldReturnProblem() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/response-status-exception", String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/response-status-exception", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.GONE);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -55,8 +54,7 @@ class ResponseStatusExceptionWebMvcTest {
   @Test
   void givenResponseStatusExceptionWithReason_returnProblemWithStatusOnly() {
     ResponseEntity<String> response =
-        restTemplate.getForEntity(
-            "/response-status-exception?reason=resource%20gone", String.class);
+        restTemplate.getForEntity("/response-status-exception?reason=resource%20gone", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.GONE);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);

@@ -43,8 +43,7 @@ class DefaultBindingResultSupportTest {
     List<Violation> violations = support.fetchViolations(bindingResult);
 
     assertThat(violations)
-        .containsExactly(
-            new Violation("name", "must not be blank"), new Violation(null, "object invalid"));
+        .containsExactly(new Violation("name", "must not be blank"), new Violation(null, "object invalid"));
   }
 
   @Test
@@ -52,8 +51,7 @@ class DefaultBindingResultSupportTest {
     TestObject target = new TestObject();
     BindingResult bindingResult = new BeanPropertyBindingResult(target, "testObject");
 
-    bindingResult.addError(
-        new FieldError("testObject", "age", target, true, null, null, "should be ignored message"));
+    bindingResult.addError(new FieldError("testObject", "age", target, true, null, null, "should be ignored message"));
 
     List<Violation> violations = support.fetchViolations(bindingResult);
 

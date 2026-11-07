@@ -72,18 +72,13 @@ public class ProblemWebMvcProperties {
       @Nullable ExceptionHandler exceptionHandler,
       @Nullable ErrorController errorController) {
     this.enabled = enabled;
-    this.exceptionAdvice =
-        exceptionAdvice != null ? exceptionAdvice : ExceptionAdvice.createDefault();
+    this.exceptionAdvice = exceptionAdvice != null ? exceptionAdvice : ExceptionAdvice.createDefault();
     this.problemExceptionAdvice =
-        problemExceptionAdvice != null
-            ? problemExceptionAdvice
-            : ProblemExceptionAdvice.createDefault();
+        problemExceptionAdvice != null ? problemExceptionAdvice : ProblemExceptionAdvice.createDefault();
     this.problemContextFilter =
         problemContextFilter != null ? problemContextFilter : ProblemContextFilter.createDefault();
-    this.exceptionHandler =
-        exceptionHandler != null ? exceptionHandler : ExceptionHandler.createDefault();
-    this.errorController =
-        errorController != null ? errorController : ErrorController.createDefault();
+    this.exceptionHandler = exceptionHandler != null ? exceptionHandler : ExceptionHandler.createDefault();
+    this.errorController = errorController != null ? errorController : ErrorController.createDefault();
   }
 
   /**
@@ -97,8 +92,8 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Returns configuration for {@code ExceptionWebMvcAdvice}, which handles general exceptions and
-   * converts them to {@code Problem} responses.
+   * Returns configuration for {@code ExceptionWebMvcAdvice}, which handles general exceptions and converts them to
+   * {@code Problem} responses.
    *
    * @return the configuration for exception advice
    * @see io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice
@@ -109,8 +104,8 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemExceptionWebMvcAdvice}, which handles exceptions of
-   * type {@code ProblemException} and converts them to Problem responses.
+   * Returns configuration for {@code ProblemExceptionWebMvcAdvice}, which handles exceptions of type {@code
+   * ProblemException} and converts them to Problem responses.
    *
    * @return the configuration for problem exception advice
    * @see io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice
@@ -121,8 +116,8 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemContextWebMvcFilter}, which enriches request handling
-   * with {@code ProblemContext}.
+   * Returns configuration for {@code ProblemContextWebMvcFilter}, which enriches request handling with {@code
+   * ProblemContext}.
    *
    * @return the configuration for the {@code ProblemContextWebMvcFilter}
    * @see io.github.problem4j.core.ProblemContext
@@ -134,9 +129,8 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemEnhancedWebMvcHandler} replacement, which allows
-   * Problem4J to take control of exception handling normally performed by Spring's {@code
-   * ResponseEntityExceptionHandler}.
+   * Returns configuration for {@code ProblemEnhancedWebMvcHandler} replacement, which allows Problem4J to take control
+   * of exception handling normally performed by Spring's {@code ResponseEntityExceptionHandler}.
    *
    * @return the configuration for the overwritten exception handler
    * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
@@ -148,8 +142,8 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemErrorController} replacement, which allows Problem4J to
-   * take control of exception handling normally performed by Spring's {@code ErrorController}.
+   * Returns configuration for {@code ProblemErrorController} replacement, which allows Problem4J to take control of
+   * exception handling normally performed by Spring's {@code ErrorController}.
    *
    * @return the configuration for the overwritten error handler
    * @see org.springframework.boot.webmvc.error.ErrorController
@@ -356,8 +350,8 @@ public class ProblemWebMvcProperties {
     /**
      * Creates a new configuration group for {@code ProblemEnhancedWebMvcHandler}.
      *
-     * @param enabled whether the {@code ResponseEntityExceptionHandler} should be replaced with
-     *     {@code ProblemEnhancedWebMvcHandler}
+     * @param enabled whether the {@code ResponseEntityExceptionHandler} should be replaced with {@code
+     *     ProblemEnhancedWebMvcHandler}
      * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
      * @see org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
      * @since 1.2.0
@@ -414,8 +408,7 @@ public class ProblemWebMvcProperties {
     /**
      * Creates a new configuration group.
      *
-     * @param enabled whether the {@code ErrorController} should be replaced with {@code
-     *     ProblemErrorController}
+     * @param enabled whether the {@code ErrorController} should be replaced with {@code ProblemErrorController}
      * @see io.github.problem4j.spring.webmvc.ProblemErrorController
      * @see org.springframework.boot.webmvc.error.ErrorController
      * @since 1.2.0

@@ -66,15 +66,10 @@ class ProblemEnhancedWebMvcHandlerTest {
     ResponseEntity<Object> response =
         requireNonNull(
             advice.handleExceptionInternal(
-                new RuntimeException(),
-                null,
-                new HttpHeaders(),
-                HttpStatus.BAD_REQUEST,
-                request()));
+                new RuntimeException(), null, new HttpHeaders(), HttpStatus.BAD_REQUEST, request()));
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(requireNonNull((Problem) response.getBody()).getStatus())
-        .isEqualTo(HttpStatus.BAD_REQUEST.value());
+    assertThat(requireNonNull((Problem) response.getBody()).getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
   }
 
   @Test
@@ -87,25 +82,18 @@ class ProblemEnhancedWebMvcHandlerTest {
           }
 
           @Override
-          public Problem resolve(
-              ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+          public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
             return Problem.builder().status(422).detail("from-resolver").build();
           }
         };
     advice =
         new ProblemEnhancedWebMvcHandler(
-            new DefaultProblemResolverStore(List.of(resolver)),
-            ProblemPostProcessor.identity(),
-            List.of());
+            new DefaultProblemResolverStore(List.of(resolver)), ProblemPostProcessor.identity(), List.of());
 
     ResponseEntity<Object> response =
         requireNonNull(
             advice.handleExceptionInternal(
-                new IllegalArgumentException(),
-                null,
-                new HttpHeaders(),
-                HttpStatus.BAD_REQUEST,
-                request()));
+                new IllegalArgumentException(), null, new HttpHeaders(), HttpStatus.BAD_REQUEST, request()));
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT);
     assertThat(requireNonNull((Problem) response.getBody()).getDetail()).isEqualTo("from-resolver");
@@ -116,14 +104,9 @@ class ProblemEnhancedWebMvcHandlerTest {
     ResponseEntity<Object> response =
         requireNonNull(
             advice.handleExceptionInternal(
-                new RuntimeException(),
-                null,
-                new HttpHeaders(),
-                HttpStatus.BAD_REQUEST,
-                request()));
+                new RuntimeException(), null, new HttpHeaders(), HttpStatus.BAD_REQUEST, request()));
 
-    assertThat(response.getHeaders().getContentType())
-        .isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
+    assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
 
   @Test
@@ -137,11 +120,7 @@ class ProblemEnhancedWebMvcHandlerTest {
     ResponseEntity<Object> response =
         requireNonNull(
             advice.handleExceptionInternal(
-                new RuntimeException(),
-                null,
-                new HttpHeaders(),
-                HttpStatus.BAD_REQUEST,
-                request()));
+                new RuntimeException(), null, new HttpHeaders(), HttpStatus.BAD_REQUEST, request()));
 
     assertThat(requireNonNull((Problem) response.getBody()).getDetail()).isEqualTo("processed");
   }
@@ -159,17 +138,12 @@ class ProblemEnhancedWebMvcHandlerTest {
     ResponseEntity<Object> response =
         requireNonNull(
             advice.handleExceptionInternal(
-                new RuntimeException(),
-                null,
-                new HttpHeaders(),
-                HttpStatus.BAD_REQUEST,
-                request()));
+                new RuntimeException(), null, new HttpHeaders(), HttpStatus.BAD_REQUEST, request()));
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   private static ServletWebRequest request() {
-    return new ServletWebRequest(
-        new MockHttpServletRequest("GET", "/test"), new MockHttpServletResponse());
+    return new ServletWebRequest(new MockHttpServletRequest("GET", "/test"), new MockHttpServletResponse());
   }
 }

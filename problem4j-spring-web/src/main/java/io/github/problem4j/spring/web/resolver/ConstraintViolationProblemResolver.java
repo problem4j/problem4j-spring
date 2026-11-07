@@ -32,13 +32,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 /**
- * Handles {@link ConstraintViolationException} thrown when one or more Bean Validation constraints
- * are violated.
+ * Handles {@link ConstraintViolationException} thrown when one or more Bean Validation constraints are violated.
  *
  * <p>Relates with {@code MethodValidationException} (see {@link MethodValidationProblemResolver}).
  *
- * <p>This exception indicates that method parameters, return values, or other validated elements
- * failed to satisfy declared {@code @Valid} or {@code @Constraint} annotations.
+ * <p>This exception indicates that method parameters, return values, or other validated elements failed to satisfy
+ * declared {@code @Valid} or {@code @Constraint} annotations.
  *
  * @see org.springframework.validation.method.MethodValidationException
  * @since 1.2.0
@@ -65,9 +64,8 @@ public class ConstraintViolationProblemResolver extends AbstractProblemResolver 
   }
 
   /**
-   * Returns a {@link Problem} with {@link HttpStatus#BAD_REQUEST}, a formatted {@code detail}, and
-   * an {@code errors} extension listing each constraint violation (property and message) extracted
-   * from the exception.
+   * Returns a {@link Problem} with {@link HttpStatus#BAD_REQUEST}, a formatted {@code detail}, and an {@code errors}
+   * extension listing each constraint violation (property and message) extracted from the exception.
    *
    * @param context problem context (ignored)
    * @param ex the thrown {@link ConstraintViolationException}
@@ -77,8 +75,7 @@ public class ConstraintViolationProblemResolver extends AbstractProblemResolver 
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ConstraintViolationException e = (ConstraintViolationException) ex;
     List<Violation> errors = extractViolations(e);
 
@@ -90,8 +87,8 @@ public class ConstraintViolationProblemResolver extends AbstractProblemResolver 
   }
 
   /**
-   * Converts each {@link ConstraintViolation} into a {@link Violation} capturing the leaf property
-   * name and its validation message.
+   * Converts each {@link ConstraintViolation} into a {@link Violation} capturing the leaf property name and its
+   * validation message.
    *
    * @since 1.2.0
    */
@@ -102,8 +99,8 @@ public class ConstraintViolationProblemResolver extends AbstractProblemResolver 
   }
 
   /**
-   * Returns the simple (leaf) property name from a violation's {@link Path}. If the path or its
-   * terminal node name is absent, returns an empty string.
+   * Returns the simple (leaf) property name from a violation's {@link Path}. If the path or its terminal node name is
+   * absent, returns an empty string.
    *
    * @since 1.2.0
    */

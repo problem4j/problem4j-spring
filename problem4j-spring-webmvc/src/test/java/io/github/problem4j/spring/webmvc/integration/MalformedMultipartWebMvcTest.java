@@ -52,8 +52,7 @@ class MalformedMultipartWebMvcTest {
 
     HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-    ResponseEntity<String> response =
-        restTemplate.postForEntity("/malformed-multipart", requestEntity, String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity("/malformed-multipart", requestEntity, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);

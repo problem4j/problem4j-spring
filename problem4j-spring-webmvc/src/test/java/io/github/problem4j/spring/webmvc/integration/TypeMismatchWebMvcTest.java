@@ -45,8 +45,7 @@ class TypeMismatchWebMvcTest {
 
   @Test
   void givenRequestWithInvalidPathVariable_shouldReturnProblem() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/type-mismatch/path-variable/abc", String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/type-mismatch/path-variable/abc", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -65,8 +64,7 @@ class TypeMismatchWebMvcTest {
 
   @Test
   void givenRequestWithValidPathVariable_shouldReturnOk() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/type-mismatch/path-variable/123", String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/type-mismatch/path-variable/123", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
@@ -74,8 +72,7 @@ class TypeMismatchWebMvcTest {
 
   @Test
   void givenRequestWithInvalidParameterType_shouldReturnProblem() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/type-mismatch/request-param?id=abc", String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/type-mismatch/request-param?id=abc", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -94,8 +91,7 @@ class TypeMismatchWebMvcTest {
 
   @Test
   void givenRequestWithValidParameter_shouldReturnOk() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/type-mismatch/request-param?id=123", String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/type-mismatch/request-param?id=123", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
@@ -109,8 +105,7 @@ class TypeMismatchWebMvcTest {
     HttpEntity<Void> request = new HttpEntity<>(headers);
 
     ResponseEntity<String> response =
-        restTemplate.exchange(
-            "/type-mismatch/request-header", HttpMethod.GET, request, String.class);
+        restTemplate.exchange("/type-mismatch/request-header", HttpMethod.GET, request, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -135,8 +130,7 @@ class TypeMismatchWebMvcTest {
     HttpEntity<Void> request = new HttpEntity<>(headers);
 
     ResponseEntity<String> response =
-        restTemplate.exchange(
-            "/type-mismatch/request-header", HttpMethod.GET, request, String.class);
+        restTemplate.exchange("/type-mismatch/request-header", HttpMethod.GET, request, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
@@ -189,8 +183,7 @@ class TypeMismatchWebMvcTest {
     String json = "{\"name\": \"Test\", \"status\": \"INVALID\"}";
     HttpEntity<String> request = new HttpEntity<>(json, headers);
 
-    ResponseEntity<String> response =
-        restTemplate.postForEntity("/type-mismatch/request-body", request, String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity("/type-mismatch/request-body", request, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -215,8 +208,7 @@ class TypeMismatchWebMvcTest {
     String json = "{\"name\": \"Test\", \"status\": \"ACTIVE\"}";
     HttpEntity<String> request = new HttpEntity<>(json, headers);
 
-    ResponseEntity<String> response =
-        restTemplate.postForEntity("/type-mismatch/request-body", request, String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity("/type-mismatch/request-body", request, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }

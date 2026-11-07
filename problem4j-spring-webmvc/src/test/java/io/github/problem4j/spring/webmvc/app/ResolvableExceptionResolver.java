@@ -35,8 +35,7 @@ public class ResolvableExceptionResolver implements ProblemResolver {
   }
 
   @Override
-  public Problem resolve(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     return Problem.builder()
         .type("http://exception.example.org/resolvable")
         .title(ex.getClass().getSimpleName())

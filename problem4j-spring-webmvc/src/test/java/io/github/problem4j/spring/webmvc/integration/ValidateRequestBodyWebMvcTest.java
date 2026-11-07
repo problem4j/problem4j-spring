@@ -75,8 +75,7 @@ class ValidateRequestBodyWebMvcTest {
   void givenGlobalValidationViolation_shouldReturnProblemWithoutFieldName() {
     AlwaysInvalidRequest body = new AlwaysInvalidRequest("value");
 
-    ResponseEntity<String> response =
-        restTemplate.postForEntity("/validate-global-object", body, String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity("/validate-global-object", body, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -95,8 +94,7 @@ class ValidateRequestBodyWebMvcTest {
   }
 
   @ParameterizedTest
-  @ValueSource(
-      strings = {"{ \"name\": \"Alice\"", "not a json", "123", "[1, 2, 3]", "\"just a string\""})
+  @ValueSource(strings = {"{ \"name\": \"Alice\"", "not a json", "123", "[1, 2, 3]", "\"just a string\""})
   @NullSource
   void givenMalformedRequestBody_shouldReturnProblem(String json) {
     HttpHeaders headers = new HttpHeaders();
@@ -104,8 +102,7 @@ class ValidateRequestBodyWebMvcTest {
 
     HttpEntity<String> entity = new HttpEntity<>(json, headers);
 
-    ResponseEntity<String> response =
-        restTemplate.postForEntity("/validate-request-body", entity, String.class);
+    ResponseEntity<String> response = restTemplate.postForEntity("/validate-request-body", entity, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);

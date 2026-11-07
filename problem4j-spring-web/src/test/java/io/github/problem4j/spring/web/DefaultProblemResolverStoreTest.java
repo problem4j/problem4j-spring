@@ -49,8 +49,7 @@ class DefaultProblemResolverStoreTest {
     }
 
     @Override
-    public Problem resolve(
-        ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+    public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
       return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
   }

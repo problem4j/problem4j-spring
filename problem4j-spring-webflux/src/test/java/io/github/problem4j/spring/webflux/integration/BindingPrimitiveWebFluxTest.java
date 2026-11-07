@@ -119,29 +119,28 @@ class BindingPrimitiveWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(
-            problem -> {
-              String expectedKind;
-              if (path.endsWith("/boolean")) {
-                expectedKind = "boolean";
-              } else if (path.endsWith("/float") || path.endsWith("/double")) {
-                expectedKind = "number";
-              } else {
-                expectedKind = "integer";
-              }
+        .value(problem -> {
+          String expectedKind;
+          if (path.endsWith("/boolean")) {
+            expectedKind = "boolean";
+          } else if (path.endsWith("/float") || path.endsWith("/double")) {
+            expectedKind = "number";
+          } else {
+            expectedKind = "integer";
+          }
 
-              Problem expected =
-                  Problem.builder()
-                      .status(HttpStatus.BAD_REQUEST.value())
-                      .detail("type mismatch")
-                      .extension("property", "value")
-                      .extension("kind", expectedKind)
-                      .build();
+          Problem expected =
+              Problem.builder()
+                  .status(HttpStatus.BAD_REQUEST.value())
+                  .detail("type mismatch")
+                  .extension("property", "value")
+                  .extension("kind", expectedKind)
+                  .build();
 
-              if (!problem.equals(expected)) {
-                assertThat(problem).isEqualTo(Problem.of(HttpStatus.BAD_REQUEST.value()));
-              }
-            });
+          if (!problem.equals(expected)) {
+            assertThat(problem).isEqualTo(Problem.of(HttpStatus.BAD_REQUEST.value()));
+          }
+        });
   }
 
   @ParameterizedTest
@@ -221,26 +220,25 @@ class BindingPrimitiveWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(
-            problem -> {
-              String expectedKind;
-              if (path.endsWith("/boolean")) {
-                expectedKind = "boolean";
-              } else if (path.endsWith("/float") || path.endsWith("/double")) {
-                expectedKind = "number";
-              } else {
-                expectedKind = "integer";
-              }
+        .value(problem -> {
+          String expectedKind;
+          if (path.endsWith("/boolean")) {
+            expectedKind = "boolean";
+          } else if (path.endsWith("/float") || path.endsWith("/double")) {
+            expectedKind = "number";
+          } else {
+            expectedKind = "integer";
+          }
 
-              assertThat(problem)
-                  .isEqualTo(
-                      Problem.builder()
-                          .status(HttpStatus.BAD_REQUEST.value())
-                          .detail("type mismatch")
-                          .extension("property", "nested.value")
-                          .extension("kind", expectedKind)
-                          .build());
-            });
+          assertThat(problem)
+              .isEqualTo(
+                  Problem.builder()
+                      .status(HttpStatus.BAD_REQUEST.value())
+                      .detail("type mismatch")
+                      .extension("property", "nested.value")
+                      .extension("kind", expectedKind)
+                      .build());
+        });
   }
 
   @ParameterizedTest
@@ -267,26 +265,25 @@ class BindingPrimitiveWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(
-            problem -> {
-              String expectedKind;
-              if (path.endsWith("/boolean")) {
-                expectedKind = "boolean";
-              } else if (path.endsWith("/float") || path.endsWith("/double")) {
-                expectedKind = "number";
-              } else {
-                expectedKind = "integer";
-              }
+        .value(problem -> {
+          String expectedKind;
+          if (path.endsWith("/boolean")) {
+            expectedKind = "boolean";
+          } else if (path.endsWith("/float") || path.endsWith("/double")) {
+            expectedKind = "number";
+          } else {
+            expectedKind = "integer";
+          }
 
-              assertThat(problem)
-                  .isEqualTo(
-                      Problem.builder()
-                          .status(HttpStatus.BAD_REQUEST.value())
-                          .detail("type mismatch")
-                          .extension("property", "value")
-                          .extension("kind", expectedKind)
-                          .build());
-            });
+          assertThat(problem)
+              .isEqualTo(
+                  Problem.builder()
+                      .status(HttpStatus.BAD_REQUEST.value())
+                      .detail("type mismatch")
+                      .extension("property", "value")
+                      .extension("kind", expectedKind)
+                      .build());
+        });
   }
 
   @ParameterizedTest
@@ -310,20 +307,19 @@ class BindingPrimitiveWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(
-            problem -> {
-              Problem expected =
-                  Problem.builder()
-                      .status(HttpStatus.BAD_REQUEST.value())
-                      .detail("type mismatch")
-                      .extension("property", "value")
-                      .extension("kind", "integer")
-                      .build();
+        .value(problem -> {
+          Problem expected =
+              Problem.builder()
+                  .status(HttpStatus.BAD_REQUEST.value())
+                  .detail("type mismatch")
+                  .extension("property", "value")
+                  .extension("kind", "integer")
+                  .build();
 
-              if (!problem.equals(expected)) {
-                assertThat(problem).isEqualTo(Problem.of(HttpStatus.BAD_REQUEST.value()));
-              }
-            });
+          if (!problem.equals(expected)) {
+            assertThat(problem).isEqualTo(Problem.of(HttpStatus.BAD_REQUEST.value()));
+          }
+        });
   }
 
   @Test
@@ -339,20 +335,19 @@ class BindingPrimitiveWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(
-            problem -> {
-              Problem expected =
-                  Problem.builder()
-                      .status(HttpStatus.BAD_REQUEST.value())
-                      .detail("type mismatch")
-                      .extension("property", "value")
-                      .extension("kind", "integer")
-                      .build();
+        .value(problem -> {
+          Problem expected =
+              Problem.builder()
+                  .status(HttpStatus.BAD_REQUEST.value())
+                  .detail("type mismatch")
+                  .extension("property", "value")
+                  .extension("kind", "integer")
+                  .build();
 
-              if (!problem.equals(expected)) {
-                assertThat(problem).isEqualTo(Problem.of(HttpStatus.BAD_REQUEST.value()));
-              }
-            });
+          if (!problem.equals(expected)) {
+            assertThat(problem).isEqualTo(Problem.of(HttpStatus.BAD_REQUEST.value()));
+          }
+        });
   }
 
   @Test
@@ -402,15 +397,14 @@ class BindingPrimitiveWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(
-            problem ->
-                assertThat(problem)
-                    .isEqualTo(
-                        Problem.builder()
-                            .status(HttpStatus.BAD_REQUEST.value())
-                            .detail("type mismatch")
-                            .extension("property", expectedProperty)
-                            .extension("kind", expectedKind)
-                            .build()));
+        .value(problem ->
+            assertThat(problem)
+                .isEqualTo(
+                    Problem.builder()
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .detail("type mismatch")
+                        .extension("property", expectedProperty)
+                        .extension("kind", expectedKind)
+                        .build()));
   }
 }

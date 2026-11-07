@@ -34,15 +34,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ServerErrorException;
 
 /**
- * Handles {@link ServerErrorException} thrown when a server-side error occurs while processing a
+ * Handles {@link ServerErrorException} thrown when a server-side error occurs while processing a request.
+ *
+ * <p>This exception indicates that an unexpected condition or internal failure prevented the server from fulfilling the
  * request.
  *
- * <p>This exception indicates that an unexpected condition or internal failure prevented the server
- * from fulfilling the request.
- *
- * <p>The handler is responsible for returning an appropriate HTTP 5xx response (e.g., 500 Internal
- * Server Error) to inform the client that the request could not be processed due to a server-side
- * problem.
+ * <p>The handler is responsible for returning an appropriate HTTP 5xx response (e.g., 500 Internal Server Error) to
+ * inform the client that the request could not be processed due to a server-side problem.
  *
  * @since 1.2.0
  */
@@ -70,11 +68,10 @@ public class ServerErrorProblemResolver extends AbstractProblemResolver {
   /**
    * Resolves a {@link ServerErrorException} into an immutable {@link Problem}.
    *
-   * <p>Special case: Spring WebFlux's {@code PathVariableMethodArgumentResolver} raises {@link
-   * ServerErrorException} (instead of a missing-value exception) when a required {@code
-   * PathVariable} is absent. In that scenario this method returns a BAD_REQUEST problem with a
-   * standardized detail ({@code ViolationSupport#MISSING_PATH_VARIABLE_DETAIL}) and an extension
-   * "{@code ViolationSupport#NAME_EXTENSION}" containing the variable name.
+   * <p>Special case: Spring WebFlux's {@code PathVariableMethodArgumentResolver} raises {@link ServerErrorException}
+   * (instead of a missing-value exception) when a required {@code PathVariable} is absent. In that scenario this method
+   * returns a BAD_REQUEST problem with a standardized detail ({@code ViolationSupport#MISSING_PATH_VARIABLE_DETAIL})
+   * and an extension "{@code ViolationSupport#NAME_EXTENSION}" containing the variable name.
    *
    * <p>Otherwise, it falls back to a generic INTERNAL_SERVER_ERROR problem.
    *
@@ -89,8 +86,7 @@ public class ServerErrorProblemResolver extends AbstractProblemResolver {
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ServerErrorException e = (ServerErrorException) ex;
 
     if (isMissingPathVariableError(e)) {
@@ -106,9 +102,9 @@ public class ServerErrorProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Unlike other implementations of {@code AbstractNamedValueSyncArgumentResolver} that throw
-   * {@code MissingRequestValueException} when certain {@code @RestController} argument is missing,
-   * {@code PathVariableMethodArgumentResolver} throws {@code ServerErrorException}.
+   * Unlike other implementations of {@code AbstractNamedValueSyncArgumentResolver} that throw {@code
+   * MissingRequestValueException} when certain {@code @RestController} argument is missing, {@code
+   * PathVariableMethodArgumentResolver} throws {@code ServerErrorException}.
    *
    * <ul>
    *   <li>{@code MissingRequestValueException} (from {@code spring-web})
@@ -119,8 +115,7 @@ public class ServerErrorProblemResolver extends AbstractProblemResolver {
    *
    * @see org.springframework.web.server.MissingRequestValueException
    * @see org.springframework.web.server.ServerErrorException
-   * @return {@code true} if the exception actually refers to missing path variable, {@code false}
-   *     otherwise
+   * @return {@code true} if the exception actually refers to missing path variable, {@code false} otherwise
    * @since 1.2.0
    */
   private boolean isMissingPathVariableError(ServerErrorException e) {
@@ -131,15 +126,12 @@ public class ServerErrorProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Derives a path variable's logical name from the {@link MethodParameter}. If the parameter is
-   * annotated with {@link PathVariable} and its {@code name} attribute is non-empty, that value is
-   * returned; otherwise the Java parameter name (which may be {@code null} if not compiled with
-   * {@code -parameters}) is returned.
+   * Derives a path variable's logical name from the {@link MethodParameter}. If the parameter is annotated with {@link
+   * PathVariable} and its {@code name} attribute is non-empty, that value is returned; otherwise the Java parameter
+   * name (which may be {@code null} if not compiled with {@code -parameters}) is returned.
    *
-   * @param methodParameter the method parameter describing the missing path variable (never null
-   *     when invoked)
-   * @return explicit annotation name, falling back to the reflective parameter name (may be {@code
-   *     null})
+   * @param methodParameter the method parameter describing the missing path variable (never null when invoked)
+   * @return explicit annotation name, falling back to the reflective parameter name (may be {@code null})
    * @since 1.2.0
    */
   private @Nullable String findParameterName(@Nullable MethodParameter methodParameter) {

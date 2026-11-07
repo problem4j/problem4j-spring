@@ -17,8 +17,8 @@
 /**
  * Core Spring Web integration for Problem4J.
  *
- * <p>Provides base classes and utilities for resolving exceptions into {@code Problem} responses,
- * used by both Spring WebMVC and WebFlux.
+ * <p>Provides base classes and utilities for resolving exceptions into {@code Problem} responses, used by both Spring
+ * WebMVC and WebFlux.
  */
 @NullMarked
 package io.github.problem4j.spring.web;

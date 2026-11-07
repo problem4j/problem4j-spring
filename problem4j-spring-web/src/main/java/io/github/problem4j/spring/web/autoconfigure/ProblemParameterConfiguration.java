@@ -30,8 +30,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.method.MethodValidationResult;
 
 /**
- * Configuration for parameter support components, such as method parameter name resolution and
- * binding / method validation result conversion.
+ * Configuration for parameter support components, such as method parameter name resolution and binding / method
+ * validation result conversion.
  */
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.ANY)
 @Configuration(proxyBeanMethods = false)
@@ -65,8 +65,7 @@ class ProblemParameterConfiguration {
      */
     @ConditionalOnMissingBean(MethodValidationResultSupport.class)
     @Bean
-    MethodValidationResultSupport problemMethodValidationResultSupport(
-        MethodParameterSupport methodParameterSupport) {
+    MethodValidationResultSupport problemMethodValidationResultSupport(MethodParameterSupport methodParameterSupport) {
       return new DefaultMethodValidationResultSupport(methodParameterSupport);
     }
   }

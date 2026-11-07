@@ -34,7 +34,6 @@ public class ProblemOverrideController {
 
   @PostMapping(path = "/type-not-blank")
   public String typeNotBlank() {
-    throw new ProblemException(
-        Problem.builder().type("not-blank").status(HttpStatus.BAD_REQUEST.value()).build());
+    throw new ProblemException(Problem.builder().type("not-blank").status(HttpStatus.BAD_REQUEST.value()).build());
   }
 }

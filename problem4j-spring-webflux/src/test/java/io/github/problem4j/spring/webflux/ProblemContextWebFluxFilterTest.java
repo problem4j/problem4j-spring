@@ -29,8 +29,7 @@ class ProblemContextWebFluxFilterTest {
   @Test
   void givenNoTracingHeaderName_whenFilter_thenGeneratedTraceIdIsLowercase32HexCharacters() {
     ProblemContextWebFluxFilter filter = new ProblemContextWebFluxFilter(() -> null);
-    MockServerWebExchange exchange =
-        MockServerWebExchange.from(MockServerHttpRequest.get("/test").build());
+    MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/test").build());
 
     filter.filter(exchange, ex -> Mono.empty()).block();
 
@@ -38,11 +37,9 @@ class ProblemContextWebFluxFilterTest {
   }
 
   @Test
-  void
-      givenTracingHeaderNameConfigured_whenNoHeaderInRequest_thenGeneratedTraceIdIsLowercase32HexCharacters() {
+  void givenTracingHeaderNameConfigured_whenNoHeaderInRequest_thenGeneratedTraceIdIsLowercase32HexCharacters() {
     ProblemContextWebFluxFilter filter = new ProblemContextWebFluxFilter(() -> "X-Trace-Id");
-    MockServerWebExchange exchange =
-        MockServerWebExchange.from(MockServerHttpRequest.get("/test").build());
+    MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/test").build());
 
     filter.filter(exchange, ex -> Mono.empty()).block();
 
@@ -50,12 +47,10 @@ class ProblemContextWebFluxFilterTest {
   }
 
   @Test
-  void
-      givenTracingHeaderNameConfigured_whenHeaderPresentInRequest_thenUsesRequestHeaderAsTraceId() {
+  void givenTracingHeaderNameConfigured_whenHeaderPresentInRequest_thenUsesRequestHeaderAsTraceId() {
     ProblemContextWebFluxFilter filter = new ProblemContextWebFluxFilter(() -> "X-Trace-Id");
     MockServerWebExchange exchange =
-        MockServerWebExchange.from(
-            MockServerHttpRequest.get("/test").header("X-Trace-Id", "custom-trace-id").build());
+        MockServerWebExchange.from(MockServerHttpRequest.get("/test").header("X-Trace-Id", "custom-trace-id").build());
 
     filter.filter(exchange, ex -> Mono.empty()).block();
 

@@ -46,8 +46,7 @@ class NoResourceFoundProblemResolverTest {
     NoResourceFoundException ex =
         new NoResourceFoundException(HttpMethod.GET, "/context/missing.html", "/missing.html");
 
-    Problem problem =
-        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.NOT_FOUND);
+    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.NOT_FOUND);
 
     assertThat(problem).isEqualTo(Problem.builder().status(HttpStatus.NOT_FOUND.value()).build());
   }
@@ -58,8 +57,7 @@ class NoResourceFoundProblemResolverTest {
         new NoResourceFoundException(HttpMethod.GET, "/context/missing.html", "/missing.html");
 
     Problem problem =
-        resolver.resolve(
-            ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
   }

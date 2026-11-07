@@ -35,14 +35,14 @@ import org.springframework.web.server.ServerWebInputException;
 import tools.jackson.databind.exc.MismatchedInputException;
 
 /**
- * Handles {@link ServerWebInputException} thrown when request data cannot be properly read or
- * converted in a WebFlux application.
+ * Handles {@link ServerWebInputException} thrown when request data cannot be properly read or converted in a WebFlux
+ * application.
  *
- * <p>This typically occurs for invalid query parameters, path variables, or request body content
- * that cannot be converted to the target method parameter type.
+ * <p>This typically occurs for invalid query parameters, path variables, or request body content that cannot be
+ * converted to the target method parameter type.
  *
- * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to
- * indicate that the client sent invalid or unreadable input.
+ * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to indicate that the
+ * client sent invalid or unreadable input.
  *
  * @since 1.2.0
  */
@@ -72,15 +72,13 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Creates a new {@link ServerWebInputProblemResolver} with the specified problem format and
-   * method parameter support.
+   * Creates a new {@link ServerWebInputProblemResolver} with the specified problem format and method parameter support.
    *
    * @param problemFormat the problem format to use
    * @param methodParameterSupport the support for extracting parameter names
    * @since 1.2.0
    */
-  public ServerWebInputProblemResolver(
-      ProblemFormat problemFormat, MethodParameterSupport methodParameterSupport) {
+  public ServerWebInputProblemResolver(ProblemFormat problemFormat, MethodParameterSupport methodParameterSupport) {
     this(
         problemFormat,
         new TypeMismatchProblemResolver(problemFormat),
@@ -89,8 +87,8 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Creates a new {@link ServerWebInputProblemResolver} with the specified problem format, type
-   * mismatch resolver, and method parameter support.
+   * Creates a new {@link ServerWebInputProblemResolver} with the specified problem format, type mismatch resolver, and
+   * method parameter support.
    *
    * @param problemFormat the problem format to use
    * @param typeMismatchProblemResolver the resolver to use
@@ -110,11 +108,10 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Resolves a {@link ServerWebInputException} into an immutable {@link Problem}. If the root cause
-   * is a {@link TypeMismatchException}, delegates to {@link TypeMismatchProblemResolver} and, when
-   * missing, attempts to append the offending property/parameter name as the {@code
-   * ViolationSupport#PROPERTY_EXTENSION}. Otherwise, returns a problem whose status reflects the
-   * exception's embedded HTTP status code.
+   * Resolves a {@link ServerWebInputException} into an immutable {@link Problem}. If the root cause is a {@link
+   * TypeMismatchException}, delegates to {@link TypeMismatchProblemResolver} and, when missing, attempts to append the
+   * offending property/parameter name as the {@code ViolationSupport#PROPERTY_EXTENSION}. Otherwise, returns a problem
+   * whose status reflects the exception's embedded HTTP status code.
    *
    * @param context problem context (unused for this resolver)
    * @param ex the triggering {@link ServerWebInputException}
@@ -125,8 +122,7 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ServerWebInputException swie = (ServerWebInputException) ex;
 
     if (swie.getCause() instanceof TypeMismatchException tme) {
@@ -146,8 +142,7 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver {
       TypeMismatchException tme) {
     Problem problem = typeMismatchProblemResolver.resolve(context, tme, headers, status);
     if (!problem.getExtensions().containsKey(PROPERTY_EXTENSION)) {
-      Optional<String> optionalProperty =
-          methodParameterSupport.findParameterName(swie.getMethodParameter());
+      Optional<String> optionalProperty = methodParameterSupport.findParameterName(swie.getMethodParameter());
       if (optionalProperty.isPresent()) {
         return problem.toBuilder().extension(PROPERTY_EXTENSION, optionalProperty.get()).build();
       }

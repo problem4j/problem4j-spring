@@ -28,11 +28,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * {@link ProblemResolverStore} implementation evaluates resolved based on class and its
- * inheritance.
+ * {@link ProblemResolverStore} implementation evaluates resolved based on class and its inheritance.
  *
- * <p>Resolvers are matched to exceptions by assignability, preferring the most specific exception
- * type.
+ * <p>Resolvers are matched to exceptions by assignability, preferring the most specific exception type.
  *
  * @since 1.2.0
  */
@@ -53,20 +51,18 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
   }
 
   /**
-   * Creates a new store initialized with the given resolvers and a specific class distance
-   * evaluation strategy.
+   * Creates a new store initialized with the given resolvers and a specific class distance evaluation strategy.
    *
    * @param problemResolvers list of available {@link ProblemResolver} instances
-   * @param classDistanceEvaluation the strategy used to evaluate the distance between exception
-   *     classes (e.g., when finding the best resolver for a specific exception type).
+   * @param classDistanceEvaluation the strategy used to evaluate the distance between exception classes (e.g., when
+   *     finding the best resolver for a specific exception type).
    * @throws NullPointerException if any resolver or its exception class is {@code null}
    * @since 1.2.0
    */
   public DefaultProblemResolverStore(
       List<ProblemResolver> problemResolvers, ClassDistanceEvaluation classDistanceEvaluation) {
     Map<Class<? extends Exception>, ProblemResolver> copy = new HashMap<>(problemResolvers.size());
-    problemResolvers.forEach(
-        resolver -> copy.put(resolver.getExceptionClass(), Objects.requireNonNull(resolver)));
+    problemResolvers.forEach(resolver -> copy.put(resolver.getExceptionClass(), Objects.requireNonNull(resolver)));
     this.resolvers = Map.copyOf(copy);
     this.classDistanceEvaluation = classDistanceEvaluation;
   }
@@ -74,8 +70,8 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
   /**
    * Returns a {@link ProblemResolver} for the given exception class.
    *
-   * <p>This method searches for resolvers whose exception type is assignable from the given class,
-   * selecting the most specific match.
+   * <p>This method searches for resolvers whose exception type is assignable from the given class, selecting the most
+   * specific match.
    *
    * @param clazz exception class to resolve
    * @return an {@link Optional} containing the matching resolver, or empty if none found

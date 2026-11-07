@@ -29,13 +29,12 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 /**
- * Resolves {@link HandlerMethodValidationException} (Spring's aggregated method validation errors)
- * into a {@link Problem} representation.
+ * Resolves {@link HandlerMethodValidationException} (Spring's aggregated method validation errors) into a {@link
+ * Problem} representation.
  *
- * <p>For 4xx statuses it produces a validation problem containing an {@code errors} extension with
- * parameter violations (via {@link MethodValidationResultSupport}). For 5xx statuses it returns
- * only a basic problem with the resolved status, avoiding leaking validation details when the
- * server indicates an internal failure.
+ * <p>For 4xx statuses it produces a validation problem containing an {@code errors} extension with parameter violations
+ * (via {@link MethodValidationResultSupport}). For 5xx statuses it returns only a basic problem with the resolved
+ * status, avoiding leaking validation details when the server indicates an internal failure.
  *
  * @since 1.2.0
  */
@@ -44,8 +43,8 @@ public class HandlerMethodValidationProblemResolver extends AbstractProblemResol
   private final MethodValidationResultSupport methodValidationResultSupport;
 
   /**
-   * Creates a new {@link HandlerMethodValidationProblemResolver} with the default problem format
-   * and default method validation result support.
+   * Creates a new {@link HandlerMethodValidationProblemResolver} with the default problem format and default method
+   * validation result support.
    *
    * @since 1.2.0
    */
@@ -54,8 +53,8 @@ public class HandlerMethodValidationProblemResolver extends AbstractProblemResol
   }
 
   /**
-   * Creates a new {@link HandlerMethodValidationProblemResolver} with the specified problem format
-   * and default method validation result support.
+   * Creates a new {@link HandlerMethodValidationProblemResolver} with the specified problem format and default method
+   * validation result support.
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
@@ -65,8 +64,8 @@ public class HandlerMethodValidationProblemResolver extends AbstractProblemResol
   }
 
   /**
-   * Creates a new {@link HandlerMethodValidationProblemResolver} with the specified problem format
-   * and method validation result support.
+   * Creates a new {@link HandlerMethodValidationProblemResolver} with the specified problem format and method
+   * validation result support.
    *
    * @param problemFormat the problem format to use
    * @param methodValidationResultSupport the support for extracting validation results
@@ -79,10 +78,9 @@ public class HandlerMethodValidationProblemResolver extends AbstractProblemResol
   }
 
   /**
-   * Returns a {@link Problem} for a {@link HandlerMethodValidationException}. If the provided
-   * status is 5xx, returns a minimal problem with that status only. Otherwise, includes validation
-   * violations collected by {@link MethodValidationResultSupport} and preserves the caller-provided
-   * status.
+   * Returns a {@link Problem} for a {@link HandlerMethodValidationException}. If the provided status is 5xx, returns a
+   * minimal problem with that status only. Otherwise, includes validation violations collected by {@link
+   * MethodValidationResultSupport} and preserves the caller-provided status.
    *
    * @param context problem context (unused for method validation aggregation)
    * @param ex the thrown validation exception (must be {@link HandlerMethodValidationException})
@@ -92,8 +90,7 @@ public class HandlerMethodValidationProblemResolver extends AbstractProblemResol
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     HandlerMethodValidationException e = (HandlerMethodValidationException) ex;
     if (status.is5xxServerError()) {
       return Problem.of(status.value());

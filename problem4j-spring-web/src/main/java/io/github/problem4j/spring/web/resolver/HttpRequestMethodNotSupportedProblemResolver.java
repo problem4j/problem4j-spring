@@ -25,14 +25,14 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 /**
- * Handles {@link HttpRequestMethodNotSupportedException} thrown when a client sends an HTTP request
- * using a method not supported by the target handler.
+ * Handles {@link HttpRequestMethodNotSupportedException} thrown when a client sends an HTTP request using a method not
+ * supported by the target handler.
  *
- * <p>This typically occurs when the request uses a method (e.g., POST, GET, PUT, DELETE) that the
- * controller or endpoint does not allow.
+ * <p>This typically occurs when the request uses a method (e.g., POST, GET, PUT, DELETE) that the controller or
+ * endpoint does not allow.
  *
- * <p>The handler is responsible for returning an appropriate HTTP 405 (Method Not Allowed)
- * response, often including the list of supported methods in the {@code Allow} header.
+ * <p>The handler is responsible for returning an appropriate HTTP 405 (Method Not Allowed) response, often including
+ * the list of supported methods in the {@code Allow} header.
  *
  * <p>Always resolves to a {@link Problem} with status {@link HttpStatus#METHOD_NOT_ALLOWED}.
  *
@@ -50,8 +50,7 @@ public class HttpRequestMethodNotSupportedProblemResolver extends AbstractProble
   }
 
   /**
-   * Creates a new {@link HttpRequestMethodNotSupportedProblemResolver} with the specified problem
-   * format.
+   * Creates a new {@link HttpRequestMethodNotSupportedProblemResolver} with the specified problem format.
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
@@ -61,9 +60,9 @@ public class HttpRequestMethodNotSupportedProblemResolver extends AbstractProble
   }
 
   /**
-   * Returns a {@link Problem} with {@link HttpStatus#METHOD_NOT_ALLOWED} (HTTP 405). Other
-   * parameters ({@code context}, {@code headers}, {@code status}) are ignored because the status is
-   * mandated by the semantics of {@link HttpRequestMethodNotSupportedException}.
+   * Returns a {@link Problem} with {@link HttpStatus#METHOD_NOT_ALLOWED} (HTTP 405). Other parameters ({@code context},
+   * {@code headers}, {@code status}) are ignored because the status is mandated by the semantics of {@link
+   * HttpRequestMethodNotSupportedException}.
    *
    * @param context problem context (unused)
    * @param ex the triggering {@link HttpRequestMethodNotSupportedException}
@@ -73,8 +72,7 @@ public class HttpRequestMethodNotSupportedProblemResolver extends AbstractProble
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     return Problem.of(HttpStatus.METHOD_NOT_ALLOWED.value());
   }
 }

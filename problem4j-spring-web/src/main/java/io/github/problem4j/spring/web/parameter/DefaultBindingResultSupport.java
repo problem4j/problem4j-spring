@@ -49,10 +49,9 @@ public class DefaultBindingResultSupport implements BindingResultSupport {
   public DefaultBindingResultSupport() {}
 
   /**
-   * Builds a {@link Violation}s list from a Spring {@link BindingResult} (e.g. produced when
-   * binding a {@code @ModelAttribute} fails or when {@code @Valid} detects field / global errors).
-   * Field errors are translated into {@link Violation}s keyed by field name; global errors use
-   * {@code null} as the field name.
+   * Builds a {@link Violation}s list from a Spring {@link BindingResult} (e.g. produced when binding a
+   * {@code @ModelAttribute} fails or when {@code @Valid} detects field / global errors). Field errors are translated
+   * into {@link Violation}s keyed by field name; global errors use {@code null} as the field name.
    *
    * @param result the binding/validation result to convert (must not be {@code null})
    * @return list of violations extracted from the binding result
@@ -69,12 +68,12 @@ public class DefaultBindingResultSupport implements BindingResultSupport {
   /**
    * Converts a {@link FieldError} from a {@link BindingResult} into a {@link Violation}.
    *
-   * <p>Resolves a field error into a Violation, taking into account {@link BindParam} annotations
-   * on the target object's constructor parameters.
+   * <p>Resolves a field error into a Violation, taking into account {@link BindParam} annotations on the target
+   * object's constructor parameters.
    *
-   * <p>{@code isBindingFailure() == true} usually means that there was a failure in creation of
-   * object from values taken out of request. Most common one is validation error or type mismatch
-   * between {@code @ModelAttribute}-annotated argument and one of its values.
+   * <p>{@code isBindingFailure() == true} usually means that there was a failure in creation of object from values
+   * taken out of request. Most common one is validation error or type mismatch between
+   * {@code @ModelAttribute}-annotated argument and one of its values.
    *
    * @param bindingResult the {@link BindingResult} containing the validation errors
    * @param error the {@link FieldError} to convert
@@ -94,9 +93,8 @@ public class DefaultBindingResultSupport implements BindingResultSupport {
   /**
    * Converts a global {@link ObjectError} from a {@link BindingResult} into a {@link Violation}.
    *
-   * <p>A global error is not associated with a specific field, so the {@code field} property of the
-   * resulting {@link Violation} is set to {@code null}. The {@code message} is taken from the
-   * error's default message.
+   * <p>A global error is not associated with a specific field, so the {@code field} property of the resulting {@link
+   * Violation} is set to {@code null}. The {@code message} is taken from the error's default message.
    *
    * @param bindingResult the {@link BindingResult} containing the validation errors
    * @param error the {@link ObjectError} to convert
@@ -111,8 +109,7 @@ public class DefaultBindingResultSupport implements BindingResultSupport {
    * Reads metadata mapping for the target object of a BindingResult.
    *
    * @param bindingResult the BindingResult containing the target object
-   * @return an unmodifiable map of parameter names to their bound names, or empty map if target is
-   *     {@code null}
+   * @return an unmodifiable map of parameter names to their bound names, or empty map if target is {@code null}
    * @since 1.2.0
    */
   protected Map<String, String> findParametersMetadata(BindingResult bindingResult) {
@@ -140,8 +137,8 @@ public class DefaultBindingResultSupport implements BindingResultSupport {
   /**
    * Finds the constructor that most likely was used for binding for the given class.
    *
-   * <p>For records, returns the canonical constructor. For non-records, returns the single declared
-   * constructor if only one exists.
+   * <p>For records, returns the canonical constructor. For non-records, returns the single declared constructor if only
+   * one exists.
    *
    * @param target the class to inspect
    * @return an {@code Optional} containing the binding constructor if found
@@ -150,9 +147,7 @@ public class DefaultBindingResultSupport implements BindingResultSupport {
   protected Optional<Constructor<?>> findBindingConstructor(Class<?> target) {
     if (target.isRecord()) {
       Class<?>[] mainArgs =
-          Arrays.stream(target.getRecordComponents())
-              .map(RecordComponent::getType)
-              .toArray(i -> new Class<?>[i]);
+          Arrays.stream(target.getRecordComponents()).map(RecordComponent::getType).toArray(i -> new Class<?>[i]);
       try {
         return Optional.of(target.getDeclaredConstructor(mainArgs));
       } catch (NoSuchMethodException e) {
@@ -172,8 +167,7 @@ public class DefaultBindingResultSupport implements BindingResultSupport {
   /**
    * Extracts parameter metadata from the given constructor.
    *
-   * <p>Each constructor parameter is added with its parameter name. {@link BindParam} is taken into
-   * account if present.
+   * <p>Each constructor parameter is added with its parameter name. {@link BindParam} is taken into account if present.
    *
    * @param constructor the constructor to inspect
    * @return an unmodifiable map of parameter names to their bound names

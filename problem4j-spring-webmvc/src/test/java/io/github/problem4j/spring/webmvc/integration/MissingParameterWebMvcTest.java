@@ -48,8 +48,7 @@ class MissingParameterWebMvcTest {
 
   @Test
   void givenRequestWithoutPathVariable_shouldReturnProblem() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/missing-parameter/path-variable", String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/missing-parameter/path-variable", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -67,8 +66,7 @@ class MissingParameterWebMvcTest {
 
   @Test
   void givenRequestWithPathVariable_shouldReturnOk() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/missing-parameter/path-variable/value", String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/missing-parameter/path-variable/value", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
@@ -76,8 +74,7 @@ class MissingParameterWebMvcTest {
 
   @Test
   void givenRequestWithoutRequestParam_shouldReturnProblem() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/missing-parameter/request-param", String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/missing-parameter/request-param", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -108,8 +105,7 @@ class MissingParameterWebMvcTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-    HttpEntity<MultiValueMap<String, Object>> request =
-        new HttpEntity<>(new LinkedMultiValueMap<>(), headers);
+    HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(new LinkedMultiValueMap<>(), headers);
 
     ResponseEntity<String> response =
         restTemplate.postForEntity("/missing-parameter/request-part", request, String.class);
@@ -132,9 +128,7 @@ class MissingParameterWebMvcTest {
   void givenRequestWithoutRequestPartHeader_shouldReturnProblem() {
     ResponseEntity<String> response =
         restTemplate.postForEntity(
-            "/missing-parameter/request-part",
-            new HttpEntity<>(null, new HttpHeaders()),
-            String.class);
+            "/missing-parameter/request-part", new HttpEntity<>(null, new HttpHeaders()), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -169,8 +163,7 @@ class MissingParameterWebMvcTest {
 
   @Test
   void givenRequestWithoutRequestHeader_shouldReturnProblem() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/missing-parameter/request-header", String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/missing-parameter/request-header", String.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
@@ -189,16 +182,14 @@ class MissingParameterWebMvcTest {
     headers.set("X-Custom-Header", "value");
     HttpEntity<Void> request = new HttpEntity<>(headers);
     ResponseEntity<String> response =
-        restTemplate.exchange(
-            "/missing-parameter/request-header", HttpMethod.GET, request, String.class);
+        restTemplate.exchange("/missing-parameter/request-header", HttpMethod.GET, request, String.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
   }
 
   @Test
   void givenRequestWithoutCookieValue_shouldReturnProblem() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/missing-parameter/cookie-value", String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/missing-parameter/cookie-value", String.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
@@ -217,16 +208,14 @@ class MissingParameterWebMvcTest {
     headers.add(HttpHeaders.COOKIE, "x_session=value");
     HttpEntity<Void> request = new HttpEntity<>(headers);
     ResponseEntity<String> response =
-        restTemplate.exchange(
-            "/missing-parameter/cookie-value", HttpMethod.GET, request, String.class);
+        restTemplate.exchange("/missing-parameter/cookie-value", HttpMethod.GET, request, String.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("OK");
   }
 
   @Test
   void givenRequestWithoutRequestAttribute_shouldReturnProblem() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/missing-parameter/request-attribute", String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/missing-parameter/request-attribute", String.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
@@ -241,8 +230,7 @@ class MissingParameterWebMvcTest {
 
   @Test
   void givenRequestWithoutSessionAttribute_shouldReturnProblem() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/missing-parameter/session-attribute", String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/missing-parameter/session-attribute", String.class);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);

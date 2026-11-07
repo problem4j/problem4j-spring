@@ -26,14 +26,13 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
- * Handles {@link NoResourceFoundException} thrown when a requested static resource cannot be found
- * in application.
+ * Handles {@link NoResourceFoundException} thrown when a requested static resource cannot be found in application.
  *
- * <p>This typically occurs when the client requests a URL that is mapped to static resources (e.g.,
- * files under {@code /static} or {@code /public}) but no matching resource exists.
+ * <p>This typically occurs when the client requests a URL that is mapped to static resources (e.g., files under {@code
+ * /static} or {@code /public}) but no matching resource exists.
  *
- * <p>The handler is responsible for returning an appropriate HTTP 404 (Not Found) response to
- * indicate that the requested resource is not available.
+ * <p>The handler is responsible for returning an appropriate HTTP 404 (Not Found) response to indicate that the
+ * requested resource is not available.
  *
  * @since 1.2.0
  */
@@ -59,9 +58,9 @@ public class NoResourceFoundProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Returns a {@link Problem} with {@link HttpStatus#NOT_FOUND} (HTTP 404) indicating the requested
-   * static resource could not be located. Other parameters ({@code context}, {@code headers},
-   * {@code status}) are ignored because the exception semantics unambiguously map to 404.
+   * Returns a {@link Problem} with {@link HttpStatus#NOT_FOUND} (HTTP 404) indicating the requested static resource
+   * could not be located. Other parameters ({@code context}, {@code headers}, {@code status}) are ignored because the
+   * exception semantics unambiguously map to 404.
    *
    * @param context problem context (unused)
    * @param ex the triggering {@link NoResourceFoundException}
@@ -71,8 +70,7 @@ public class NoResourceFoundProblemResolver extends AbstractProblemResolver {
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     return Problem.of(HttpStatus.NOT_FOUND.value());
   }
 }

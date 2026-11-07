@@ -32,20 +32,18 @@ import org.springframework.validation.method.MethodValidationException;
 /**
  * Handles {@link MethodValidationException} thrown when method-level Bean Validation fails.
  *
- * <p>This exception is raised for methods annotated with {@code @Validated} or containing
- * {@code @Constraint}-annotated parameters or return values that do not satisfy declared validation
- * rules.
+ * <p>This exception is raised for methods annotated with {@code @Validated} or containing {@code @Constraint}-annotated
+ * parameters or return values that do not satisfy declared validation rules.
  *
- * <p>When method validation adaptation is enabled (e.g. via {@code @EnableMethodValidation}),
- * Spring intercepts method invocations, delegates to a Bean Validation provider, and wraps any
- * resulting {@code ConstraintViolationException} in a {@link MethodValidationException}.
+ * <p>When method validation adaptation is enabled (e.g. via {@code @EnableMethodValidation}), Spring intercepts method
+ * invocations, delegates to a Bean Validation provider, and wraps any resulting {@code ConstraintViolationException} in
+ * a {@link MethodValidationException}.
  *
- * <p>This allows framework components and exception handlers to deal with a consistent,
- * Spring-specific exception type instead of the raw Jakarta exception.
+ * <p>This allows framework components and exception handlers to deal with a consistent, Spring-specific exception type
+ * instead of the raw Jakarta exception.
  *
- * <p>Always resolves to a problem with status {@link HttpStatus#BAD_REQUEST} and an {@code errors}
- * extension populated via {@link MethodValidationResultSupport} (one entry per violated parameter /
- * return value).
+ * <p>Always resolves to a problem with status {@link HttpStatus#BAD_REQUEST} and an {@code errors} extension populated
+ * via {@link MethodValidationResultSupport} (one entry per violated parameter / return value).
  *
  * @see jakarta.validation.ConstraintViolationException
  * @since 1.2.0
@@ -74,8 +72,8 @@ public class MethodValidationProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Creates a new {@link MethodValidationProblemResolver} with the specified problem format and
-   * method validation result support.
+   * Creates a new {@link MethodValidationProblemResolver} with the specified problem format and method validation
+   * result support.
    *
    * @param problemFormat the problem format to use
    * @param methodValidationResultSupport the support for extracting validation results
@@ -88,9 +86,9 @@ public class MethodValidationProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Returns a {@link Problem} with status {@link HttpStatus#BAD_REQUEST} and an {@code errors}
-   * extension describing each parameter or return value violation. Other parameters ({@code
-   * context}, {@code headers}, {@code status}) are ignored for status selection; 400 is enforced.
+   * Returns a {@link Problem} with status {@link HttpStatus#BAD_REQUEST} and an {@code errors} extension describing
+   * each parameter or return value violation. Other parameters ({@code context}, {@code headers}, {@code status}) are
+   * ignored for status selection; 400 is enforced.
    *
    * @param context problem context (unused)
    * @param ex the thrown {@link MethodValidationException}
@@ -100,8 +98,7 @@ public class MethodValidationProblemResolver extends AbstractProblemResolver {
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     MethodValidationException e = (MethodValidationException) ex;
     return Problem.builder()
         .status(HttpStatus.BAD_REQUEST.value())

@@ -30,21 +30,19 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.validation.BindException;
 
 /**
- * Due to {@link BindException} being subclassed by {@code MethodArgumentNotValidException}, this
- * implementation also covers that exceptions.
+ * Due to {@link BindException} being subclassed by {@code MethodArgumentNotValidException}, this implementation also
+ * covers that exceptions.
  *
- * <p>Quite obvious message, but worth to note that the only reason {@link BindProblemResolver} is
- * kept is due to backwards compatibility as Problem4J doesn't use any fields from that subclass at
- * the moment.
+ * <p>Quite obvious message, but worth to note that the only reason {@link BindProblemResolver} is kept is due to
+ * backwards compatibility as Problem4J doesn't use any fields from that subclass at the moment.
  *
- * <p>These exceptions indicate that incoming request parameters or bodies could not be bound to
- * target objects or did not pass validation constraints.
+ * <p>These exceptions indicate that incoming request parameters or bodies could not be bound to target objects or did
+ * not pass validation constraints.
  *
  * <ul>
- *   <li>{@link BindException} - thrown for binding or validation errors on form or query
- *       parameters.
- *   <li>{@code MethodArgumentNotValidException} - thrown for validation failures on
- *       {@code @RequestBody} or {@code @ModelAttribute} method arguments.
+ *   <li>{@link BindException} - thrown for binding or validation errors on form or query parameters.
+ *   <li>{@code MethodArgumentNotValidException} - thrown for validation failures on {@code @RequestBody} or
+ *       {@code @ModelAttribute} method arguments.
  * </ul>
  *
  * @see org.springframework.web.bind.MethodArgumentNotValidException
@@ -57,8 +55,7 @@ public class BindProblemResolver extends AbstractProblemResolver {
   private final BindingResultSupport bindingResultSupport;
 
   /**
-   * Constructs a new {@link BindProblemResolver} with the default problem format and binding result
-   * support.
+   * Constructs a new {@link BindProblemResolver} with the default problem format and binding result support.
    *
    * @since 1.2.0
    */
@@ -77,23 +74,21 @@ public class BindProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Constructs a new {@link BindProblemResolver} with the specified problem format and binding
-   * result support.
+   * Constructs a new {@link BindProblemResolver} with the specified problem format and binding result support.
    *
    * @param problemFormat the problem format to use
    * @param bindingResultSupport the binding result support to use
    * @since 1.2.0
    */
-  public BindProblemResolver(
-      ProblemFormat problemFormat, BindingResultSupport bindingResultSupport) {
+  public BindProblemResolver(ProblemFormat problemFormat, BindingResultSupport bindingResultSupport) {
     super(BindException.class, problemFormat);
     this.bindingResultSupport = bindingResultSupport;
   }
 
   /**
-   * Resolves a {@link BindException} (or subclass) to a {@link Problem} with {@link
-   * HttpStatus#BAD_REQUEST} and an {@code errors} extension listing field/global validation
-   * violations produced by the underlying {@link BindException#getBindingResult()}.
+   * Resolves a {@link BindException} (or subclass) to a {@link Problem} with {@link HttpStatus#BAD_REQUEST} and an
+   * {@code errors} extension listing field/global validation violations produced by the underlying {@link
+   * BindException#getBindingResult()}.
    *
    * @param context problem context (ignored for binding violations)
    * @param ex the binding / validation exception (must be a {@link BindException})
@@ -103,15 +98,12 @@ public class BindProblemResolver extends AbstractProblemResolver {
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     BindException e = (BindException) ex;
     return Problem.builder()
         .status(HttpStatus.BAD_REQUEST.value())
         .detail(formatDetail(VALIDATION_FAILED_DETAIL))
-        .extension(
-            ViolationSupport.ERRORS_EXTENSION,
-            bindingResultSupport.fetchViolations(e.getBindingResult()))
+        .extension(ViolationSupport.ERRORS_EXTENSION, bindingResultSupport.fetchViolations(e.getBindingResult()))
         .build();
   }
 }

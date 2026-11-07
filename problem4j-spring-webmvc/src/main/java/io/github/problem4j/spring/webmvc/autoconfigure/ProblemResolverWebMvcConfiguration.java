@@ -28,9 +28,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
- * Each nested configuration class is annotated with {@link ConditionalOnClass} to ensure that only
- * resolvers for classes present on the classpath are created. This design allows the library to
- * remain compatible previous versions.
+ * Each nested configuration class is annotated with {@link ConditionalOnClass} to ensure that only resolvers for
+ * classes present on the classpath are created. This design allows the library to remain compatible previous versions.
  */
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @Configuration(proxyBeanMethods = false)

@@ -49,8 +49,7 @@ class XmlProblemWebMvcTest {
     headers.setAccept(List.of(MediaType.APPLICATION_XML));
 
     ResponseEntity<String> response =
-        restTemplate.exchange(
-            "/xml-problem", HttpMethod.GET, new HttpEntity<>(headers), String.class);
+        restTemplate.exchange("/xml-problem", HttpMethod.GET, new HttpEntity<>(headers), String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType())

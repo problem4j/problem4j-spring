@@ -49,8 +49,7 @@ class CoroutineWebFluxTest {
     "/coroutine/resolver, coroutine failure",
     "/coroutine/flow, flow failure"
   })
-  void givenCoroutineThrowingAfterSuspension_whenRequesting_thenProblemIsReturned(
-      String path, String detail) {
+  void givenCoroutineThrowingAfterSuspension_whenRequesting_thenProblemIsReturned(String path, String detail) {
     webTestClient
         .get()
         .uri(path)
@@ -75,8 +74,7 @@ class CoroutineWebFluxTest {
   }
 
   @Test
-  void
-      givenCoroutineThrowingUnresolvableException_whenRequesting_thenInternalServerErrorProblemIsReturned() {
+  void givenCoroutineThrowingUnresolvableException_whenRequesting_thenInternalServerErrorProblemIsReturned() {
     webTestClient
         .get()
         .uri("/coroutine/unresolvable")

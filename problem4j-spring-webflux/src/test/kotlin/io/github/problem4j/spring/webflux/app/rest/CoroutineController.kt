@@ -38,17 +38,12 @@ class CoroutineController {
   suspend fun problemException(): String {
     withContext(Dispatchers.Default) { delay(Duration.ofMillis(1)) }
     throw ProblemException(
-        Problem.builder()
-            .type("https://example.org/coroutine")
-            .status(409)
-            .detail("coroutine conflict")
-            .build(),
+        Problem.builder().type("https://example.org/coroutine").status(409).detail("coroutine conflict").build(),
     )
   }
 
   @GetMapping(path = ["/resolver"])
-  suspend fun resolver(): String =
-      withContext(Dispatchers.IO) { throw CoroutineException("coroutine failure") }
+  suspend fun resolver(): String = withContext(Dispatchers.IO) { throw CoroutineException("coroutine failure") }
 
   @GetMapping(path = ["/unresolvable"])
   suspend fun unresolvable(): String {

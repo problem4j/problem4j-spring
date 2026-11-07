@@ -62,26 +62,25 @@ class BindingKotlinWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(
-            problem -> {
-              String expectedKind;
-              if (path.endsWith("/boolean")) {
-                expectedKind = "boolean";
-              } else if (path.endsWith("/float") || path.endsWith("/double")) {
-                expectedKind = "number";
-              } else {
-                expectedKind = "integer";
-              }
+        .value(problem -> {
+          String expectedKind;
+          if (path.endsWith("/boolean")) {
+            expectedKind = "boolean";
+          } else if (path.endsWith("/float") || path.endsWith("/double")) {
+            expectedKind = "number";
+          } else {
+            expectedKind = "integer";
+          }
 
-              assertThat(problem)
-                  .isEqualTo(
-                      Problem.builder()
-                          .status(HttpStatus.BAD_REQUEST.value())
-                          .detail("Type mismatch")
-                          .extension("property", "value")
-                          .extension("kind", expectedKind)
-                          .build());
-            });
+          assertThat(problem)
+              .isEqualTo(
+                  Problem.builder()
+                      .status(HttpStatus.BAD_REQUEST.value())
+                      .detail("Type mismatch")
+                      .extension("property", "value")
+                      .extension("kind", expectedKind)
+                      .build());
+        });
   }
 
   @ParameterizedTest
@@ -105,26 +104,25 @@ class BindingKotlinWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(
-            problem -> {
-              String expectedKind;
-              if (path.endsWith("/boolean")) {
-                expectedKind = "boolean";
-              } else if (path.endsWith("/float")) {
-                expectedKind = "number";
-              } else {
-                expectedKind = "integer";
-              }
+        .value(problem -> {
+          String expectedKind;
+          if (path.endsWith("/boolean")) {
+            expectedKind = "boolean";
+          } else if (path.endsWith("/float")) {
+            expectedKind = "number";
+          } else {
+            expectedKind = "integer";
+          }
 
-              assertThat(problem)
-                  .isEqualTo(
-                      Problem.builder()
-                          .status(HttpStatus.BAD_REQUEST.value())
-                          .detail("Type mismatch")
-                          .extension("property", "nested.value")
-                          .extension("kind", expectedKind)
-                          .build());
-            });
+          assertThat(problem)
+              .isEqualTo(
+                  Problem.builder()
+                      .status(HttpStatus.BAD_REQUEST.value())
+                      .detail("Type mismatch")
+                      .extension("property", "nested.value")
+                      .extension("kind", expectedKind)
+                      .build());
+        });
   }
 
   @ParameterizedTest
@@ -152,15 +150,14 @@ class BindingKotlinWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(
-            problem ->
-                assertThat(problem)
-                    .isEqualTo(
-                        Problem.builder()
-                            .status(HttpStatus.BAD_REQUEST.value())
-                            .detail("Type mismatch")
-                            .extension("property", "nested")
-                            .build()));
+        .value(problem ->
+            assertThat(problem)
+                .isEqualTo(
+                    Problem.builder()
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .detail("Type mismatch")
+                        .extension("property", "nested")
+                        .build()));
   }
 
   @ParameterizedTest
@@ -185,16 +182,15 @@ class BindingKotlinWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(
-            problem ->
-                assertThat(problem)
-                    .isEqualTo(
-                        Problem.builder()
-                            .status(HttpStatus.BAD_REQUEST.value())
-                            .detail("Type mismatch")
-                            .extension("property", expectedProperty)
-                            .extension("kind", expectedKind)
-                            .build()));
+        .value(problem ->
+            assertThat(problem)
+                .isEqualTo(
+                    Problem.builder()
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .detail("Type mismatch")
+                        .extension("property", expectedProperty)
+                        .extension("kind", expectedKind)
+                        .build()));
   }
 
   @Test
@@ -234,16 +230,15 @@ class BindingKotlinWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(
-            problem ->
-                assertThat(problem)
-                    .isEqualTo(
-                        Problem.builder()
-                            .status(HttpStatus.BAD_REQUEST.value())
-                            .detail("Type mismatch")
-                            .extension("property", "values")
-                            .extension("kind", "integer")
-                            .build()));
+        .value(problem ->
+            assertThat(problem)
+                .isEqualTo(
+                    Problem.builder()
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .detail("Type mismatch")
+                        .extension("property", "values")
+                        .extension("kind", "integer")
+                        .build()));
   }
 
   @Test
@@ -271,16 +266,15 @@ class BindingKotlinWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(
-            problem ->
-                assertThat(problem)
-                    .isEqualTo(
-                        Problem.builder()
-                            .status(HttpStatus.BAD_REQUEST.value())
-                            .detail("Type mismatch")
-                            .extension("property", "map.k")
-                            .extension("kind", "integer")
-                            .build()));
+        .value(problem ->
+            assertThat(problem)
+                .isEqualTo(
+                    Problem.builder()
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .detail("Type mismatch")
+                        .extension("property", "map.k")
+                        .extension("kind", "integer")
+                        .build()));
   }
 
   @Test
@@ -372,29 +366,28 @@ class BindingKotlinWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(
-            problem -> {
-              String expectedKind;
-              if (path.endsWith("/boolean")) {
-                expectedKind = "boolean";
-              } else if (path.endsWith("/float") || path.endsWith("/double")) {
-                expectedKind = "number";
-              } else {
-                expectedKind = "integer";
-              }
+        .value(problem -> {
+          String expectedKind;
+          if (path.endsWith("/boolean")) {
+            expectedKind = "boolean";
+          } else if (path.endsWith("/float") || path.endsWith("/double")) {
+            expectedKind = "number";
+          } else {
+            expectedKind = "integer";
+          }
 
-              Problem expected =
-                  Problem.builder()
-                      .status(HttpStatus.BAD_REQUEST.value())
-                      .detail("Type mismatch")
-                      .extension("property", "value")
-                      .extension("kind", expectedKind)
-                      .build();
+          Problem expected =
+              Problem.builder()
+                  .status(HttpStatus.BAD_REQUEST.value())
+                  .detail("Type mismatch")
+                  .extension("property", "value")
+                  .extension("kind", expectedKind)
+                  .build();
 
-              if (!problem.equals(expected)) {
-                assertThat(problem).isEqualTo(Problem.of(HttpStatus.BAD_REQUEST.value()));
-              }
-            });
+          if (!problem.equals(expected)) {
+            assertThat(problem).isEqualTo(Problem.of(HttpStatus.BAD_REQUEST.value()));
+          }
+        });
   }
 
   @ParameterizedTest
@@ -474,26 +467,25 @@ class BindingKotlinWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(
-            problem -> {
-              String expectedKind;
-              if (path.endsWith("/boolean")) {
-                expectedKind = "boolean";
-              } else if (path.endsWith("/float") || path.endsWith("/double")) {
-                expectedKind = "number";
-              } else {
-                expectedKind = "integer";
-              }
+        .value(problem -> {
+          String expectedKind;
+          if (path.endsWith("/boolean")) {
+            expectedKind = "boolean";
+          } else if (path.endsWith("/float") || path.endsWith("/double")) {
+            expectedKind = "number";
+          } else {
+            expectedKind = "integer";
+          }
 
-              assertThat(problem)
-                  .isEqualTo(
-                      Problem.builder()
-                          .status(HttpStatus.BAD_REQUEST.value())
-                          .detail("Type mismatch")
-                          .extension("property", "nested.value")
-                          .extension("kind", expectedKind)
-                          .build());
-            });
+          assertThat(problem)
+              .isEqualTo(
+                  Problem.builder()
+                      .status(HttpStatus.BAD_REQUEST.value())
+                      .detail("Type mismatch")
+                      .extension("property", "nested.value")
+                      .extension("kind", expectedKind)
+                      .build());
+        });
   }
 
   @ParameterizedTest
@@ -520,26 +512,25 @@ class BindingKotlinWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(
-            problem -> {
-              String expectedKind;
-              if (path.endsWith("/boolean")) {
-                expectedKind = "boolean";
-              } else if (path.endsWith("/float") || path.endsWith("/double")) {
-                expectedKind = "number";
-              } else {
-                expectedKind = "integer";
-              }
+        .value(problem -> {
+          String expectedKind;
+          if (path.endsWith("/boolean")) {
+            expectedKind = "boolean";
+          } else if (path.endsWith("/float") || path.endsWith("/double")) {
+            expectedKind = "number";
+          } else {
+            expectedKind = "integer";
+          }
 
-              assertThat(problem)
-                  .isEqualTo(
-                      Problem.builder()
-                          .status(HttpStatus.BAD_REQUEST.value())
-                          .detail("Type mismatch")
-                          .extension("property", "value")
-                          .extension("kind", expectedKind)
-                          .build());
-            });
+          assertThat(problem)
+              .isEqualTo(
+                  Problem.builder()
+                      .status(HttpStatus.BAD_REQUEST.value())
+                      .detail("Type mismatch")
+                      .extension("property", "value")
+                      .extension("kind", expectedKind)
+                      .build());
+        });
   }
 
   @ParameterizedTest
@@ -563,20 +554,19 @@ class BindingKotlinWebFluxTest {
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(
-            problem -> {
-              Problem expected =
-                  Problem.builder()
-                      .status(HttpStatus.BAD_REQUEST.value())
-                      .detail("Type mismatch")
-                      .extension("property", "value")
-                      .extension("kind", "integer")
-                      .build();
+        .value(problem -> {
+          Problem expected =
+              Problem.builder()
+                  .status(HttpStatus.BAD_REQUEST.value())
+                  .detail("Type mismatch")
+                  .extension("property", "value")
+                  .extension("kind", "integer")
+                  .build();
 
-              if (!problem.equals(expected)) {
-                assertThat(problem).isEqualTo(Problem.of(HttpStatus.BAD_REQUEST.value()));
-              }
-            });
+          if (!problem.equals(expected)) {
+            assertThat(problem).isEqualTo(Problem.of(HttpStatus.BAD_REQUEST.value()));
+          }
+        });
   }
 
   @Test

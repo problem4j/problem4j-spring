@@ -28,8 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class ResponseStatusController {
 
   @GetMapping
-  public String responseStatusException(
-      @RequestParam(value = "reason", required = false) String reason) {
+  public String responseStatusException(@RequestParam(value = "reason", required = false) String reason) {
     if (reason == null) {
       throw new ResponseStatusException(HttpStatus.GONE);
     }

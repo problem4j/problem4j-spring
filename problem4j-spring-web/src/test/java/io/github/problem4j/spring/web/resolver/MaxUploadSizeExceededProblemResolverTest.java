@@ -44,8 +44,7 @@ class MaxUploadSizeExceededProblemResolverTest {
   void givenExceptionWithMaxSize_whenResolve_thenReturnsContentTooLargeWithMaxExtension() {
     MaxUploadSizeExceededException ex = new MaxUploadSizeExceededException(1024L);
 
-    Problem problem =
-        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.CONTENT_TOO_LARGE.value());
     assertThat(problem.getDetail()).isEqualTo("Max upload size exceeded");
@@ -53,12 +52,10 @@ class MaxUploadSizeExceededProblemResolverTest {
   }
 
   @Test
-  void
-      givenExceptionWithNegativeMaxSize_whenResolve_thenReturnsContentTooLargeWithoutMaxExtension() {
+  void givenExceptionWithNegativeMaxSize_whenResolve_thenReturnsContentTooLargeWithoutMaxExtension() {
     MaxUploadSizeExceededException ex = new MaxUploadSizeExceededException(-1L);
 
-    Problem problem =
-        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.CONTENT_TOO_LARGE.value());
     assertThat(problem.getDetail()).isEqualTo("Max upload size exceeded");

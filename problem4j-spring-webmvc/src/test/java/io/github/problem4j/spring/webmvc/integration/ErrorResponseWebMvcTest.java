@@ -49,7 +49,6 @@ class ErrorResponseWebMvcTest {
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
     assertThat(problem)
-        .isEqualTo(
-            Problem.builder().status(HttpStatus.CONFLICT.value()).detail("this is detail").build());
+        .isEqualTo(Problem.builder().status(HttpStatus.CONFLICT.value()).detail("this is detail").build());
   }
 }

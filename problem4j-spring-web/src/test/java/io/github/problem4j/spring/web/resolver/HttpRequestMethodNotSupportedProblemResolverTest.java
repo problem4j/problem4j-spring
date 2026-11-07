@@ -36,33 +36,25 @@ class HttpRequestMethodNotSupportedProblemResolverTest {
   }
 
   @Test
-  void
-      givenDefaultConstructor_whenGetExceptionClass_thenReturnsHttpRequestMethodNotSupportedException() {
-    assertThat(resolver.getExceptionClass())
-        .isEqualTo(HttpRequestMethodNotSupportedException.class);
+  void givenDefaultConstructor_whenGetExceptionClass_thenReturnsHttpRequestMethodNotSupportedException() {
+    assertThat(resolver.getExceptionClass()).isEqualTo(HttpRequestMethodNotSupportedException.class);
   }
 
   @Test
-  void
-      givenHttpRequestMethodNotSupportedException_whenResolve_thenReturnsMethodNotAllowedProblem() {
-    HttpRequestMethodNotSupportedException ex =
-        new HttpRequestMethodNotSupportedException("DELETE");
+  void givenHttpRequestMethodNotSupportedException_whenResolve_thenReturnsMethodNotAllowedProblem() {
+    HttpRequestMethodNotSupportedException ex = new HttpRequestMethodNotSupportedException("DELETE");
 
-    Problem problem =
-        resolver.resolve(
-            ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.METHOD_NOT_ALLOWED);
+    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.METHOD_NOT_ALLOWED);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED.value());
   }
 
   @Test
   void givenHttpRequestMethodNotSupportedException_whenResolve_thenIgnoresPassedStatus() {
-    HttpRequestMethodNotSupportedException ex =
-        new HttpRequestMethodNotSupportedException("DELETE");
+    HttpRequestMethodNotSupportedException ex = new HttpRequestMethodNotSupportedException("DELETE");
 
     Problem problem =
-        resolver.resolve(
-            ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED.value());
   }

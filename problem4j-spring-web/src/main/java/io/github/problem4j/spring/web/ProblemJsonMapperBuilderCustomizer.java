@@ -22,9 +22,8 @@ import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomize
 import tools.jackson.databind.json.JsonMapper;
 
 /**
- * Customizes Spring Boot's JSON ObjectMapper by registering a mix-in for the {@link Problem}
- * interface. Ensures that all Problem objects are serialized and deserialized consistently
- * according to {@link ProblemJacksonMixIn}.
+ * Customizes Spring Boot's JSON ObjectMapper by registering a mix-in for the {@link Problem} interface. Ensures that
+ * all Problem objects are serialized and deserialized consistently according to {@link ProblemJacksonMixIn}.
  *
  * @since 2.1.0
  */
@@ -38,8 +37,8 @@ public class ProblemJsonMapperBuilderCustomizer implements JsonMapperBuilderCust
   public ProblemJsonMapperBuilderCustomizer() {}
 
   /**
-   * Adds the {@link ProblemJacksonMixIn} to the JSON mapper builder for proper serialization and
-   * deserialization of {@link Problem} objects.
+   * Adds the {@link ProblemJacksonMixIn} to the JSON mapper builder for proper serialization and deserialization of
+   * {@link Problem} objects.
    *
    * @param builder the JSON mapper builder to customize
    * @since 2.1.0

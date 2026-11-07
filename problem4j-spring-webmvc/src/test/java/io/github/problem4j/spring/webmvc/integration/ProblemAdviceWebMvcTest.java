@@ -47,17 +47,10 @@ class ProblemAdviceWebMvcTest {
     "string1, 1, true",
     "string2, 2, false",
   })
-  void givenExtendedProblemException_shouldReturnProblem(
-      String value1, Long value2, boolean value3) {
+  void givenExtendedProblemException_shouldReturnProblem(String value1, Long value2, boolean value3) {
     ResponseEntity<String> response =
         restTemplate.getForEntity(
-            "/problem-advice/exception?value1="
-                + value1
-                + "&value2="
-                + value2
-                + "&value3="
-                + value3,
-            String.class);
+            "/problem-advice/exception?value1=" + value1 + "&value2=" + value2 + "&value3=" + value3, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.valueOf(418));
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -83,13 +76,7 @@ class ProblemAdviceWebMvcTest {
   void givenAnnotatedException_shouldReturnProblem(String value1, Long value2, boolean value3) {
     ResponseEntity<String> response =
         restTemplate.getForEntity(
-            "/problem-advice/annotation?value1="
-                + value1
-                + "&value2="
-                + value2
-                + "&value3="
-                + value3,
-            String.class);
+            "/problem-advice/annotation?value1=" + value1 + "&value2=" + value2 + "&value3=" + value3, String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.valueOf(418));
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -109,8 +96,7 @@ class ProblemAdviceWebMvcTest {
 
   @Test
   void givenAnnotationEmptyException_returnProblemWithUnknownStatus() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/problem-advice/annotation-empty", String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/problem-advice/annotation-empty", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -122,8 +108,7 @@ class ProblemAdviceWebMvcTest {
 
   @Test
   void givenResolvableException_shouldReturnProblem() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/problem-advice/resolvable", String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/problem-advice/resolvable", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -142,15 +127,13 @@ class ProblemAdviceWebMvcTest {
 
   @Test
   void givenUnresolvableException_shouldReturnInternalServerErrorProblem() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/problem-advice/unresolvable", String.class);
+    ResponseEntity<String> response = restTemplate.getForEntity("/problem-advice/unresolvable", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem)
-        .isEqualTo(Problem.builder().status(HttpStatus.INTERNAL_SERVER_ERROR.value()).build());
+    assertThat(problem).isEqualTo(Problem.builder().status(HttpStatus.INTERNAL_SERVER_ERROR.value()).build());
   }
 }

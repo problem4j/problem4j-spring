@@ -51,8 +51,8 @@ import tools.jackson.dataformat.xml.XmlMapper;
 /**
  * Spring Boot autoconfiguration for Problem4J integration.
  *
- * <p>This class wires all necessary beans for producing standardized {@code Problem} responses from
- * Spring controllers. It includes:
+ * <p>This class wires all necessary beans for producing standardized {@code Problem} responses from Spring controllers.
+ * It includes:
  *
  * <p>Beans are conditional:
  *
@@ -102,22 +102,20 @@ public class ProblemAutoConfiguration {
   }
 
   /**
-   * Provides a {@link ProblemPostProcessor} that applies post-processing rules to {@code Problem}
-   * instances before they are returned in HTTP responses.
+   * Provides a {@link ProblemPostProcessor} that applies post-processing rules to {@code Problem} instances before they
+   * are returned in HTTP responses.
    *
-   * <p>The default implementation, {@link DefaultProblemPostProcessor}, supports configurable
-   * overrides for problem fields such as {@code type} and {@code instance}, based on the properties
-   * defined in {@link ProblemProperties}. These overrides may include runtime placeholders such as:
+   * <p>The default implementation, {@link DefaultProblemPostProcessor}, supports configurable overrides for problem
+   * fields such as {@code type} and {@code instance}, based on the properties defined in {@link ProblemProperties}.
+   * These overrides may include runtime placeholders such as:
    *
    * <ul>
    *   <li>{@code {problem.type}} - replaced with the original problem's type URI
    *   <li>{@code {problem.instance}} - replaced with the original problem's instance URI
-   *   <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@link
-   *       ProblemContext}
+   *   <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@link ProblemContext}
    * </ul>
    *
-   * <p>This allows enriching or normalizing problem responses without modifying the original
-   * exception mapping logic.
+   * <p>This allows enriching or normalizing problem responses without modifying the original exception mapping logic.
    *
    * @param properties the configuration properties containing override templates and settings
    * @return a new {@link DefaultProblemPostProcessor} instance
@@ -130,17 +128,14 @@ public class ProblemAutoConfiguration {
   }
 
   /**
-   * Provides a {@link ProblemResolverStore} that aggregates all {@link ProblemResolver}
-   * implementations.
+   * Provides a {@link ProblemResolverStore} that aggregates all {@link ProblemResolver} implementations.
    *
    * @param problemResolvers all available {@link ProblemResolver} declared as components
-   * @return {@link DefaultProblemResolverStore}, wrapped in {@link CachingProblemResolverStore} if
-   *     caching is enabled
+   * @return {@link DefaultProblemResolverStore}, wrapped in {@link CachingProblemResolverStore} if caching is enabled
    */
   @ConditionalOnMissingBean(ProblemResolverStore.class)
   @Bean
-  ProblemResolverStore problemResolverStore(
-      List<ProblemResolver> problemResolvers, ProblemProperties properties) {
+  ProblemResolverStore problemResolverStore(List<ProblemResolver> problemResolvers, ProblemProperties properties) {
     ProblemResolverStore problemResolverStore = new DefaultProblemResolverStore(problemResolvers);
 
     if (properties.getResolverCaching().isEnabled()) {
@@ -151,9 +146,9 @@ public class ProblemAutoConfiguration {
   }
 
   /**
-   * Provides a {@link TypeNameMapper} that maps Java types to string names for inclusion in problem
-   * responses. The default implementation, {@link SimpleTypeNameMapper} supports simple Java types,
-   * such as primitives, numbers, strings, arrays and lists.
+   * Provides a {@link TypeNameMapper} that maps Java types to string names for inclusion in problem responses. The
+   * default implementation, {@link SimpleTypeNameMapper} supports simple Java types, such as primitives, numbers,
+   * strings, arrays and lists.
    *
    * @return a new {@link SimpleTypeNameMapper}
    */
@@ -172,8 +167,8 @@ public class ProblemAutoConfiguration {
     ProblemJsonMapperConfiguration() {}
 
     /**
-     * Creates a {@link ProblemJsonMapperBuilderCustomizer} to add the {@code ProblemJacksonMixIn}
-     * to the JSON mapper for consistent Problem serialization.
+     * Creates a {@link ProblemJsonMapperBuilderCustomizer} to add the {@code ProblemJacksonMixIn} to the JSON mapper
+     * for consistent Problem serialization.
      *
      * @return a new ProblemJsonMapperBuilderCustomizer bean
      * @see io.github.problem4j.jackson3.ProblemJacksonMixIn
@@ -194,8 +189,8 @@ public class ProblemAutoConfiguration {
     ProblemXmlMapperConfiguration() {}
 
     /**
-     * Creates a {@link ProblemXmlMapperBuilderCustomizer} to add the {@code ProblemJacksonMixIn} to
-     * the XML mapper for consistent Problem serialization.
+     * Creates a {@link ProblemXmlMapperBuilderCustomizer} to add the {@code ProblemJacksonMixIn} to the XML mapper for
+     * consistent Problem serialization.
      *
      * @return a new ProblemJsonMapperBuilderCustomizer bean
      * @see io.github.problem4j.jackson3.ProblemJacksonMixIn
@@ -208,9 +203,8 @@ public class ProblemAutoConfiguration {
   }
 
   /**
-   * If Jackson2 is present on the classpath, configures a {@link ProblemModule} bean. Note that
-   * Spring Boot 4 does not include Jackson2 by default. To make it work, add {@code
-   * spring-boot-jackson2} dependency manually.
+   * If Jackson2 is present on the classpath, configures a {@link ProblemModule} bean. Note that Spring Boot 4 does not
+   * include Jackson2 by default. To make it work, add {@code spring-boot-jackson2} dependency manually.
    *
    * @see <a
    *     href="https://github.com/spring-projects/spring-boot/blob/v4.0.0/module/spring-boot-jackson2/src/main/java/org/springframework/boot/jackson2/autoconfigure/Jackson2AutoConfiguration.java#L86">

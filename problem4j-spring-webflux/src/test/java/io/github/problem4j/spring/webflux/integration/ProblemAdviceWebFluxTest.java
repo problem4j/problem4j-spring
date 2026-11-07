@@ -41,18 +41,16 @@ class ProblemAdviceWebFluxTest {
 
   @ParameterizedTest
   @CsvSource({"string1, 1, true", "string2, 2, false"})
-  void givenExtendedProblemException_shouldReturnProblem(
-      String value1, Long value2, boolean value3) {
+  void givenExtendedProblemException_shouldReturnProblem(String value1, Long value2, boolean value3) {
     webTestClient
         .get()
-        .uri(
-            uriBuilder ->
-                uriBuilder
-                    .path("/problem-advice/exception")
-                    .queryParam("value1", value1)
-                    .queryParam("value2", value2)
-                    .queryParam("value3", value3)
-                    .build())
+        .uri(uriBuilder ->
+            uriBuilder
+                .path("/problem-advice/exception")
+                .queryParam("value1", value1)
+                .queryParam("value2", value2)
+                .queryParam("value3", value3)
+                .build())
         .exchange()
         .expectStatus()
         .isEqualTo(HttpStatus.valueOf(418))
@@ -75,14 +73,13 @@ class ProblemAdviceWebFluxTest {
   void givenAnnotatedException_shouldReturnProblem(String value1, Long value2, boolean value3) {
     webTestClient
         .get()
-        .uri(
-            uriBuilder ->
-                uriBuilder
-                    .path("/problem-advice/annotation")
-                    .queryParam("value1", value1)
-                    .queryParam("value2", value2)
-                    .queryParam("value3", value3)
-                    .build())
+        .uri(uriBuilder ->
+            uriBuilder
+                .path("/problem-advice/annotation")
+                .queryParam("value1", value1)
+                .queryParam("value2", value2)
+                .queryParam("value3", value3)
+                .build())
         .exchange()
         .expectStatus()
         .isEqualTo(HttpStatus.valueOf(418))

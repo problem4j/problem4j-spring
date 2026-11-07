@@ -28,14 +28,13 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import tools.jackson.databind.exc.MismatchedInputException;
 
 /**
- * Handles {@link HttpMessageNotReadableException} thrown when an HTTP request body cannot be read
- * or parsed.
+ * Handles {@link HttpMessageNotReadableException} thrown when an HTTP request body cannot be read or parsed.
  *
- * <p>This typically occurs for requests with malformed JSON, XML, or other payloads that cannot be
- * converted by the configured {@code HttpMessageConverter}s.
+ * <p>This typically occurs for requests with malformed JSON, XML, or other payloads that cannot be converted by the
+ * configured {@code HttpMessageConverter}s.
  *
- * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to
- * indicate that the request body is invalid or unreadable.
+ * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to indicate that the
+ * request body is invalid or unreadable.
  *
  * @see org.springframework.http.converter.HttpMessageConverter
  * @since 1.2.0
@@ -64,23 +63,20 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
   }
 
   /**
-   * Creates a new {@link HttpMessageNotReadableProblemResolver} with the specified problem format
-   * and type name mapper.
+   * Creates a new {@link HttpMessageNotReadableProblemResolver} with the specified problem format and type name mapper.
    *
    * @param problemFormat the problem format to use
    * @param typeNameMapper the type mapper to use
    * @since 1.2.0
    */
-  public HttpMessageNotReadableProblemResolver(
-      ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
+  public HttpMessageNotReadableProblemResolver(ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
     super(HttpMessageNotReadableException.class, problemFormat);
     this.jacksonErrorHelper = new JacksonErrorHelper(problemFormat, typeNameMapper);
   }
 
   /**
-   * Returns a {@link Problem} with {@link HttpStatus#BAD_REQUEST} (HTTP 400). Other parameters
-   * ({@code context}, {@code headers}, {@code status}) are ignored because a malformed or
-   * unreadable request body always maps to a client error.
+   * Returns a {@link Problem} with {@link HttpStatus#BAD_REQUEST} (HTTP 400). Other parameters ({@code context}, {@code
+   * headers}, {@code status}) are ignored because a malformed or unreadable request body always maps to a client error.
    *
    * @param context problem context (unused)
    * @param ex the triggering {@link HttpMessageNotReadableException}
@@ -90,8 +86,7 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     if (ex.getCause() instanceof MismatchedInputException e) {
       return jacksonErrorHelper.resolveMismatchedInput(e);
     }

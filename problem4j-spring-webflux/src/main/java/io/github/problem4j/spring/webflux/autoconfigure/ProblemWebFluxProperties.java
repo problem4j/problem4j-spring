@@ -72,20 +72,14 @@ public class ProblemWebFluxProperties {
       @Nullable ExceptionHandler exceptionHandler,
       @Nullable ErrorWebExceptionHandler errorWebExceptionHandler) {
     this.enabled = enabled;
-    this.exceptionAdvice =
-        exceptionAdvice != null ? exceptionAdvice : ExceptionAdvice.createDefault();
+    this.exceptionAdvice = exceptionAdvice != null ? exceptionAdvice : ExceptionAdvice.createDefault();
     this.problemExceptionAdvice =
-        problemExceptionAdvice != null
-            ? problemExceptionAdvice
-            : ProblemExceptionAdvice.createDefault();
+        problemExceptionAdvice != null ? problemExceptionAdvice : ProblemExceptionAdvice.createDefault();
     this.problemContextFilter =
         problemContextFilter != null ? problemContextFilter : ProblemContextFilter.createDefault();
-    this.exceptionHandler =
-        exceptionHandler != null ? exceptionHandler : ExceptionHandler.createDefault();
+    this.exceptionHandler = exceptionHandler != null ? exceptionHandler : ExceptionHandler.createDefault();
     this.errorWebExceptionHandler =
-        errorWebExceptionHandler != null
-            ? errorWebExceptionHandler
-            : ErrorWebExceptionHandler.createDefault();
+        errorWebExceptionHandler != null ? errorWebExceptionHandler : ErrorWebExceptionHandler.createDefault();
   }
 
   /**
@@ -99,8 +93,8 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Returns configuration for {@code ExceptionWebFluxAdvice}, which handles general exceptions and
-   * converts them to {@code Problem} responses.
+   * Returns configuration for {@code ExceptionWebFluxAdvice}, which handles general exceptions and converts them to
+   * {@code Problem} responses.
    *
    * @return the configuration for exception advice
    * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
@@ -111,8 +105,8 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemExceptionWebFluxAdvice}, which handles exceptions of
-   * type {@code ProblemException} and converts them to Problem responses.
+   * Returns configuration for {@code ProblemExceptionWebFluxAdvice}, which handles exceptions of type {@code
+   * ProblemException} and converts them to Problem responses.
    *
    * @return the configuration for problem exception advice
    * @see io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice
@@ -123,8 +117,8 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemContextWebFluxFilter}, which enriches request handling
-   * with {@code ProblemContext}.
+   * Returns configuration for {@code ProblemContextWebFluxFilter}, which enriches request handling with {@code
+   * ProblemContext}.
    *
    * @return the configuration for the {@code ProblemContextWebFluxFilter}
    * @see io.github.problem4j.core.ProblemContext
@@ -136,9 +130,8 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemEnhancedWebFluxHandler} replacement, which allows
-   * Problem4J to take control of exception handling normally performed by Spring's {@code
-   * ResponseEntityExceptionHandler}.
+   * Returns configuration for {@code ProblemEnhancedWebFluxHandler} replacement, which allows Problem4J to take control
+   * of exception handling normally performed by Spring's {@code ResponseEntityExceptionHandler}.
    *
    * @return the configuration for the overwritten exception handler
    * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
@@ -150,9 +143,8 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemErrorWebExceptionHandler} replacement, which allows
-   * Problem4J to take control of exception handling normally performed by Spring's {@code
-   * ErrorWebExceptionHandler}.
+   * Returns configuration for {@code ProblemErrorWebExceptionHandler} replacement, which allows Problem4J to take
+   * control of exception handling normally performed by Spring's {@code ErrorWebExceptionHandler}.
    *
    * @return the configuration for the overwritten error handler
    * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
@@ -359,8 +351,8 @@ public class ProblemWebFluxProperties {
     /**
      * Creates a new configuration group.
      *
-     * @param enabled whether the {@code ResponseEntityExceptionHandler} should be replaced with
-     *     {@code ProblemEnhancedWebFluxHandler}
+     * @param enabled whether the {@code ResponseEntityExceptionHandler} should be replaced with {@code
+     *     ProblemEnhancedWebFluxHandler}
      * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
      * @see org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler
      * @since 1.2.0
@@ -396,9 +388,7 @@ public class ProblemWebFluxProperties {
     /** Default enabled value for {@code ErrorWebExceptionHandler} configuration group. */
     public static final boolean DEFAULT_ENABLED = true;
 
-    /**
-     * Default enabled value as a string for {@code ErrorWebExceptionHandler} configuration group.
-     */
+    /** Default enabled value as a string for {@code ErrorWebExceptionHandler} configuration group. */
     public static final String DEFAULT_ENABLED_VALUE = "true";
 
     private static ErrorWebExceptionHandler createDefault() {

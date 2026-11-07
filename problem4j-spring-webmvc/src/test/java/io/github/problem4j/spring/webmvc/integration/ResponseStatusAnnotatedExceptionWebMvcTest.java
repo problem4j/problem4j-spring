@@ -42,8 +42,7 @@ class ResponseStatusAnnotatedExceptionWebMvcTest {
   @Test
   void givenSpringNativeResponseStatusAnnotation_shouldReturnProblemWithStatus() {
     ResponseEntity<String> response =
-        restTemplate.getForEntity(
-            "/response-status-annotated/forbidden-status-annotated", String.class);
+        restTemplate.getForEntity("/response-status-annotated/forbidden-status-annotated", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -76,7 +75,6 @@ class ResponseStatusAnnotatedExceptionWebMvcTest {
 
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
-    assertThat(problem)
-        .isEqualTo(Problem.builder().status(418).title("Both Annotated Exception").build());
+    assertThat(problem).isEqualTo(Problem.builder().status(418).title("Both Annotated Exception").build());
   }
 }

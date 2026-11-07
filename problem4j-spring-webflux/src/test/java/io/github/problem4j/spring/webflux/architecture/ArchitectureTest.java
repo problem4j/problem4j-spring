@@ -41,8 +41,7 @@ class ArchitectureTest {
           .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
           .importPackages(BASE_PACKAGE);
 
-  private static final JavaClasses TEST_CLASSES =
-      new ClassFileImporter().importPackages(BASE_PACKAGE);
+  private static final JavaClasses TEST_CLASSES = new ClassFileImporter().importPackages(BASE_PACKAGE);
 
   @Test
   void givenPackageStructure_whenCheckingSlices_thenNoCyclesExist() {
@@ -87,8 +86,7 @@ class ArchitectureTest {
       @Override
       public void check(JavaClass item, ConditionEvents events) {
         boolean nullMarked = item.getPackage().isAnnotatedWith(NullMarked.class);
-        String message =
-            String.format("Package %s is not annotated with @NullMarked", item.getPackageName());
+        String message = String.format("Package %s is not annotated with @NullMarked", item.getPackageName());
         events.add(new SimpleConditionEvent(item, nullMarked, message));
       }
     };
@@ -110,8 +108,7 @@ class ArchitectureTest {
       @Override
       public boolean test(JavaClass javaClass) {
         return javaClass.getEnclosingClass().isEmpty()
-            && javaClass.getMethods().stream()
-                .anyMatch(method -> method.isAnnotatedWith(Test.class));
+            && javaClass.getMethods().stream().anyMatch(method -> method.isAnnotatedWith(Test.class));
       }
     };
   }
