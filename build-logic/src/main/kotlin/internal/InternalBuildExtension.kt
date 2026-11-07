@@ -17,7 +17,7 @@ import org.gradle.api.provider.Property
  *
  * @constructor Injected by Gradle via [org.gradle.api.model.ObjectFactory].
  */
-abstract class InternalPublishingExtension @Inject constructor(objects: ObjectFactory) {
+abstract class InternalBuildExtension @Inject constructor(objects: ObjectFactory) {
 
   /**
    * Human-readable display name of the artifact. Used for publishing metadata and documentation.
