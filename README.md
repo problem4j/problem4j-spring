@@ -221,6 +221,8 @@ dependency.
 <details>
 <summary><b>Expand...</b></summary>
 
+**Note** that **Java 21+** is recommended for local development.
+
 Gradle **9.x+** requires **Java 17+** to run, but higher Java versions can also be used. All modules of this project are
 compiled using a **Java 17 toolchain**, so the produced artifacts are compatible with **Java 17**, regardless of the
 Java version Gradle runs on.
@@ -241,11 +243,6 @@ task. **Note** that **building will fail** if code is not properly formatted.
 ```bash
 ./gradlew spotlessApply
 ```
-
-**Note** that **Java 21+** (`21` or `25`) is recommended for local development. Formatters (such as
-`google-java-format`) resolve to different versions depending on the Java version Gradle runs on. Building on **Java 17**
-works as well, but code style check may fail even for properly formatted code. CI verifies code style only on **Java 21**
-and **Java 25**.
 
 **Note** that if the year has changed, add `-Pspotless.license-year-enabled` flag to update the year in license headers.
 The [publishing GitHub Action](.github/workflows/release.yml) will fail if the year is not updated, but
