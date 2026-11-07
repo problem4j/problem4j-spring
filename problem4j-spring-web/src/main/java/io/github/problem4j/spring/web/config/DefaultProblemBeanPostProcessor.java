@@ -69,7 +69,10 @@ final class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor 
 
     if (log.isDebugEnabled() && !auditLog.isEmpty()) {
       log.debug(
-          "Enhanced '{}' [{}] bean with {}", beanName, AopUtils.getTargetClass(bean).getName(), asLogLine(auditLog));
+          "Enhanced '{}' [{}] bean with {}",
+          beanName,
+          AopUtils.getTargetClass(bean).getName(),
+          asLogLine(auditLog));
     }
     return bean;
   }
@@ -133,7 +136,9 @@ final class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor 
       case 1 -> auditLog.get(0);
       case 2 -> String.join(" and ", auditLog);
       default ->
-          String.join(", ", auditLog.subList(0, auditLog.size() - 1)) + " and " + auditLog.get(auditLog.size() - 1);
+          String.join(", ", auditLog.subList(0, auditLog.size() - 1))
+              + " and "
+              + auditLog.get(auditLog.size() - 1);
     };
   }
 
@@ -142,7 +147,8 @@ final class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor 
     private Supplier<@Nullable ProblemFormat> problemFormat = () -> null;
     private Supplier<@Nullable TypeNameMapper> typeNameMapper = () -> null;
     private Supplier<@Nullable BindingResultSupport> bindingResultSupport = () -> null;
-    private Supplier<@Nullable MethodValidationResultSupport> methodValidationResultSupport = () -> null;
+    private Supplier<@Nullable MethodValidationResultSupport> methodValidationResultSupport =
+        () -> null;
     private Supplier<@Nullable MethodParameterSupport> methodParameterSupport = () -> null;
 
     DefaultBuilder() {}
@@ -160,7 +166,8 @@ final class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor 
     }
 
     @Override
-    public Builder bindingResultSupport(Supplier<@Nullable BindingResultSupport> bindingResultSupport) {
+    public Builder bindingResultSupport(
+        Supplier<@Nullable BindingResultSupport> bindingResultSupport) {
       this.bindingResultSupport = bindingResultSupport;
       return this;
     }
@@ -174,7 +181,8 @@ final class DefaultProblemBeanPostProcessor implements ProblemBeanPostProcessor 
     }
 
     @Override
-    public Builder methodParameterSupport(Supplier<@Nullable MethodParameterSupport> methodParameterSupport) {
+    public Builder methodParameterSupport(
+        Supplier<@Nullable MethodParameterSupport> methodParameterSupport) {
       this.methodParameterSupport = methodParameterSupport;
       return this;
     }

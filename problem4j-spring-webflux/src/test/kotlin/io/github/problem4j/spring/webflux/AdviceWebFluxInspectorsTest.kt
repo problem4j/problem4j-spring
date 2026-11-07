@@ -31,7 +31,8 @@ class AdviceWebFluxInspectorsTest {
 
   private val context: ProblemContext = ProblemContext.create()
   private val problem: Problem = Problem.of(409)
-  private val request: ServerWebExchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"))
+  private val request: ServerWebExchange =
+      MockServerWebExchange.from(MockServerHttpRequest.get("/"))
 
   @Test
   fun givenFullInspector_whenInspecting_thenArgumentsArePassed() {
@@ -43,7 +44,8 @@ class AdviceWebFluxInspectorsTest {
 
     inspector.inspect(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
 
-    assertThat(captured.get()).containsExactly(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
+    assertThat(captured.get())
+        .containsExactly(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
   }
 
   @Test

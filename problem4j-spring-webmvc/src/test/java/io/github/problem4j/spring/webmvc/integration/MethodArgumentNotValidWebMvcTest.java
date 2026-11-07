@@ -43,7 +43,8 @@ class MethodArgumentNotValidWebMvcTest {
 
   @Test
   void givenModelAttributeTypeMismatch_shouldReturnBadRequestProblem() {
-    ResponseEntity<String> response = restTemplate.getForEntity("/method-argument-not-valid?number=abc", String.class);
+    ResponseEntity<String> response =
+        restTemplate.getForEntity("/method-argument-not-valid?number=abc", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);

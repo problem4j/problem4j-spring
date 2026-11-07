@@ -38,18 +38,19 @@ import org.springframework.web.server.ServerWebInputException;
 import tools.jackson.databind.exc.MismatchedInputException;
 
 /**
- * Handles {@link ServerWebInputException} thrown when request data cannot be properly read or converted in a WebFlux
- * application.
+ * Handles {@link ServerWebInputException} thrown when request data cannot be properly read or
+ * converted in a WebFlux application.
  *
- * <p>This typically occurs for invalid query parameters, path variables, or request body content that cannot be
- * converted to the target method parameter type.
+ * <p>This typically occurs for invalid query parameters, path variables, or request body content
+ * that cannot be converted to the target method parameter type.
  *
- * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to indicate that the
- * client sent invalid or unreadable input.
+ * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to
+ * indicate that the client sent invalid or unreadable input.
  *
- * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link AbstractProblemResolver},
- * the {@link TypeNameMapper} and {@link MethodParameterSupport} are assigned after construction by {@link
- * ProblemBeanPostProcessor} through {@link #setTypeNameMapper(TypeNameMapper)} and {@link
+ * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
+ * AbstractProblemResolver}, the {@link TypeNameMapper} and {@link MethodParameterSupport} are
+ * assigned after construction by {@link ProblemBeanPostProcessor} through {@link
+ * #setTypeNameMapper(TypeNameMapper)} and {@link
  * #setMethodParameterSupport(MethodParameterSupport)}.
  *
  * @since 1.2.0
@@ -80,8 +81,8 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after construction; use
-   *     {@link #ServerWebInputProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
+   *     construction; use {@link #ServerWebInputProblemResolver()}
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
   public ServerWebInputProblemResolver(ProblemFormat problemFormat) {
@@ -89,22 +90,26 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
   }
 
   /**
-   * Creates a new {@link ServerWebInputProblemResolver} with the specified problem format and method parameter support.
+   * Creates a new {@link ServerWebInputProblemResolver} with the specified problem format and
+   * method parameter support.
    *
    * @param problemFormat the problem format to use
    * @param methodParameterSupport the support for extracting parameter names
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after construction; use
-   *     {@link #ServerWebInputProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
+   *     construction; use {@link #ServerWebInputProblemResolver()}
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
-  public ServerWebInputProblemResolver(ProblemFormat problemFormat, MethodParameterSupport methodParameterSupport) {
+  public ServerWebInputProblemResolver(
+      ProblemFormat problemFormat, MethodParameterSupport methodParameterSupport) {
     this(problemFormat, new SimpleTypeNameMapper(), methodParameterSupport);
   }
 
   @SuppressWarnings("removal")
   private ServerWebInputProblemResolver(
-      ProblemFormat problemFormat, TypeNameMapper typeNameMapper, MethodParameterSupport methodParameterSupport) {
+      ProblemFormat problemFormat,
+      TypeNameMapper typeNameMapper,
+      MethodParameterSupport methodParameterSupport) {
     super(ServerWebInputException.class, problemFormat);
     this.methodParameterSupport = methodParameterSupport;
     this.typeMismatchHelper = new TypeMismatchHelper(problemFormat, typeNameMapper);
@@ -112,16 +117,16 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
   }
 
   /**
-   * Creates a new {@link ServerWebInputProblemResolver} with the specified problem format, type mismatch resolver, and
-   * method parameter support.
+   * Creates a new {@link ServerWebInputProblemResolver} with the specified problem format, type
+   * mismatch resolver, and method parameter support.
    *
    * @param problemFormat the problem format to use
    * @param typeMismatchProblemResolver the resolver to use, ignored since 3.1.0
    * @param methodParameterSupport the support for extracting parameter names
    * @param typeNameMapper the type name mapper to use for decoding exceptions
    * @since 1.2.0
-   * @deprecated since 3.1.0 as other constructors and {@link ProblemBeanPostProcessor ProblemBeanPostProcessor} should
-   *     be used to apply components of this class
+   * @deprecated since 3.1.0 as other constructors and {@link ProblemBeanPostProcessor
+   *     ProblemBeanPostProcessor} should be used to apply components of this class
    */
   @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)
@@ -173,10 +178,11 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
   }
 
   /**
-   * Resolves a {@link ServerWebInputException} into an immutable {@link Problem}. If the root cause is a {@link
-   * TypeMismatchException}, delegates to the internal type-mismatch helper and, when the property is missing, attempts
-   * to append the offending property/parameter name as the {@code ViolationSupport#PROPERTY_EXTENSION}. Otherwise,
-   * returns a problem whose status reflects the exception's embedded HTTP status code.
+   * Resolves a {@link ServerWebInputException} into an immutable {@link Problem}. If the root cause
+   * is a {@link TypeMismatchException}, delegates to the internal type-mismatch helper and, when
+   * the property is missing, attempts to append the offending property/parameter name as the {@code
+   * ViolationSupport#PROPERTY_EXTENSION}. Otherwise, returns a problem whose status reflects the
+   * exception's embedded HTTP status code.
    *
    * @param context problem context (unused for this resolver)
    * @param ex the triggering {@link ServerWebInputException}
@@ -187,7 +193,8 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(
+      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ServerWebInputException swie = (ServerWebInputException) ex;
 
     if (swie.getCause() instanceof TypeMismatchException tme) {
@@ -199,10 +206,12 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
     return Problem.of(swie.getStatusCode().value());
   }
 
-  private Problem resolveTypeMismatchException(ServerWebInputException swie, TypeMismatchException tme) {
+  private Problem resolveTypeMismatchException(
+      ServerWebInputException swie, TypeMismatchException tme) {
     Problem problem = typeMismatchHelper.toProblem(tme);
     if (!problem.getExtensions().containsKey(PROPERTY_EXTENSION)) {
-      Optional<String> optionalProperty = methodParameterSupport.findParameterName(swie.getMethodParameter());
+      Optional<String> optionalProperty =
+          methodParameterSupport.findParameterName(swie.getMethodParameter());
       if (optionalProperty.isPresent()) {
         return problem.toBuilder().extension(PROPERTY_EXTENSION, optionalProperty.get()).build();
       }

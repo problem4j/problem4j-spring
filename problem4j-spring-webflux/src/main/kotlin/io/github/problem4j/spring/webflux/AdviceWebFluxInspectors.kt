@@ -38,7 +38,8 @@ import org.springframework.web.server.ServerWebExchange
  *     }
  * ```
  *
- * @param inspect observes the resolved [Problem] with all arguments of [AdviceWebFluxInspector.inspect]
+ * @param inspect observes the resolved [Problem] with all arguments of
+ *   [AdviceWebFluxInspector.inspect]
  * @return an [AdviceWebFluxInspector] delegating to [inspect]
  * @since 3.1.0
  */

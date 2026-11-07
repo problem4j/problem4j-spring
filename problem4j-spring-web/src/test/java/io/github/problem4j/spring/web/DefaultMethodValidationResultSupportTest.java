@@ -38,13 +38,15 @@ class DefaultMethodValidationResultSupportTest {
 
   @Test
   void givenMethodValidationException_shouldResolveViolations() throws NoSuchMethodException {
-    Method method = SampleValidatedMethods.class.getDeclaredMethod("sample", String.class, String.class);
+    Method method =
+        SampleValidatedMethods.class.getDeclaredMethod("sample", String.class, String.class);
     MethodParameter firstParam = new MethodParameter(method, 0);
     MethodParameter secondParam = new MethodParameter(method, 1);
 
     ParameterValidationResult firstResult = mock(ParameterValidationResult.class);
     when(firstResult.getMethodParameter()).thenReturn(firstParam);
-    when(firstResult.getResolvableErrors()).thenReturn(List.of(new ObjectError("first", "must not be null")));
+    when(firstResult.getResolvableErrors())
+        .thenReturn(List.of(new ObjectError("first", "must not be null")));
 
     ParameterValidationResult secondResult = mock(ParameterValidationResult.class);
     when(secondResult.getMethodParameter()).thenReturn(secondParam);
@@ -58,7 +60,8 @@ class DefaultMethodValidationResultSupportTest {
 
     assertThat(violations).hasSize(2);
     assertThat(violations.get(0)).isEqualTo(new Violation("p1", "must not be null"));
-    assertThat(violations.get(1)).isEqualTo(new Violation("second", "size must be between 3 and 10"));
+    assertThat(violations.get(1))
+        .isEqualTo(new Violation("second", "size must be between 3 and 10"));
   }
 
   static class SampleValidatedMethods {

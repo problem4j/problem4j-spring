@@ -63,16 +63,19 @@ import org.springframework.web.server.ServerErrorException;
 import org.springframework.web.server.ServerWebInputException;
 
 /**
- * Spring configuration for registering {@code ProblemResolver} beans for {@code spring-web} library. Modules {@code
- * problem4j-spring-webflux} and {@code problem4j-spring-webmvc} provide additional {@link Configuration} classes with
- * more resolvers, that originate from other Spring libraries.
+ * Spring configuration for registering {@code ProblemResolver} beans for {@code spring-web}
+ * library. Modules {@code problem4j-spring-webflux} and {@code problem4j-spring-webmvc} provide
+ * additional {@link Configuration} classes with more resolvers, that originate from other Spring
+ * libraries.
  *
- * <p>Each nested configuration class is annotated with {@link ConditionalOnClass} to ensure that only resolvers for
- * classes present on the classpath are created. This design allows the library to remain compatible previous versions.
+ * <p>Each nested configuration class is annotated with {@link ConditionalOnClass} to ensure that
+ * only resolvers for classes present on the classpath are created. This design allows the library
+ * to remain compatible previous versions.
  *
- * <p>Every resolver is constructed with its default (no-arg) constructor here; any dependency it needs ({@code
- * ProblemFormat}, {@code TypeNameMapper}, {@code BindingResultSupport}, {@code MethodValidationResultSupport}, {@code
- * MethodParameterSupport}) is injected after construction by the single {@link ProblemBeanPostProcessor}.
+ * <p>Every resolver is constructed with its default (no-arg) constructor here; any dependency it
+ * needs ({@code ProblemFormat}, {@code TypeNameMapper}, {@code BindingResultSupport}, {@code
+ * MethodValidationResultSupport}, {@code MethodParameterSupport}) is injected after construction by
+ * the single {@link ProblemBeanPostProcessor}.
  *
  * @see io.github.problem4j.spring.web.resolver.ProblemResolver
  */

@@ -121,7 +121,10 @@ tasks.named<Task>("check") {
 }
 
 tasks.withType<Javadoc>().configureEach {
-    javadocTool = javaToolchains.javadocToolFor { languageVersion = JavaLanguageVersion.of(javaTargetVersion) }
+    javadocTool =
+        javaToolchains.javadocToolFor {
+            languageVersion = JavaLanguageVersion.of(javaTargetVersion)
+        }
 }
 
 // Assert that each package has a package-info.java with @NullMarked annotation on it.

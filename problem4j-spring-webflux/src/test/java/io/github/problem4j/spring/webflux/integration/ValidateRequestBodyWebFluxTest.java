@@ -97,7 +97,8 @@ class ValidateRequestBodyWebFluxTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"{ \"name\": \"Alice\"", "not a json", "123", "[1, 2, 3]", "\"just a string\""})
+  @ValueSource(
+      strings = {"{ \"name\": \"Alice\"", "not a json", "123", "[1, 2, 3]", "\"just a string\""})
   @NullSource
   void givenMalformedRequestBody_shouldReturnProblem(String json) {
     WebTestClient.RequestBodySpec spec =

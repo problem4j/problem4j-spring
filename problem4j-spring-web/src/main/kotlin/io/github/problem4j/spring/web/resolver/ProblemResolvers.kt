@@ -24,7 +24,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
 
 /**
- * Creates a [ProblemResolver] for exception type [E] from a lambda, without subclassing [AbstractProblemResolver].
+ * Creates a [ProblemResolver] for exception type [E] from a lambda, without subclassing
+ * [AbstractProblemResolver].
  *
  * Example:
  * ```
@@ -58,7 +59,8 @@ public inline fun <reified E : Exception> problemResolver(
     }
 
 /**
- * Creates a [ProblemResolver] for exception type [E] from a lambda, without subclassing [AbstractProblemResolver].
+ * Creates a [ProblemResolver] for exception type [E] from a lambda, without subclassing
+ * [AbstractProblemResolver].
  *
  * Example:
  * ```

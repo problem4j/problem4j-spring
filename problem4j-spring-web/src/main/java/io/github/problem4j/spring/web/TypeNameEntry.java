@@ -65,7 +65,8 @@ public final class TypeNameEntry {
   }
 
   /**
-   * Compares this entry to another object for equality. Two entries are equal if their types and names are equal.
+   * Compares this entry to another object for equality. Two entries are equal if their types and
+   * names are equal.
    *
    * @param obj the object to compare with
    * @return {@code true} if both entries are equal, {@code false} otherwise

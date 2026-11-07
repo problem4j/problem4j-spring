@@ -30,9 +30,9 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 /**
- * Creates comparators deciding {@link ProblemResolver} precedence the same way Spring orders injected collections, i.e.
- * also considering {@link org.springframework.core.annotation.Order &#64;Order} declared on {@code @Bean} factory
- * methods.
+ * Creates comparators deciding {@link ProblemResolver} precedence the same way Spring orders
+ * injected collections, i.e. also considering {@link org.springframework.core.annotation.Order
+ * &#64;Order} declared on {@code @Bean} factory methods.
  */
 final class ResolverOrdering {
 
@@ -44,7 +44,8 @@ final class ResolverOrdering {
    * @return comparator ordering resolvers by precedence (lower wins)
    */
   static Comparator<Object> comparator(
-      ConfigurableListableBeanFactory beanFactory, Map<String, ? extends ProblemResolver> problemResolvers) {
+      ConfigurableListableBeanFactory beanFactory,
+      Map<String, ? extends ProblemResolver> problemResolvers) {
     IdentityHashMap<Object, Object> sources = new IdentityHashMap<>();
     problemResolvers.forEach((beanName, resolver) -> {
       Object source = findOrderSource(beanFactory, beanName, resolver);

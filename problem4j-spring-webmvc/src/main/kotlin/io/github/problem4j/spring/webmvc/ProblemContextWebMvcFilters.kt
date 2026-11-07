@@ -33,8 +33,8 @@ import jakarta.servlet.http.HttpServletResponse
 public interface ProblemContextWebMvcFilterSpec {
 
   /**
-   * Replaces the default trace identifier generation (random UUID without dashes). Used only when no trace identifier
-   * is found in request attributes or in the configured tracing header.
+   * Replaces the default trace identifier generation (random UUID without dashes). Used only when
+   * no trace identifier is found in request attributes or in the configured tracing header.
    *
    * @param create generates a new trace identifier
    * @since 3.1.0
@@ -42,8 +42,8 @@ public interface ProblemContextWebMvcFilterSpec {
   public fun createTraceId(create: (HttpServletRequest, HttpServletResponse) -> String)
 
   /**
-   * Registers a callback invoked after the [ProblemContext] is assigned to request attributes and before the rest of
-   * the filter chain is processed. Callbacks run in registration order.
+   * Registers a callback invoked after the [ProblemContext] is assigned to request attributes and
+   * before the rest of the filter chain is processed. Callbacks run in registration order.
    *
    * @param callback receives the request, response and the assigned [ProblemContext]
    * @since 3.1.0
@@ -51,9 +51,9 @@ public interface ProblemContextWebMvcFilterSpec {
   public fun onContext(callback: (HttpServletRequest, HttpServletResponse, ProblemContext) -> Unit)
 
   /**
-   * Registers a callback invoked after the rest of the filter chain is processed, regardless of whether it completed
-   * normally or threw. Useful for cleaning up state set up in [onContext] (e.g. MDC entries). Callbacks run in
-   * registration order.
+   * Registers a callback invoked after the rest of the filter chain is processed, regardless of
+   * whether it completed normally or threw. Useful for cleaning up state set up in [onContext]
+   * (e.g. MDC entries). Callbacks run in registration order.
    *
    * @param callback receives the request, response and the assigned [ProblemContext]
    * @since 3.1.0
@@ -100,7 +100,8 @@ public fun problemContextWebMvcFilter(
 
 private typealias TraceIdFactory = (HttpServletRequest, HttpServletResponse) -> String
 
-private typealias ContextCallback = (HttpServletRequest, HttpServletResponse, ProblemContext) -> Unit
+private typealias ContextCallback =
+    (HttpServletRequest, HttpServletResponse, ProblemContext) -> Unit
 
 private class ProblemContextWebMvcFilterSpecImpl : ProblemContextWebMvcFilterSpec {
 

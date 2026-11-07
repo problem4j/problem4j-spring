@@ -35,38 +35,39 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   private boolean enabled = true;
 
   /**
-   * Defines the format for the {@code detail} field in Problem responses. Supported values are {@code "lowercase"},
-   * {@code "capitalized"}, and {@code "uppercase"}.
+   * Defines the format for the {@code detail} field in Problem responses. Supported values are
+   * {@code "lowercase"}, {@code "capitalized"}, and {@code "uppercase"}.
    */
   private String detailFormat = DetailFormat.CAPITALIZED;
 
   /**
-   * Name of the HTTP header that carries a trace ID for simple tracing provided by this library. If unset, the feature
-   * is disabled.
+   * Name of the HTTP header that carries a trace ID for simple tracing provided by this library. If
+   * unset, the feature is disabled.
    */
   private @Nullable String tracingHeaderName;
 
   /**
-   * Template for overriding the {@code type} field of a Problem response. May contain placeholders like {@code
-   * {problem.type}} and {@code {context.<key>}}.
+   * Template for overriding the {@code type} field of a Problem response. May contain placeholders
+   * like {@code {problem.type}} and {@code {context.<key>}}.
    */
   private @Nullable String typeOverride;
 
   /**
-   * Template for overriding the {@code title} field of a Problem response. May contain placeholders like {@code
-   * {problem.title}} and {@code {context.<key>}}.
+   * Template for overriding the {@code title} field of a Problem response. May contain placeholders
+   * like {@code {problem.title}} and {@code {context.<key>}}.
    */
   private @Nullable String titleOverride;
 
   /**
-   * Template for overriding the {@code instance} field of a Problem response. May contain placeholders like {@code
-   * {problem.instance}} and {@code {context.<key>}} for dynamic values.
+   * Template for overriding the {@code instance} field of a Problem response. May contain
+   * placeholders like {@code {problem.instance}} and {@code {context.<key>}} for dynamic values.
    */
   private @Nullable String instanceOverride;
 
   /**
-   * Policy for multiple {@code ProblemResolver}-s supporting the same exception class with equal order. {@code first}
-   * uses the first one registered in the application context, {@code fail} fails application startup.
+   * Policy for multiple {@code ProblemResolver}-s supporting the same exception class with equal
+   * order. {@code first} uses the first one registered in the application context, {@code fail}
+   * fails application startup.
    */
   private DuplicateResolverPolicy duplicateResolverPolicy = DuplicateResolverPolicy.FAIL;
 
@@ -84,21 +85,21 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    * Constructs a new {@link ProblemProperties}.
    *
    * @param enabled whether problem handling is enabled
-   * @param detailFormat format for the {@code detail} field (one of {@link DetailFormat#LOWERCASE}, {@link
-   *     DetailFormat#CAPITALIZED}, {@link DetailFormat#UPPERCASE})
+   * @param detailFormat format for the {@code detail} field (one of {@link DetailFormat#LOWERCASE},
+   *     {@link DetailFormat#CAPITALIZED}, {@link DetailFormat#UPPERCASE})
    * @param tracingHeaderName name of the HTTP header carrying a trace ID (nullable)
-   * @param typeOverride template for overriding the {@code type} field; may contain {@code {context.<key>}}
-   *     placeholders (nullable)
-   * @param titleOverride template for overriding the {@code title} field; may contain {@code {context.<key>}}
-   *     placeholders (nullable)
-   * @param instanceOverride template for overriding the {@code instance} field; may contain {@code {context.<key>}}
-   *     placeholders (nullable)
-   * @param resolverCaching caching for resolver lookups ({@code CachingProblemResolverStore}); defaults to a new {@link
-   *     ResolverCaching} instance
+   * @param typeOverride template for overriding the {@code type} field; may contain {@code
+   *     {context.<key>}} placeholders (nullable)
+   * @param titleOverride template for overriding the {@code title} field; may contain {@code
+   *     {context.<key>}} placeholders (nullable)
+   * @param instanceOverride template for overriding the {@code instance} field; may contain {@code
+   *     {context.<key>}} placeholders (nullable)
+   * @param resolverCaching caching for resolver lookups ({@code CachingProblemResolverStore});
+   *     defaults to a new {@link ResolverCaching} instance
    * @see io.github.problem4j.spring.web.CachingProblemResolverStore
    * @since 1.2.0
-   * @deprecated retained only for binary backwards compatibility; use the no-arg constructor together with the
-   *     corresponding setters instead
+   * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+   *     together with the corresponding setters instead
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
   public ProblemProperties(
@@ -164,9 +165,9 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   /**
    * Returns the name of the HTTP header used for tracing requests.
    *
-   * <p>This header provides the trace identifier that can be injected into responses. When combined with {@link
-   * #instanceOverride}, the trace ID may be used to dynamically populate the {@code instance} field of a {@code
-   * Problem} response.
+   * <p>This header provides the trace identifier that can be injected into responses. When combined
+   * with {@link #instanceOverride}, the trace ID may be used to dynamically populate the {@code
+   * instance} field of a {@code Problem} response.
    *
    * <p>If no header name is configured, this method may return {@code null}.
    *
@@ -182,7 +183,8 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   /**
    * Sets the name of the HTTP header carrying a trace ID.
    *
-   * @param tracingHeaderName name of the HTTP header carrying a trace ID, or {@code null} to disable tracing
+   * @param tracingHeaderName name of the HTTP header carrying a trace ID, or {@code null} to
+   *     disable tracing
    * @since 3.1.0
    */
   public void setTracingHeaderName(@Nullable String tracingHeaderName) {
@@ -192,17 +194,18 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   /**
    * Returns the configured type override.
    *
-   * <p>This value defines a fixed or templated {@code type} URI to be used for all problems processed by the
-   * post-processor, replacing the original problem type if present. The value may include special placeholders that
-   * will be dynamically replaced at runtime:
+   * <p>This value defines a fixed or templated {@code type} URI to be used for all problems
+   * processed by the post-processor, replacing the original problem type if present. The value may
+   * include special placeholders that will be dynamically replaced at runtime:
    *
    * <ul>
    *   <li>{@code {problem.type}} - replaced with the original problem's type URI
-   *   <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@code ProblemContext}
+   *   <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@code
+   *       ProblemContext}
    * </ul>
    *
-   * <p>If no override is configured, this method may return {@code null}, and the original problem type will be
-   * preserved.
+   * <p>If no override is configured, this method may return {@code null}, and the original problem
+   * type will be preserved.
    *
    * @return the configured type override string, or {@code null} if not set
    * @see io.github.problem4j.core.ProblemContext
@@ -216,8 +219,8 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   /**
    * Sets the template for overriding the {@code type} field.
    *
-   * @param typeOverride template for overriding the {@code type} field; may contain {@code {context.<key>}}
-   *     placeholders (nullable)
+   * @param typeOverride template for overriding the {@code type} field; may contain {@code
+   *     {context.<key>}} placeholders (nullable)
    * @since 3.1.0
    */
   public void setTypeOverride(@Nullable String typeOverride) {
@@ -231,7 +234,8 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    *
    * <ul>
    *   <li>{@code {problem.title}} - replaced with the original problem's title
-   *   <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@code ProblemContext}
+   *   <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@code
+   *       ProblemContext}
    * </ul>
    *
    * @return the configured title override string, or {@code null} if not set
@@ -246,8 +250,8 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   /**
    * Sets the template for overriding the {@code title} field.
    *
-   * @param titleOverride template for overriding the {@code title} field; may contain {@code {context.<key>}}
-   *     placeholders (nullable)
+   * @param titleOverride template for overriding the {@code title} field; may contain {@code
+   *     {context.<key>}} placeholders (nullable)
    * @since 3.1.0
    */
   public void setTitleOverride(@Nullable String titleOverride) {
@@ -257,17 +261,18 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   /**
    * Returns the configured instance override.
    *
-   * <p>This value may contain special placeholders that will be replaced at runtime with contextual or problem-specific
-   * data:
+   * <p>This value may contain special placeholders that will be replaced at runtime with contextual
+   * or problem-specific data:
    *
    * <ul>
    *   <li>{@code {problem.instance}} - replaced with the original problem's instance URI
-   *   <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@code ProblemContext}
+   *   <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@code
+   *       ProblemContext}
    * </ul>
    *
-   * <p>This is useful if the {@code instance} field cannot be determined when throwing a {@code ProblemException} (or
-   * an exception annotated with {@code @ProblemMapping}). Setting this configuration, along with {@link
-   * #tracingHeaderName}, enables this feature.
+   * <p>This is useful if the {@code instance} field cannot be determined when throwing a {@code
+   * ProblemException} (or an exception annotated with {@code @ProblemMapping}). Setting this
+   * configuration, along with {@link #tracingHeaderName}, enables this feature.
    *
    * @return the configured instance override string, or {@code null} if not set
    * @see io.github.problem4j.core.ProblemContext
@@ -282,8 +287,8 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   /**
    * Sets the template for overriding the {@code instance} field.
    *
-   * @param instanceOverride template for overriding the {@code instance} field; may contain {@code {context.<key>}}
-   *     placeholders (nullable)
+   * @param instanceOverride template for overriding the {@code instance} field; may contain {@code
+   *     {context.<key>}} placeholders (nullable)
    * @since 3.1.0
    */
   public void setInstanceOverride(@Nullable String instanceOverride) {
@@ -352,7 +357,8 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
      * Default enabled value string for resolver caching.
      *
      * @since 1.2.0
-     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link #DEFAULT_ENABLED}
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public static final String DEFAULT_ENABLED_VALUE = "false";
@@ -372,8 +378,8 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
      *
      * @param enabled whether caching is enabled
      * @since 1.2.0
-     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor together with {@link
-     *     #setEnabled(boolean)} instead
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with {@link #setEnabled(boolean)} instead
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public ResolverCaching(boolean enabled) {
@@ -434,8 +440,8 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   }
 
   /**
-   * Policy for handling multiple {@link io.github.problem4j.spring.web.resolver.ProblemResolver ProblemResolver} beans
-   * supporting the same exception class with equal order.
+   * Policy for handling multiple {@link io.github.problem4j.spring.web.resolver.ProblemResolver
+   * ProblemResolver} beans supporting the same exception class with equal order.
    *
    * @see #getDuplicateResolverPolicy()
    * @since 3.1.0

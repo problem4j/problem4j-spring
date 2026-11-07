@@ -69,8 +69,8 @@ public class ProblemWebFluxProperties {
    * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
    * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
    * @since 1.2.0
-   * @deprecated retained only for binary backwards compatibility; use the no-arg constructor together with the
-   *     corresponding setters instead
+   * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+   *     together with the corresponding setters instead
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
   public ProblemWebFluxProperties(
@@ -119,8 +119,8 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Returns configuration for {@code ExceptionWebFluxAdvice}, which handles general exceptions and converts them to
-   * {@code Problem} responses.
+   * Returns configuration for {@code ExceptionWebFluxAdvice}, which handles general exceptions and
+   * converts them to {@code Problem} responses.
    *
    * @return the configuration for exception advice
    * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
@@ -142,8 +142,8 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemExceptionWebFluxAdvice}, which handles exceptions of type {@code
-   * ProblemException} and converts them to Problem responses.
+   * Returns configuration for {@code ProblemExceptionWebFluxAdvice}, which handles exceptions of
+   * type {@code ProblemException} and converts them to Problem responses.
    *
    * @return the configuration for problem exception advice
    * @see io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice
@@ -165,8 +165,8 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemContextWebFluxFilter}, which enriches request handling with {@code
-   * ProblemContext}.
+   * Returns configuration for {@code ProblemContextWebFluxFilter}, which enriches request handling
+   * with {@code ProblemContext}.
    *
    * @return the configuration for the {@code ProblemContextWebFluxFilter}
    * @see io.github.problem4j.core.ProblemContext
@@ -189,8 +189,9 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemEnhancedWebFluxHandler} replacement, which allows Problem4J to take control
-   * of exception handling normally performed by Spring's {@code ResponseEntityExceptionHandler}.
+   * Returns configuration for {@code ProblemEnhancedWebFluxHandler} replacement, which allows
+   * Problem4J to take control of exception handling normally performed by Spring's {@code
+   * ResponseEntityExceptionHandler}.
    *
    * @return the configuration for the overwritten exception handler
    * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
@@ -213,8 +214,9 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemErrorWebExceptionHandler} replacement, which allows Problem4J to take
-   * control of exception handling normally performed by Spring's {@code ErrorWebExceptionHandler}.
+   * Returns configuration for {@code ProblemErrorWebExceptionHandler} replacement, which allows
+   * Problem4J to take control of exception handling normally performed by Spring's {@code
+   * ErrorWebExceptionHandler}.
    *
    * @return the configuration for the overwritten error handler
    * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
@@ -257,7 +259,8 @@ public class ProblemWebFluxProperties {
      * Default enabled value as a string for {@code ExceptionAdvice} configuration group.
      *
      * @since 1.2.0
-     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link #DEFAULT_ENABLED}
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public static final String DEFAULT_ENABLED_VALUE = "true";
@@ -279,8 +282,8 @@ public class ProblemWebFluxProperties {
      * @param enabled whether the {@code ExceptionWebFluxAdvice} bean should be registered
      * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
      * @since 1.2.0
-     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor together with the
-     *     corresponding setters instead
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public ExceptionAdvice(boolean enabled) {
@@ -331,7 +334,8 @@ public class ProblemWebFluxProperties {
      * Default enabled value as a string for {@code ProblemExceptionAdvice} configuration group.
      *
      * @since 1.2.0
-     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link #DEFAULT_ENABLED}
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public static final String DEFAULT_ENABLED_VALUE = "true";
@@ -353,8 +357,8 @@ public class ProblemWebFluxProperties {
      * @param enabled whether the {@code ProblemExceptionWebFluxAdvice} bean should be registered
      * @see io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice
      * @since 1.2.0
-     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor together with the
-     *     corresponding setters instead
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public ProblemExceptionAdvice(boolean enabled) {
@@ -405,7 +409,8 @@ public class ProblemWebFluxProperties {
      * Default enabled value as a string for {@code ProblemContextFilter} configuration group.
      *
      * @since 1.2.0
-     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link #DEFAULT_ENABLED}
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public static final String DEFAULT_ENABLED_VALUE = "true";
@@ -427,8 +432,8 @@ public class ProblemWebFluxProperties {
      * @param enabled whether the {@code ProblemContextWebFluxFilter} bean should be registered
      * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
      * @since 1.2.0
-     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor together with the
-     *     corresponding setters instead
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public ProblemContextFilter(boolean enabled) {
@@ -479,7 +484,8 @@ public class ProblemWebFluxProperties {
      * Default enabled value as a string for {@code ExceptionHandler} configuration group.
      *
      * @since 1.2.0
-     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link #DEFAULT_ENABLED}
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public static final String DEFAULT_ENABLED_VALUE = "true";
@@ -498,13 +504,13 @@ public class ProblemWebFluxProperties {
     /**
      * Creates a new configuration group.
      *
-     * @param enabled whether the {@code ResponseEntityExceptionHandler} should be replaced with {@code
-     *     ProblemEnhancedWebFluxHandler}
+     * @param enabled whether the {@code ResponseEntityExceptionHandler} should be replaced with
+     *     {@code ProblemEnhancedWebFluxHandler}
      * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
      * @see org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler
      * @since 1.2.0
-     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor together with the
-     *     corresponding setters instead
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public ExceptionHandler(boolean enabled) {
@@ -525,8 +531,8 @@ public class ProblemWebFluxProperties {
     /**
      * Sets whether the {@code ProblemEnhancedWebFluxHandler} should be registered.
      *
-     * @param enabled whether the {@code ResponseEntityExceptionHandler} should be replaced with {@code
-     *     ProblemEnhancedWebFluxHandler}
+     * @param enabled whether the {@code ResponseEntityExceptionHandler} should be replaced with
+     *     {@code ProblemEnhancedWebFluxHandler}
      * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
      * @see org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler
      * @since 3.1.0
@@ -554,7 +560,8 @@ public class ProblemWebFluxProperties {
     /**
      * Default enabled value as a string for {@code ErrorWebExceptionHandler} configuration group.
      *
-     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link #DEFAULT_ENABLED}
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public static final String DEFAULT_ENABLED_VALUE = "true";
@@ -577,8 +584,8 @@ public class ProblemWebFluxProperties {
      *     ProblemErrorWebExceptionHandler}
      * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
      * @since 1.2.0
-     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor together with the
-     *     corresponding setters instead
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public ErrorWebExceptionHandler(boolean enabled) {

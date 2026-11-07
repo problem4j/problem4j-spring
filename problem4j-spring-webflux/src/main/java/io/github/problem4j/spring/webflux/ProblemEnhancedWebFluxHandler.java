@@ -42,8 +42,8 @@ import reactor.core.publisher.Mono;
 /**
  * Handles Spring framework exceptions using registered {@code ProblemResolver}s.
  *
- * <p>This class extends {@link ResponseEntityExceptionHandler} and overrides {@link #handleExceptionInternal} to
- * replace the response body with a {@link Problem} object.
+ * <p>This class extends {@link ResponseEntityExceptionHandler} and overrides {@link
+ * #handleExceptionInternal} to replace the response body with a {@link Problem} object.
  *
  * <p>Behavior:
  *
@@ -85,9 +85,10 @@ public class ProblemEnhancedWebFluxHandler extends ResponseEntityExceptionHandle
   }
 
   /**
-   * Overrides the default exception handling to produce a {@link Problem} response. It attempts to resolve the
-   * exception using registered resolvers, sets the content type, applies post-processing, and falls back to a generic
-   * problem if resolution fails. It also applies any configured inspectors.
+   * Overrides the default exception handling to produce a {@link Problem} response. It attempts to
+   * resolve the exception using registered resolvers, sets the content type, applies
+   * post-processing, and falls back to a generic problem if resolution fails. It also applies any
+   * configured inspectors.
    *
    * @param ex the exception to handle
    * @param body the body to use for the response
@@ -104,7 +105,8 @@ public class ProblemEnhancedWebFluxHandler extends ResponseEntityExceptionHandle
       @Nullable HttpHeaders headers,
       HttpStatusCode status,
       ServerWebExchange exchange) {
-    ProblemContext context = exchange.getAttributeOrDefault(PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create());
+    ProblemContext context =
+        exchange.getAttributeOrDefault(PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create());
 
     headers = headers != null ? new HttpHeaders(headers) : new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
@@ -118,7 +120,9 @@ public class ProblemEnhancedWebFluxHandler extends ResponseEntityExceptionHandle
       problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
-    status = Optional.ofNullable(HttpStatus.resolve(problem.getStatus())).orElse(HttpStatus.INTERNAL_SERVER_ERROR);
+    status =
+        Optional.ofNullable(HttpStatus.resolve(problem.getStatus()))
+            .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
     for (AdviceWebFluxInspector inspector : adviceWebFluxInspectors) {
       inspector.inspect(context, problem, ex, headers, status, exchange);
@@ -128,7 +132,8 @@ public class ProblemEnhancedWebFluxHandler extends ResponseEntityExceptionHandle
   }
 
   /**
-   * Returns a {@link Problem} for the given exception, using a resolver if available, or a fallback otherwise.
+   * Returns a {@link Problem} for the given exception, using a resolver if available, or a fallback
+   * otherwise.
    *
    * @param context the problem context
    * @param ex the exception to resolve

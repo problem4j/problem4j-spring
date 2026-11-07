@@ -31,7 +31,8 @@ final class WebFluxAdviceSupport {
    * @param exchange exchange that was being handled while that exception occurred
    * @param e exception that occurred while processing exception {@code ex}
    */
-  static void logAdviceException(Logger log, Exception ex, ServerWebExchange exchange, Exception e) {
+  static void logAdviceException(
+      Logger log, Exception ex, ServerWebExchange exchange, Exception e) {
     log.warn(
         "Unable to resolve problem response (method={}, path={}, traceId={}, message={}, originalException=[{} : {}])",
         exchange.getRequest().getMethod(),

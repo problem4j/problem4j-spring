@@ -35,7 +35,8 @@ import io.github.problem4j.core.ProblemContext
  * @return this context instance for chaining
  * @since 3.1.0
  */
-public fun ProblemContext.putAll(vararg entries: Pair<String, String?>): ProblemContext = putAll(mapOf(*entries))
+public fun ProblemContext.putAll(vararg entries: Pair<String, String?>): ProblemContext =
+    putAll(mapOf(*entries))
 
 /**
  * Associates the given value with the given key, or unsets it when [value] is `null`.

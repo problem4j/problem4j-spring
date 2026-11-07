@@ -46,8 +46,8 @@ import org.springframework.web.context.request.WebRequest;
 /**
  * Fallback exception handler for uncaught {@link Exception}s in Spring REST controllers.
  *
- * <p>This class uses {@link RestControllerAdvice} to intercept any exceptions not handled by more specific exception
- * handlers. It converts them into a standardized {@link Problem} response with:
+ * <p>This class uses {@link RestControllerAdvice} to intercept any exceptions not handled by more
+ * specific exception handlers. It converts them into a standardized {@link Problem} response with:
  *
  * <ul>
  *   <li>HTTP status: {@link HttpStatus#INTERNAL_SERVER_ERROR}
@@ -55,9 +55,9 @@ import org.springframework.web.context.request.WebRequest;
  *   <li>Content type: {@code application/problem+json}
  * </ul>
  *
- * <p>Intended as a <b>generic fallback</b>, it ensures that unexpected exceptions still produce a consistent {@link
- * Problem} response. For more specific exception handling, use {@link ProblemEnhancedWebMvcHandler}, {@link
- * ProblemExceptionWebMvcAdvice}.
+ * <p>Intended as a <b>generic fallback</b>, it ensures that unexpected exceptions still produce a
+ * consistent {@link Problem} response. For more specific exception handling, use {@link
+ * ProblemEnhancedWebMvcHandler}, {@link ProblemExceptionWebMvcAdvice}.
  *
  * @since 1.2.0
  */
@@ -93,8 +93,9 @@ public class ExceptionWebMvcAdvice {
   }
 
   /**
-   * Generic fallback handler converting any uncaught exception into a {@link Problem} response. Chooses a resolver,
-   * {@code @ProblemMapping}, {@code @ResponseStatus}, or defaults to {@code INTERNAL_SERVER_ERROR}.
+   * Generic fallback handler converting any uncaught exception into a {@link Problem} response.
+   * Chooses a resolver, {@code @ProblemMapping}, {@code @ResponseStatus}, or defaults to {@code
+   * INTERNAL_SERVER_ERROR}.
    *
    * @param ex the uncaught exception
    * @param request the web request
@@ -103,7 +104,8 @@ public class ExceptionWebMvcAdvice {
    */
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Object> handleException(Exception ex, WebRequest request) {
-    ProblemContext context = (ProblemContext) request.getAttribute(PROBLEM_CONTEXT_ATTRIBUTE, SCOPE_REQUEST);
+    ProblemContext context =
+        (ProblemContext) request.getAttribute(PROBLEM_CONTEXT_ATTRIBUTE, SCOPE_REQUEST);
     if (context == null) {
       context = ProblemContext.create();
     }
@@ -121,7 +123,8 @@ public class ExceptionWebMvcAdvice {
     }
 
     HttpStatus status =
-        Optional.ofNullable(HttpStatus.resolve(problem.getStatus())).orElse(HttpStatus.INTERNAL_SERVER_ERROR);
+        Optional.ofNullable(HttpStatus.resolve(problem.getStatus()))
+            .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
     for (AdviceWebMvcInspector inspector : adviceWebMvcInspectors) {
       inspector.inspect(context, problem, ex, headers, status, request);
@@ -138,7 +141,8 @@ public class ExceptionWebMvcAdvice {
     if (optionalResolver.isPresent()) {
       return optionalResolver.get().resolve(context, ex, headers, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    ResponseStatus responseStatus = AnnotatedElementUtils.findMergedAnnotation(ex.getClass(), ResponseStatus.class);
+    ResponseStatus responseStatus =
+        AnnotatedElementUtils.findMergedAnnotation(ex.getClass(), ResponseStatus.class);
     if (responseStatus != null) {
       ProblemBuilder builder = Problem.builder().status(responseStatus.code().value());
       if (StringUtils.hasLength(responseStatus.reason())) {

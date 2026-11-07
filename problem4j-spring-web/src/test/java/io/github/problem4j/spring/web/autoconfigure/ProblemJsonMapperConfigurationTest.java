@@ -36,11 +36,13 @@ class ProblemJsonMapperConfigurationTest {
   private final WebApplicationContextRunner contextRunner =
       new WebApplicationContextRunner()
           .withConfiguration(
-              AutoConfigurations.of(JacksonAutoConfiguration.class, ProblemJacksonAutoConfiguration.class));
+              AutoConfigurations.of(
+                  JacksonAutoConfiguration.class, ProblemJacksonAutoConfiguration.class));
 
   @Test
   void givenJsonMapperOnClasspath_whenContextStarts_thenRegistersCustomizer() {
-    contextRunner.run(context -> assertThat(context).hasSingleBean(ProblemJsonMapperBuilderCustomizer.class));
+    contextRunner.run(
+        context -> assertThat(context).hasSingleBean(ProblemJsonMapperBuilderCustomizer.class));
   }
 
   @Test
@@ -70,7 +72,8 @@ class ProblemJsonMapperConfigurationTest {
   void givenJsonMapperNotOnClasspath_whenContextStarts_thenDoesNotRegisterCustomizer() {
     contextRunner
         .withClassLoader(new FilteredClassLoader(JsonMapper.class))
-        .run(context -> assertThat(context).doesNotHaveBean(ProblemJsonMapperBuilderCustomizer.class));
+        .run(context ->
+            assertThat(context).doesNotHaveBean(ProblemJsonMapperBuilderCustomizer.class));
   }
 
   @Test
@@ -87,14 +90,18 @@ class ProblemJsonMapperConfigurationTest {
   void givenProblem4jDisabled_whenContextStarts_thenDoesNotRegisterCustomizer() {
     contextRunner
         .withPropertyValues("problem4j.enabled=false")
-        .run(context -> assertThat(context).doesNotHaveBean(ProblemJsonMapperBuilderCustomizer.class));
+        .run(context ->
+            assertThat(context).doesNotHaveBean(ProblemJsonMapperBuilderCustomizer.class));
   }
 
   @Test
   void givenNonWebApplication_whenContextStarts_thenRegistersCustomizer() {
     new ApplicationContextRunner()
-        .withConfiguration(AutoConfigurations.of(JacksonAutoConfiguration.class, ProblemJacksonAutoConfiguration.class))
-        .run(context -> assertThat(context).hasSingleBean(ProblemJsonMapperBuilderCustomizer.class));
+        .withConfiguration(
+            AutoConfigurations.of(
+                JacksonAutoConfiguration.class, ProblemJacksonAutoConfiguration.class))
+        .run(
+            context -> assertThat(context).hasSingleBean(ProblemJsonMapperBuilderCustomizer.class));
   }
 
   @Configuration(proxyBeanMethods = false)

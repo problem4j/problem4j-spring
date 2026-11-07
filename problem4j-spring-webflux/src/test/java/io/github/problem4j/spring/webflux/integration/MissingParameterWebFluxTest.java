@@ -104,7 +104,11 @@ class MissingParameterWebFluxTest {
   void givenRequestWithRequestParam_shouldReturnOk() {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path("/missing-parameter/request-param").queryParam("param", "value").build())
+        .uri(uriBuilder ->
+            uriBuilder
+                .path("/missing-parameter/request-param")
+                .queryParam("param", "value")
+                .build())
         .exchange()
         .expectStatus()
         .isOk()

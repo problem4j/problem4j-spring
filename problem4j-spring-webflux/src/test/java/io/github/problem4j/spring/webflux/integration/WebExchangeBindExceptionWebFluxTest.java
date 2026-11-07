@@ -42,7 +42,8 @@ class WebExchangeBindExceptionWebFluxTest {
   void givenModelAttributeTypeMismatch_shouldReturnBadRequestProblem() {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path("/web-exchange-bind").queryParam("number", "asd").build())
+        .uri(
+            uriBuilder -> uriBuilder.path("/web-exchange-bind").queryParam("number", "asd").build())
         .exchange()
         .expectStatus()
         .isEqualTo(HttpStatus.BAD_REQUEST)

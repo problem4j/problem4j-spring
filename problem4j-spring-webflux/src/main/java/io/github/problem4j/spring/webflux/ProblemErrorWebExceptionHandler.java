@@ -37,11 +37,11 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 /**
- * A WebFlux {@link org.springframework.boot.webflux.error.ErrorWebExceptionHandler} that renders HTTP problems (RFC
- * 7807) instead of the default JSON error response.
+ * A WebFlux {@link org.springframework.boot.webflux.error.ErrorWebExceptionHandler} that renders
+ * HTTP problems (RFC 7807) instead of the default JSON error response.
  *
- * <p>It replaces the response body with a {@link Problem} object while preserving the original HTTP status and content
- * type {@code application/problem+json}.
+ * <p>It replaces the response body with a {@link Problem} object while preserving the original HTTP
+ * status and content type {@code application/problem+json}.
  *
  * @since 1.2.0
  */
@@ -70,7 +70,8 @@ public class ProblemErrorWebExceptionHandler extends DefaultErrorWebExceptionHan
   }
 
   /**
-   * Returns a routing function that handles all requests and delegates to {@link #renderErrorResponse(ServerRequest)}.
+   * Returns a routing function that handles all requests and delegates to {@link
+   * #renderErrorResponse(ServerRequest)}.
    *
    * @param errorAttributes the error attributes used to resolve errors
    * @return a routing function for handling errors

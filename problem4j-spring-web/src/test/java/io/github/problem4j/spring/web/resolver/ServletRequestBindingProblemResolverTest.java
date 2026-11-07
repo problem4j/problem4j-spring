@@ -48,9 +48,11 @@ class ServletRequestBindingProblemResolverTest {
 
   @Test
   void givenMissingServletRequestParameterException_whenResolve_thenReturnsMissingParamProblem() {
-    MissingServletRequestParameterException ex = new MissingServletRequestParameterException("page", "Integer");
+    MissingServletRequestParameterException ex =
+        new MissingServletRequestParameterException("page", "Integer");
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getDetail()).isEqualTo("Missing request param");
@@ -64,7 +66,8 @@ class ServletRequestBindingProblemResolverTest {
     MethodParameter parameter = methodParameter("pathMethod", String.class);
     MissingPathVariableException ex = new MissingPathVariableException("id", parameter);
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getDetail()).isEqualTo("Missing path variable");
@@ -72,11 +75,14 @@ class ServletRequestBindingProblemResolverTest {
   }
 
   @Test
-  void givenMissingRequestHeaderException_whenResolve_thenReturnsMissingHeaderProblem() throws NoSuchMethodException {
+  void givenMissingRequestHeaderException_whenResolve_thenReturnsMissingHeaderProblem()
+      throws NoSuchMethodException {
     MethodParameter parameter = methodParameter("headerMethod", String.class);
-    MissingRequestHeaderException ex = new MissingRequestHeaderException("Authorization", parameter);
+    MissingRequestHeaderException ex =
+        new MissingRequestHeaderException("Authorization", parameter);
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getDetail()).isEqualTo("Missing header");
@@ -84,11 +90,13 @@ class ServletRequestBindingProblemResolverTest {
   }
 
   @Test
-  void givenMissingRequestCookieException_whenResolve_thenReturnsMissingCookieProblem() throws NoSuchMethodException {
+  void givenMissingRequestCookieException_whenResolve_thenReturnsMissingCookieProblem()
+      throws NoSuchMethodException {
     MethodParameter parameter = methodParameter("cookieMethod", String.class);
     MissingRequestCookieException ex = new MissingRequestCookieException("session", parameter);
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getDetail()).isEqualTo("Missing cookie");
@@ -96,10 +104,13 @@ class ServletRequestBindingProblemResolverTest {
   }
 
   @Test
-  void givenGenericExceptionWithSessionAttributeMessage_whenResolve_thenReturnsMissingSessionAttributeProblem() {
-    ServletRequestBindingException ex = new ServletRequestBindingException("Missing session attribute 'userId'");
+  void
+      givenGenericExceptionWithSessionAttributeMessage_whenResolve_thenReturnsMissingSessionAttributeProblem() {
+    ServletRequestBindingException ex =
+        new ServletRequestBindingException("Missing session attribute 'userId'");
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getDetail()).isEqualTo("Missing session attribute");
@@ -107,10 +118,13 @@ class ServletRequestBindingProblemResolverTest {
   }
 
   @Test
-  void givenGenericExceptionWithRequestAttributeMessage_whenResolve_thenReturnsMissingRequestAttributeProblem() {
-    ServletRequestBindingException ex = new ServletRequestBindingException("Missing request attribute 'tenantId'");
+  void
+      givenGenericExceptionWithRequestAttributeMessage_whenResolve_thenReturnsMissingRequestAttributeProblem() {
+    ServletRequestBindingException ex =
+        new ServletRequestBindingException("Missing request attribute 'tenantId'");
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getDetail()).isEqualTo("Missing request attribute");

@@ -36,11 +36,13 @@ class ProblemXmlMapperConfigurationTest {
   private final WebApplicationContextRunner contextRunner =
       new WebApplicationContextRunner()
           .withConfiguration(
-              AutoConfigurations.of(JacksonAutoConfiguration.class, ProblemJacksonAutoConfiguration.class));
+              AutoConfigurations.of(
+                  JacksonAutoConfiguration.class, ProblemJacksonAutoConfiguration.class));
 
   @Test
   void givenXmlMapperOnClasspath_whenContextStarts_thenRegistersCustomizer() {
-    contextRunner.run(context -> assertThat(context).hasSingleBean(ProblemXmlMapperBuilderCustomizer.class));
+    contextRunner.run(
+        context -> assertThat(context).hasSingleBean(ProblemXmlMapperBuilderCustomizer.class));
   }
 
   @Test
@@ -70,7 +72,8 @@ class ProblemXmlMapperConfigurationTest {
   void givenXmlMapperNotOnClasspath_whenContextStarts_thenDoesNotRegisterCustomizer() {
     contextRunner
         .withClassLoader(new FilteredClassLoader(XmlMapper.class))
-        .run(context -> assertThat(context).doesNotHaveBean(ProblemXmlMapperBuilderCustomizer.class));
+        .run(context ->
+            assertThat(context).doesNotHaveBean(ProblemXmlMapperBuilderCustomizer.class));
   }
 
   @Test
@@ -87,13 +90,16 @@ class ProblemXmlMapperConfigurationTest {
   void givenProblem4jDisabled_whenContextStarts_thenDoesNotRegisterCustomizer() {
     contextRunner
         .withPropertyValues("problem4j.enabled=false")
-        .run(context -> assertThat(context).doesNotHaveBean(ProblemXmlMapperBuilderCustomizer.class));
+        .run(context ->
+            assertThat(context).doesNotHaveBean(ProblemXmlMapperBuilderCustomizer.class));
   }
 
   @Test
   void givenNonWebApplication_whenContextStarts_thenRegistersCustomizer() {
     new ApplicationContextRunner()
-        .withConfiguration(AutoConfigurations.of(JacksonAutoConfiguration.class, ProblemJacksonAutoConfiguration.class))
+        .withConfiguration(
+            AutoConfigurations.of(
+                JacksonAutoConfiguration.class, ProblemJacksonAutoConfiguration.class))
         .run(context -> assertThat(context).hasSingleBean(ProblemXmlMapperBuilderCustomizer.class));
   }
 

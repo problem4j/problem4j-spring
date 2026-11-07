@@ -36,16 +36,19 @@ class HttpMediaTypeNotSupportedProblemResolverTest {
   }
 
   @Test
-  void givenDefaultConstructor_whenGetExceptionClass_thenReturnsHttpMediaTypeNotSupportedException() {
+  void
+      givenDefaultConstructor_whenGetExceptionClass_thenReturnsHttpMediaTypeNotSupportedException() {
     assertThat(resolver.getExceptionClass()).isEqualTo(HttpMediaTypeNotSupportedException.class);
   }
 
   @Test
-  void givenHttpMediaTypeNotSupportedException_whenResolve_thenReturnsUnsupportedMediaTypeProblem() {
+  void
+      givenHttpMediaTypeNotSupportedException_whenResolve_thenReturnsUnsupportedMediaTypeProblem() {
     HttpMediaTypeNotSupportedException ex = new HttpMediaTypeNotSupportedException("msg");
 
     Problem problem =
-        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        resolver.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value());
   }
@@ -55,7 +58,8 @@ class HttpMediaTypeNotSupportedProblemResolverTest {
     HttpMediaTypeNotSupportedException ex = new HttpMediaTypeNotSupportedException("msg");
 
     Problem problem =
-        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        resolver.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value());
   }

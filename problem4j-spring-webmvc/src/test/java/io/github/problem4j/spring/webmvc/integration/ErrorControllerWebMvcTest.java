@@ -41,7 +41,8 @@ class ErrorControllerWebMvcTest {
 
   @Test
   void givenSendError500_whenError_thenReturnsProblem() {
-    ResponseEntity<String> response = restTemplate.getForEntity("/send-error/internal-server-error", String.class);
+    ResponseEntity<String> response =
+        restTemplate.getForEntity("/send-error/internal-server-error", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
@@ -53,7 +54,8 @@ class ErrorControllerWebMvcTest {
 
   @Test
   void givenSendError204_whenError_thenReturnsNoContent() {
-    ResponseEntity<String> response = restTemplate.getForEntity("/send-error/no-content", String.class);
+    ResponseEntity<String> response =
+        restTemplate.getForEntity("/send-error/no-content", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     assertThat(response.getBody()).isNull();

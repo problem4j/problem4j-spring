@@ -19,15 +19,16 @@ package io.github.problem4j.spring.web;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Defines configuration settings used by {@link ProblemPostProcessor} implementations to control how problem responses
- * are modified before being returned to the client.
+ * Defines configuration settings used by {@link ProblemPostProcessor} implementations to control
+ * how problem responses are modified before being returned to the client.
  *
- * <p>Implementations of this interface typically provide values from application configuration (for example, {@code
- * problem4j.type-override}, {@code problem4j.type-override} and {@code problem4j.instance-override}) and may include
- * runtime placeholders that are resolved during post-processing.
+ * <p>Implementations of this interface typically provide values from application configuration (for
+ * example, {@code problem4j.type-override}, {@code problem4j.type-override} and {@code
+ * problem4j.instance-override}) and may include runtime placeholders that are resolved during
+ * post-processing.
  *
- * <p>These settings allow applications to dynamically customize problem types, titles, and instances to match
- * organizational or tracing conventions.
+ * <p>These settings allow applications to dynamically customize problem types, titles, and
+ * instances to match organizational or tracing conventions.
  *
  * @since 1.2.0
  */
@@ -36,8 +37,8 @@ public interface PostProcessorSettings {
   /**
    * Returns the configured override template for the {@code type} field of a problem.
    *
-   * <p>The value may include placeholders such as {@code {problem.type}} or {@code {context.<key>}}, which will be
-   * replaced at runtime.
+   * <p>The value may include placeholders such as {@code {problem.type}} or {@code
+   * {context.<key>}}, which will be replaced at runtime.
    *
    * @return the configured type override template, or {@code null} if not set
    * @since 1.2.0
@@ -47,8 +48,8 @@ public interface PostProcessorSettings {
   /**
    * Returns the configured override template for the {@code title} field of a problem.
    *
-   * <p>The value may include placeholders such as {@code {problem.title}} or {@code {context.<key>}}, which will be
-   * replaced at runtime.
+   * <p>The value may include placeholders such as {@code {problem.title}} or {@code
+   * {context.<key>}}, which will be replaced at runtime.
    *
    * @return the configured title override template, or {@code null} if not set
    * @since 3.0.0
@@ -58,8 +59,8 @@ public interface PostProcessorSettings {
   /**
    * Returns the configured override template for the {@code instance} field of a problem.
    *
-   * <p>The value may include placeholders such as {@code {problem.instance}} or {@code {context.<key>}}, which will be
-   * replaced at runtime.
+   * <p>The value may include placeholders such as {@code {problem.instance}} or {@code
+   * {context.<key>}}, which will be replaced at runtime.
    *
    * @return the configured instance override template, or {@code null} if not set
    * @since 1.2.0

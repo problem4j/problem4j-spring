@@ -106,7 +106,10 @@ class ProblemWebAutoConfigurationTest {
         .withPropertyValues("problem4j.duplicate-resolver-policy=first")
         .run(context -> {
           assertThat(context).hasNotFailed();
-          assertThat(context.getBean(ProblemResolverStore.class).findResolver(DuplicatedException.class))
+          assertThat(
+                  context
+                      .getBean(ProblemResolverStore.class)
+                      .findResolver(DuplicatedException.class))
               .containsSame(context.getBean("firstDuplicatedResolver", ProblemResolver.class));
         });
   }
@@ -147,7 +150,10 @@ class ProblemWebAutoConfigurationTest {
         .withUserConfiguration(DifferentOrderResolversConfiguration.class)
         .withPropertyValues("problem4j.duplicate-resolver-policy=fail")
         .run(context ->
-            assertThat(context.getBean(ProblemResolverStore.class).findResolver(DuplicatedException.class))
+            assertThat(
+                    context
+                        .getBean(ProblemResolverStore.class)
+                        .findResolver(DuplicatedException.class))
                 .get()
                 .isInstanceOf(PrioritizedResolver.class));
   }
@@ -159,7 +165,10 @@ class ProblemWebAutoConfigurationTest {
         .withUserConfiguration(BeanMethodOrderResolversConfiguration.class)
         .withPropertyValues("problem4j.duplicate-resolver-policy=fail")
         .run(context ->
-            assertThat(context.getBean(ProblemResolverStore.class).findResolver(DuplicatedException.class))
+            assertThat(
+                    context
+                        .getBean(ProblemResolverStore.class)
+                        .findResolver(DuplicatedException.class))
                 .get()
                 .isSameAs(context.getBean("prioritizedBeanMethodResolver")));
   }
@@ -171,7 +180,10 @@ class ProblemWebAutoConfigurationTest {
         .withUserConfiguration(BeanMethodAndClassOrderResolversConfiguration.class)
         .withPropertyValues("problem4j.duplicate-resolver-policy=fail")
         .run(context ->
-            assertThat(context.getBean(ProblemResolverStore.class).findResolver(DuplicatedException.class))
+            assertThat(
+                    context
+                        .getBean(ProblemResolverStore.class)
+                        .findResolver(DuplicatedException.class))
                 .get()
                 .isSameAs(context.getBean("beanMethodOrderedResolver")));
   }
@@ -186,7 +198,10 @@ class ProblemWebAutoConfigurationTest {
           .withUserConfiguration(ChildPlainResolverConfiguration.class)
           .withPropertyValues("problem4j.duplicate-resolver-policy=fail")
           .run(context ->
-              assertThat(context.getBean(ProblemResolverStore.class).findResolver(DuplicatedException.class))
+              assertThat(
+                      context
+                          .getBean(ProblemResolverStore.class)
+                          .findResolver(DuplicatedException.class))
                   .get()
                   .isSameAs(context.getBean("childPlainResolver")));
     }
@@ -200,7 +215,10 @@ class ProblemWebAutoConfigurationTest {
           .withParent(parent)
           .withConfiguration(autoConfigurations)
           .run(context ->
-              assertThat(context.getBean(ProblemResolverStore.class).findResolver(DuplicatedException.class))
+              assertThat(
+                      context
+                          .getBean(ProblemResolverStore.class)
+                          .findResolver(DuplicatedException.class))
                   .isEmpty());
     }
   }
@@ -210,12 +228,15 @@ class ProblemWebAutoConfigurationTest {
     new WebApplicationContextRunner()
         .withConfiguration(autoConfigurations)
         .withUserConfiguration(DifferentOrderResolversConfiguration.class)
-        .withPropertyValues("problem4j.duplicate-resolver-policy=fail", "problem4j.resolver-caching.enabled=true")
+        .withPropertyValues(
+            "problem4j.duplicate-resolver-policy=fail", "problem4j.resolver-caching.enabled=true")
         .run(context -> {
           ProblemResolverStore store = context.getBean(ProblemResolverStore.class);
 
           assertThat(store).isInstanceOf(CachingProblemResolverStore.class);
-          assertThat(store.findResolver(DuplicatedException.class)).get().isInstanceOf(PrioritizedResolver.class);
+          assertThat(store.findResolver(DuplicatedException.class))
+              .get()
+              .isInstanceOf(PrioritizedResolver.class);
         });
   }
 
@@ -304,7 +325,8 @@ class ProblemWebAutoConfigurationTest {
     }
 
     @Override
-    public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+    public Problem resolve(
+        ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
       return Problem.builder().status(400).build();
     }
   }

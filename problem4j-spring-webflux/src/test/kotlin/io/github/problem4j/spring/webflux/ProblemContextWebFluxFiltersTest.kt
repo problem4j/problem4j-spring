@@ -79,7 +79,8 @@ class ProblemContextWebFluxFiltersTest {
 
     filter.filter(MockServerWebExchange.from(MockServerHttpRequest.get("/")), chain).block()
 
-    assertThat(events).containsExactly("context1:abc", "context2", "chain", "complete1:abc", "complete2")
+    assertThat(events)
+        .containsExactly("context1:abc", "context2", "chain", "complete1:abc", "complete2")
   }
 
   @Test
@@ -112,7 +113,8 @@ class ProblemContextWebFluxFiltersTest {
   @Test
   fun givenFailingChain_whenFiltering_thenOnCompleteIsInvokedAndErrorPropagates() {
     val captured = AtomicReference<ProblemContext>()
-    val filter = problemContextWebFluxFilter({ null }) { onComplete { _, context -> captured.set(context) } }
+    val filter =
+        problemContextWebFluxFilter({ null }) { onComplete { _, context -> captured.set(context) } }
     val chain = WebFilterChain { Mono.error(IllegalStateException("boom")) }
 
     assertThatThrownBy {
@@ -126,7 +128,8 @@ class ProblemContextWebFluxFiltersTest {
   @Test
   fun givenOnComplete_whenNotSubscribed_thenCallbackIsNotInvoked() {
     val captured = AtomicReference<ProblemContext>()
-    val filter = problemContextWebFluxFilter({ null }) { onComplete { _, context -> captured.set(context) } }
+    val filter =
+        problemContextWebFluxFilter({ null }) { onComplete { _, context -> captured.set(context) } }
 
     filter.filter(MockServerWebExchange.from(MockServerHttpRequest.get("/"))) { Mono.empty() }
 

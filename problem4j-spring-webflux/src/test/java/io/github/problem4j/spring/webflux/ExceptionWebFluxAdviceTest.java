@@ -64,7 +64,8 @@ class ExceptionWebFluxAdviceTest {
         requireNonNull(advice.handleException(new RuntimeException(), exchange()).block());
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-    assertThat(requireNonNull(response.getBody()).getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    assertThat(requireNonNull(response.getBody()).getStatus())
+        .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
   }
 
   @Test
@@ -73,7 +74,8 @@ class ExceptionWebFluxAdviceTest {
         requireNonNull(advice.handleException(new ForbiddenExceptionStub(), exchange()).block());
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-    assertThat(requireNonNull(response.getBody()).getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
+    assertThat(requireNonNull(response.getBody()).getStatus())
+        .isEqualTo(HttpStatus.FORBIDDEN.value());
   }
 
   @Test
@@ -90,7 +92,8 @@ class ExceptionWebFluxAdviceTest {
     ResponseEntity<Problem> response =
         requireNonNull(advice.handleException(new RuntimeException(), exchange()).block());
 
-    assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
+    assertThat(response.getHeaders().getContentType())
+        .isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
   }
 
   @Test

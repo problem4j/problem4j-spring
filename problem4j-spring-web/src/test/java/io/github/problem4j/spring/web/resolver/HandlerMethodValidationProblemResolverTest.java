@@ -50,11 +50,15 @@ class HandlerMethodValidationProblemResolverTest {
   @Test
   void givenHandlerMethodValidationException_shouldGenerateProblem() {
     MethodValidationResult mockMethodValidationResult = mock(MethodValidationResult.class);
-    HandlerMethodValidationException ex = new HandlerMethodValidationException(mockMethodValidationResult);
+    HandlerMethodValidationException ex =
+        new HandlerMethodValidationException(mockMethodValidationResult);
 
     Problem problem =
         handlerMethodValidationProblemResolver.resolve(
-            ProblemContext.create().put("traceId", "traceId"), ex, new HttpHeaders(), ex.getStatusCode());
+            ProblemContext.create().put("traceId", "traceId"),
+            ex,
+            new HttpHeaders(),
+            ex.getStatusCode());
 
     assertEquals(Problem.BLANK_TYPE, problem.getType());
     assertEquals(HttpStatus.BAD_REQUEST.getReasonPhrase(), problem.getTitle());
@@ -65,7 +69,8 @@ class HandlerMethodValidationProblemResolverTest {
   void givenMethodValidationResultSupportSetAfterConstruction_whenResolve_thenUsesNewSupport() {
     List<Violation> violations = List.of(new Violation("field", "custom"));
     handlerMethodValidationProblemResolver.setMethodValidationResultSupport(result -> violations);
-    HandlerMethodValidationException ex = new HandlerMethodValidationException(mock(MethodValidationResult.class));
+    HandlerMethodValidationException ex =
+        new HandlerMethodValidationException(mock(MethodValidationResult.class));
 
     Problem problem =
         handlerMethodValidationProblemResolver.resolve(

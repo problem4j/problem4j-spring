@@ -35,8 +35,8 @@ import tools.jackson.dataformat.xml.XmlMapper;
 /**
  * Spring Boot autoconfiguration registering Problem4J serialization support for Jackson mappers.
  *
- * <p>It does not require a web application, so {@code Problem} objects are serialized consistently also in non-web
- * applications (e.g. those consuming Problem responses through an HTTP client).
+ * <p>It does not require a web application, so {@code Problem} objects are serialized consistently
+ * also in non-web applications (e.g. those consuming Problem responses through an HTTP client).
  *
  * @since 3.1.0
  */
@@ -52,7 +52,11 @@ public class ProblemJacksonAutoConfiguration {
   public ProblemJacksonAutoConfiguration() {}
 
   /** Configuration for JSON support in Problem serialization. */
-  @ConditionalOnClass({JsonMapperBuilderCustomizer.class, JsonMapper.class, ProblemJacksonMixIn.class})
+  @ConditionalOnClass({
+    JsonMapperBuilderCustomizer.class,
+    JsonMapper.class,
+    ProblemJacksonMixIn.class
+  })
   @Configuration(proxyBeanMethods = false)
   static class ProblemJsonMapperConfiguration {
 
@@ -60,8 +64,8 @@ public class ProblemJacksonAutoConfiguration {
     ProblemJsonMapperConfiguration() {}
 
     /**
-     * Creates a {@link ProblemJsonMapperBuilderCustomizer} to add the {@code ProblemJacksonMixIn} to the JSON mapper
-     * for consistent Problem serialization.
+     * Creates a {@link ProblemJsonMapperBuilderCustomizer} to add the {@code ProblemJacksonMixIn}
+     * to the JSON mapper for consistent Problem serialization.
      *
      * @return a new ProblemJsonMapperBuilderCustomizer bean
      * @see io.github.problem4j.jackson3.ProblemJacksonMixIn
@@ -74,7 +78,11 @@ public class ProblemJacksonAutoConfiguration {
   }
 
   /** Configuration for XML support in Problem serialization. */
-  @ConditionalOnClass({XmlMapperBuilderCustomizer.class, XmlMapper.class, ProblemJacksonMixIn.class})
+  @ConditionalOnClass({
+    XmlMapperBuilderCustomizer.class,
+    XmlMapper.class,
+    ProblemJacksonMixIn.class
+  })
   @Configuration(proxyBeanMethods = false)
   static class ProblemXmlMapperConfiguration {
 
@@ -82,8 +90,8 @@ public class ProblemJacksonAutoConfiguration {
     ProblemXmlMapperConfiguration() {}
 
     /**
-     * Creates a {@link ProblemXmlMapperBuilderCustomizer} to add the {@code ProblemJacksonMixIn} to the XML mapper for
-     * consistent Problem serialization.
+     * Creates a {@link ProblemXmlMapperBuilderCustomizer} to add the {@code ProblemJacksonMixIn} to
+     * the XML mapper for consistent Problem serialization.
      *
      * @return a new ProblemXmlMapperBuilderCustomizer bean
      * @see io.github.problem4j.jackson3.ProblemJacksonMixIn
@@ -96,8 +104,9 @@ public class ProblemJacksonAutoConfiguration {
   }
 
   /**
-   * If Jackson2 is present on the classpath, configures a {@link ProblemModule} bean. Note that Spring Boot 4 does not
-   * include Jackson2 by default. To make it work, add {@code spring-boot-jackson2} dependency manually.
+   * If Jackson2 is present on the classpath, configures a {@link ProblemModule} bean. Note that
+   * Spring Boot 4 does not include Jackson2 by default. To make it work, add {@code
+   * spring-boot-jackson2} dependency manually.
    *
    * @see <a
    *     href="https://github.com/spring-projects/spring-boot/blob/v4.0.0/module/spring-boot-jackson2/src/main/java/org/springframework/boot/jackson2/autoconfigure/Jackson2AutoConfiguration.java#L86">

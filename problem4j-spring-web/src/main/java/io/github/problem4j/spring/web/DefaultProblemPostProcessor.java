@@ -25,12 +25,13 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.util.StringUtils;
 
 /**
- * {@link ProblemPostProcessor} implementation that overrides selected fields of a {@link Problem} based on configurable
- * templates.
+ * {@link ProblemPostProcessor} implementation that overrides selected fields of a {@link Problem}
+ * based on configurable templates.
  *
- * <p>This processor allows the {@code type}, {@code title}, and {@code instance} fields to be replaced with custom
- * values defined through {@link PostProcessorSettings}. Each override can include placeholders that are resolved at
- * runtime using data from the current {@link Problem} or {@link ProblemContext}.
+ * <p>This processor allows the {@code type}, {@code title}, and {@code instance} fields to be
+ * replaced with custom values defined through {@link PostProcessorSettings}. Each override can
+ * include placeholders that are resolved at runtime using data from the current {@link Problem} or
+ * {@link ProblemContext}.
  *
  * <p>Supported placeholders:
  *
@@ -38,25 +39,28 @@ import org.springframework.util.StringUtils;
  *   <li><b>For {@code type} override:</b>
  *       <ul>
  *         <li>{@code {problem.type}} - replaced with the original problem's {@code type}
- *         <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@link ProblemContext}
+ *         <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current
+ *             {@link ProblemContext}
  *       </ul>
  *   <li><b>For {@code title} override:</b>
  *       <ul>
  *         <li>{@code {problem.title}} - replaced with the original problem's {@code title}
- *         <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@link ProblemContext}
+ *         <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current
+ *             {@link ProblemContext}
  *       </ul>
  *   <li><b>For {@code instance} override:</b>
  *       <ul>
  *         <li>{@code {problem.instance}} - replaced with the original problem's {@code instance}
- *         <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@link ProblemContext}
+ *         <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current
+ *             {@link ProblemContext}
  *       </ul>
  * </ul>
  *
- * <p>If an override template contains a {@code {context.<key>}} placeholder whose value is absent or empty in the
- * context, the override is skipped entirely for that field.
+ * <p>If an override template contains a {@code {context.<key>}} placeholder whose value is absent
+ * or empty in the context, the override is skipped entirely for that field.
  *
- * <p>If an override template produces the same value as the existing field, no change is applied. If no override
- * results in a change, the original {@link Problem} instance is returned unchanged.
+ * <p>If an override template produces the same value as the existing field, no change is applied.
+ * If no override results in a change, the original {@link Problem} instance is returned unchanged.
  *
  * <p>Example configuration:
  *
@@ -71,24 +75,24 @@ import org.springframework.util.StringUtils;
 public class DefaultProblemPostProcessor implements ProblemPostProcessor {
 
   /**
-   * Prefix for context placeholders in override templates. For example, a placeholder like {@code {context.userId}}
-   * would look for a value with key {@code userId} in the {@link ProblemContext}.
+   * Prefix for context placeholders in override templates. For example, a placeholder like {@code
+   * {context.userId}} would look for a value with key {@code userId} in the {@link ProblemContext}.
    *
    * @since 3.0.0
    */
   protected static final String CONTEXT_PREFIX = "context.";
 
   /**
-   * Regular expression pattern to identify placeholders in override templates. It matches any substring enclosed in
-   * curly braces, such as {@code {problem.type}} or {@code {context.userId}}.
+   * Regular expression pattern to identify placeholders in override templates. It matches any
+   * substring enclosed in curly braces, such as {@code {problem.type}} or {@code {context.userId}}.
    *
    * @since 3.0.0
    */
   protected static final String PLACEHOLDER_REGEX = "\\{([^}]+)}";
 
   /**
-   * Compiled pattern for detecting placeholders in override templates. This is used to find and process placeholders
-   * when applying overrides.
+   * Compiled pattern for detecting placeholders in override templates. This is used to find and
+   * process placeholders when applying overrides.
    *
    * @since 3.0.0
    */
@@ -109,14 +113,16 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
   /**
    * Applies configured overrides to {@code type}, {@code title}, and/or {@code instance}.
    *
-   * <p>About {@code about:blank}: when the original type is {@code null} or {@link Problem#BLANK_TYPE}, the placeholder
-   * {@code {problem.type}} resolves to an empty string (templates naturally collapse). If the template is exactly
-   * {@code {problem.type}}, the original {@code about:blank} value is preserved instead of becoming empty.
+   * <p>About {@code about:blank}: when the original type is {@code null} or {@link
+   * Problem#BLANK_TYPE}, the placeholder {@code {problem.type}} resolves to an empty string
+   * (templates naturally collapse). If the template is exactly {@code {problem.type}}, the original
+   * {@code about:blank} value is preserved instead of becoming empty.
    *
-   * @param context the {@link ProblemContext} providing request-scoped data, or {@code null} if none is available
+   * @param context the {@link ProblemContext} providing request-scoped data, or {@code null} if
+   *     none is available
    * @param problem the {@link Problem} instance to process
-   * @return a new or modified {@link Problem} to be returned to the client; may be the same instance if no changes are
-   *     applied
+   * @return a new or modified {@link Problem} to be returned to the client; may be the same
+   *     instance if no changes are applied
    * @since 1.2.0
    */
   @Override
@@ -147,7 +153,8 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
     boolean requiresProblemType = template.contains("{problem.type}");
     boolean hasProblemType = problem.isTypeNonBlank();
 
-    if (canOverride(requiresProblemType, hasProblemType) && allContextPlaceholdersSatisfied(template, context)) {
+    if (canOverride(requiresProblemType, hasProblemType)
+        && allContextPlaceholdersSatisfied(template, context)) {
       Optional<String> newTypeCandidate = overrideType(context, problem);
       if (newTypeCandidate.isPresent()) {
         return problem.toBuilder().type(newTypeCandidate.get()).build();
@@ -157,7 +164,8 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
   }
 
   /**
-   * Determines whether a field can be overridden given whether its problem-field placeholder is required and available.
+   * Determines whether a field can be overridden given whether its problem-field placeholder is
+   * required and available.
    *
    * @param requiresProblemField whether the template requires the problem field value
    * @param hasProblemField whether the problem has that field value
@@ -169,9 +177,10 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
   }
 
   /**
-   * Because this implementation does not try to resolve dynamic fields, it does not reuse the code from {@code
-   * ProblemPostProcessor}. Instead, we rely on simple substring replacement in form of {@link
-   * String#replace(CharSequence, CharSequence)}, and then removing all remaining unknown variables.
+   * Because this implementation does not try to resolve dynamic fields, it does not reuse the code
+   * from {@code ProblemPostProcessor}. Instead, we rely on simple substring replacement in form of
+   * {@link String#replace(CharSequence, CharSequence)}, and then removing all remaining unknown
+   * variables.
    *
    * @param context the problem context
    * @param problem the original problem
@@ -213,7 +222,8 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
     boolean requiresProblemTitle = template.contains("{problem.title}");
     boolean hasProblemTitle = StringUtils.hasLength(problem.getTitle());
 
-    if (canOverride(requiresProblemTitle, hasProblemTitle) && allContextPlaceholdersSatisfied(template, context)) {
+    if (canOverride(requiresProblemTitle, hasProblemTitle)
+        && allContextPlaceholdersSatisfied(template, context)) {
       Optional<String> newTitleCandidate = overrideTitle(context, problem);
       if (newTitleCandidate.isPresent()) {
         return problem.toBuilder().title(newTitleCandidate.get()).build();
@@ -223,9 +233,10 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
   }
 
   /**
-   * Because this implementation does not try to resolve dynamic fields, it does not reuse the code from {@code
-   * ProblemPostProcessor}. Instead, we rely on simple substring replacement in form of {@link
-   * String#replace(CharSequence, CharSequence)}, and then removing all remaining unknown variables.
+   * Because this implementation does not try to resolve dynamic fields, it does not reuse the code
+   * from {@code ProblemPostProcessor}. Instead, we rely on simple substring replacement in form of
+   * {@link String#replace(CharSequence, CharSequence)}, and then removing all remaining unknown
+   * variables.
    *
    * @param context the problem context
    * @param problem the original problem
@@ -234,7 +245,8 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    * @since 3.0.0
    */
   protected Optional<String> overrideTitle(ProblemContext context, Problem problem) {
-    if (!StringUtils.hasLength(problem.getTitle()) || !StringUtils.hasLength(settings.getTitleOverride())) {
+    if (!StringUtils.hasLength(problem.getTitle())
+        || !StringUtils.hasLength(settings.getTitleOverride())) {
       return Optional.empty();
     }
 
@@ -268,9 +280,11 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
     boolean hasProblemInstance =
         problem.getInstance() != null && StringUtils.hasLength(problem.getInstance().toString());
 
-    if (canOverride(needsProblemInstance, hasProblemInstance) && allContextPlaceholdersSatisfied(template, context)) {
+    if (canOverride(needsProblemInstance, hasProblemInstance)
+        && allContextPlaceholdersSatisfied(template, context)) {
       String newInstance = overrideInstance(context, problem);
-      if (StringUtils.hasLength(newInstance) && !newInstance.equals(stringOrEmpty(problem.getInstance()))) {
+      if (StringUtils.hasLength(newInstance)
+          && !newInstance.equals(stringOrEmpty(problem.getInstance()))) {
         return problem.toBuilder().instance(newInstance).build();
       }
     }
@@ -278,12 +292,13 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
   }
 
   /**
-   * Because this implementation does not try to resolve dynamic fields, it does not reuse the code from {@code
-   * ProblemPostProcessor}. Instead, we rely on simple substring replacement in form of {@link
-   * String#replace(CharSequence, CharSequence)}, and then removing all remaining unknown variables.
+   * Because this implementation does not try to resolve dynamic fields, it does not reuse the code
+   * from {@code ProblemPostProcessor}. Instead, we rely on simple substring replacement in form of
+   * {@link String#replace(CharSequence, CharSequence)}, and then removing all remaining unknown
+   * variables.
    *
-   * <p>If the algorithm discovers remaining placeholders that are unresolved, overriding is aborted and original value
-   * is restored.
+   * <p>If the algorithm discovers remaining placeholders that are unresolved, overriding is aborted
+   * and original value is restored.
    *
    * @param context the problem context
    * @param problem the original problem
@@ -321,9 +336,9 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
   }
 
   /**
-   * Because this implementation does not try to resolve dynamic fields, it does not reuse the code from {@code
-   * ProblemMapper}. Instead, we rely on simple substring replacement, and then removing all remaining unknown
-   * variables.
+   * Because this implementation does not try to resolve dynamic fields, it does not reuse the code
+   * from {@code ProblemMapper}. Instead, we rely on simple substring replacement, and then removing
+   * all remaining unknown variables.
    *
    * @param value the string to check
    * @return true if unresolved placeholders remain

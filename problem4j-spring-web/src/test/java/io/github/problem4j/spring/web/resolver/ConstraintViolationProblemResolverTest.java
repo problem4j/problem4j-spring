@@ -51,7 +51,8 @@ class ConstraintViolationProblemResolverTest {
   void givenExceptionWithNoViolations_whenResolve_thenReturnsBadRequestWithEmptyErrors() {
     ConstraintViolationException ex = new ConstraintViolationException(Set.of());
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getDetail()).isEqualTo("Validation failed");
@@ -71,7 +72,8 @@ class ConstraintViolationProblemResolverTest {
 
     ConstraintViolationException ex = new ConstraintViolationException(Set.of(violation));
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     assertThat(problem.getDetail()).isEqualTo("Validation failed");

@@ -51,14 +51,16 @@ class HttpMessageNotReadableProblemResolverTest {
     HttpMessageNotReadableException ex =
         new HttpMessageNotReadableException("msg", new MockHttpInputMessage(new byte[0]));
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
   }
 
   @Test
-  void givenProblemFormatAndTypeNameMapperSetAfterConstruction_whenResolvingMismatchedInput_thenAppliesBoth()
-      throws IOException {
+  void
+      givenProblemFormatAndTypeNameMapperSetAfterConstruction_whenResolvingMismatchedInput_thenAppliesBoth()
+          throws IOException {
     resolver.setProblemFormat(detail -> detail == null ? null : detail.toUpperCase());
     resolver.setTypeNameMapper(type -> Optional.of("custom-int"));
 
@@ -71,10 +73,13 @@ class HttpMessageNotReadableProblemResolverTest {
     HttpMessageNotReadableException ex =
         new HttpMessageNotReadableException("msg", cause, new MockHttpInputMessage(new byte[0]));
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 
     assertThat(problem.getDetail()).isEqualTo("TYPE MISMATCH");
-    assertThat(problem.getExtensions()).containsEntry("property", "age").containsEntry("kind", "custom-int");
+    assertThat(problem.getExtensions())
+        .containsEntry("property", "age")
+        .containsEntry("kind", "custom-int");
   }
 
   @Test
@@ -83,7 +88,8 @@ class HttpMessageNotReadableProblemResolverTest {
         new HttpMessageNotReadableException("msg", new MockHttpInputMessage(new byte[0]));
 
     Problem problem =
-        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        resolver.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
   }

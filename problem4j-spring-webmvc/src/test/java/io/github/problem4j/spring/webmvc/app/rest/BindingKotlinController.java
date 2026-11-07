@@ -118,7 +118,8 @@ public class BindingKotlinController {
   }
 
   @PostMapping(path = "/list/nullable-elements", consumes = MediaType.APPLICATION_JSON_VALUE)
-  public String listNullableElements(@RequestBody KotlinModel.KotlinListNullableElementsRequest request) {
+  public String listNullableElements(
+      @RequestBody KotlinModel.KotlinListNullableElementsRequest request) {
     return "OK";
   }
 

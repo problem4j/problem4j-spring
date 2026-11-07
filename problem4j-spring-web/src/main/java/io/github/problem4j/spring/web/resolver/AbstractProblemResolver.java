@@ -24,10 +24,11 @@ import org.jspecify.annotations.Nullable;
 /**
  * Convenience base class for {@link ProblemResolver}-s.
  *
- * <p>When used as a Spring bean under {@code problem4j-spring-web} autoconfiguration, the {@link ProblemFormat} held by
- * this resolver is (re)assigned after construction by {@link ProblemBeanPostProcessor} through {@link
- * #setProblemFormat(ProblemFormat)}, overriding whatever the constructor received. Subclasses may have further
- * collaborators injected the same way; each documents its own.
+ * <p>When used as a Spring bean under {@code problem4j-spring-web} autoconfiguration, the {@link
+ * ProblemFormat} held by this resolver is (re)assigned after construction by {@link
+ * ProblemBeanPostProcessor} through {@link #setProblemFormat(ProblemFormat)}, overriding whatever
+ * the constructor received. Subclasses may have further collaborators injected the same way; each
+ * documents its own.
  *
  * @since 1.2.0
  */
@@ -38,7 +39,8 @@ public abstract class AbstractProblemResolver implements ProblemResolver, Proble
   private ProblemFormat problemFormat;
 
   /**
-   * Creates a resolver for the given exception type using {@link ProblemFormat#identity()} (no detail transformation).
+   * Creates a resolver for the given exception type using {@link ProblemFormat#identity()} (no
+   * detail transformation).
    *
    * @param clazz exception subtype this resolver is responsible for
    * @since 1.2.0
@@ -49,14 +51,15 @@ public abstract class AbstractProblemResolver implements ProblemResolver, Proble
   }
 
   /**
-   * Creates a resolver for the given exception type with a custom {@link ProblemFormat} applied to any detail text via
-   * {@link #formatDetail(String)}.
+   * Creates a resolver for the given exception type with a custom {@link ProblemFormat} applied to
+   * any detail text via {@link #formatDetail(String)}.
    *
    * @param clazz exception subtype this resolver is responsible for
    * @param problemFormat formatting strategy for detail (must not be {@code null})
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link ProblemFormat} after
-   *     construction; use {@link #AbstractProblemResolver(Class)} and rely on {@link #setProblemFormat(ProblemFormat)}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link
+   *     ProblemFormat} after construction; use {@link #AbstractProblemResolver(Class)} and rely on
+   *     {@link #setProblemFormat(ProblemFormat)}
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
   public AbstractProblemResolver(Class<? extends Exception> clazz, ProblemFormat problemFormat) {

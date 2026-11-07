@@ -46,8 +46,8 @@ import org.springframework.web.server.WebFilter;
 /**
  * Spring Boot autoconfiguration for Problem4J integration with Spring WebFlux web environment.
  *
- * <p>This class wires all necessary beans for producing standardized {@code Problem} responses from Spring WebFlux
- * controllers. It includes:
+ * <p>This class wires all necessary beans for producing standardized {@code Problem} responses from
+ * Spring WebFlux controllers. It includes:
  *
  * <p>Beans are conditional:
  *
@@ -71,13 +71,16 @@ public class ProblemWebFluxAutoConfiguration {
   public ProblemWebFluxAutoConfiguration() {}
 
   /**
-   * Creates the default {@link ExceptionWebFluxAdvice} used for handling exceptions in WebFlux applications.
+   * Creates the default {@link ExceptionWebFluxAdvice} used for handling exceptions in WebFlux
+   * applications.
    *
-   * <p>The advice intercepts thrown exceptions and resolves them to {@code Problem} objects according {@code
-   * ProblemResolver}-s managed by {@link ProblemResolverStore}.
+   * <p>The advice intercepts thrown exceptions and resolves them to {@code Problem} objects
+   * according {@code ProblemResolver}-s managed by {@link ProblemResolverStore}.
    */
   @Order(Ordered.LOWEST_PRECEDENCE)
-  @ConditionalOnBooleanProperty(name = "problem4j.webflux.exception-advice.enabled", matchIfMissing = true)
+  @ConditionalOnBooleanProperty(
+      name = "problem4j.webflux.exception-advice.enabled",
+      matchIfMissing = true)
   @ConditionalOnMissingBean(ExceptionWebFluxAdvice.class)
   @Bean
   ExceptionWebFluxAdvice exceptionWebFluxAdvice(
@@ -90,26 +93,31 @@ public class ProblemWebFluxAutoConfiguration {
   }
 
   /**
-   * Creates the default {@link ProblemExceptionWebFluxAdvice}, responsible for handling Problem4J-specific exception
-   * types in WebFlux pipelines.
+   * Creates the default {@link ProblemExceptionWebFluxAdvice}, responsible for handling
+   * Problem4J-specific exception types in WebFlux pipelines.
    *
-   * <p>This advice focuses on translating {@code Problem}-domain exceptions into standardized problem responses, using
-   * the configured post processor and inspectors.
+   * <p>This advice focuses on translating {@code Problem}-domain exceptions into standardized
+   * problem responses, using the configured post processor and inspectors.
    */
   @Order(Ordered.LOWEST_PRECEDENCE - 10)
-  @ConditionalOnBooleanProperty(name = "problem4j.webflux.problem-exception-advice.enabled", matchIfMissing = true)
+  @ConditionalOnBooleanProperty(
+      name = "problem4j.webflux.problem-exception-advice.enabled",
+      matchIfMissing = true)
   @ConditionalOnMissingBean(ProblemExceptionWebFluxAdvice.class)
   @Bean
   ProblemExceptionWebFluxAdvice problemExceptionWebFluxAdvice(
-      ProblemPostProcessor problemPostProcessor, List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
+      ProblemPostProcessor problemPostProcessor,
+      List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
     return new ProblemExceptionWebFluxAdvice(problemPostProcessor, adviceWebFluxInspectors);
   }
 
   /**
-   * Nested configuration that registers the {@link ProblemContextWebFluxFilter} responsible for preparing and
-   * propagating the Problem4J context across WebFlux request handling.
+   * Nested configuration that registers the {@link ProblemContextWebFluxFilter} responsible for
+   * preparing and propagating the Problem4J context across WebFlux request handling.
    */
-  @ConditionalOnBooleanProperty(name = "problem4j.webflux.problem-context-filter.enabled", matchIfMissing = true)
+  @ConditionalOnBooleanProperty(
+      name = "problem4j.webflux.problem-context-filter.enabled",
+      matchIfMissing = true)
   @ConditionalOnClass(WebFilter.class)
   @Configuration(proxyBeanMethods = false)
   static class ProblemContextWebFluxFilterConfiguration {
@@ -118,8 +126,8 @@ public class ProblemWebFluxAutoConfiguration {
     ProblemContextWebFluxFilterConfiguration() {}
 
     /**
-     * Registers the default {@link ProblemContextWebFluxFilter}, which initializes and propagates Problem4J contextual
-     * metadata throughout the request lifecycle.
+     * Registers the default {@link ProblemContextWebFluxFilter}, which initializes and propagates
+     * Problem4J contextual metadata throughout the request lifecycle.
      */
     @ConditionalOnMissingBean(ProblemContextWebFluxFilter.class)
     @Bean
@@ -129,9 +137,12 @@ public class ProblemWebFluxAutoConfiguration {
   }
 
   /**
-   * Nested configuration that replaces the default WebFlux exception handler with a Problem4J-enhanced implementation.
+   * Nested configuration that replaces the default WebFlux exception handler with a
+   * Problem4J-enhanced implementation.
    */
-  @ConditionalOnBooleanProperty(name = "problem4j.webflux.exception-handler.enabled", matchIfMissing = true)
+  @ConditionalOnBooleanProperty(
+      name = "problem4j.webflux.exception-handler.enabled",
+      matchIfMissing = true)
   @ConditionalOnClass(ResponseEntityExceptionHandler.class)
   @Configuration(proxyBeanMethods = false)
   static class ResponseEntityExceptionHandlerConfiguration {
@@ -140,7 +151,8 @@ public class ProblemWebFluxAutoConfiguration {
     ResponseEntityExceptionHandlerConfiguration() {}
 
     /**
-     * Provides the Problem4J-enhanced {@link ResponseEntityExceptionHandler} implementation for WebFlux applications.
+     * Provides the Problem4J-enhanced {@link ResponseEntityExceptionHandler} implementation for
+     * WebFlux applications.
      */
     @Order(Ordered.LOWEST_PRECEDENCE - 10)
     @ConditionalOnMissingBean(ResponseEntityExceptionHandler.class)
@@ -149,7 +161,8 @@ public class ProblemWebFluxAutoConfiguration {
         ProblemResolverStore problemResolverStore,
         ProblemPostProcessor problemPostProcessor,
         List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
-      return new ProblemEnhancedWebFluxHandler(problemResolverStore, problemPostProcessor, adviceWebFluxInspectors);
+      return new ProblemEnhancedWebFluxHandler(
+          problemResolverStore, problemPostProcessor, adviceWebFluxInspectors);
     }
   }
 }

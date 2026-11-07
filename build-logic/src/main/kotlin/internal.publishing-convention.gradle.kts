@@ -57,7 +57,8 @@ publishing {
                 }
                 scm {
                     connection = findProperty("internal.pom.scm.connection") as? String
-                    developerConnection = findProperty("internal.pom.scm.developer-connection") as? String
+                    developerConnection =
+                        findProperty("internal.pom.scm.developer-connection") as? String
                     url = findProperty("internal.pom.scm.url") as? String
                 }
                 issueManagement {

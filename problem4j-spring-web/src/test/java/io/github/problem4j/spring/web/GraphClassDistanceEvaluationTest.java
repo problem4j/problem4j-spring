@@ -68,7 +68,8 @@ class GraphClassDistanceEvaluationTest {
 
       int withDefault = evaluation.calculate(Level2Class.class, Object.class);
       int withExplicit =
-          evaluation.calculate(Level2Class.class, Object.class, ClassDistanceEvaluation.DEFAULT_MAX_DEPTH);
+          evaluation.calculate(
+              Level2Class.class, Object.class, ClassDistanceEvaluation.DEFAULT_MAX_DEPTH);
 
       assertEquals(withExplicit, withDefault);
     }
@@ -301,7 +302,8 @@ class GraphClassDistanceEvaluationTest {
 
     @Test
     void givenSuperclassExcluded_whenSearchingSuperclassHierarchy_thenMaxValue() {
-      ClassDistanceEvaluation evaluation = new GraphClassDistanceEvaluation(HierarchyTraversalMode.INTERFACES);
+      ClassDistanceEvaluation evaluation =
+          new GraphClassDistanceEvaluation(HierarchyTraversalMode.INTERFACES);
 
       int distance = evaluation.calculate(Level2Class.class, BaseClass.class);
 
@@ -310,7 +312,8 @@ class GraphClassDistanceEvaluationTest {
 
     @Test
     void givenSuperclassExcluded_butInterfaceMatchExists_thenStillFindInterfacePath() {
-      ClassDistanceEvaluation evaluation = new GraphClassDistanceEvaluation(HierarchyTraversalMode.INTERFACES);
+      ClassDistanceEvaluation evaluation =
+          new GraphClassDistanceEvaluation(HierarchyTraversalMode.INTERFACES);
 
       int distance = evaluation.calculate(ImplementerClass.class, BaseInterface.class);
 
@@ -319,7 +322,8 @@ class GraphClassDistanceEvaluationTest {
 
     @Test
     void givenInterfacesExcluded_whenSearchingInterfaceHierarchy_thenMaxValue() {
-      ClassDistanceEvaluation evaluation = new GraphClassDistanceEvaluation(HierarchyTraversalMode.SUPERCLASS);
+      ClassDistanceEvaluation evaluation =
+          new GraphClassDistanceEvaluation(HierarchyTraversalMode.SUPERCLASS);
 
       int distance = evaluation.calculate(ImplementerClass.class, BaseInterface.class);
 
@@ -328,7 +332,8 @@ class GraphClassDistanceEvaluationTest {
 
     @Test
     void givenInterfacesExcluded_butSuperclassMatchExists_thenStillFindSuperclassPath() {
-      ClassDistanceEvaluation evaluation = new GraphClassDistanceEvaluation(HierarchyTraversalMode.SUPERCLASS);
+      ClassDistanceEvaluation evaluation =
+          new GraphClassDistanceEvaluation(HierarchyTraversalMode.SUPERCLASS);
 
       int distance = evaluation.calculate(Level2Class.class, Level1Class.class);
 

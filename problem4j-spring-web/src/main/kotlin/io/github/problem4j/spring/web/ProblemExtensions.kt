@@ -19,8 +19,8 @@ package io.github.problem4j.spring.web
 import io.github.problem4j.core.Problem
 
 /**
- * Creates a copy of this [Problem] with the changes applied by a [ProblemBuilderSpec] DSL. The original [Problem] is
- * left unchanged.
+ * Creates a copy of this [Problem] with the changes applied by a [ProblemBuilderSpec] DSL. The
+ * original [Problem] is left unchanged.
  *
  * Example:
  * ```
@@ -38,10 +38,12 @@ import io.github.problem4j.core.Problem
  * @return the new [Problem]
  * @since 3.1.0
  */
-public fun Problem.copy(block: ProblemBuilderSpec.() -> Unit): Problem = toBuilder().applySpec(block)
+public fun Problem.copy(block: ProblemBuilderSpec.() -> Unit): Problem =
+    toBuilder().applySpec(block)
 
 /**
- * Returns the value of the extension with the given name, or `null` when no such extension is present.
+ * Returns the value of the extension with the given name, or `null` when no such extension is
+ * present.
  *
  * Example:
  * ```
@@ -63,8 +65,8 @@ public fun Problem.copy(block: ProblemBuilderSpec.() -> Unit): Problem = toBuild
 public operator fun Problem.get(name: String): Any? = extensions[name]
 
 /**
- * Returns the value of the extension with the given name cast to [T], or `null` when no such extension is present or
- * its value is not a [T].
+ * Returns the value of the extension with the given name cast to [T], or `null` when no such
+ * extension is present or its value is not a [T].
  *
  * Example:
  * ```

@@ -32,13 +32,16 @@ class ProblemWebMvcPropertiesTest {
 
   @Test
   void givenDeprecatedDefaultEnabledValues_whenRead_thenMatchDefaultEnabled() {
-    assertThat(ExceptionAdvice.DEFAULT_ENABLED_VALUE).isEqualTo(String.valueOf(ExceptionAdvice.DEFAULT_ENABLED));
+    assertThat(ExceptionAdvice.DEFAULT_ENABLED_VALUE)
+        .isEqualTo(String.valueOf(ExceptionAdvice.DEFAULT_ENABLED));
     assertThat(ProblemExceptionAdvice.DEFAULT_ENABLED_VALUE)
         .isEqualTo(String.valueOf(ProblemExceptionAdvice.DEFAULT_ENABLED));
     assertThat(ProblemContextFilter.DEFAULT_ENABLED_VALUE)
         .isEqualTo(String.valueOf(ProblemContextFilter.DEFAULT_ENABLED));
-    assertThat(ExceptionHandler.DEFAULT_ENABLED_VALUE).isEqualTo(String.valueOf(ExceptionHandler.DEFAULT_ENABLED));
-    assertThat(ErrorController.DEFAULT_ENABLED_VALUE).isEqualTo(String.valueOf(ErrorController.DEFAULT_ENABLED));
+    assertThat(ExceptionHandler.DEFAULT_ENABLED_VALUE)
+        .isEqualTo(String.valueOf(ExceptionHandler.DEFAULT_ENABLED));
+    assertThat(ErrorController.DEFAULT_ENABLED_VALUE)
+        .isEqualTo(String.valueOf(ErrorController.DEFAULT_ENABLED));
   }
 
   @Test
@@ -46,11 +49,16 @@ class ProblemWebMvcPropertiesTest {
     ProblemWebMvcProperties properties = new ProblemWebMvcProperties();
 
     assertThat(properties.isEnabled()).isTrue();
-    assertThat(properties.getExceptionAdvice().isEnabled()).isEqualTo(ExceptionAdvice.DEFAULT_ENABLED);
-    assertThat(properties.getProblemExceptionAdvice().isEnabled()).isEqualTo(ProblemExceptionAdvice.DEFAULT_ENABLED);
-    assertThat(properties.getProblemContextFilter().isEnabled()).isEqualTo(ProblemContextFilter.DEFAULT_ENABLED);
-    assertThat(properties.getExceptionHandler().isEnabled()).isEqualTo(ExceptionHandler.DEFAULT_ENABLED);
-    assertThat(properties.getErrorController().isEnabled()).isEqualTo(ErrorController.DEFAULT_ENABLED);
+    assertThat(properties.getExceptionAdvice().isEnabled())
+        .isEqualTo(ExceptionAdvice.DEFAULT_ENABLED);
+    assertThat(properties.getProblemExceptionAdvice().isEnabled())
+        .isEqualTo(ProblemExceptionAdvice.DEFAULT_ENABLED);
+    assertThat(properties.getProblemContextFilter().isEnabled())
+        .isEqualTo(ProblemContextFilter.DEFAULT_ENABLED);
+    assertThat(properties.getExceptionHandler().isEnabled())
+        .isEqualTo(ExceptionHandler.DEFAULT_ENABLED);
+    assertThat(properties.getErrorController().isEnabled())
+        .isEqualTo(ErrorController.DEFAULT_ENABLED);
   }
 
   @Test
@@ -87,7 +95,12 @@ class ProblemWebMvcPropertiesTest {
 
     ProblemWebMvcProperties properties =
         new ProblemWebMvcProperties(
-            false, exceptionAdvice, problemExceptionAdvice, problemContextFilter, exceptionHandler, errorController);
+            false,
+            exceptionAdvice,
+            problemExceptionAdvice,
+            problemContextFilter,
+            exceptionHandler,
+            errorController);
 
     assertThat(properties.isEnabled()).isFalse();
     assertThat(properties.getExceptionAdvice()).isSameAs(exceptionAdvice);
@@ -104,13 +117,19 @@ class ProblemWebMvcPropertiesTest {
 
   @Test
   void givenDeprecatedConstructor_whenNestedGroupsNull_thenDefaultsRetained() {
-    ProblemWebMvcProperties properties = new ProblemWebMvcProperties(true, null, null, null, null, null);
+    ProblemWebMvcProperties properties =
+        new ProblemWebMvcProperties(true, null, null, null, null, null);
 
-    assertThat(properties.getExceptionAdvice().isEnabled()).isEqualTo(ExceptionAdvice.DEFAULT_ENABLED);
-    assertThat(properties.getProblemExceptionAdvice().isEnabled()).isEqualTo(ProblemExceptionAdvice.DEFAULT_ENABLED);
-    assertThat(properties.getProblemContextFilter().isEnabled()).isEqualTo(ProblemContextFilter.DEFAULT_ENABLED);
-    assertThat(properties.getExceptionHandler().isEnabled()).isEqualTo(ExceptionHandler.DEFAULT_ENABLED);
-    assertThat(properties.getErrorController().isEnabled()).isEqualTo(ErrorController.DEFAULT_ENABLED);
+    assertThat(properties.getExceptionAdvice().isEnabled())
+        .isEqualTo(ExceptionAdvice.DEFAULT_ENABLED);
+    assertThat(properties.getProblemExceptionAdvice().isEnabled())
+        .isEqualTo(ProblemExceptionAdvice.DEFAULT_ENABLED);
+    assertThat(properties.getProblemContextFilter().isEnabled())
+        .isEqualTo(ProblemContextFilter.DEFAULT_ENABLED);
+    assertThat(properties.getExceptionHandler().isEnabled())
+        .isEqualTo(ExceptionHandler.DEFAULT_ENABLED);
+    assertThat(properties.getErrorController().isEnabled())
+        .isEqualTo(ErrorController.DEFAULT_ENABLED);
   }
 
   @Test

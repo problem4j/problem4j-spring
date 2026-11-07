@@ -42,8 +42,9 @@ import org.springframework.context.annotation.Role;
 /**
  * Spring Boot autoconfiguration for Problem4J integration.
  *
- * <p>This class wires generic beans for creating and post-processing {@code Problem} objects, which do not depend on
- * HTTP nor require a web application. Web-related beans are wired by {@link ProblemWebAutoConfiguration}.
+ * <p>This class wires generic beans for creating and post-processing {@code Problem} objects, which
+ * do not depend on HTTP nor require a web application. Web-related beans are wired by {@link
+ * ProblemWebAutoConfiguration}.
  *
  * @see io.github.problem4j.core.Problem
  * @since 1.2.0
@@ -84,20 +85,22 @@ public class ProblemAutoConfiguration {
   }
 
   /**
-   * Provides a {@link ProblemPostProcessor} that applies post-processing rules to {@code Problem} instances before they
-   * are returned.
+   * Provides a {@link ProblemPostProcessor} that applies post-processing rules to {@code Problem}
+   * instances before they are returned.
    *
-   * <p>The default implementation, {@link DefaultProblemPostProcessor}, supports configurable overrides for problem
-   * fields such as {@code type} and {@code instance}, based on the properties defined in {@link ProblemProperties}.
-   * These overrides may include runtime placeholders such as:
+   * <p>The default implementation, {@link DefaultProblemPostProcessor}, supports configurable
+   * overrides for problem fields such as {@code type} and {@code instance}, based on the properties
+   * defined in {@link ProblemProperties}. These overrides may include runtime placeholders such as:
    *
    * <ul>
    *   <li>{@code {problem.type}} - replaced with the original problem's type URI
    *   <li>{@code {problem.instance}} - replaced with the original problem's instance URI
-   *   <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@link ProblemContext}
+   *   <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@link
+   *       ProblemContext}
    * </ul>
    *
-   * <p>This allows enriching or normalizing problem responses without modifying the original exception mapping logic.
+   * <p>This allows enriching or normalizing problem responses without modifying the original
+   * exception mapping logic.
    *
    * @param properties the configuration properties containing override templates and settings
    * @return a new {@link DefaultProblemPostProcessor} instance
@@ -110,9 +113,9 @@ public class ProblemAutoConfiguration {
   }
 
   /**
-   * Provides a {@link TypeNameMapper} that maps Java types to string names for inclusion in problem responses. The
-   * default implementation, {@link SimpleTypeNameMapper} supports simple Java types, such as primitives, numbers,
-   * strings, arrays and lists.
+   * Provides a {@link TypeNameMapper} that maps Java types to string names for inclusion in problem
+   * responses. The default implementation, {@link SimpleTypeNameMapper} supports simple Java types,
+   * such as primitives, numbers, strings, arrays and lists.
    *
    * @return a new {@link SimpleTypeNameMapper}
    */
@@ -123,15 +126,17 @@ public class ProblemAutoConfiguration {
   }
 
   /**
-   * Provides the single {@link ProblemBeanPostProcessor} that injects the container's Problem4J collaborators ({@link
-   * ProblemFormat}, {@link TypeNameMapper}, {@link BindingResultSupport}, {@link MethodValidationResultSupport}, {@link
-   * MethodParameterSupport}) into every bean that opts in through one of the {@code *Aware} callback interfaces, so
-   * overriding built-in resolvers can be simplified.
+   * Provides the single {@link ProblemBeanPostProcessor} that injects the container's Problem4J
+   * collaborators ({@link ProblemFormat}, {@link TypeNameMapper}, {@link BindingResultSupport},
+   * {@link MethodValidationResultSupport}, {@link MethodParameterSupport}) into every bean that
+   * opts in through one of the {@code *Aware} callback interfaces, so overriding built-in resolvers
+   * can be simplified.
    *
    * @param problemFormat provider for the container's {@link ProblemFormat} bean
    * @param typeNameMapper provider for the container's {@link TypeNameMapper} bean
    * @param bindingResultSupport provider for the container's {@link BindingResultSupport} bean
-   * @param methodValidationResultSupport provider for the container's {@link MethodValidationResultSupport} bean
+   * @param methodValidationResultSupport provider for the container's {@link
+   *     MethodValidationResultSupport} bean
    * @param methodParameterSupport provider for the container's {@link MethodParameterSupport} bean
    * @return a new {@link ProblemBeanPostProcessor}
    */

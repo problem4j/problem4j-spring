@@ -30,13 +30,14 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 /**
- * Handles {@link MaxUploadSizeExceededException} thrown when a file upload exceeds the configured maximum size limit.
+ * Handles {@link MaxUploadSizeExceededException} thrown when a file upload exceeds the configured
+ * maximum size limit.
  *
- * <p>This occurs during multipart/form-data requests if the uploaded file is larger than the limit set in the server or
- * Spring configuration (e.g., {@code spring.servlet.multipart.max-file-size}).
+ * <p>This occurs during multipart/form-data requests if the uploaded file is larger than the limit
+ * set in the server or Spring configuration (e.g., {@code spring.servlet.multipart.max-file-size}).
  *
- * <p>The handler is responsible for returning an appropriate HTTP 413 (Payload Too Large) response to inform the client
- * that the uploaded file exceeds the allowed size.
+ * <p>The handler is responsible for returning an appropriate HTTP 413 (Payload Too Large) response
+ * to inform the client that the uploaded file exceeds the allowed size.
  *
  * @since 1.2.0
  */
@@ -56,8 +57,8 @@ public class MaxUploadSizeExceededProblemResolver extends AbstractProblemResolve
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link ProblemFormat} after
-   *     construction; use {@link #MaxUploadSizeExceededProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link
+   *     ProblemFormat} after construction; use {@link #MaxUploadSizeExceededProblemResolver()}
    */
   @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)
@@ -66,10 +67,10 @@ public class MaxUploadSizeExceededProblemResolver extends AbstractProblemResolve
   }
 
   /**
-   * Returns a {@link Problem} with status {@link HttpStatus#CONTENT_TOO_LARGE}, a formatted standard detail message,
-   * and an extension entry providing the maximum allowed upload size. Other parameters ({@code context}, {@code
-   * headers}, {@code status}) are ignored because the semantics of {@link MaxUploadSizeExceededException} dictate the
-   * response.
+   * Returns a {@link Problem} with status {@link HttpStatus#CONTENT_TOO_LARGE}, a formatted
+   * standard detail message, and an extension entry providing the maximum allowed upload size.
+   * Other parameters ({@code context}, {@code headers}, {@code status}) are ignored because the
+   * semantics of {@link MaxUploadSizeExceededException} dictate the response.
    *
    * @param context problem context (unused for this resolver)
    * @param ex the triggering {@link MaxUploadSizeExceededException}
@@ -79,7 +80,8 @@ public class MaxUploadSizeExceededProblemResolver extends AbstractProblemResolve
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(
+      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     MaxUploadSizeExceededException e = (MaxUploadSizeExceededException) ex;
     ProblemBuilder builder =
         Problem.builder()

@@ -25,15 +25,15 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * Handles {@link ResponseStatusException} thrown to signal a specific HTTP status and optional reason from application
- * code or framework components.
+ * Handles {@link ResponseStatusException} thrown to signal a specific HTTP status and optional
+ * reason from application code or framework components.
  *
- * <p>This exception can be thrown directly in controllers, services, or other layers to indicate errors such as 404
- * (Not Found), 403 (Forbidden), or 500 (Internal Server Error) without relying on checked exceptions or custom error
- * types.
+ * <p>This exception can be thrown directly in controllers, services, or other layers to indicate
+ * errors such as 404 (Not Found), 403 (Forbidden), or 500 (Internal Server Error) without relying
+ * on checked exceptions or custom error types.
  *
- * <p>The handler is responsible for translating the exception into the corresponding HTTP response with the specified
- * status code, reason, and any additional details.
+ * <p>The handler is responsible for translating the exception into the corresponding HTTP response
+ * with the specified status code, reason, and any additional details.
  *
  * @since 1.2.0
  */
@@ -53,8 +53,8 @@ public class ResponseStatusProblemResolver extends AbstractProblemResolver {
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link ProblemFormat} after
-   *     construction; use {@link #ResponseStatusProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link
+   *     ProblemFormat} after construction; use {@link #ResponseStatusProblemResolver()}
    */
   @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)
@@ -63,12 +63,12 @@ public class ResponseStatusProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Returns a {@link Problem} reflecting {@link ResponseStatusException} and the HTTP status carried by it. Ignores
-   * provided {@code status}, {@code headers}, and {@code context}; the resolver always uses {@link
-   * ResponseStatusException#getStatusCode()}.
+   * Returns a {@link Problem} reflecting {@link ResponseStatusException} and the HTTP status
+   * carried by it. Ignores provided {@code status}, {@code headers}, and {@code context}; the
+   * resolver always uses {@link ResponseStatusException#getStatusCode()}.
    *
-   * <p>The exception's reason/message is intentionally not propagated here (can be added by a custom subclass if
-   * desired) to avoid leaking internal details unless explicitly configured.
+   * <p>The exception's reason/message is intentionally not propagated here (can be added by a
+   * custom subclass if desired) to avoid leaking internal details unless explicitly configured.
    *
    * @param context problem context (unused)
    * @param ex the {@link ResponseStatusException} to convert
@@ -78,7 +78,8 @@ public class ResponseStatusProblemResolver extends AbstractProblemResolver {
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(
+      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ResponseStatusException e = (ResponseStatusException) ex;
     return Problem.of(e.getStatusCode().value());
   }

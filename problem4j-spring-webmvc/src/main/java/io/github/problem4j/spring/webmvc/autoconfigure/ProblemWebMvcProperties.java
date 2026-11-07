@@ -69,8 +69,8 @@ public class ProblemWebMvcProperties {
    * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
    * @see io.github.problem4j.spring.webmvc.ProblemErrorController
    * @since 1.2.0
-   * @deprecated retained only for binary backwards compatibility; use the no-arg constructor together with the
-   *     corresponding setters instead
+   * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+   *     together with the corresponding setters instead
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
   public ProblemWebMvcProperties(
@@ -119,8 +119,8 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Returns configuration for {@code ExceptionWebMvcAdvice}, which handles general exceptions and converts them to
-   * {@code Problem} responses.
+   * Returns configuration for {@code ExceptionWebMvcAdvice}, which handles general exceptions and
+   * converts them to {@code Problem} responses.
    *
    * @return the configuration for exception advice
    * @see io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice
@@ -142,8 +142,8 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemExceptionWebMvcAdvice}, which handles exceptions of type {@code
-   * ProblemException} and converts them to Problem responses.
+   * Returns configuration for {@code ProblemExceptionWebMvcAdvice}, which handles exceptions of
+   * type {@code ProblemException} and converts them to Problem responses.
    *
    * @return the configuration for problem exception advice
    * @see io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice
@@ -165,8 +165,8 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemContextWebMvcFilter}, which enriches request handling with {@code
-   * ProblemContext}.
+   * Returns configuration for {@code ProblemContextWebMvcFilter}, which enriches request handling
+   * with {@code ProblemContext}.
    *
    * @return the configuration for the {@code ProblemContextWebMvcFilter}
    * @see io.github.problem4j.core.ProblemContext
@@ -189,8 +189,9 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemEnhancedWebMvcHandler} replacement, which allows Problem4J to take control
-   * of exception handling normally performed by Spring's {@code ResponseEntityExceptionHandler}.
+   * Returns configuration for {@code ProblemEnhancedWebMvcHandler} replacement, which allows
+   * Problem4J to take control of exception handling normally performed by Spring's {@code
+   * ResponseEntityExceptionHandler}.
    *
    * @return the configuration for the overwritten exception handler
    * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
@@ -213,8 +214,8 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemErrorController} replacement, which allows Problem4J to take control of
-   * exception handling normally performed by Spring's {@code ErrorController}.
+   * Returns configuration for {@code ProblemErrorController} replacement, which allows Problem4J to
+   * take control of exception handling normally performed by Spring's {@code ErrorController}.
    *
    * @return the configuration for the overwritten error handler
    * @see org.springframework.boot.webmvc.error.ErrorController
@@ -257,7 +258,8 @@ public class ProblemWebMvcProperties {
      * Default enabled value string for {@code ExceptionWebMvcAdvice}.
      *
      * @since 1.2.0
-     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link #DEFAULT_ENABLED}
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public static final String DEFAULT_ENABLED_VALUE = "true";
@@ -279,8 +281,8 @@ public class ProblemWebMvcProperties {
      * @param enabled whether the {@code ExceptionWebMvcAdvice} bean should be registered
      * @see io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice
      * @since 1.2.0
-     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor together with the
-     *     corresponding setters instead
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public ExceptionAdvice(boolean enabled) {
@@ -331,7 +333,8 @@ public class ProblemWebMvcProperties {
      * Default enabled value string for {@code ProblemExceptionWebMvcAdvice}.
      *
      * @since 1.2.0
-     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link #DEFAULT_ENABLED}
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public static final String DEFAULT_ENABLED_VALUE = "true";
@@ -340,7 +343,8 @@ public class ProblemWebMvcProperties {
     private boolean enabled = DEFAULT_ENABLED;
 
     /**
-     * Creates a new configuration group for {@code ProblemExceptionWebMvcAdvice} with default values.
+     * Creates a new configuration group for {@code ProblemExceptionWebMvcAdvice} with default
+     * values.
      *
      * @see io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice
      * @since 3.1.0
@@ -353,8 +357,8 @@ public class ProblemWebMvcProperties {
      * @param enabled whether the {@code ProblemExceptionWebMvcAdvice} bean should be registered
      * @see io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice
      * @since 1.2.0
-     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor together with the
-     *     corresponding setters instead
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public ProblemExceptionAdvice(boolean enabled) {
@@ -405,7 +409,8 @@ public class ProblemWebMvcProperties {
      * Default enabled value string for {@code ProblemContextWebMvcFilter}.
      *
      * @since 1.2.0
-     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link #DEFAULT_ENABLED}
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public static final String DEFAULT_ENABLED_VALUE = "true";
@@ -427,8 +432,8 @@ public class ProblemWebMvcProperties {
      * @param enabled whether the {@code ProblemContextWebMvcFilter} bean should be registered
      * @see io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter
      * @since 1.2.0
-     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor together with the
-     *     corresponding setters instead
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public ProblemContextFilter(boolean enabled) {
@@ -479,7 +484,8 @@ public class ProblemWebMvcProperties {
      * Default enabled value string for {@code ExceptionHandler}.
      *
      * @since 1.2.0
-     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link #DEFAULT_ENABLED}
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public static final String DEFAULT_ENABLED_VALUE = "true";
@@ -488,7 +494,8 @@ public class ProblemWebMvcProperties {
     private boolean enabled = DEFAULT_ENABLED;
 
     /**
-     * Creates a new configuration group for {@code ProblemEnhancedWebMvcHandler} with default values.
+     * Creates a new configuration group for {@code ProblemEnhancedWebMvcHandler} with default
+     * values.
      *
      * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
      * @since 3.1.0
@@ -498,13 +505,13 @@ public class ProblemWebMvcProperties {
     /**
      * Creates a new configuration group for {@code ProblemEnhancedWebMvcHandler}.
      *
-     * @param enabled whether the {@code ResponseEntityExceptionHandler} should be replaced with {@code
-     *     ProblemEnhancedWebMvcHandler}
+     * @param enabled whether the {@code ResponseEntityExceptionHandler} should be replaced with
+     *     {@code ProblemEnhancedWebMvcHandler}
      * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
      * @see org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
      * @since 1.2.0
-     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor together with the
-     *     corresponding setters instead
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public ExceptionHandler(boolean enabled) {
@@ -525,8 +532,8 @@ public class ProblemWebMvcProperties {
     /**
      * Sets whether the {@code ProblemEnhancedWebMvcHandler} should be registered.
      *
-     * @param enabled whether the {@code ResponseEntityExceptionHandler} should be replaced with {@code
-     *     ProblemEnhancedWebMvcHandler}
+     * @param enabled whether the {@code ResponseEntityExceptionHandler} should be replaced with
+     *     {@code ProblemEnhancedWebMvcHandler}
      * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
      * @see org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
      * @since 3.1.0
@@ -559,7 +566,8 @@ public class ProblemWebMvcProperties {
      * Default enabled value string for {@code ErrorController}.
      *
      * @since 1.2.0
-     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link #DEFAULT_ENABLED}
+     * @deprecated since 3.1.0 as it is no longer used for property binding; use {@link
+     *     #DEFAULT_ENABLED}
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public static final String DEFAULT_ENABLED_VALUE = "true";
@@ -578,11 +586,12 @@ public class ProblemWebMvcProperties {
     /**
      * Creates a new configuration group.
      *
-     * @param enabled whether the {@code ErrorController} should be replaced with {@code ProblemErrorController}
+     * @param enabled whether the {@code ErrorController} should be replaced with {@code
+     *     ProblemErrorController}
      * @see io.github.problem4j.spring.webmvc.ProblemErrorController
      * @since 1.2.0
-     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor together with the
-     *     corresponding setters instead
+     * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
+     *     together with the corresponding setters instead
      */
     @Deprecated(since = "3.1.0", forRemoval = true)
     public ErrorController(boolean enabled) {
@@ -603,7 +612,8 @@ public class ProblemWebMvcProperties {
     /**
      * Sets whether the {@code ProblemErrorController} should be registered.
      *
-     * @param enabled whether the {@code ErrorController} should be replaced with {@code ProblemErrorController}
+     * @param enabled whether the {@code ErrorController} should be replaced with {@code
+     *     ProblemErrorController}
      * @see io.github.problem4j.spring.webmvc.ProblemErrorController
      * @see org.springframework.boot.webmvc.error.ErrorController
      * @since 3.1.0

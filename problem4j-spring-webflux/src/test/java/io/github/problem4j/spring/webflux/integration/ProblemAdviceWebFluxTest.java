@@ -41,7 +41,8 @@ class ProblemAdviceWebFluxTest {
 
   @ParameterizedTest
   @CsvSource({"string1, 1, true", "string2, 2, false"})
-  void givenExtendedProblemException_shouldReturnProblem(String value1, Long value2, boolean value3) {
+  void givenExtendedProblemException_shouldReturnProblem(
+      String value1, Long value2, boolean value3) {
     webTestClient
         .get()
         .uri(uriBuilder ->

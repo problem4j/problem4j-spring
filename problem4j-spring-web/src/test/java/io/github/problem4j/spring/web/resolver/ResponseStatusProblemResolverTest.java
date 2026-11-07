@@ -45,7 +45,8 @@ class ResponseStatusProblemResolverTest {
     ResponseStatusException ex = new ResponseStatusException(HttpStatus.NOT_FOUND);
 
     Problem problem =
-        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+        resolver.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
   }
@@ -54,7 +55,8 @@ class ResponseStatusProblemResolverTest {
   void givenResponseStatusExceptionWithCustomStatus_whenResolve_thenUsesExceptionStatus() {
     ResponseStatusException ex = new ResponseStatusException(HttpStatus.PAYMENT_REQUIRED);
 
-    Problem problem = resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.OK);
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.OK);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.PAYMENT_REQUIRED.value());
   }

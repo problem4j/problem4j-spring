@@ -31,11 +31,12 @@ import reactor.core.publisher.Mono;
 import reactor.util.context.Context;
 
 /**
- * {@link WebFilter} that ensures each request processed by a WebFlux application has an associated context and trace
- * identifier.
+ * {@link WebFilter} that ensures each request processed by a WebFlux application has an associated
+ * context and trace identifier.
  *
- * <p>The filter reads the trace ID from a configured HTTP header, generates one if missing, and stores it in the {@link
- * ServerWebExchange} attributes, response headers, and Reactor context for downstream access.
+ * <p>The filter reads the trace ID from a configured HTTP header, generates one if missing, and
+ * stores it in the {@link ServerWebExchange} attributes, response headers, and Reactor context for
+ * downstream access.
  *
  * @since 1.2.0
  */
@@ -56,8 +57,9 @@ public class ProblemContextWebFluxFilter implements WebFilter {
   /**
    * Applies the filter logic.
    *
-   * <p>Ensures that a trace ID is available for the request, stores it in the exchange attributes, adds it to the
-   * response headers (if configured), and propagates it through the Reactor context for reactive downstream components.
+   * <p>Ensures that a trace ID is available for the request, stores it in the exchange attributes,
+   * adds it to the response headers (if configured), and propagates it through the Reactor context
+   * for reactive downstream components.
    *
    * @param exchange the current server exchange
    * @param chain the web filter chain to continue processing
@@ -77,8 +79,8 @@ public class ProblemContextWebFluxFilter implements WebFilter {
   /**
    * Builds or retrieves an existing {@link ProblemContext} for the given request.
    *
-   * <p>If the exchange already contains a {@link ProblemContext} attribute, that instance is reused. Otherwise, a new
-   * one is created using {@link #findTraceId} and {@link #initTraceId}.
+   * <p>If the exchange already contains a {@link ProblemContext} attribute, that instance is
+   * reused. Otherwise, a new one is created using {@link #findTraceId} and {@link #initTraceId}.
    *
    * @param exchange the current server exchange
    * @return an existing or newly created {@link ProblemContext}
@@ -87,7 +89,8 @@ public class ProblemContextWebFluxFilter implements WebFilter {
   protected ProblemContext buildProblemContext(ServerWebExchange exchange) {
     return exchange.getAttribute(PROBLEM_CONTEXT_ATTRIBUTE) instanceof ProblemContext attribute
         ? attribute
-        : ProblemContext.create().put("traceId", findTraceId(exchange).orElseGet(() -> initTraceId(exchange)));
+        : ProblemContext.create()
+            .put("traceId", findTraceId(exchange).orElseGet(() -> initTraceId(exchange)));
   }
 
   /**
@@ -104,8 +107,8 @@ public class ProblemContextWebFluxFilter implements WebFilter {
   /**
    * Initializes a new trace ID for the request if one cannot be found.
    *
-   * <p>If a tracing header name is configured in {@link ProblemContextSettings}, the header value is used if present.
-   * Otherwise, a new trace ID is generated using {@link #createNewTraceId}.
+   * <p>If a tracing header name is configured in {@link ProblemContextSettings}, the header value
+   * is used if present. Otherwise, a new trace ID is generated using {@link #createNewTraceId}.
    *
    * @param exchange the current server exchange
    * @return the existing or newly generated trace ID
@@ -122,8 +125,8 @@ public class ProblemContextWebFluxFilter implements WebFilter {
   /**
    * Generates a new trace identifier.
    *
-   * <p>Subclasses may override this method to customize the trace ID generation logic. By default, it generates a
-   * random UUID and removes dashes, producing a 32-character lowercase hex string.
+   * <p>Subclasses may override this method to customize the trace ID generation logic. By default,
+   * it generates a random UUID and removes dashes, producing a 32-character lowercase hex string.
    *
    * @param exchange the current server exchange
    * @return a newly generated trace ID
@@ -168,7 +171,10 @@ public class ProblemContextWebFluxFilter implements WebFilter {
    */
   protected void assignTracingHeader(ServerWebExchange exchange, ProblemContext context) {
     if (StringUtils.hasLength(settings.getTracingHeaderName())) {
-      exchange.getResponse().getHeaders().set(settings.getTracingHeaderName(), context.get("traceId"));
+      exchange
+          .getResponse()
+          .getHeaders()
+          .set(settings.getTracingHeaderName(), context.get("traceId"));
     }
   }
 

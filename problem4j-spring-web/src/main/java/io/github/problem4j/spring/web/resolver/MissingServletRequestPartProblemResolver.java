@@ -29,18 +29,19 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 /**
- * Handles {@link MissingServletRequestPartProblemResolver} related exceptions, thrown when a required part of a
- * multipart request is missing.
+ * Handles {@link MissingServletRequestPartProblemResolver} related exceptions, thrown when a
+ * required part of a multipart request is missing.
  *
- * <p>This typically occurs when a controller method parameter is annotated with {@code @RequestPart} and the client
- * fails to include the expected file or form part in a multipart/form-data request.
+ * <p>This typically occurs when a controller method parameter is annotated with
+ * {@code @RequestPart} and the client fails to include the expected file or form part in a
+ * multipart/form-data request.
  *
- * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to indicate that the
- * required request part was not provided.
+ * <p>The handler is responsible for returning an appropriate HTTP 400 (Bad Request) response to
+ * indicate that the required request part was not provided.
  *
- * <p>Unlike {@link ServletRequestBindingProblemResolver}, this resolver is separate because its exception ({@link
- * MissingServletRequestPartException}} extends {@code ServletException} rather than {@code
- * ServletRequestBindingException}.
+ * <p>Unlike {@link ServletRequestBindingProblemResolver}, this resolver is separate because its
+ * exception ({@link MissingServletRequestPartException}} extends {@code ServletException} rather
+ * than {@code ServletRequestBindingException}.
  *
  * @see jakarta.servlet.ServletException
  * @see org.springframework.web.bind.ServletRequestBindingException
@@ -58,12 +59,13 @@ public class MissingServletRequestPartProblemResolver extends AbstractProblemRes
   }
 
   /**
-   * Creates a new {@link MissingServletRequestPartProblemResolver} with the specified problem format.
+   * Creates a new {@link MissingServletRequestPartProblemResolver} with the specified problem
+   * format.
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link ProblemFormat} after
-   *     construction; use {@link #MissingServletRequestPartProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link
+   *     ProblemFormat} after construction; use {@link #MissingServletRequestPartProblemResolver()}
    */
   @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)
@@ -72,8 +74,9 @@ public class MissingServletRequestPartProblemResolver extends AbstractProblemRes
   }
 
   /**
-   * Returns a {@link Problem} representing a missing multipart request part with status {@link HttpStatus#BAD_REQUEST},
-   * a standardized detail message ({@code ViolationSupport#MISSING_REQUEST_PART_DETAIL}) and an extension named {@code
+   * Returns a {@link Problem} representing a missing multipart request part with status {@link
+   * HttpStatus#BAD_REQUEST}, a standardized detail message ({@code
+   * ViolationSupport#MISSING_REQUEST_PART_DETAIL}) and an extension named {@code
    * ViolationSupport#PARAM_EXTENSION} containing the missing part's name.
    *
    * @param context problem context (unused)
@@ -86,7 +89,8 @@ public class MissingServletRequestPartProblemResolver extends AbstractProblemRes
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(
+      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     MissingServletRequestPartException e = (MissingServletRequestPartException) ex;
     return Problem.builder()
         .status(HttpStatus.BAD_REQUEST.value())

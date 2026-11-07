@@ -43,7 +43,8 @@ class AdviceWebMvcInspectorsTest {
 
     inspector.inspect(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
 
-    assertThat(captured.get()).containsExactly(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
+    assertThat(captured.get())
+        .containsExactly(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
   }
 
   @Test

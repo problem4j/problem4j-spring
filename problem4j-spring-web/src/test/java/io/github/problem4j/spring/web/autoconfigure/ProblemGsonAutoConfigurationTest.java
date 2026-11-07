@@ -35,11 +35,14 @@ class ProblemGsonAutoConfigurationTest {
 
   private final WebApplicationContextRunner contextRunner =
       new WebApplicationContextRunner()
-          .withConfiguration(AutoConfigurations.of(GsonAutoConfiguration.class, ProblemGsonAutoConfiguration.class));
+          .withConfiguration(
+              AutoConfigurations.of(
+                  GsonAutoConfiguration.class, ProblemGsonAutoConfiguration.class));
 
   @Test
   void givenGsonOnClasspath_whenContextStarts_thenRegistersCustomizer() {
-    contextRunner.run(context -> assertThat(context).hasSingleBean(ProblemGsonBuilderCustomizer.class));
+    contextRunner.run(
+        context -> assertThat(context).hasSingleBean(ProblemGsonBuilderCustomizer.class));
   }
 
   @Test
@@ -93,7 +96,8 @@ class ProblemGsonAutoConfigurationTest {
   @Test
   void givenNonWebApplication_whenContextStarts_thenRegistersCustomizer() {
     new ApplicationContextRunner()
-        .withConfiguration(AutoConfigurations.of(GsonAutoConfiguration.class, ProblemGsonAutoConfiguration.class))
+        .withConfiguration(
+            AutoConfigurations.of(GsonAutoConfiguration.class, ProblemGsonAutoConfiguration.class))
         .run(context -> assertThat(context).hasSingleBean(ProblemGsonBuilderCustomizer.class));
   }
 

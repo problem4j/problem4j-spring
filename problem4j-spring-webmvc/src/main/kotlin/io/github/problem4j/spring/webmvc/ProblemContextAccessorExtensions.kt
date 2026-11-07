@@ -23,8 +23,8 @@ import org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST
 import org.springframework.web.context.request.WebRequest
 
 /**
- * The [ProblemContext] assigned to this request by [ProblemContextWebMvcFilter], or `null` if none is assigned (e.g.
- * the filter is disabled or has not processed this request yet).
+ * The [ProblemContext] assigned to this request by [ProblemContextWebMvcFilter], or `null` if none
+ * is assigned (e.g. the filter is disabled or has not processed this request yet).
  *
  * Example:
  * ```
@@ -50,8 +50,8 @@ public val HttpServletRequest.problemContext: ProblemContext?
   get() = getAttribute(PROBLEM_CONTEXT_ATTRIBUTE) as? ProblemContext
 
 /**
- * The [ProblemContext] assigned to this request by [ProblemContextWebMvcFilter], or `null` if none is assigned (e.g.
- * the filter is disabled or has not processed this request yet).
+ * The [ProblemContext] assigned to this request by [ProblemContextWebMvcFilter], or `null` if none
+ * is assigned (e.g. the filter is disabled or has not processed this request yet).
  *
  * Example:
  * ```

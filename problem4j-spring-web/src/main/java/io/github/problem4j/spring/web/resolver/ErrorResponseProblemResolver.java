@@ -26,14 +26,14 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.ErrorResponseException;
 
 /**
- * Handles {@link ErrorResponseException} thrown when a controller or framework component raises an error represented by
- * an {@code ErrorResponse}.
+ * Handles {@link ErrorResponseException} thrown when a controller or framework component raises an
+ * error represented by an {@code ErrorResponse}.
  *
- * <p>This exception is typically used by Spring MVC or WebFlux to signal HTTP errors such as 400, 404, or 500, carrying
- * both an {@link HttpStatusCode} and structured error details.
+ * <p>This exception is typically used by Spring MVC or WebFlux to signal HTTP errors such as 400,
+ * 404, or 500, carrying both an {@link HttpStatusCode} and structured error details.
  *
- * <p>It may be thrown programmatically from application code or internally by Spring when request processing fails and
- * an {@code ErrorResponse} needs to be returned to the client.
+ * <p>It may be thrown programmatically from application code or internally by Spring when request
+ * processing fails and an {@code ErrorResponse} needs to be returned to the client.
  *
  * @see org.springframework.web.ErrorResponse
  * @since 1.2.0
@@ -54,8 +54,8 @@ public class ErrorResponseProblemResolver extends AbstractProblemResolver {
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link ProblemFormat} after
-   *     construction; use {@link #ErrorResponseProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link
+   *     ProblemFormat} after construction; use {@link #ErrorResponseProblemResolver()}
    */
   @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)
@@ -64,12 +64,12 @@ public class ErrorResponseProblemResolver extends AbstractProblemResolver {
   }
 
   /**
-   * Converts the given {@link ErrorResponseException} into a {@link Problem} by copying its body fields ({@code type},
-   * {@code title}, {@code detail}, {@code instance}) and status code. Any additional properties present in the
-   * underlying {@code ErrorResponse} are added as extensions.
+   * Converts the given {@link ErrorResponseException} into a {@link Problem} by copying its body
+   * fields ({@code type}, {@code title}, {@code detail}, {@code instance}) and status code. Any
+   * additional properties present in the underlying {@code ErrorResponse} are added as extensions.
    *
-   * <p>The provided {@code status} parameter is ignored in favor of the status contained in the exception. {@code
-   * headers} and {@code context} are currently not used but are part of the SPI.
+   * <p>The provided {@code status} parameter is ignored in favor of the status contained in the
+   * exception. {@code headers} and {@code context} are currently not used but are part of the SPI.
    *
    * @param context problem context (unused)
    * @param ex the {@link ErrorResponseException} to convert
@@ -80,7 +80,8 @@ public class ErrorResponseProblemResolver extends AbstractProblemResolver {
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(
+      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ErrorResponseException e = (ErrorResponseException) ex;
     ProblemBuilder builder =
         Problem.builder()

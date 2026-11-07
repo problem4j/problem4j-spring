@@ -35,7 +35,10 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(
     classes = {WebFluxTestApp.class},
-    properties = {"spring.validation.method.adapt-constraint-violations=true", "problem4j.detail-format=lowercase"},
+    properties = {
+      "spring.validation.method.adapt-constraint-violations=true",
+      "problem4j.detail-format=lowercase"
+    },
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
@@ -64,7 +67,8 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
                     Problem.builder()
                         .status(HttpStatus.BAD_REQUEST.value())
                         .detail("validation failed")
-                        .extension("errors", List.of(Map.of("field", "id", "error", VIOLATION_ERROR)))
+                        .extension(
+                            "errors", List.of(Map.of("field", "id", "error", VIOLATION_ERROR)))
                         .build()));
   }
 
@@ -75,7 +79,8 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
   void givenTooShortRequestParam_shouldReturnValidationProblem() {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path("/validate-parameter/request-param").queryParam("query", "v").build())
+        .uri(uriBuilder ->
+            uriBuilder.path("/validate-parameter/request-param").queryParam("query", "v").build())
         .exchange()
         .expectStatus()
         .isBadRequest()
@@ -88,7 +93,8 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
                     Problem.builder()
                         .status(HttpStatus.BAD_REQUEST.value())
                         .detail("validation failed")
-                        .extension("errors", List.of(Map.of("field", "query", "error", VIOLATION_ERROR)))
+                        .extension(
+                            "errors", List.of(Map.of("field", "query", "error", VIOLATION_ERROR)))
                         .build()));
   }
 
@@ -113,7 +119,9 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
                     Problem.builder()
                         .status(HttpStatus.BAD_REQUEST.value())
                         .detail("validation failed")
-                        .extension("errors", List.of(Map.of("field", "X-Custom-Header", "error", VIOLATION_ERROR)))
+                        .extension(
+                            "errors",
+                            List.of(Map.of("field", "X-Custom-Header", "error", VIOLATION_ERROR)))
                         .build()));
   }
 
@@ -138,7 +146,9 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
                     Problem.builder()
                         .status(HttpStatus.BAD_REQUEST.value())
                         .detail("validation failed")
-                        .extension("errors", List.of(Map.of("field", "x_session", "error", VIOLATION_ERROR)))
+                        .extension(
+                            "errors",
+                            List.of(Map.of("field", "x_session", "error", VIOLATION_ERROR)))
                         .build()));
   }
 
@@ -149,14 +159,19 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
   void givenValueViolatingAllConstraints_shouldReturnAllErrors() {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path("/validate-parameter/multi-constraint").queryParam("input", "v").build())
+        .uri(uriBuilder ->
+            uriBuilder
+                .path("/validate-parameter/multi-constraint")
+                .queryParam("input", "v")
+                .build())
         .exchange()
         .expectStatus()
         .isBadRequest()
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(problem -> assertThat(problem.getExtensions().get("errors")).asInstanceOf(LIST).hasSize(2));
+        .value(problem ->
+            assertThat(problem.getExtensions().get("errors")).asInstanceOf(LIST).hasSize(2));
   }
 
   /**
@@ -167,14 +182,19 @@ class ValidateMethodArgumentFailingWithAdaptingWebFluxTest {
   void givenValueViolatingSingleConstraint_shouldReturnCorrectError(String input) {
     webTestClient
         .get()
-        .uri(uriBuilder -> uriBuilder.path("/validate-parameter/multi-constraint").queryParam("input", input).build())
+        .uri(uriBuilder ->
+            uriBuilder
+                .path("/validate-parameter/multi-constraint")
+                .queryParam("input", input)
+                .build())
         .exchange()
         .expectStatus()
         .isBadRequest()
         .expectHeader()
         .contentType(Problem.CONTENT_TYPE_JSON)
         .expectBody(Problem.class)
-        .value(problem -> assertThat(problem.getExtensions().get("errors")).asInstanceOf(LIST).hasSize(1));
+        .value(problem ->
+            assertThat(problem.getExtensions().get("errors")).asInstanceOf(LIST).hasSize(1));
   }
 
   /**

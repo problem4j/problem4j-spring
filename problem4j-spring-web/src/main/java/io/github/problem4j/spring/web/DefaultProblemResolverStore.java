@@ -34,9 +34,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 /**
- * {@link ProblemResolverStore} implementation evaluates resolved based on class and its inheritance.
+ * {@link ProblemResolverStore} implementation evaluates resolved based on class and its
+ * inheritance.
  *
- * <p>Resolvers are matched to exceptions by assignability, preferring the most specific exception type.
+ * <p>Resolvers are matched to exceptions by assignability, preferring the most specific exception
+ * type.
  *
  * @since 1.2.0
  */
@@ -50,9 +52,10 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
   /**
    * Creates a new store initialized with the given resolvers.
    *
-   * <p>If multiple resolvers support the same exception class, the one with the highest precedence is used, as
-   * determined by {@link org.springframework.core.Ordered} or {@link org.springframework.core.annotation.Order @Order}
-   * (lower value wins). On tie, the first one in the list is used.
+   * <p>If multiple resolvers support the same exception class, the one with the highest precedence
+   * is used, as determined by {@link org.springframework.core.Ordered} or {@link
+   * org.springframework.core.annotation.Order @Order} (lower value wins). On tie, the first one in
+   * the list is used.
    *
    * @param problemResolvers list of available {@link ProblemResolver} instances
    * @throws NullPointerException if any resolver or its exception class is {@code null}
@@ -63,20 +66,23 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
   }
 
   /**
-   * Creates a new store initialized with the given resolvers and a specific class distance evaluation strategy.
+   * Creates a new store initialized with the given resolvers and a specific class distance
+   * evaluation strategy.
    *
-   * <p>If multiple resolvers support the same exception class, the one with the highest precedence is used, as
-   * determined by {@link org.springframework.core.Ordered} or {@link org.springframework.core.annotation.Order @Order}
-   * (lower value wins). On tie, the first one in the list is used.
+   * <p>If multiple resolvers support the same exception class, the one with the highest precedence
+   * is used, as determined by {@link org.springframework.core.Ordered} or {@link
+   * org.springframework.core.annotation.Order @Order} (lower value wins). On tie, the first one in
+   * the list is used.
    *
    * @param problemResolvers list of available {@link ProblemResolver} instances
-   * @param classDistanceEvaluation the strategy used to evaluate the distance between exception classes (e.g., when
-   *     finding the best resolver for a specific exception type).
+   * @param classDistanceEvaluation the strategy used to evaluate the distance between exception
+   *     classes (e.g., when finding the best resolver for a specific exception type).
    * @throws NullPointerException if any resolver or its exception class is {@code null}
    * @since 1.2.0
    */
   public DefaultProblemResolverStore(
-      List<? extends ProblemResolver> problemResolvers, ClassDistanceEvaluation classDistanceEvaluation) {
+      List<? extends ProblemResolver> problemResolvers,
+      ClassDistanceEvaluation classDistanceEvaluation) {
     this.resolvers =
         index(
             problemResolvers.stream().map(resolver -> new Registration(null, resolver)),
@@ -87,9 +93,9 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
   /**
    * Creates a new store initialized with the given resolvers, keyed by bean name.
    *
-   * <p>Bean names are used only for diagnostics, i.e. debug logging of which resolver takes precedence when multiple
-   * resolvers support the same exception class. Resolver precedence rules are the same as in {@link
-   * #DefaultProblemResolverStore(List)}.
+   * <p>Bean names are used only for diagnostics, i.e. debug logging of which resolver takes
+   * precedence when multiple resolvers support the same exception class. Resolver precedence rules
+   * are the same as in {@link #DefaultProblemResolverStore(List)}.
    *
    * @param problemResolvers available {@link ProblemResolver} instances by bean name
    * @throws NullPointerException if any resolver or its exception class is {@code null}
@@ -100,35 +106,38 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
   }
 
   /**
-   * Creates a new store initialized with the given resolvers, keyed by bean name, and a specific class distance
-   * evaluation strategy.
+   * Creates a new store initialized with the given resolvers, keyed by bean name, and a specific
+   * class distance evaluation strategy.
    *
-   * <p>Bean names are used only for diagnostics, i.e. debug logging of which resolver takes precedence when multiple
-   * resolvers support the same exception class. Resolver precedence rules are the same as in {@link
-   * #DefaultProblemResolverStore(List, ClassDistanceEvaluation)}.
+   * <p>Bean names are used only for diagnostics, i.e. debug logging of which resolver takes
+   * precedence when multiple resolvers support the same exception class. Resolver precedence rules
+   * are the same as in {@link #DefaultProblemResolverStore(List, ClassDistanceEvaluation)}.
    *
    * @param problemResolvers available {@link ProblemResolver} instances by bean name
-   * @param classDistanceEvaluation the strategy used to evaluate the distance between exception classes (e.g., when
-   *     finding the best resolver for a specific exception type).
+   * @param classDistanceEvaluation the strategy used to evaluate the distance between exception
+   *     classes (e.g., when finding the best resolver for a specific exception type).
    * @throws NullPointerException if any resolver or its exception class is {@code null}
    * @since 3.1.0
    */
   public DefaultProblemResolverStore(
-      Map<String, ? extends ProblemResolver> problemResolvers, ClassDistanceEvaluation classDistanceEvaluation) {
+      Map<String, ? extends ProblemResolver> problemResolvers,
+      ClassDistanceEvaluation classDistanceEvaluation) {
     this(problemResolvers, classDistanceEvaluation, AnnotationAwareOrderComparator.INSTANCE);
   }
 
   /**
-   * Creates a new store initialized with the given resolvers, keyed by bean name, a specific class distance evaluation
-   * strategy and a comparator deciding resolver precedence.
+   * Creates a new store initialized with the given resolvers, keyed by bean name, a specific class
+   * distance evaluation strategy and a comparator deciding resolver precedence.
    *
-   * <p>If multiple resolvers support the same exception class, the one ordered first by {@code orderComparator} is
-   * used. On tie, the first one in the map is used. Bean names are used only for diagnostics.
+   * <p>If multiple resolvers support the same exception class, the one ordered first by {@code
+   * orderComparator} is used. On tie, the first one in the map is used. Bean names are used only
+   * for diagnostics.
    *
    * @param problemResolvers available {@link ProblemResolver} instances by bean name
-   * @param classDistanceEvaluation the strategy used to evaluate the distance between exception classes (e.g., when
-   *     finding the best resolver for a specific exception type).
-   * @param orderComparator comparator deciding precedence of resolvers supporting the same exception class (lower wins)
+   * @param classDistanceEvaluation the strategy used to evaluate the distance between exception
+   *     classes (e.g., when finding the best resolver for a specific exception type).
+   * @param orderComparator comparator deciding precedence of resolvers supporting the same
+   *     exception class (lower wins)
    * @throws NullPointerException if any resolver or its exception class is {@code null}
    * @since 3.1.0
    */
@@ -138,7 +147,8 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
       Comparator<Object> orderComparator) {
     this.resolvers =
         index(
-            problemResolvers.entrySet().stream().map(entry -> new Registration(entry.getKey(), entry.getValue())),
+            problemResolvers.entrySet().stream()
+                .map(entry -> new Registration(entry.getKey(), entry.getValue())),
             orderComparator);
     this.classDistanceEvaluation = classDistanceEvaluation;
   }
@@ -146,8 +156,8 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
   /**
    * Returns a {@link ProblemResolver} for the given exception class.
    *
-   * <p>This method searches for resolvers whose exception type is assignable from the given class, selecting the most
-   * specific match.
+   * <p>This method searches for resolvers whose exception type is assignable from the given class,
+   * selecting the most specific match.
    *
    * @param clazz exception class to resolve
    * @return an {@link Optional} containing the matching resolver, or empty if none found
@@ -178,7 +188,8 @@ public class DefaultProblemResolverStore implements ProblemResolverStore {
     Map<Class<? extends Exception>, List<Registration>> byExceptionClass = new HashMap<>();
     sorted.forEach(registration ->
         byExceptionClass
-            .computeIfAbsent(registration.getResolver().getExceptionClass(), key -> new ArrayList<>())
+            .computeIfAbsent(
+                registration.getResolver().getExceptionClass(), key -> new ArrayList<>())
             .add(registration));
 
     Map<Class<? extends Exception>, Registration> copy = new HashMap<>(byExceptionClass.size());

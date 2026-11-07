@@ -51,7 +51,8 @@ class ProblemBeanPostProcessorIntegrationTest {
   @Autowired private MethodParameterSupport methodParameterSupport;
 
   @Test
-  void givenComponentImplementingEveryAwareInterface_whenContextStarts_thenEveryCollaboratorIsInjected() {
+  void
+      givenComponentImplementingEveryAwareInterface_whenContextStarts_thenEveryCollaboratorIsInjected() {
     assertThat(component.problemFormat).isSameAs(problemFormat);
     assertThat(component.typeNameMapper).isSameAs(typeNameMapper);
     assertThat(component.bindingResultSupport).isSameAs(bindingResultSupport);
@@ -98,7 +99,8 @@ class ProblemBeanPostProcessorIntegrationTest {
     }
 
     @Override
-    public void setMethodValidationResultSupport(MethodValidationResultSupport methodValidationResultSupport) {
+    public void setMethodValidationResultSupport(
+        MethodValidationResultSupport methodValidationResultSupport) {
       this.methodValidationResultSupport = methodValidationResultSupport;
     }
 

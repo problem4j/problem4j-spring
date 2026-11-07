@@ -33,7 +33,8 @@ import org.springframework.context.annotation.Configuration;
 class ProblemJackson2ModuleConfigurationTest {
 
   private final WebApplicationContextRunner contextRunner =
-      new WebApplicationContextRunner().withConfiguration(AutoConfigurations.of(ProblemJacksonAutoConfiguration.class));
+      new WebApplicationContextRunner()
+          .withConfiguration(AutoConfigurations.of(ProblemJacksonAutoConfiguration.class));
 
   @Test
   void givenJackson2OnClasspath_whenContextStarts_thenRegistersModule() {
@@ -43,7 +44,8 @@ class ProblemJackson2ModuleConfigurationTest {
   @Test
   void givenJackson2OnClasspath_whenModuleRegistered_thenObjectMapperSerializesProblem() {
     contextRunner.run(context -> {
-      ObjectMapper objectMapper = new ObjectMapper().registerModule(context.getBean(ProblemModule.class));
+      ObjectMapper objectMapper =
+          new ObjectMapper().registerModule(context.getBean(ProblemModule.class));
       Problem problem =
           Problem.builder()
               .type("https://example.org/errors/conflict")
@@ -52,7 +54,8 @@ class ProblemJackson2ModuleConfigurationTest {
               .extension("reason", "duplicate")
               .build();
 
-      Problem result = objectMapper.readValue(objectMapper.writeValueAsString(problem), Problem.class);
+      Problem result =
+          objectMapper.readValue(objectMapper.writeValueAsString(problem), Problem.class);
 
       assertThat(result).isEqualTo(problem);
     });
@@ -64,7 +67,8 @@ class ProblemJackson2ModuleConfigurationTest {
         .withUserConfiguration(CustomModuleConfiguration.class)
         .run(context -> {
           assertThat(context).hasSingleBean(ProblemModule.class);
-          assertThat(context.getBean(ProblemModule.class)).isSameAs(context.getBean("customProblemModule"));
+          assertThat(context.getBean(ProblemModule.class))
+              .isSameAs(context.getBean("customProblemModule"));
         });
   }
 

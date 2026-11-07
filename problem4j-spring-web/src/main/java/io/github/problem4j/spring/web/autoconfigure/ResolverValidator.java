@@ -26,8 +26,9 @@ import java.util.Optional;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 /**
- * Validates that for each exception class a single {@link ProblemResolver} bean has the highest precedence, as
- * determined by {@link org.springframework.core.Ordered} or {@link org.springframework.core.annotation.Order @Order}.
+ * Validates that for each exception class a single {@link ProblemResolver} bean has the highest
+ * precedence, as determined by {@link org.springframework.core.Ordered} or {@link
+ * org.springframework.core.annotation.Order @Order}.
  */
 final class ResolverValidator {
 
@@ -35,8 +36,8 @@ final class ResolverValidator {
    * Validates resolver precedence.
    *
    * @param problemResolvers resolvers by bean name
-   * @throws IllegalStateException if multiple resolvers supporting the same exception class share the highest
-   *     precedence; the message lists every such exception class
+   * @throws IllegalStateException if multiple resolvers supporting the same exception class share
+   *     the highest precedence; the message lists every such exception class
    */
   static void validate(Map<String, ? extends ProblemResolver> problemResolvers) {
     validate(problemResolvers, AnnotationAwareOrderComparator.INSTANCE);
@@ -47,19 +48,21 @@ final class ResolverValidator {
    *
    * @param problemResolvers resolvers by bean name
    * @param orderComparator comparator deciding precedence of resolvers (lower wins)
-   * @throws IllegalStateException if multiple resolvers supporting the same exception class share the highest
-   *     precedence; the message lists every such exception class
+   * @throws IllegalStateException if multiple resolvers supporting the same exception class share
+   *     the highest precedence; the message lists every such exception class
    */
-  static void validate(Map<String, ? extends ProblemResolver> problemResolvers, Comparator<Object> orderComparator) {
-    Map<Class<? extends Exception>, List<Map.Entry<String, ProblemResolver>>> byExceptionClass = new LinkedHashMap<>();
+  static void validate(
+      Map<String, ? extends ProblemResolver> problemResolvers, Comparator<Object> orderComparator) {
+    Map<Class<? extends Exception>, List<Map.Entry<String, ProblemResolver>>> byExceptionClass =
+        new LinkedHashMap<>();
     problemResolvers.forEach((beanName, resolver) ->
         byExceptionClass
             .computeIfAbsent(resolver.getExceptionClass(), key -> new ArrayList<>())
             .add(Map.entry(beanName, resolver)));
 
     List<String> conflicts = new ArrayList<>();
-    byExceptionClass.forEach(
-        (exceptionClass, entries) -> findConflict(exceptionClass, entries, orderComparator).ifPresent(conflicts::add));
+    byExceptionClass.forEach((exceptionClass, entries) ->
+        findConflict(exceptionClass, entries, orderComparator).ifPresent(conflicts::add));
 
     if (!conflicts.isEmpty()) {
       throw new IllegalStateException(
@@ -79,7 +82,8 @@ final class ResolverValidator {
     List<String> tied =
         entries.stream()
             .filter(entry -> orderComparator.compare(winner, entry.getValue()) == 0)
-            .map(entry -> "'" + entry.getKey() + "' (" + entry.getValue().getClass().getName() + ")")
+            .map(
+                entry -> "'" + entry.getKey() + "' (" + entry.getValue().getClass().getName() + ")")
             .toList();
 
     if (tied.size() < 2) {

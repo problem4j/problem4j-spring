@@ -47,12 +47,12 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.ServletRequestBindingException;
 
 /**
- * An {@link ProblemResolver} implementation that maps {@link ServletRequestBindingException} and its common subtypes to
- * {@link Problem} representations.
+ * An {@link ProblemResolver} implementation that maps {@link ServletRequestBindingException} and
+ * its common subtypes to {@link Problem} representations.
  *
- * <p>Each supported exception type is mapped to a {@link Problem} with {@code 400 Bad Request} status and a
- * human-readable detail message. Additional metadata about the missing element (such as parameter name, header name, or
- * attribute name) is added as extensions.
+ * <p>Each supported exception type is mapped to a {@link Problem} with {@code 400 Bad Request}
+ * status and a human-readable detail message. Additional metadata about the missing element (such
+ * as parameter name, header name, or attribute name) is added as extensions.
  *
  * @see MissingPathVariableException
  * @see MissingRequestCookieException
@@ -64,21 +64,24 @@ import org.springframework.web.bind.ServletRequestBindingException;
 public class ServletRequestBindingProblemResolver extends AbstractProblemResolver {
 
   /**
-   * Regular expression to match generic ServletRequestBindingException messages indicating missing session or request
-   * attributes, e.g. "Missing session attribute 'userId'". Captures the scope (session or request) and the attribute
-   * name.
+   * Regular expression to match generic ServletRequestBindingException messages indicating missing
+   * session or request attributes, e.g. "Missing session attribute 'userId'". Captures the scope
+   * (session or request) and the attribute name.
    *
    * @since 3.0.0
    */
-  protected static final String MISSING_ATTRIBUTE_REGEX = "^Missing (session|request) attribute '([^']+)'";
+  protected static final String MISSING_ATTRIBUTE_REGEX =
+      "^Missing (session|request) attribute '([^']+)'";
 
   /**
-   * Pattern to match generic ServletRequestBindingException messages indicating missing session or request attributes,
-   * e.g. "Missing session attribute 'userId'". Captures the scope (session or request) and the attribute name.
+   * Pattern to match generic ServletRequestBindingException messages indicating missing session or
+   * request attributes, e.g. "Missing session attribute 'userId'". Captures the scope (session or
+   * request) and the attribute name.
    *
    * @since 3.0.0
    */
-  protected static final Pattern MISSING_ATTRIBUTE_PATTERN = Pattern.compile(MISSING_ATTRIBUTE_REGEX);
+  protected static final Pattern MISSING_ATTRIBUTE_PATTERN =
+      Pattern.compile(MISSING_ATTRIBUTE_REGEX);
 
   /**
    * Creates a new {@link ServletRequestBindingProblemResolver} with default problem format.
@@ -94,8 +97,8 @@ public class ServletRequestBindingProblemResolver extends AbstractProblemResolve
    *
    * @param problemFormat the problem format to use
    * @since 1.2.0
-   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link ProblemFormat} after
-   *     construction; use {@link #ServletRequestBindingProblemResolver()}
+   * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns the {@link
+   *     ProblemFormat} after construction; use {@link #ServletRequestBindingProblemResolver()}
    */
   @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)
@@ -104,19 +107,24 @@ public class ServletRequestBindingProblemResolver extends AbstractProblemResolve
   }
 
   /**
-   * Resolves a {@link ServletRequestBindingException} (or one of its common subclasses) into an immutable {@link
-   * Problem} with {@link HttpStatus#BAD_REQUEST} status and appropriate detail plus metadata extensions.
+   * Resolves a {@link ServletRequestBindingException} (or one of its common subclasses) into an
+   * immutable {@link Problem} with {@link HttpStatus#BAD_REQUEST} status and appropriate detail
+   * plus metadata extensions.
    *
    * <p>Subtype handling:
    *
    * <ul>
-   *   <li>{@link MissingPathVariableException}: detail {@code MISSING_PATH_VARIABLE_DETAIL}, extension {@code "name"}
-   *   <li>{@link MissingServletRequestParameterException}: detail {@code MISSING_REQUEST_PARAM_DETAIL}, extensions
-   *       {@code "param"}, {@code "kind"}
-   *   <li>{@link MissingRequestHeaderException}: detail {@code MISSING_HEADER_DETAIL}, extension {@code "header"}
-   *   <li>{@link MissingRequestCookieException}: detail {@code MISSING_COOKIE_DETAIL}, extension {@code "cookie"}
-   *   <li>Generic {@link ServletRequestBindingException} whose message matches {@code ^Missing (session|request)
-   *       attribute '...'}: detail set to corresponding missing attribute message and extension {@code attribute}
+   *   <li>{@link MissingPathVariableException}: detail {@code MISSING_PATH_VARIABLE_DETAIL},
+   *       extension {@code "name"}
+   *   <li>{@link MissingServletRequestParameterException}: detail {@code
+   *       MISSING_REQUEST_PARAM_DETAIL}, extensions {@code "param"}, {@code "kind"}
+   *   <li>{@link MissingRequestHeaderException}: detail {@code MISSING_HEADER_DETAIL}, extension
+   *       {@code "header"}
+   *   <li>{@link MissingRequestCookieException}: detail {@code MISSING_COOKIE_DETAIL}, extension
+   *       {@code "cookie"}
+   *   <li>Generic {@link ServletRequestBindingException} whose message matches {@code ^Missing
+   *       (session|request) attribute '...'}: detail set to corresponding missing attribute message
+   *       and extension {@code attribute}
    * </ul>
    *
    * @param context problem context (unused)
@@ -128,12 +136,15 @@ public class ServletRequestBindingProblemResolver extends AbstractProblemResolve
    * @since 3.0.0
    */
   @Override
-  public Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+  public Problem resolve(
+      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
     ProblemBuilder builder = Problem.builder().status(HttpStatus.BAD_REQUEST.value());
 
     if (ex instanceof MissingPathVariableException e) {
       builder =
-          builder.detail(formatDetail(MISSING_PATH_VARIABLE_DETAIL)).extension(NAME_EXTENSION, e.getVariableName());
+          builder
+              .detail(formatDetail(MISSING_PATH_VARIABLE_DETAIL))
+              .extension(NAME_EXTENSION, e.getVariableName());
     } else if (ex instanceof MissingServletRequestParameterException e) {
       builder =
           builder
@@ -141,9 +152,15 @@ public class ServletRequestBindingProblemResolver extends AbstractProblemResolve
               .extension(PARAM_EXTENSION, e.getParameterName())
               .extension(KIND_EXTENSION, e.getParameterType().toLowerCase(Locale.ROOT));
     } else if (ex instanceof MissingRequestHeaderException e) {
-      builder = builder.detail(formatDetail(MISSING_HEADER_DETAIL)).extension(HEADER_EXTENSION, e.getHeaderName());
+      builder =
+          builder
+              .detail(formatDetail(MISSING_HEADER_DETAIL))
+              .extension(HEADER_EXTENSION, e.getHeaderName());
     } else if (ex instanceof MissingRequestCookieException e) {
-      builder = builder.detail(formatDetail(MISSING_COOKIE_DETAIL)).extension(COOKIE_EXTENSION, e.getCookieName());
+      builder =
+          builder
+              .detail(formatDetail(MISSING_COOKIE_DETAIL))
+              .extension(COOKIE_EXTENSION, e.getCookieName());
     } else if (ex instanceof ServletRequestBindingException e) {
       Matcher matcher = MISSING_ATTRIBUTE_PATTERN.matcher(e.getMessage());
       if (matcher.find()) {
@@ -156,7 +173,8 @@ public class ServletRequestBindingProblemResolver extends AbstractProblemResolve
     return builder.build();
   }
 
-  private ProblemBuilder extentAttributeDetail(String scope, ProblemBuilder builder, String attribute) {
+  private ProblemBuilder extentAttributeDetail(
+      String scope, ProblemBuilder builder, String attribute) {
     if (scope.equals("session")) {
       builder = builder.detail(formatDetail(MISSING_SESSION_ATTRIBUTE_DETAIL));
     } else {

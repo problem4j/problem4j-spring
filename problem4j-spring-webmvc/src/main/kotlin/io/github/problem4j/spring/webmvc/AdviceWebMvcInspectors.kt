@@ -38,7 +38,8 @@ import org.springframework.web.context.request.WebRequest
  *     }
  * ```
  *
- * @param inspect observes the resolved [Problem] with all arguments of [AdviceWebMvcInspector.inspect]
+ * @param inspect observes the resolved [Problem] with all arguments of
+ *   [AdviceWebMvcInspector.inspect]
  * @return an [AdviceWebMvcInspector] delegating to [inspect]
  * @since 3.1.0
  */
