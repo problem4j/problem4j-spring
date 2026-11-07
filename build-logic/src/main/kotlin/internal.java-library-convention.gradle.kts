@@ -2,12 +2,15 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
+    id("jacoco")
     id("java-library")
 }
 
+val javaVersion = 17
+
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(javaVersion)
     }
     withSourcesJar()
     withJavadocJar()
@@ -18,17 +21,21 @@ tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
 }
 
+tasks.named<JavaCompile>("compileJava").configure {
+    options.release = javaVersion
+}
+
 tasks.withType<Jar>().configureEach {
     manifest {
         attributes["Implementation-Title"] = project.name
         attributes["Implementation-Version"] = project.version
-        attributes["Build-Jdk-Spec"] = java.toolchain.languageVersion.get().toString()
+        attributes["Build-Jdk-Spec"] = javaVersion
         attributes["Created-By"] = "Gradle ${gradle.gradleVersion}"
         attributes["Automatic-Module-Name"] = project.name.replace('-', '.')
     }
     from("${rootProject.rootDir}/LICENSE") {
         into("META-INF/")
-        rename { "LICENSE.txt" }
+        rename { "$it.txt" }
     }
 }
 
@@ -46,6 +53,20 @@ tasks.withType<Test>().configureEach {
 
     systemProperty("user.language", "en")
     systemProperty("user.country", "US")
+}
+
+tasks.named<JacocoReport>("jacocoTestReport") {
+    dependsOn(tasks.named("test"))
+
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+}
+
+tasks.named<Task>("check") {
+    finalizedBy(tasks.named("jacocoTestReport"))
 }
 
 // Usage:

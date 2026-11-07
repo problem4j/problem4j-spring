@@ -1,5 +1,4 @@
 plugins {
-    id("internal.jacoco-convention")
     id("internal.java-library-convention")
     id("internal.publishing-convention")
     alias(libs.plugins.nmcp)
@@ -31,7 +30,7 @@ dependencies {
 }
 
 // see build-logic/src/main/kotlin/internal.publishing-convention.gradle.kts
-internalPublishing {
+internalBuild {
     displayName = "Problem4J Spring WebFlux"
     description = "Spring WebFlux integration for library implementing RFC7807 (aka RFC9457)."
 }
