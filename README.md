@@ -56,63 +56,16 @@ Extensive usage manual explaining library features can be found on [GitHub Pages
 
 The primary ways to produce a `Problem` response are:
 
-1. Throwing a `ProblemException` with a manually built `Problem`.
+1. Implementing a custom `ProblemResolver` (or registering one via the Kotlin DSL).
 2. Annotating an exception class with `@ProblemMapping`.
-3. Implementing a custom `ProblemResolver`.
-4. Registering a `ProblemResolver` via the Kotlin DSL.
+3. Throwing a `ProblemException` with a manually built `Problem`.
 
-### 1. Throwing a `ProblemException`
+For more details about each method, please visit <https://problem4j.github.io/>.
 
-```java
-throw new ProblemException(Problem.of("Invalid Request", 400, "not a valid json"));
-```
+### 1. Implementing a `ProblemResolver`
 
-It would produce following response with `application/problem+json`.
-
-```json
-{
-    "title": "Invalid Request",
-    "status": 400,
-    "detail": "not a valid json"
-}
-```
-
-### 2. Using `@ProblemMapping` on a custom exception
-
-```java
-@ProblemMapping(
-    type = "errors/invalid-request",
-    title = "Invalid Request",
-    status = 400,
-    detail = "{message}: {fieldName}",
-    extensions = {"userId", "fieldName"})
-public class ExampleException extends RuntimeException {
-
-  private final String userId;
-  private final String fieldName;
-
-  public ExampleException(String userId, String fieldName) {
-    super("bad input for user " + userId);
-    this.userId = userId;
-    this.fieldName = fieldName;
-  }
-}
-```
-
-It would produce following response with `application/problem+json`.
-
-```json
-{
-    "type": "errors/invalid-request",
-    "title": "Invalid Request",
-    "status": 400,
-    "detail": "bad input for user u-123: age",
-    "userId": "u-123",
-    "fieldName": "age"
-}
-```
-
-### 3. Implementing a custom `ProblemResolver`
+Keeps domain exceptions free of annotations and fixed superclasses, and works also for exceptions you can't modify
+(e.g. from third-party libraries).
 
 ```java
 @Component
@@ -149,9 +102,7 @@ It would produce following response with `application/problem+json`.
 }
 ```
 
-### 4. Registering a `ProblemResolver` via the Kotlin DSL
-
-> **Since `3.1.0`.**
+Since `3.1.0`, in Kotlin, the same resolver can also be registered via a simplified DSL.
 
 ```kotlin
 @Configuration
@@ -170,6 +121,63 @@ class ExampleExceptionResolverConfiguration {
 ```
 
 It would produce the same response as the resolver above.
+
+### 2. Using `@ProblemMapping` on a custom exception
+
+Declarative mapping for exceptions you own, without writing a resolver. Fields and request context can be
+interpolated into `Problem` values, and the annotation is inherited by subclasses.
+
+```java
+@ProblemMapping(
+    type = "errors/invalid-request",
+    title = "Invalid Request",
+    status = 400,
+    detail = "{message}: {fieldName}",
+    extensions = {"userId", "fieldName"})
+public class ExampleException extends RuntimeException {
+
+  private final String userId;
+  private final String fieldName;
+
+  public ExampleException(String userId, String fieldName) {
+    super("bad input for user " + userId);
+    this.userId = userId;
+    this.fieldName = fieldName;
+  }
+}
+```
+
+It would produce following response with `application/problem+json`.
+
+```json
+{
+    "type": "errors/invalid-request",
+    "title": "Invalid Request",
+    "status": 400,
+    "detail": "bad input for user u-123: age",
+    "userId": "u-123",
+    "fieldName": "age"
+}
+```
+
+### 3. Throwing a `ProblemException`
+
+Simplest for ad-hoc errors, but ties exceptions to Problem4J superclass and moves response building to the throw
+site.
+
+```java
+throw new ProblemException(Problem.of("Invalid Request", 400, "not a valid json"));
+```
+
+It would produce following response with `application/problem+json`.
+
+```json
+{
+    "title": "Invalid Request",
+    "status": 400,
+    "detail": "not a valid json"
+}
+```
 
 ## Maven Dependency
 
