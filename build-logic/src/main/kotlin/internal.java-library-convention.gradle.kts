@@ -1,8 +1,13 @@
+import internal.getIntProperty
+import internal.isTestTask
+import net.ltgt.gradle.errorprone.errorprone
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
+    id("jacoco")
     id("java-library")
+    id("net.ltgt.errorprone")
 }
 
 // The project is built using a JDK 25 toolchain, but the main sources are compiled with --release 17.
@@ -17,9 +22,12 @@ plugins {
 //
 // Tests are NOT compiled with --release XYZ, so they may use newer Java APIs.
 
+val javaToolchainVersion = project.getIntProperty("internal.java.toolchain-version")
+val javaTargetVersion = project.getIntProperty("internal.java.target-version")
+
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(25)
+        languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
     }
     withSourcesJar()
     withJavadocJar()
@@ -28,23 +36,33 @@ java {
 tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.add("-parameters")
     options.encoding = "UTF-8"
+
+    options.errorprone {
+        if (isTestTask()) {
+            disableAllChecks = true
+        }
+
+        error("NullAway")
+        option("NullAway:OnlyNullMarked", "true")
+        option("NullAway:JSpecifyMode", "true")
+    }
 }
 
 tasks.named<JavaCompile>("compileJava").configure {
-    options.release = 17
+    options.release = javaTargetVersion
 }
 
 tasks.withType<Jar>().configureEach {
     manifest {
         attributes["Implementation-Title"] = project.name
         attributes["Implementation-Version"] = project.version
-        attributes["Build-Jdk-Spec"] = java.toolchain.languageVersion.get().toString()
+        attributes["Build-Jdk-Spec"] = javaTargetVersion
         attributes["Created-By"] = "Gradle ${gradle.gradleVersion}"
         attributes["Automatic-Module-Name"] = project.name.replace('-', '.')
     }
     from("${rootProject.rootDir}/LICENSE") {
         into("META-INF/")
-        rename { "LICENSE.txt" }
+        rename { "$it.txt" }
     }
 }
 
@@ -64,8 +82,22 @@ tasks.withType<Test>().configureEach {
     systemProperty("user.country", "US")
 }
 
+tasks.named<JacocoReport>("jacocoTestReport") {
+    dependsOn(tasks.named("test"))
+
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+}
+
+tasks.named<Task>("check") {
+    finalizedBy(tasks.named("jacocoTestReport"))
+}
+
 tasks.withType<Javadoc>().configureEach {
-    javadocTool = javaToolchains.javadocToolFor { languageVersion = JavaLanguageVersion.of(17) }
+    javadocTool = javaToolchains.javadocToolFor { languageVersion = JavaLanguageVersion.of(javaTargetVersion) }
 }
 
 // Usage:
