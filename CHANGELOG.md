@@ -38,6 +38,10 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ### Changed
 
+- With `io.micrometer:micrometer-tracing` on the classpath, `traceId` of `ProblemContext` comes from the current tracing
+  span by default (`problem4j.tracing.source=auto`), instead of the `problem4j.tracing-header-name` header or a random
+  trace ID. The header value is used only if no span is available, and the header is still written into responses with
+  the span's `traceId`. Set `problem4j.tracing.source=simple` to keep the previous behavior.
 - Bump `problem4j-core` to `2.0.1`.
 - `ServerWebInputProblemResolver` no longer delegates type-mismatch handling to the `TypeMismatchProblemResolver` bean.
 - Split `ProblemAutoConfiguration` into several auto-configurations. `ProblemAutoConfiguration` now keeps only generic

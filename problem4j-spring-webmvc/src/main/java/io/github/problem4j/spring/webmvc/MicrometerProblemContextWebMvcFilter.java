@@ -40,9 +40,10 @@ import org.springframework.web.filter.ServerHttpObservationFilter;
  *   <li>newly generated trace ID.
  * </ol>
  *
- * <p>If a span is available, its span ID is stored in {@code ProblemContext} under {@code spanId}
- * key as well. Spans with an empty trace ID (e.g. {@code Tracer.NOOP} spans, used when no tracing
- * bridge is present) are ignored.
+ * <p>If the trace ID comes from the current span, its span ID is stored in {@code ProblemContext}
+ * under {@code spanId} key as well, so that both always belong to the same trace. Spans with an
+ * empty trace ID (e.g. {@code Tracer.NOOP} spans, used when no tracing bridge is present) are
+ * ignored.
  *
  * <p>Requires {@code io.micrometer:micrometer-tracing} on the classpath. Registered instead of
  * {@link ProblemContextWebMvcFilter} with {@code problem4j.tracing.source=micrometer}, or with
@@ -64,7 +65,7 @@ public class MicrometerProblemContextWebMvcFilter extends ProblemContextWebMvcFi
 
   /**
    * Builds or retrieves an existing {@link ProblemContext} for the given request, adding {@code
-   * spanId} of the current span if not present yet.
+   * spanId} of the current span if not present yet, and if the trace ID comes from that span.
    *
    * @param request the current server request
    * @param response the current server response
@@ -76,7 +77,9 @@ public class MicrometerProblemContextWebMvcFilter extends ProblemContextWebMvcFi
       HttpServletRequest request, HttpServletResponse response) {
     ProblemContext context = super.buildProblemContext(request, response);
     if (context.get("spanId") == null) {
-      findTraceContext(request).ifPresent(trace -> context.put("spanId", trace.spanId()));
+      findTraceContext(request)
+          .filter(trace -> trace.traceId().equals(context.get("traceId")))
+          .ifPresent(trace -> context.put("spanId", trace.spanId()));
     }
     return context;
   }

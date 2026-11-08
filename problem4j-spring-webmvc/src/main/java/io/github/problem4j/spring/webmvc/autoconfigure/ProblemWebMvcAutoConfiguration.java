@@ -187,9 +187,11 @@ public class ProblemWebMvcAutoConfiguration {
 
     /**
      * Fails application startup if {@code problem4j.tracing.source} is set to a source that cannot
-     * be used, as its required dependencies are not on the classpath.
+     * be used, as its required dependencies are not on the classpath. Skipped if a custom {@link
+     * ProblemContextWebMvcFilter} bean is defined, as the tracing source is not used then.
      */
     @Conditional(OnUnavailableSource.class)
+    @ConditionalOnMissingBean(ProblemContextWebMvcFilter.class)
     @Configuration(proxyBeanMethods = false)
     static class UnavailableTracingSourceConfiguration {
 
@@ -208,7 +210,6 @@ public class ProblemWebMvcAutoConfiguration {
    * Nested configuration that registers {@link ProblemContextWebMvcArgumentResolver}, resolving
    * controller method arguments of {@code ProblemContext} type without any annotation.
    */
-  @ConditionalOnClass(WebMvcConfigurer.class)
   @Configuration(proxyBeanMethods = false)
   static class ProblemContextArgumentResolverConfiguration {
 

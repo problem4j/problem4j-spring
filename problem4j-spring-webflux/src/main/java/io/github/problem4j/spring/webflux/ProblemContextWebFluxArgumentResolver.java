@@ -32,6 +32,9 @@ import org.springframework.web.server.ServerWebExchange;
  * ProblemContextWebFluxFilter}, the same one used for creating {@code Problem} responses. If none
  * is assigned (e.g. the filter is disabled), resolves to {@code null}.
  *
+ * <p>Only parameters declared exactly as {@link ProblemContext} are supported, wrappers like {@code
+ * Optional<ProblemContext>} are not.
+ *
  * <pre>{@code
  * @GetMapping("/orders/{id}")
  * public Mono<Order> getOrder(@PathVariable String id, ProblemContext context) {

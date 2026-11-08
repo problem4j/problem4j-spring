@@ -148,6 +148,20 @@ class ProblemContextWebFluxFilterConfigurationTest {
                 .isExactlyInstanceOf(ProblemContextWebFluxFilter.class));
   }
 
+  @Test
+  void
+      givenMicrometerTracingSourceWithoutMicrometerTracingAndCustomFilter_whenContextStarts_thenCustomFilterIsKept() {
+    contextRunner
+        .withPropertyValues("problem4j.tracing.source=micrometer")
+        .withClassLoader(new FilteredClassLoader(TracingObservationHandler.class))
+        .withUserConfiguration(CustomFilterConfiguration.class)
+        .run(context ->
+            assertThat(context)
+                .hasNotFailed()
+                .getBean(ProblemContextWebFluxFilter.class)
+                .isSameAs(context.getBean(CustomFilterConfiguration.class).filter));
+  }
+
   @Configuration(proxyBeanMethods = false)
   static class CustomFilterConfiguration {
 

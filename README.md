@@ -43,8 +43,7 @@ but leaves a few gaps that **Problem4J** fills:
   with field violations, or `param`, `header` and `property` naming the invalid input - without exposing raw exception
   messages.
 - **One place for cross-cutting rules.** Application properties can override `type`, `title` and `instance` with
-  templates, and inject a trace ID into every response - from the current Micrometer Tracing span if present, so it
-  matches the one in logs, or from a request header.
+  templates, and inject a trace ID from a request header into every response.
 - **Immutable, framework-independent model.** `Problem` is immutable (unlike `ProblemDetail`) and comes from
   [`problem4j-core`][problem4j-core], so the same model and JSON mapping (Jackson, Gson) can be used outside Spring,
   e.g. in API clients.

@@ -41,9 +41,10 @@ import org.springframework.web.server.ServerWebExchange;
  *   <li>newly generated trace ID.
  * </ol>
  *
- * <p>If a span is available, its span ID is stored in {@code ProblemContext} under {@code spanId}
- * key as well. Spans with an empty trace ID (e.g. {@code Tracer.NOOP} spans, used when no tracing
- * bridge is present) are ignored.
+ * <p>If the trace ID comes from the current span, its span ID is stored in {@code ProblemContext}
+ * under {@code spanId} key as well, so that both always belong to the same trace. Spans with an
+ * empty trace ID (e.g. {@code Tracer.NOOP} spans, used when no tracing bridge is present) are
+ * ignored.
  *
  * <p>Requires {@code io.micrometer:micrometer-tracing} on the classpath. Registered instead of
  * {@link ProblemContextWebFluxFilter} with {@code problem4j.tracing.source=micrometer}, or with
@@ -65,7 +66,7 @@ public class MicrometerProblemContextWebFluxFilter extends ProblemContextWebFlux
 
   /**
    * Builds or retrieves an existing {@link ProblemContext} for the given exchange, adding {@code
-   * spanId} of the current span if not present yet.
+   * spanId} of the current span if not present yet, and if the trace ID comes from that span.
    *
    * @param exchange the current server exchange
    * @return an existing or newly created {@link ProblemContext}
@@ -75,7 +76,9 @@ public class MicrometerProblemContextWebFluxFilter extends ProblemContextWebFlux
   protected ProblemContext buildProblemContext(ServerWebExchange exchange) {
     ProblemContext context = super.buildProblemContext(exchange);
     if (context.get("spanId") == null) {
-      findTraceContext(exchange).ifPresent(trace -> context.put("spanId", trace.spanId()));
+      findTraceContext(exchange)
+          .filter(trace -> trace.traceId().equals(context.get("traceId")))
+          .ifPresent(trace -> context.put("spanId", trace.spanId()));
     }
     return context;
   }

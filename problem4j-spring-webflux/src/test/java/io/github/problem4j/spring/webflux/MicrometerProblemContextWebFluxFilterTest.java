@@ -74,6 +74,35 @@ class MicrometerProblemContextWebFluxFilterTest {
     filter(exchange);
 
     assertThat(problemContext(exchange).get("traceId")).isEqualTo("attribute-trace");
+    assertThat(problemContext(exchange).get("spanId")).isNull();
+  }
+
+  @Test
+  void givenAssignedContextWithSpanId_whenFilter_thenSpanIdIsKept() {
+    MockServerWebExchange exchange = exchange(MockServerHttpRequest.get("/"));
+    withSpan(exchange, span(TRACE_ID, SPAN_ID));
+    exchange
+        .getAttributes()
+        .put(
+            PROBLEM_CONTEXT_ATTRIBUTE,
+            ProblemContext.create().put("traceId", TRACE_ID).put("spanId", "existing-span"));
+
+    filter(exchange);
+
+    assertThat(problemContext(exchange).get("traceId")).isEqualTo(TRACE_ID);
+    assertThat(problemContext(exchange).get("spanId")).isEqualTo("existing-span");
+  }
+
+  @Test
+  void givenAssignedContextWithoutSpanId_whenFilter_thenSpanIdOfSameTraceIsAdded() {
+    MockServerWebExchange exchange = exchange(MockServerHttpRequest.get("/"));
+    withSpan(exchange, span(TRACE_ID, SPAN_ID));
+    exchange
+        .getAttributes()
+        .put(PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create().put("traceId", TRACE_ID));
+
+    filter(exchange);
+
     assertThat(problemContext(exchange).get("spanId")).isEqualTo(SPAN_ID);
   }
 

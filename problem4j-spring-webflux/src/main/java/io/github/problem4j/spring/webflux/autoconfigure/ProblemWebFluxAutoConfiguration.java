@@ -181,9 +181,11 @@ public class ProblemWebFluxAutoConfiguration {
 
     /**
      * Fails application startup if {@code problem4j.tracing.source} is set to a source that cannot
-     * be used, as its required dependencies are not on the classpath.
+     * be used, as its required dependencies are not on the classpath. Skipped if a custom {@link
+     * ProblemContextWebFluxFilter} bean is defined, as the tracing source is not used then.
      */
     @Conditional(OnUnavailableSource.class)
+    @ConditionalOnMissingBean(ProblemContextWebFluxFilter.class)
     @Configuration(proxyBeanMethods = false)
     static class UnavailableTracingSourceConfiguration {
 

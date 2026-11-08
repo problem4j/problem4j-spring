@@ -76,6 +76,31 @@ class MicrometerProblemContextWebMvcFilterTest {
     filter.doFilterInternal(request, response, (req, res) -> {});
 
     assertThat(problemContext().get("traceId")).isEqualTo("attribute-trace");
+    assertThat(problemContext().get("spanId")).isNull();
+  }
+
+  @Test
+  void givenAssignedContextWithSpanId_whenFilter_thenSpanIdIsKept() throws Exception {
+    withSpan(span(TRACE_ID, SPAN_ID));
+    request.setAttribute(
+        PROBLEM_CONTEXT_ATTRIBUTE,
+        ProblemContext.create().put("traceId", TRACE_ID).put("spanId", "existing-span"));
+
+    filter.doFilterInternal(request, response, (req, res) -> {});
+
+    assertThat(problemContext().get("traceId")).isEqualTo(TRACE_ID);
+    assertThat(problemContext().get("spanId")).isEqualTo("existing-span");
+  }
+
+  @Test
+  void givenAssignedContextWithoutSpanId_whenFilter_thenSpanIdOfSameTraceIsAdded()
+      throws Exception {
+    withSpan(span(TRACE_ID, SPAN_ID));
+    request.setAttribute(
+        PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create().put("traceId", TRACE_ID));
+
+    filter.doFilterInternal(request, response, (req, res) -> {});
+
     assertThat(problemContext().get("spanId")).isEqualTo(SPAN_ID);
   }
 
