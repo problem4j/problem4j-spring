@@ -16,12 +16,19 @@
 
 package io.github.problem4j.spring.webflux.autoconfigure;
 
+import static io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.UNAVAILABLE_SOURCE_MESSAGE;
+
 import io.github.problem4j.core.ProblemMapper;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties;
+import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnMicrometerSource;
+import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnSimpleSource;
+import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnUnavailableSource;
 import io.github.problem4j.spring.webflux.AdviceWebFluxInspector;
 import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
+import io.github.problem4j.spring.webflux.MicrometerProblemContextWebFluxFilter;
+import io.github.problem4j.spring.webflux.ProblemContextWebFluxArgumentResolver;
 import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
 import io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler;
 import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
@@ -36,6 +43,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.webflux.autoconfigure.WebFluxAutoConfiguration;
 import org.springframework.boot.webflux.autoconfigure.error.ErrorWebFluxAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
@@ -112,6 +120,18 @@ public class ProblemWebFluxAutoConfiguration {
   }
 
   /**
+   * Registers the default {@link ProblemContextWebFluxArgumentResolver}, resolving controller
+   * method arguments of {@code ProblemContext} type without any annotation. Spring Boot's {@code
+   * WebFluxAutoConfiguration} adds all {@code HandlerMethodArgumentResolver} beans to the custom
+   * argument resolvers of WebFlux, so the bean is not registered via {@code WebFluxConfigurer}.
+   */
+  @ConditionalOnMissingBean(ProblemContextWebFluxArgumentResolver.class)
+  @Bean
+  ProblemContextWebFluxArgumentResolver problemContextWebFluxArgumentResolver() {
+    return new ProblemContextWebFluxArgumentResolver();
+  }
+
+  /**
    * Nested configuration that registers the {@link ProblemContextWebFluxFilter} responsible for
    * preparing and propagating the Problem4J context across WebFlux request handling.
    */
@@ -126,13 +146,69 @@ public class ProblemWebFluxAutoConfiguration {
     ProblemContextWebFluxFilterConfiguration() {}
 
     /**
-     * Registers the default {@link ProblemContextWebFluxFilter}, which initializes and propagates
-     * Problem4J contextual metadata throughout the request lifecycle.
+     * Registers the default {@link ProblemContextWebFluxFilter}, which takes trace identifiers from
+     * the configured tracing header or generates new ones. Used with {@code
+     * problem4j.tracing.source=simple}, or {@code auto} (default) without Micrometer Tracing.
      */
+    @Conditional(OnSimpleSource.class)
+    @Configuration(proxyBeanMethods = false)
+    static class SimpleTracingConfiguration {
+
+      /** Creates a new instance of this configuration. */
+      SimpleTracingConfiguration() {}
+
+      /**
+       * Registers the default {@link ProblemContextWebFluxFilter}, which initializes and propagates
+       * Problem4J contextual metadata throughout the request lifecycle.
+       */
+      @ConditionalOnMissingBean(ProblemContextWebFluxFilter.class)
+      @Bean
+      ProblemContextWebFluxFilter problemContextWebFluxFilter(ProblemProperties properties) {
+        return new ProblemContextWebFluxFilter(properties);
+      }
+    }
+
+    /**
+     * Registers {@link MicrometerProblemContextWebFluxFilter}, which takes trace identifiers from
+     * the current Micrometer Tracing span. Used with {@code problem4j.tracing.source=micrometer},
+     * or {@code auto} (default) with Micrometer Tracing.
+     */
+    @Conditional(OnMicrometerSource.class)
+    @Configuration(proxyBeanMethods = false)
+    static class MicrometerTracingConfiguration {
+
+      /** Creates a new instance of this configuration. */
+      MicrometerTracingConfiguration() {}
+
+      /**
+       * Registers {@link MicrometerProblemContextWebFluxFilter}, which initializes and propagates
+       * Problem4J contextual metadata throughout the request lifecycle.
+       */
+      @ConditionalOnMissingBean(ProblemContextWebFluxFilter.class)
+      @Bean
+      ProblemContextWebFluxFilter problemContextWebFluxFilter(ProblemProperties properties) {
+        return new MicrometerProblemContextWebFluxFilter(properties);
+      }
+    }
+
+    /**
+     * Fails application startup if {@code problem4j.tracing.source} is set to a source that cannot
+     * be used, as its required dependencies are not on the classpath. Skipped if a custom {@link
+     * ProblemContextWebFluxFilter} bean is defined, as the tracing source is not used then.
+     */
+    @Conditional(OnUnavailableSource.class)
     @ConditionalOnMissingBean(ProblemContextWebFluxFilter.class)
-    @Bean
-    ProblemContextWebFluxFilter problemContextWebFluxFilter(ProblemProperties properties) {
-      return new ProblemContextWebFluxFilter(properties);
+    @Configuration(proxyBeanMethods = false)
+    static class UnavailableTracingSourceConfiguration {
+
+      /**
+       * Always throws, as the configured {@code problem4j.tracing.source} cannot be satisfied.
+       *
+       * @throws IllegalStateException always
+       */
+      UnavailableTracingSourceConfiguration() {
+        throw new IllegalStateException(UNAVAILABLE_SOURCE_MESSAGE);
+      }
     }
   }
 

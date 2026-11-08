@@ -16,12 +16,19 @@
 
 package io.github.problem4j.spring.webmvc.autoconfigure;
 
+import static io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.UNAVAILABLE_SOURCE_MESSAGE;
+
 import io.github.problem4j.core.ProblemMapper;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties;
+import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnMicrometerSource;
+import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnSimpleSource;
+import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnUnavailableSource;
 import io.github.problem4j.spring.webmvc.AdviceWebMvcInspector;
 import io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice;
+import io.github.problem4j.spring.webmvc.MicrometerProblemContextWebMvcFilter;
+import io.github.problem4j.spring.webmvc.ProblemContextWebMvcArgumentResolver;
 import io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter;
 import io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler;
 import io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice;
@@ -36,11 +43,14 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.webmvc.autoconfigure.WebMvcAutoConfiguration;
 import org.springframework.boot.webmvc.autoconfigure.error.ErrorMvcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 /**
@@ -116,6 +126,30 @@ public class ProblemWebMvcAutoConfiguration {
   }
 
   /**
+   * Registers the default {@link ProblemContextWebMvcArgumentResolver}, resolving controller method
+   * arguments of {@code ProblemContext} type without any annotation.
+   */
+  @ConditionalOnMissingBean(ProblemContextWebMvcArgumentResolver.class)
+  @Bean
+  ProblemContextWebMvcArgumentResolver problemContextWebMvcArgumentResolver() {
+    return new ProblemContextWebMvcArgumentResolver();
+  }
+
+  /**
+   * Adds {@link ProblemContextWebMvcArgumentResolver} to the custom argument resolvers of WebMVC.
+   */
+  @Bean
+  WebMvcConfigurer problemContextWebMvcArgumentResolverConfigurer(
+      ProblemContextWebMvcArgumentResolver resolver) {
+    return new WebMvcConfigurer() {
+      @Override
+      public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(resolver);
+      }
+    };
+  }
+
+  /**
    * Nested configuration that registers the {@link ProblemContextWebMvcFilter} responsible for
    * preparing and propagating the Problem4J context across WebMVC request handling.
    */
@@ -130,13 +164,69 @@ public class ProblemWebMvcAutoConfiguration {
     ProblemContextMvcFilterConfiguration() {}
 
     /**
-     * Registers the default {@link ProblemContextWebMvcFilter}, which initializes and propagates
-     * Problem4J contextual metadata throughout the request lifecycle.
+     * Registers the default {@link ProblemContextWebMvcFilter}, which takes trace identifiers from
+     * the configured tracing header or generates new ones. Used with {@code
+     * problem4j.tracing.source=simple}, or {@code auto} (default) without Micrometer Tracing.
      */
+    @Conditional(OnSimpleSource.class)
+    @Configuration(proxyBeanMethods = false)
+    static class SimpleTracingConfiguration {
+
+      /** Creates a new instance of this configuration. */
+      SimpleTracingConfiguration() {}
+
+      /**
+       * Registers the default {@link ProblemContextWebMvcFilter}, which initializes and propagates
+       * Problem4J contextual metadata throughout the request lifecycle.
+       */
+      @ConditionalOnMissingBean(ProblemContextWebMvcFilter.class)
+      @Bean
+      ProblemContextWebMvcFilter problemContextWebMvcFilter(ProblemProperties properties) {
+        return new ProblemContextWebMvcFilter(properties);
+      }
+    }
+
+    /**
+     * Registers {@link MicrometerProblemContextWebMvcFilter}, which takes trace identifiers from
+     * the current Micrometer Tracing span. Used with {@code problem4j.tracing.source=micrometer},
+     * or {@code auto} (default) with Micrometer Tracing.
+     */
+    @Conditional(OnMicrometerSource.class)
+    @Configuration(proxyBeanMethods = false)
+    static class MicrometerTracingConfiguration {
+
+      /** Creates a new instance of this configuration. */
+      MicrometerTracingConfiguration() {}
+
+      /**
+       * Registers {@link MicrometerProblemContextWebMvcFilter}, which initializes and propagates
+       * Problem4J contextual metadata throughout the request lifecycle.
+       */
+      @ConditionalOnMissingBean(ProblemContextWebMvcFilter.class)
+      @Bean
+      ProblemContextWebMvcFilter problemContextWebMvcFilter(ProblemProperties properties) {
+        return new MicrometerProblemContextWebMvcFilter(properties);
+      }
+    }
+
+    /**
+     * Fails application startup if {@code problem4j.tracing.source} is set to a source that cannot
+     * be used, as its required dependencies are not on the classpath. Skipped if a custom {@link
+     * ProblemContextWebMvcFilter} bean is defined, as the tracing source is not used then.
+     */
+    @Conditional(OnUnavailableSource.class)
     @ConditionalOnMissingBean(ProblemContextWebMvcFilter.class)
-    @Bean
-    ProblemContextWebMvcFilter problemContextWebMvcFilter(ProblemProperties properties) {
-      return new ProblemContextWebMvcFilter(properties);
+    @Configuration(proxyBeanMethods = false)
+    static class UnavailableTracingSourceConfiguration {
+
+      /**
+       * Always throws, as the configured {@code problem4j.tracing.source} cannot be satisfied.
+       *
+       * @throws IllegalStateException always
+       */
+      UnavailableTracingSourceConfiguration() {
+        throw new IllegalStateException(UNAVAILABLE_SOURCE_MESSAGE);
+      }
     }
   }
 

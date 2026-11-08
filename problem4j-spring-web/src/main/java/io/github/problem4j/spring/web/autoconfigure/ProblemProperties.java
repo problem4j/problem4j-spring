@@ -75,6 +75,11 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   private ResolverCaching resolverCaching = new ResolverCaching();
 
   /**
+   * Tracing configuration, deciding where trace identifiers of {@code ProblemContext} come from.
+   */
+  private Tracing tracing = new Tracing();
+
+  /**
    * Creates a new instance of {@link ProblemProperties} with default values.
    *
    * @since 3.1.0
@@ -337,6 +342,26 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   }
 
   /**
+   * Returns the tracing configuration.
+   *
+   * @return tracing settings
+   * @since 3.1.0
+   */
+  public Tracing getTracing() {
+    return tracing;
+  }
+
+  /**
+   * Sets the tracing configuration.
+   *
+   * @param tracing tracing settings
+   * @since 3.1.0
+   */
+  public void setTracing(Tracing tracing) {
+    this.tracing = tracing;
+  }
+
+  /**
    * Caching configuration for ({@code CachingProblemResolverStore}).
    *
    * <p>Controls whether resolver lookup caching is enabled and its maximum size.
@@ -405,6 +430,85 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
     public void setEnabled(boolean enabled) {
       this.enabled = enabled;
     }
+  }
+
+  /**
+   * Tracing configuration, deciding where trace identifiers of {@code ProblemContext} come from.
+   *
+   * @since 3.1.0
+   */
+  public static class Tracing {
+
+    /**
+     * Source of trace identifiers. {@code auto} uses {@code micrometer} if {@code
+     * io.micrometer:micrometer-tracing} is on the classpath, and {@code simple} otherwise. {@code
+     * simple} takes the trace ID from the {@code problem4j.tracing-header-name} header or generates
+     * a random one. {@code micrometer} takes the trace ID and span ID of the current Micrometer
+     * Tracing span first, falling back to {@code simple} behavior if no span is available, and
+     * fails application startup if Micrometer Tracing is not on the classpath.
+     */
+    private TracingSource source = TracingSource.AUTO;
+
+    /**
+     * Creates a new instance of {@link Tracing} with default values.
+     *
+     * @since 3.1.0
+     */
+    public Tracing() {}
+
+    /**
+     * Returns the source of trace identifiers.
+     *
+     * @return the tracing source
+     * @since 3.1.0
+     */
+    public TracingSource getSource() {
+      return source;
+    }
+
+    /**
+     * Sets the source of trace identifiers.
+     *
+     * @param source the tracing source
+     * @since 3.1.0
+     */
+    public void setSource(TracingSource source) {
+      this.source = source;
+    }
+  }
+
+  /**
+   * Source of trace identifiers stored in {@code ProblemContext}.
+   *
+   * @see Tracing#getSource()
+   * @since 3.1.0
+   */
+  public enum TracingSource {
+
+    /**
+     * {@link #MICROMETER} if {@code io.micrometer:micrometer-tracing} is on the classpath, {@link
+     * #SIMPLE} otherwise.
+     *
+     * @since 3.1.0
+     */
+    AUTO,
+
+    /**
+     * Trace ID is taken from the {@code problem4j.tracing-header-name} header, or generated as a
+     * random UUID without dashes.
+     *
+     * @since 3.1.0
+     */
+    SIMPLE,
+
+    /**
+     * Trace ID and span ID are taken from the current Micrometer Tracing span. If no span is
+     * available, falls back to {@link #SIMPLE} behavior. Requires {@code
+     * io.micrometer:micrometer-tracing} on the classpath, otherwise application startup fails.
+     *
+     * @since 3.1.0
+     */
+    MICROMETER
   }
 
   /**

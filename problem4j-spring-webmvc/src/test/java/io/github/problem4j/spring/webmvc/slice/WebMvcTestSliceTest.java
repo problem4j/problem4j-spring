@@ -16,19 +16,24 @@
 
 package io.github.problem4j.spring.webmvc.slice;
 
+import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import io.github.problem4j.core.Problem;
+import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemException;
 import io.github.problem4j.spring.web.autoconfigure.ProblemAutoConfiguration;
 import io.github.problem4j.spring.web.autoconfigure.ProblemJacksonAutoConfiguration;
 import io.github.problem4j.spring.web.autoconfigure.ProblemWebAutoConfiguration;
 import io.github.problem4j.spring.webmvc.autoconfigure.ProblemWebMvcAutoConfiguration;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -37,7 +42,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.json.JsonCompareMode;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RestController;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -98,12 +105,42 @@ class WebMvcTestSliceTest {
                         .build()));
   }
 
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        "/slice/problem-context",
+        "/slice/problem-context/request-attribute",
+        "/slice/kotlin/problem-context",
+        "/slice/kotlin/suspend/problem-context"
+      })
+  void givenProblemContextParameter_whenRequesting_thenProblemContextOfRequestIsResolved(
+      String path) throws Exception {
+    MvcResult result = mockMvc.perform(get(path).header("X-Trace-Id", "slice-trace")).andReturn();
+    if (result.getRequest().isAsyncStarted()) {
+      result = mockMvc.perform(asyncDispatch(result)).andReturn();
+    }
+
+    assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+    assertThat(result.getResponse().getContentAsString()).isEqualTo("slice-trace");
+  }
+
   @SpringBootConfiguration
-  @Import(SliceController.class)
+  @Import({SliceController.class, KotlinSliceController.class})
   static class SliceConfiguration {}
 
   @RestController
   static class SliceController {
+
+    @GetMapping("/slice/problem-context")
+    String problemContext(ProblemContext context) {
+      return String.valueOf(context.get("traceId"));
+    }
+
+    @GetMapping("/slice/problem-context/request-attribute")
+    String problemContextRequestAttribute(
+        @RequestAttribute(PROBLEM_CONTEXT_ATTRIBUTE) ProblemContext context) {
+      return String.valueOf(context.get("traceId"));
+    }
 
     @GetMapping("/slice/problem")
     String problem() {

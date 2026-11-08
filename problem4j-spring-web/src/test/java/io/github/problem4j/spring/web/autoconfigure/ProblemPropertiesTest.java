@@ -21,7 +21,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DetailFormat;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DuplicateResolverPolicy;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ResolverCaching;
+import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.Tracing;
+import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.TracingSource;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 
 // These tests exist only to play with getters/setters and the deprecated constructors so they are
 // not reported as uncovered while playing with test coverage.
@@ -48,6 +55,7 @@ class ProblemPropertiesTest {
     assertThat(properties.getDuplicateResolverPolicy()).isEqualTo(DuplicateResolverPolicy.FAIL);
     assertThat(properties.getResolverCaching().isEnabled())
         .isEqualTo(ResolverCaching.DEFAULT_ENABLED);
+    assertThat(properties.getTracing().getSource()).isEqualTo(TracingSource.AUTO);
   }
 
   @Test
@@ -64,6 +72,9 @@ class ProblemPropertiesTest {
     properties.setInstanceOverride("instance");
     properties.setDuplicateResolverPolicy(DuplicateResolverPolicy.FIRST);
     properties.setResolverCaching(caching);
+    Tracing tracing = new Tracing();
+    tracing.setSource(TracingSource.MICROMETER);
+    properties.setTracing(tracing);
 
     assertThat(properties.isEnabled()).isFalse();
     assertThat(properties.getDetailFormat()).isEqualTo(DetailFormat.UPPERCASE);
@@ -74,6 +85,20 @@ class ProblemPropertiesTest {
     assertThat(properties.getResolverCaching()).isSameAs(caching);
     assertThat(properties.getDuplicateResolverPolicy()).isEqualTo(DuplicateResolverPolicy.FIRST);
     assertThat(properties.getResolverCaching().isEnabled()).isTrue();
+    assertThat(properties.getTracing()).isSameAs(tracing);
+    assertThat(properties.getTracing().getSource()).isEqualTo(TracingSource.MICROMETER);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"auto, AUTO", "simple, SIMPLE", "micrometer, MICROMETER", "MICROMETER, MICROMETER"})
+  void givenTracingSourceProperty_whenBound_thenTracingSourceIsSet(
+      String value, TracingSource expected) {
+    ProblemProperties properties =
+        new Binder(new MapConfigurationPropertySource(Map.of("problem4j.tracing.source", value)))
+            .bind("problem4j", ProblemProperties.class)
+            .get();
+
+    assertThat(properties.getTracing().getSource()).isEqualTo(expected);
   }
 
   @Test

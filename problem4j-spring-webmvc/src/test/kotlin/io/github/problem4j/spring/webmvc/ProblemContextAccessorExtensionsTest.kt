@@ -18,10 +18,10 @@ package io.github.problem4j.spring.webmvc
 
 import io.github.problem4j.core.ProblemContext
 import io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE
+import jakarta.servlet.http.HttpServletRequest
 import java.util.concurrent.atomic.AtomicReference
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.mock.web.MockFilterChain
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.web.context.request.ServletWebRequest
@@ -76,16 +76,12 @@ class ProblemContextAccessorExtensionsTest {
   @Test
   fun givenFilteredRequest_whenReadingFromServletRequest_thenFilterContextIsReturned() {
     val captured = AtomicReference<ProblemContext>()
-    val filter =
-        problemContextWebMvcFilter({ null }) {
-          onContext { request, _, context ->
-            assertThat(request.problemContext).isSameAs(context)
-            captured.set(context)
-          }
-        }
+    val filter = ProblemContextWebMvcFilter { null }
     val request = MockHttpServletRequest()
 
-    filter.doFilter(request, MockHttpServletResponse(), MockFilterChain())
+    filter.doFilter(request, MockHttpServletResponse()) { req, _ ->
+      captured.set((req as HttpServletRequest).problemContext)
+    }
 
     assertThat(request.problemContext).isNotNull().isSameAs(captured.get())
   }
