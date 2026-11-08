@@ -16,7 +16,9 @@
 
 package io.github.problem4j.spring.webflux.app.rest
 
+import io.github.problem4j.core.ProblemContext
 import io.github.problem4j.core.ProblemException
+import io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE
 import io.github.problem4j.spring.web.buildProblem
 import io.github.problem4j.spring.webflux.app.problem.CoroutineException
 import io.github.problem4j.spring.webflux.app.problem.UnresolvableException
@@ -27,6 +29,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.time.delay
 import kotlinx.coroutines.withContext
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestAttribute
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -60,5 +63,19 @@ class CoroutineController {
   fun flow(): Flow<String> = flow {
     delay(Duration.ofMillis(1))
     throw CoroutineException("flow failure")
+  }
+
+  @GetMapping(path = ["/problem-context/argument"])
+  suspend fun problemContextArgument(context: ProblemContext?): String {
+    delay(Duration.ofMillis(1))
+    return context?.let { it["traceId"].toString() } ?: "no-context"
+  }
+
+  @GetMapping(path = ["/problem-context/request-attribute"])
+  suspend fun problemContextRequestAttribute(
+      @RequestAttribute(PROBLEM_CONTEXT_ATTRIBUTE) context: ProblemContext,
+  ): String {
+    delay(Duration.ofMillis(1))
+    return context["traceId"].toString()
   }
 }

@@ -28,6 +28,7 @@ import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnUn
 import io.github.problem4j.spring.webflux.AdviceWebFluxInspector;
 import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.MicrometerProblemContextWebFluxFilter;
+import io.github.problem4j.spring.webflux.ProblemContextWebFluxArgumentResolver;
 import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
 import io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler;
 import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
@@ -194,6 +195,28 @@ public class ProblemWebFluxAutoConfiguration {
       UnavailableTracingSourceConfiguration() {
         throw new IllegalStateException(UNAVAILABLE_SOURCE_MESSAGE);
       }
+    }
+  }
+
+  /**
+   * Nested configuration that registers {@link ProblemContextWebFluxArgumentResolver}, resolving
+   * controller method arguments of {@code ProblemContext} type without any annotation.
+   */
+  @Configuration(proxyBeanMethods = false)
+  static class ProblemContextArgumentResolverConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    ProblemContextArgumentResolverConfiguration() {}
+
+    /**
+     * Registers the default {@link ProblemContextWebFluxArgumentResolver}. Spring Boot's {@code
+     * WebFluxAutoConfiguration} adds all {@code HandlerMethodArgumentResolver} beans to the custom
+     * argument resolvers of WebFlux, so the bean is not registered via {@code WebFluxConfigurer}.
+     */
+    @ConditionalOnMissingBean(ProblemContextWebFluxArgumentResolver.class)
+    @Bean
+    ProblemContextWebFluxArgumentResolver problemContextWebFluxArgumentResolver() {
+      return new ProblemContextWebFluxArgumentResolver();
     }
   }
 
