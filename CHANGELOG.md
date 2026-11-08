@@ -23,6 +23,9 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Add `problem4j.duplicate-resolver-policy` property to control what happens when multiple `ProblemResolver` instances
   for the same exception class have equal order. `fail` (default) fails application startup, `first` picks the first
   one registered in the application context.
+- Register Problem4J autoconfigurations in Spring Boot test slices: `@AutoConfigureJson`, `@AutoConfigureWebFlux` and
+  `@AutoConfigureWebMvc`, to make it possible to use `@JsonTest`, `@WebFluxTest`, `@WebMvcTest`, `@RestClientTest` and
+  `@WebClientTest`.
 
 ### Changed
 
