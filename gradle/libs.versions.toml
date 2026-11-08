@@ -57,6 +57,7 @@ spring-boot-autoconfigure-processor = { module = "org.springframework.boot:sprin
 spring-boot-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor" }
 spring-boot-gson = { module = "org.springframework.boot:spring-boot-gson" }
 spring-boot-jackson = { module = "org.springframework.boot:spring-boot-jackson" }
+spring-boot-micrometer-tracing-opentelemetry = { module = "org.springframework.boot:spring-boot-micrometer-tracing-opentelemetry" }
 spring-boot-validation = { module = "org.springframework.boot:spring-boot-validation" }
 spring-boot-web-server = { module = "org.springframework.boot:spring-boot-web-server" }
 spring-boot-webflux = { module = "org.springframework.boot:spring-boot-webflux" }
@@ -73,6 +74,8 @@ jackson3-dataformat-xml = { module = "tools.jackson.dataformat:jackson-dataforma
 jackson3-module-kotlin = { module = "tools.jackson.module:jackson-module-kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core" }
 kotlinx-coroutines-reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor" }
+micrometer-tracing = { module = "io.micrometer:micrometer-tracing" }
+micrometer-tracing-bridge-otel = { module = "io.micrometer:micrometer-tracing-bridge-otel" }
 jakarta-servlet-api = { module = "jakarta.servlet:jakarta.servlet-api" }
 jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api" }
 slf4j-api = { module = "org.slf4j:slf4j-api" }

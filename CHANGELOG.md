@@ -26,6 +26,12 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Register Problem4J autoconfigurations in Spring Boot test slices: `@AutoConfigureJson`, `@AutoConfigureWebFlux` and
   `@AutoConfigureWebMvc`, to make it possible to use `@JsonTest`, `@WebFluxTest`, `@WebMvcTest`, `@RestClientTest` and
   `@WebClientTest`.
+- Add `problem4j.tracing.source` property deciding where `traceId` of `ProblemContext` comes from. `micrometer`
+  registers `MicrometerProblemContextWebMvcFilter` / `MicrometerProblemContextWebFluxFilter`, which take `traceId` and
+  `spanId` of the current Micrometer Tracing span, falling back to `problem4j.tracing-header-name` header or a random
+  trace ID if no span is available. `micrometer` requires `io.micrometer:micrometer-tracing` on the classpath, otherwise
+  application startup fails. `simple` keeps the previous behavior (header or a random trace ID). `auto` (default)
+  uses `micrometer` if `io.micrometer:micrometer-tracing` is on the classpath, and `simple` otherwise.
 
 ### Changed
 

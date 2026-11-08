@@ -14,6 +14,7 @@ dependencies {
     compileOnly(libs.spring.boot.webflux)
 
     compileOnly(libs.jakarta.validation.api)
+    compileOnly(libs.micrometer.tracing)
     compileOnly(libs.kotlin.stdlib)
     compileOnly(libs.slf4j.api)
 
@@ -34,6 +35,8 @@ dependencies {
     testImplementation(libs.kotlin.test)
     testImplementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.kotlinx.coroutines.reactor)
+    testImplementation(libs.micrometer.tracing.bridge.otel)
+    testImplementation(libs.spring.boot.micrometer.tracing.opentelemetry)
 
     testRuntimeOnly(libs.junit.platform.launcher)
 
