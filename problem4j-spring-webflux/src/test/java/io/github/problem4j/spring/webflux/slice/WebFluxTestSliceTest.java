@@ -86,11 +86,19 @@ class WebFluxTestSliceTest {
     webTestClient
         .get()
         .uri("/slice/unknown")
+        .header("X-Trace-Id", "slice-trace")
         .exchange()
         .expectStatus()
         .isNotFound()
         .expectHeader()
-        .contentType(Problem.CONTENT_TYPE_JSON);
+        .contentType(Problem.CONTENT_TYPE_JSON)
+        .expectBody(Problem.class)
+        .isEqualTo(
+            Problem.builder()
+                .title("Not Found")
+                .status(HttpStatus.NOT_FOUND.value())
+                .instance("https://example.org/trace/slice-trace")
+                .build());
   }
 
   @SpringBootConfiguration

@@ -19,6 +19,8 @@ package io.github.problem4j.spring.web.slice;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
+import io.github.problem4j.core.ProblemMapper;
+import io.github.problem4j.spring.web.autoconfigure.ProblemAutoConfiguration;
 import io.github.problem4j.spring.web.autoconfigure.ProblemGsonAutoConfiguration;
 import io.github.problem4j.spring.web.autoconfigure.ProblemJacksonAutoConfiguration;
 import java.nio.charset.StandardCharsets;
@@ -45,6 +47,8 @@ class WebClientTestSliceTest {
 
   @Test
   void givenClientTestSlice_whenContextStarts_thenProblemAutoConfigurationsAreApplied() {
+    assertThat(context.getBeansOfType(ProblemAutoConfiguration.class)).hasSize(1);
+    assertThat(context.getBeansOfType(ProblemMapper.class)).hasSize(1);
     assertThat(context.getBeansOfType(ProblemJacksonAutoConfiguration.class)).hasSize(1);
     assertThat(context.getBeansOfType(ProblemGsonAutoConfiguration.class)).hasSize(1);
   }

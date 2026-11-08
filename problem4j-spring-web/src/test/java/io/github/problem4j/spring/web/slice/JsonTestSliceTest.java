@@ -20,6 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.gson.Gson;
 import io.github.problem4j.core.Problem;
+import io.github.problem4j.core.ProblemMapper;
+import io.github.problem4j.spring.web.autoconfigure.ProblemAutoConfiguration;
 import io.github.problem4j.spring.web.autoconfigure.ProblemGsonAutoConfiguration;
 import io.github.problem4j.spring.web.autoconfigure.ProblemJacksonAutoConfiguration;
 import org.junit.jupiter.api.Test;
@@ -49,6 +51,8 @@ class JsonTestSliceTest {
 
   @Test
   void givenJsonTestSlice_whenContextStarts_thenProblemAutoConfigurationsAreApplied() {
+    assertThat(context.getBeansOfType(ProblemAutoConfiguration.class)).hasSize(1);
+    assertThat(context.getBeansOfType(ProblemMapper.class)).hasSize(1);
     assertThat(context.getBeansOfType(ProblemJacksonAutoConfiguration.class)).hasSize(1);
     assertThat(context.getBeansOfType(ProblemGsonAutoConfiguration.class)).hasSize(1);
   }

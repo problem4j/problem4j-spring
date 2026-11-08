@@ -34,10 +34,12 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.json.JsonCompareMode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tools.jackson.databind.json.JsonMapper;
 
 @WebMvcTest(
     properties = {
@@ -48,6 +50,7 @@ class WebMvcTestSliceTest {
 
   @Autowired private MockMvc mockMvc;
   @Autowired private ApplicationContext context;
+  @Autowired private JsonMapper jsonMapper;
 
   @Test
   void givenWebMvcTestSlice_whenContextStarts_thenProblemAutoConfigurationsAreApplied() {
@@ -81,9 +84,18 @@ class WebMvcTestSliceTest {
   @Test
   void givenUnknownPath_whenRequesting_thenProblemResponseIsReturned() throws Exception {
     mockMvc
-        .perform(get("/slice/unknown"))
+        .perform(get("/slice/unknown").header("X-Trace-Id", "slice-trace"))
         .andExpect(status().isNotFound())
-        .andExpect(header().string("Content-Type", Problem.CONTENT_TYPE_JSON));
+        .andExpect(header().string("Content-Type", Problem.CONTENT_TYPE_JSON))
+        .andExpect(result ->
+            assertThat(
+                    jsonMapper.readValue(result.getResponse().getContentAsString(), Problem.class))
+                .isEqualTo(
+                    Problem.builder()
+                        .title("Not Found")
+                        .status(HttpStatus.NOT_FOUND.value())
+                        .instance("https://example.org/trace/slice-trace")
+                        .build()));
   }
 
   @SpringBootConfiguration
