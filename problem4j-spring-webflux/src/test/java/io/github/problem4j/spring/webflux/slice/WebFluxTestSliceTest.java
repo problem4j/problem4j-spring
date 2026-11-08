@@ -16,15 +16,19 @@
 
 package io.github.problem4j.spring.webflux.slice;
 
+import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
+import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemException;
 import io.github.problem4j.spring.web.autoconfigure.ProblemAutoConfiguration;
 import io.github.problem4j.spring.web.autoconfigure.ProblemJacksonAutoConfiguration;
 import io.github.problem4j.spring.web.autoconfigure.ProblemWebAutoConfiguration;
 import io.github.problem4j.spring.webflux.autoconfigure.ProblemWebFluxAutoConfiguration;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.webflux.test.autoconfigure.WebFluxTest;
@@ -34,6 +38,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.json.JsonCompareMode;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -101,12 +106,44 @@ class WebFluxTestSliceTest {
                 .build());
   }
 
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        "/slice/problem-context",
+        "/slice/problem-context/request-attribute",
+        "/slice/kotlin/problem-context",
+        "/slice/kotlin/suspend/problem-context"
+      })
+  void givenProblemContextParameter_whenRequesting_thenProblemContextOfRequestIsResolved(
+      String path) {
+    webTestClient
+        .get()
+        .uri(path)
+        .header("X-Trace-Id", "slice-trace")
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody(String.class)
+        .isEqualTo("slice-trace");
+  }
+
   @SpringBootConfiguration
-  @Import(SliceController.class)
+  @Import({SliceController.class, KotlinSliceController.class})
   static class SliceConfiguration {}
 
   @RestController
   static class SliceController {
+
+    @GetMapping("/slice/problem-context")
+    String problemContext(ProblemContext context) {
+      return String.valueOf(context.get("traceId"));
+    }
+
+    @GetMapping("/slice/problem-context/request-attribute")
+    String problemContextRequestAttribute(
+        @RequestAttribute(PROBLEM_CONTEXT_ATTRIBUTE) ProblemContext context) {
+      return String.valueOf(context.get("traceId"));
+    }
 
     @GetMapping("/slice/problem")
     Mono<String> problem() {

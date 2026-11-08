@@ -40,6 +40,8 @@ class TracingWebFluxTest {
   private static final String TRACE_ID = "4bf92f3577b34da6a3ce929b0e0e4736";
   private static final String PARENT_SPAN_ID = "00f067aa0ba902b7";
   private static final String TRACEPARENT = "00-" + TRACE_ID + "-" + PARENT_SPAN_ID + "-01";
+  private static final String UNSAMPLED_TRACEPARENT =
+      "00-" + TRACE_ID + "-" + PARENT_SPAN_ID + "-00";
   private static final String HEADER_TRACE_ID = "header-trace";
 
   private static final Pattern INSTANCE_PATTERN =
@@ -72,6 +74,22 @@ class TracingWebFluxTest {
       Matcher instance = instanceOf(result);
       assertThat(instance.group(1)).isEqualTo(TRACE_ID);
       assertThat(instance.group(2)).isNotEqualTo(PARENT_SPAN_ID);
+    }
+
+    @Test
+    void givenUnsampledTraceparentHeader_whenRequesting_thenTraceIdOfIncomingTraceIsUsed() {
+      EntityExchangeResult<Problem> result =
+          exchange(
+              webTestClient,
+              HttpMethod.POST,
+              "/problem-override/instance-override",
+              UNSAMPLED_TRACEPARENT,
+              null);
+
+      Matcher instance = instanceOf(result);
+      assertThat(instance.group(1)).isEqualTo(TRACE_ID);
+      assertThat(instance.group(2)).isNotEqualTo(PARENT_SPAN_ID);
+      assertThat(result.getResponseHeaders().getFirst("X-Trace-Id")).isEqualTo(TRACE_ID);
     }
 
     @Test
