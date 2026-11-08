@@ -40,6 +40,8 @@ dependencies {
     testImplementation(libs.spring.boot.gson)
     testImplementation(libs.spring.boot.jackson)
     testImplementation(libs.spring.boot.web.server)
+    testImplementation(libs.spring.boot.restclient.test)
+    testImplementation(libs.spring.boot.webclient.test)
     testImplementation(libs.spring.boot.validation)
     testImplementation(libs.archunit.junit6)
     testImplementation(libs.jakarta.servlet.api)

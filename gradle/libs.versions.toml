@@ -62,6 +62,8 @@ spring-boot-web-server = { module = "org.springframework.boot:spring-boot-web-se
 spring-boot-webflux = { module = "org.springframework.boot:spring-boot-webflux" }
 spring-boot-webmvc = { module = "org.springframework.boot:spring-boot-webmvc" }
 spring-boot-restclient = { module = "org.springframework.boot:spring-boot-restclient" }
+spring-boot-restclient-test = { module = "org.springframework.boot:spring-boot-restclient-test" }
+spring-boot-webclient-test = { module = "org.springframework.boot:spring-boot-webclient-test" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 spring-boot-starter-webflux-test = { module = "org.springframework.boot:spring-boot-starter-webflux-test" }
 spring-boot-starter-webmvc-test = { module = "org.springframework.boot:spring-boot-starter-webmvc-test" }

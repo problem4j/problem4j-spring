@@ -1,0 +1,2 @@
+io.github.problem4j.spring.web.autoconfigure.ProblemGsonAutoConfiguration
+io.github.problem4j.spring.web.autoconfigure.ProblemJacksonAutoConfiguration
