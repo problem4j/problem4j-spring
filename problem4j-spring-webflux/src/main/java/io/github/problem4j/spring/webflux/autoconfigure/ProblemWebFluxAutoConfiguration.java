@@ -120,6 +120,18 @@ public class ProblemWebFluxAutoConfiguration {
   }
 
   /**
+   * Registers the default {@link ProblemContextWebFluxArgumentResolver}, resolving controller
+   * method arguments of {@code ProblemContext} type without any annotation. Spring Boot's {@code
+   * WebFluxAutoConfiguration} adds all {@code HandlerMethodArgumentResolver} beans to the custom
+   * argument resolvers of WebFlux, so the bean is not registered via {@code WebFluxConfigurer}.
+   */
+  @ConditionalOnMissingBean(ProblemContextWebFluxArgumentResolver.class)
+  @Bean
+  ProblemContextWebFluxArgumentResolver problemContextWebFluxArgumentResolver() {
+    return new ProblemContextWebFluxArgumentResolver();
+  }
+
+  /**
    * Nested configuration that registers the {@link ProblemContextWebFluxFilter} responsible for
    * preparing and propagating the Problem4J context across WebFlux request handling.
    */
@@ -197,28 +209,6 @@ public class ProblemWebFluxAutoConfiguration {
       UnavailableTracingSourceConfiguration() {
         throw new IllegalStateException(UNAVAILABLE_SOURCE_MESSAGE);
       }
-    }
-  }
-
-  /**
-   * Nested configuration that registers {@link ProblemContextWebFluxArgumentResolver}, resolving
-   * controller method arguments of {@code ProblemContext} type without any annotation.
-   */
-  @Configuration(proxyBeanMethods = false)
-  static class ProblemContextArgumentResolverConfiguration {
-
-    /** Creates a new instance of this configuration. */
-    ProblemContextArgumentResolverConfiguration() {}
-
-    /**
-     * Registers the default {@link ProblemContextWebFluxArgumentResolver}. Spring Boot's {@code
-     * WebFluxAutoConfiguration} adds all {@code HandlerMethodArgumentResolver} beans to the custom
-     * argument resolvers of WebFlux, so the bean is not registered via {@code WebFluxConfigurer}.
-     */
-    @ConditionalOnMissingBean(ProblemContextWebFluxArgumentResolver.class)
-    @Bean
-    ProblemContextWebFluxArgumentResolver problemContextWebFluxArgumentResolver() {
-      return new ProblemContextWebFluxArgumentResolver();
     }
   }
 

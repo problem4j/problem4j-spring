@@ -19,13 +19,18 @@ package io.github.problem4j.spring.webmvc.autoconfigure;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice;
+import io.github.problem4j.spring.webmvc.ProblemContextWebMvcArgumentResolver;
 import io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter;
 import io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 class ProblemWebMvcAutoConfigurationTest {
@@ -245,6 +250,50 @@ class ProblemWebMvcAutoConfigurationTest {
     void contextLoadsWithoutExceptionAdvice() {
       assertThat(exceptionHandler).isNull();
       assertThat(properties.getExceptionHandler().isEnabled()).isFalse();
+    }
+  }
+
+  @SpringBootTest(classes = {WebMvcTestApp.class})
+  @Nested
+  class WithDefaultProblemContextArgumentResolver {
+
+    @Autowired private ProblemContextWebMvcArgumentResolver problemContextArgumentResolver;
+
+    @Autowired
+    @Qualifier("problemContextWebMvcArgumentResolverConfigurer")
+    private WebMvcConfigurer problemContextWebMvcArgumentResolverConfigurer;
+
+    @Test
+    void contextLoadsWithDefaultResolver() {
+      assertThat(problemContextArgumentResolver)
+          .isExactlyInstanceOf(ProblemContextWebMvcArgumentResolver.class);
+      assertThat(problemContextWebMvcArgumentResolverConfigurer).isNotNull();
+    }
+  }
+
+  @SpringBootTest(
+      classes = {WebMvcTestApp.class, CustomProblemContextArgumentResolverConfiguration.class})
+  @Nested
+  class WithCustomProblemContextArgumentResolver {
+
+    @Autowired private ProblemContextWebMvcArgumentResolver problemContextArgumentResolver;
+
+    @Test
+    void contextLoadsWithCustomResolver() {
+      assertThat(problemContextArgumentResolver)
+          .isSameAs(CustomProblemContextArgumentResolverConfiguration.RESOLVER);
+    }
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  static class CustomProblemContextArgumentResolverConfiguration {
+
+    static final ProblemContextWebMvcArgumentResolver RESOLVER =
+        new ProblemContextWebMvcArgumentResolver();
+
+    @Bean
+    ProblemContextWebMvcArgumentResolver customProblemContextArgumentResolver() {
+      return RESOLVER;
     }
   }
 }

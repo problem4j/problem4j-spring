@@ -19,6 +19,7 @@ package io.github.problem4j.spring.webflux.autoconfigure;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
+import io.github.problem4j.spring.webflux.ProblemContextWebFluxArgumentResolver;
 import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
 import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
@@ -26,6 +27,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler;
 
 class ProblemWebFluxAutoConfigurationTest {
@@ -232,6 +235,45 @@ class ProblemWebFluxAutoConfigurationTest {
     void contextLoadsWithoutExceptionAdvice() {
       assertThat(exceptionHandler).isNull();
       assertThat(properties.getExceptionHandler().isEnabled()).isFalse();
+    }
+  }
+
+  @SpringBootTest(classes = {WebFluxTestApp.class})
+  @Nested
+  class WithDefaultProblemContextArgumentResolver {
+
+    @Autowired private ProblemContextWebFluxArgumentResolver problemContextArgumentResolver;
+
+    @Test
+    void contextLoadsWithDefaultResolver() {
+      assertThat(problemContextArgumentResolver)
+          .isExactlyInstanceOf(ProblemContextWebFluxArgumentResolver.class);
+    }
+  }
+
+  @SpringBootTest(
+      classes = {WebFluxTestApp.class, CustomProblemContextArgumentResolverConfiguration.class})
+  @Nested
+  class WithCustomProblemContextArgumentResolver {
+
+    @Autowired private ProblemContextWebFluxArgumentResolver problemContextArgumentResolver;
+
+    @Test
+    void contextLoadsWithCustomResolver() {
+      assertThat(problemContextArgumentResolver)
+          .isSameAs(CustomProblemContextArgumentResolverConfiguration.RESOLVER);
+    }
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  static class CustomProblemContextArgumentResolverConfiguration {
+
+    static final ProblemContextWebFluxArgumentResolver RESOLVER =
+        new ProblemContextWebFluxArgumentResolver();
+
+    @Bean
+    ProblemContextWebFluxArgumentResolver customProblemContextArgumentResolver() {
+      return RESOLVER;
     }
   }
 }

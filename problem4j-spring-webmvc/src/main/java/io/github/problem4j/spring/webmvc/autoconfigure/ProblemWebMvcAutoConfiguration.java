@@ -126,6 +126,30 @@ public class ProblemWebMvcAutoConfiguration {
   }
 
   /**
+   * Registers the default {@link ProblemContextWebMvcArgumentResolver}, resolving controller method
+   * arguments of {@code ProblemContext} type without any annotation.
+   */
+  @ConditionalOnMissingBean(ProblemContextWebMvcArgumentResolver.class)
+  @Bean
+  ProblemContextWebMvcArgumentResolver problemContextWebMvcArgumentResolver() {
+    return new ProblemContextWebMvcArgumentResolver();
+  }
+
+  /**
+   * Adds {@link ProblemContextWebMvcArgumentResolver} to the custom argument resolvers of WebMVC.
+   */
+  @Bean
+  WebMvcConfigurer problemContextWebMvcArgumentResolverConfigurer(
+      ProblemContextWebMvcArgumentResolver resolver) {
+    return new WebMvcConfigurer() {
+      @Override
+      public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(resolver);
+      }
+    };
+  }
+
+  /**
    * Nested configuration that registers the {@link ProblemContextWebMvcFilter} responsible for
    * preparing and propagating the Problem4J context across WebMVC request handling.
    */
@@ -203,38 +227,6 @@ public class ProblemWebMvcAutoConfiguration {
       UnavailableTracingSourceConfiguration() {
         throw new IllegalStateException(UNAVAILABLE_SOURCE_MESSAGE);
       }
-    }
-  }
-
-  /**
-   * Nested configuration that registers {@link ProblemContextWebMvcArgumentResolver}, resolving
-   * controller method arguments of {@code ProblemContext} type without any annotation.
-   */
-  @Configuration(proxyBeanMethods = false)
-  static class ProblemContextArgumentResolverConfiguration {
-
-    /** Creates a new instance of this configuration. */
-    ProblemContextArgumentResolverConfiguration() {}
-
-    /** Registers the default {@link ProblemContextWebMvcArgumentResolver}. */
-    @ConditionalOnMissingBean(ProblemContextWebMvcArgumentResolver.class)
-    @Bean
-    ProblemContextWebMvcArgumentResolver problemContextWebMvcArgumentResolver() {
-      return new ProblemContextWebMvcArgumentResolver();
-    }
-
-    /**
-     * Adds {@link ProblemContextWebMvcArgumentResolver} to the custom argument resolvers of WebMvc.
-     */
-    @Bean
-    WebMvcConfigurer problemContextWebMvcArgumentResolverConfigurer(
-        ProblemContextWebMvcArgumentResolver resolver) {
-      return new WebMvcConfigurer() {
-        @Override
-        public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-          resolvers.add(resolver);
-        }
-      };
     }
   }
 
