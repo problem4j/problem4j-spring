@@ -19,6 +19,7 @@ package io.github.problem4j.spring.webflux;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 
 import io.github.problem4j.core.ProblemContext;
+import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.reactive.BindingContext;
@@ -32,8 +33,9 @@ import org.springframework.web.server.ServerWebExchange;
  * ProblemContextWebFluxFilter}, the same one used for creating {@code Problem} responses. If none
  * is assigned (e.g. the filter is disabled), resolves to {@code null}.
  *
- * <p>Only parameters declared exactly as {@link ProblemContext} are supported, wrappers like {@code
- * Optional<ProblemContext>} are not.
+ * <p>Parameters declared as {@link ProblemContext} or {@code Optional<ProblemContext>} are
+ * supported. The latter resolves to an empty {@link Optional} if no {@link ProblemContext} is
+ * assigned.
  *
  * <pre>{@code
  * @GetMapping("/orders/{id}")
@@ -55,15 +57,17 @@ public class ProblemContextWebFluxArgumentResolver implements SyncHandlerMethodA
   public ProblemContextWebFluxArgumentResolver() {}
 
   /**
-   * Checks whether the given parameter is of {@link ProblemContext} type.
+   * Checks whether the given parameter is of {@link ProblemContext} or {@code
+   * Optional<ProblemContext>} type.
    *
    * @param parameter the method parameter to check
-   * @return {@code true} if the parameter is of {@link ProblemContext} type
+   * @return {@code true} if the parameter is of {@link ProblemContext} or {@code
+   *     Optional<ProblemContext>} type
    * @since 3.1.0
    */
   @Override
   public boolean supportsParameter(MethodParameter parameter) {
-    return ProblemContext.class.equals(parameter.getParameterType());
+    return ProblemContext.class.equals(parameter.nestedIfOptional().getNestedParameterType());
   }
 
   /**
@@ -72,14 +76,20 @@ public class ProblemContextWebFluxArgumentResolver implements SyncHandlerMethodA
    * @param parameter the method parameter to resolve
    * @param bindingContext the binding context to use
    * @param exchange the current exchange
-   * @return the {@link ProblemContext} of the current exchange, or {@code null} if none is assigned
+   * @return the {@link ProblemContext} of the current exchange, or {@code null} if none is
+   *     assigned, wrapped in {@link Optional} if the parameter is of {@code
+   *     Optional<ProblemContext>} type
    * @since 3.1.0
    */
   @Override
   public @Nullable Object resolveArgumentValue(
       MethodParameter parameter, BindingContext bindingContext, ServerWebExchange exchange) {
-    return exchange.getAttribute(PROBLEM_CONTEXT_ATTRIBUTE) instanceof ProblemContext context
-        ? context
-        : null;
+    ProblemContext context =
+        exchange.getAttribute(PROBLEM_CONTEXT_ATTRIBUTE) instanceof ProblemContext attribute
+            ? attribute
+            : null;
+    return Optional.class.equals(parameter.getParameterType())
+        ? Optional.ofNullable(context)
+        : context;
   }
 }

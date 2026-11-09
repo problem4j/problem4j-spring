@@ -20,6 +20,7 @@ import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_AT
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.ProblemContext;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.MethodParameter;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
@@ -71,13 +72,50 @@ class ProblemContextWebFluxArgumentResolverTest {
     assertThat(resolved).isNull();
   }
 
+  @Test
+  void givenOptionalProblemContextParameter_whenCheckingSupport_thenParameterIsSupported()
+      throws Exception {
+    assertThat(resolver.supportsParameter(parameter(2))).isTrue();
+  }
+
+  @Test
+  void givenOptionalOfOtherParameter_whenCheckingSupport_thenParameterIsNotSupported()
+      throws Exception {
+    assertThat(resolver.supportsParameter(parameter(3))).isFalse();
+  }
+
+  @Test
+  void givenContextAttribute_whenResolvingOptional_thenContextIsReturnedInOptional()
+      throws Exception {
+    ProblemContext context = ProblemContext.create().put("traceId", "trace");
+    exchange.getAttributes().put(PROBLEM_CONTEXT_ATTRIBUTE, context);
+
+    Object resolved = resolver.resolveArgumentValue(parameter(2), new BindingContext(), exchange);
+
+    assertThat(resolved).isEqualTo(Optional.of(context));
+  }
+
+  @Test
+  void givenNoContextAttribute_whenResolvingOptional_thenEmptyOptionalIsReturned()
+      throws Exception {
+    Object resolved = resolver.resolveArgumentValue(parameter(2), new BindingContext(), exchange);
+
+    assertThat(resolved).isEqualTo(Optional.empty());
+  }
+
   private static MethodParameter parameter(int index) throws NoSuchMethodException {
     return new MethodParameter(
-        Handler.class.getDeclaredMethod("handle", ProblemContext.class, String.class), index);
+        Handler.class.getDeclaredMethod(
+            "handle", ProblemContext.class, String.class, Optional.class, Optional.class),
+        index);
   }
 
   static class Handler {
 
-    void handle(ProblemContext context, String text) {}
+    void handle(
+        ProblemContext context,
+        String text,
+        Optional<ProblemContext> optionalContext,
+        Optional<String> optionalText) {}
   }
 }

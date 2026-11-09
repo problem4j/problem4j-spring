@@ -48,6 +48,7 @@ class ProblemContextArgumentWebFluxTest {
     @ValueSource(
         strings = {
           "/problem-context/argument",
+          "/problem-context/optional",
           "/problem-context/request-attribute",
           "/coroutine/problem-context/argument",
           "/coroutine/problem-context/request-attribute"
@@ -84,8 +85,14 @@ class ProblemContextArgumentWebFluxTest {
     @Autowired private WebTestClient webTestClient;
 
     @ParameterizedTest
-    @ValueSource(strings = {"/problem-context/argument", "/coroutine/problem-context/argument"})
-    void givenNotAnnotatedProblemContextParameter_whenRequesting_thenNullIsResolved(String path) {
+    @ValueSource(
+        strings = {
+          "/problem-context/argument",
+          "/problem-context/optional",
+          "/coroutine/problem-context/argument"
+        })
+    void givenNotAnnotatedProblemContextParameter_whenRequesting_thenNoContextIsResolved(
+        String path) {
       EntityExchangeResult<String> result = exchange(webTestClient, path);
 
       assertThat(result.getStatus()).isEqualTo(HttpStatus.OK);
