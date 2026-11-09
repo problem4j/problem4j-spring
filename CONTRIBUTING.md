@@ -52,11 +52,11 @@ If your Git `user.name` and `user.email` are configured, you can add the sign-of
 git commit -s -m "message"
 ```
 
-If you prefer not to expose your personal email, you may use your GitHub nickname and/or GitHub-provided noreply
+If you prefer not to expose your personal email, you may use your GitHub username and/or GitHub-provided noreply
 address, for example:
 
 ```txt
-Signed-off-by: nickname <12345678+nickname@users.noreply.github.com>
+Signed-off-by: username <12345678+username@users.noreply.github.com>
 ```
 
 Repository maintainers and code owners are not required to sign off their commits. For external contributors, every

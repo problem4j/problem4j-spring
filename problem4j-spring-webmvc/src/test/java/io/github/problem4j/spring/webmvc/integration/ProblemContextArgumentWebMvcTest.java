@@ -51,6 +51,7 @@ class ProblemContextArgumentWebMvcTest {
     @ValueSource(
         strings = {
           "/problem-context/argument",
+          "/problem-context/optional",
           "/problem-context/request-attribute",
           "/coroutine/problem-context/argument",
           "/coroutine/problem-context/request-attribute"
@@ -87,8 +88,14 @@ class ProblemContextArgumentWebMvcTest {
     @Autowired private TestRestTemplate restTemplate;
 
     @ParameterizedTest
-    @ValueSource(strings = {"/problem-context/argument", "/coroutine/problem-context/argument"})
-    void givenNotAnnotatedProblemContextParameter_whenRequesting_thenNullIsResolved(String path) {
+    @ValueSource(
+        strings = {
+          "/problem-context/argument",
+          "/problem-context/optional",
+          "/coroutine/problem-context/argument"
+        })
+    void givenNotAnnotatedProblemContextParameter_whenRequesting_thenNoContextIsResolved(
+        String path) {
       ResponseEntity<String> response = exchange(restTemplate, path);
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

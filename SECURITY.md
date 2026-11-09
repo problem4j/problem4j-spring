@@ -4,11 +4,9 @@
 
 The following version lines are actively supported:
 
-- `v3.0.x` (`main` branch) - supported versions line for Spring Boot 4, based on `problem4j-core-v2`,
-- `v2.2.x` (`release-v2.2.x` branch, until `2026-12-31`) - supported versions line for Spring Boot 4, based on
-  `problem4j-core-v1.4`,
-- `v1.2.x` (`release-v1.2.x` branch, until `2026-12-31`) - supported versions line for Spring Boot 3, based on
-  `problem4j-core-v1.4`.
+- `v3.0.x` - supported versions line for Spring Boot 4, based on `problem4j-core-v2`,
+- `v2.2.x` (until `2026-12-31`) - supported versions line for Spring Boot 4, based on `problem4j-core-v1.4`,
+- `v1.2.x` (until `2026-12-31`) - supported versions line for Spring Boot 3, based on `problem4j-core-v1.4`.
 
 ## Dependencies
 

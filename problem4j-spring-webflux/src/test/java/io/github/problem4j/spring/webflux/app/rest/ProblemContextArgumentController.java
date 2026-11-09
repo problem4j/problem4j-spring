@@ -19,11 +19,13 @@ package io.github.problem4j.spring.webflux.app.rest;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 
 import io.github.problem4j.core.ProblemContext;
+import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping(path = "/problem-context")
@@ -32,6 +34,18 @@ public class ProblemContextArgumentController {
   @GetMapping(path = "/argument")
   public String argument(@Nullable ProblemContext context) {
     return context != null ? String.valueOf(context.get("traceId")) : "no-context";
+  }
+
+  @GetMapping(path = "/optional")
+  public String optional(Optional<ProblemContext> context) {
+    return context.map(it -> String.valueOf(it.get("traceId"))).orElse("no-context");
+  }
+
+  @GetMapping(path = "/mono")
+  public Mono<String> mono(Mono<ProblemContext> context) {
+    return context
+        .map(it -> String.valueOf(it.get("traceId")))
+        .switchIfEmpty(Mono.just("no-context"));
   }
 
   @GetMapping(path = "/request-attribute")
