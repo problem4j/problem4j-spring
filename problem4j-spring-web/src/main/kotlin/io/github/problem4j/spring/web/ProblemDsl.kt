@@ -22,16 +22,6 @@ import java.net.URI
 import org.springframework.http.HttpStatusCode
 
 /**
- * Marks the Kotlin DSLs of problem4j-spring. Prevents calling members of an outer DSL receiver
- * implicitly from within a nested DSL block.
- *
- * @since 3.1.0
- */
-@DslMarker
-@Target(AnnotationTarget.CLASS) //
-public annotation class ProblemDsl
-
-/**
  * Mutable DSL receiver used by [buildProblem] functions. Exposes all configuration methods of
  * [ProblemBuilder] except `build()`, which is invoked by [buildProblem] once the DSL block
  * completes. Each call in the block is applied, so methods do not need to be chained.
@@ -50,7 +40,6 @@ public annotation class ProblemDsl
  *
  * @since 3.1.0
  */
-@ProblemDsl
 public interface ProblemBuilderSpec {
 
   /**
