@@ -101,6 +101,20 @@ class ProblemPropertiesTest {
     assertThat(properties.getTracing().getSource()).isEqualTo(expected);
   }
 
+  @ParameterizedTest
+  @CsvSource({"fail, FAIL", "first, FIRST", "last, LAST", "LAST, LAST"})
+  void givenDuplicateResolverPolicyProperty_whenBound_thenPolicyIsSet(
+      String value, DuplicateResolverPolicy expected) {
+    ProblemProperties properties =
+        new Binder(
+                new MapConfigurationPropertySource(
+                    Map.of("problem4j.duplicate-resolver-policy", value)))
+            .bind("problem4j", ProblemProperties.class)
+            .get();
+
+    assertThat(properties.getDuplicateResolverPolicy()).isEqualTo(expected);
+  }
+
   @Test
   void givenDeprecatedConstructor_whenAllArgsProvided_thenValuesApplied() {
     ResolverCaching caching = new ResolverCaching(true);

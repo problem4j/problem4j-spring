@@ -22,7 +22,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Add Kotlin extensions and DSL functions for common Problem4J classes and utilities.
 - Add `problem4j.duplicate-resolver-policy` property to control what happens when multiple `ProblemResolver` instances
   for the same exception class have equal order. `fail` (default) fails application startup, `first` picks the first
-  one registered in the application context.
+  one registered in the application context, `last` picks the last one registered in the application context (so a
+  built-in resolver wins over an application-defined one, similarly to previous versions).
 - Register Problem4J autoconfigurations in Spring Boot test slices: `@AutoConfigureJson`, `@AutoConfigureWebFlux` and
   `@AutoConfigureWebMvc`, to make it possible to use `@JsonTest`, `@WebFluxTest`, `@WebMvcTest`, `@RestClientTest` and
   `@WebClientTest`.
@@ -53,7 +54,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   ones consuming Problem responses via HTTP client).
 - `ProblemResolver` instances for the same exception class are picked based on `@Order` or `Ordered` (lower value wins).
   If multiple candidates are present with the same order, the startup fails with an error (unless
-  `problem4j.duplicate-resolver-policy=first` is set).
+  `problem4j.duplicate-resolver-policy` is set to `first` or `last`).
 
 ### Deprecated
 

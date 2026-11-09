@@ -91,8 +91,11 @@ public class ProblemWebAutoConfiguration {
         beanFactory.getBeansOfType(ProblemResolver.class);
     Comparator<Object> orderComparator = ResolverOrdering.comparator(beanFactory, problemResolvers);
 
-    if (properties.getDuplicateResolverPolicy() == DuplicateResolverPolicy.FAIL) {
+    DuplicateResolverPolicy policy = properties.getDuplicateResolverPolicy();
+    if (policy == DuplicateResolverPolicy.FAIL) {
       ResolverValidator.validate(problemResolvers, orderComparator);
+    } else if (policy == DuplicateResolverPolicy.LAST) {
+      orderComparator = ResolverOrdering.preferLastRegistered(orderComparator, problemResolvers);
     }
 
     ProblemResolverStore problemResolverStore =
