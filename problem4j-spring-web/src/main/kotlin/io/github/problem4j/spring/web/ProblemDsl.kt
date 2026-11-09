@@ -132,15 +132,6 @@ public interface ProblemBuilderSpec {
   public fun extension(name: String, value: Any?)
 
   /**
-   * Adds a single custom extension member from a [Problem.Extension]. If its value is `null`, an
-   * existing extension with the same name is removed instead.
-   *
-   * @param extension the extension to add
-   * @since 3.1.0
-   */
-  public fun extension(extension: Problem.Extension)
-
-  /**
    * Adds multiple custom extension members from a map. Entries with `null` values remove existing
    * extensions with the same key instead.
    *
@@ -148,24 +139,6 @@ public interface ProblemBuilderSpec {
    * @since 3.1.0
    */
   public fun extensions(extensions: Map<String, Any?>)
-
-  /**
-   * Adds multiple custom extension members from varargs of [Problem.Extension]. Extensions with
-   * `null` values remove existing extensions with the same name instead.
-   *
-   * @param extensions extensions to add
-   * @since 3.1.0
-   */
-  public fun extensions(vararg extensions: Problem.Extension)
-
-  /**
-   * Adds multiple custom extension members from a collection of [Problem.Extension]. Extensions
-   * with `null` values remove existing extensions with the same name instead.
-   *
-   * @param extensions extensions to add
-   * @since 3.1.0
-   */
-  public fun extensions(extensions: Iterable<Problem.Extension>)
 
   /**
    * Adds multiple custom extension members from varargs of [Pair], where each pair is a key and a
@@ -244,19 +217,7 @@ internal class ProblemBuilderSpecImpl(private var builder: ProblemBuilder) : Pro
     builder = builder.extension(name, value)
   }
 
-  override fun extension(extension: Problem.Extension) {
-    builder = builder.extension(extension)
-  }
-
   override fun extensions(extensions: Map<String, Any?>) {
-    builder = builder.extensions(extensions)
-  }
-
-  override fun extensions(vararg extensions: Problem.Extension) {
-    builder = builder.extensions(*extensions)
-  }
-
-  override fun extensions(extensions: Iterable<Problem.Extension>) {
     builder = builder.extensions(extensions)
   }
 
