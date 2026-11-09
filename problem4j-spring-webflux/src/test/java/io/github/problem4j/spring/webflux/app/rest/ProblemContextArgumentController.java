@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping(path = "/problem-context")
@@ -38,6 +39,13 @@ public class ProblemContextArgumentController {
   @GetMapping(path = "/optional")
   public String optional(Optional<ProblemContext> context) {
     return context.map(it -> String.valueOf(it.get("traceId"))).orElse("no-context");
+  }
+
+  @GetMapping(path = "/mono")
+  public Mono<String> mono(Mono<ProblemContext> context) {
+    return context
+        .map(it -> String.valueOf(it.get("traceId")))
+        .switchIfEmpty(Mono.just("no-context"));
   }
 
   @GetMapping(path = "/request-attribute")

@@ -25,6 +25,7 @@ import org.springframework.core.MethodParameter;
 import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.reactive.result.method.SyncHandlerMethodArgumentResolver;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 /**
  * Resolves controller method arguments of {@link ProblemContext} type, without any annotation.
@@ -33,9 +34,9 @@ import org.springframework.web.server.ServerWebExchange;
  * ProblemContextWebFluxFilter}, the same one used for creating {@code Problem} responses. If none
  * is assigned (e.g. the filter is disabled), resolves to {@code null}.
  *
- * <p>Parameters declared as {@link ProblemContext} or {@code Optional<ProblemContext>} are
- * supported. The latter resolves to an empty {@link Optional} if no {@link ProblemContext} is
- * assigned.
+ * <p>Parameters declared as {@link ProblemContext}, {@code Optional<ProblemContext>} or {@code
+ * Mono<ProblemContext>} are supported. The wrappers resolve to an empty {@link Optional} or an
+ * empty {@link Mono} if no {@link ProblemContext} is assigned.
  *
  * <pre>{@code
  * @GetMapping("/orders/{id}")
@@ -57,17 +58,20 @@ public class ProblemContextWebFluxArgumentResolver implements SyncHandlerMethodA
   public ProblemContextWebFluxArgumentResolver() {}
 
   /**
-   * Checks whether the given parameter is of {@link ProblemContext} or {@code
-   * Optional<ProblemContext>} type.
+   * Checks whether the given parameter is of {@link ProblemContext}, {@code
+   * Optional<ProblemContext>} or {@code Mono<ProblemContext>} type.
    *
    * @param parameter the method parameter to check
-   * @return {@code true} if the parameter is of {@link ProblemContext} or {@code
-   *     Optional<ProblemContext>} type
+   * @return {@code true} if the parameter is of {@link ProblemContext}, {@code
+   *     Optional<ProblemContext>} or {@code Mono<ProblemContext>} type
    * @since 3.1.0
    */
   @Override
   public boolean supportsParameter(MethodParameter parameter) {
-    return ProblemContext.class.equals(parameter.nestedIfOptional().getNestedParameterType());
+    Class<?> type = parameter.getParameterType();
+    return (Optional.class.equals(type) || Mono.class.equals(type))
+        ? ProblemContext.class.equals(parameter.nested().getNestedParameterType())
+        : ProblemContext.class.equals(type);
   }
 
   /**
@@ -77,8 +81,8 @@ public class ProblemContextWebFluxArgumentResolver implements SyncHandlerMethodA
    * @param bindingContext the binding context to use
    * @param exchange the current exchange
    * @return the {@link ProblemContext} of the current exchange, or {@code null} if none is
-   *     assigned, wrapped in {@link Optional} if the parameter is of {@code
-   *     Optional<ProblemContext>} type
+   *     assigned, wrapped in {@link Optional} or {@link Mono} if the parameter is of {@code
+   *     Optional<ProblemContext>} or {@code Mono<ProblemContext>} type
    * @since 3.1.0
    */
   @Override
@@ -88,8 +92,13 @@ public class ProblemContextWebFluxArgumentResolver implements SyncHandlerMethodA
         exchange.getAttribute(PROBLEM_CONTEXT_ATTRIBUTE) instanceof ProblemContext attribute
             ? attribute
             : null;
-    return Optional.class.equals(parameter.getParameterType())
-        ? Optional.ofNullable(context)
-        : context;
+    Class<?> type = parameter.getParameterType();
+    if (Optional.class.equals(type)) {
+      return Optional.ofNullable(context);
+    }
+    if (Mono.class.equals(type)) {
+      return Mono.justOrEmpty(context);
+    }
+    return context;
   }
 }

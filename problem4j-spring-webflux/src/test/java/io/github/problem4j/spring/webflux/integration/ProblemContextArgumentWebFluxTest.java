@@ -49,6 +49,7 @@ class ProblemContextArgumentWebFluxTest {
         strings = {
           "/problem-context/argument",
           "/problem-context/optional",
+          "/problem-context/mono",
           "/problem-context/request-attribute",
           "/coroutine/problem-context/argument",
           "/coroutine/problem-context/request-attribute"
@@ -89,6 +90,7 @@ class ProblemContextArgumentWebFluxTest {
         strings = {
           "/problem-context/argument",
           "/problem-context/optional",
+          "/problem-context/mono",
           "/coroutine/problem-context/argument"
         })
     void givenNotAnnotatedProblemContextParameter_whenRequesting_thenNoContextIsResolved(

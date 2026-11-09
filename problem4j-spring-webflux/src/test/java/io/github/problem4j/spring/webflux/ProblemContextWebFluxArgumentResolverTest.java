@@ -26,6 +26,7 @@ import org.springframework.core.MethodParameter;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.reactive.BindingContext;
+import reactor.core.publisher.Mono;
 
 class ProblemContextWebFluxArgumentResolverTest {
 
@@ -103,10 +104,47 @@ class ProblemContextWebFluxArgumentResolverTest {
     assertThat(resolved).isEqualTo(Optional.empty());
   }
 
+  @Test
+  void givenMonoProblemContextParameter_whenCheckingSupport_thenParameterIsSupported()
+      throws Exception {
+    assertThat(resolver.supportsParameter(parameter(4))).isTrue();
+  }
+
+  @Test
+  void givenMonoOfOtherParameter_whenCheckingSupport_thenParameterIsNotSupported()
+      throws Exception {
+    assertThat(resolver.supportsParameter(parameter(5))).isFalse();
+  }
+
+  @Test
+  void givenContextAttribute_whenResolvingMono_thenContextIsEmitted() throws Exception {
+    ProblemContext context = ProblemContext.create().put("traceId", "trace");
+    exchange.getAttributes().put(PROBLEM_CONTEXT_ATTRIBUTE, context);
+
+    Object resolved = resolver.resolveArgumentValue(parameter(4), new BindingContext(), exchange);
+
+    assertThat(resolved)
+        .isInstanceOfSatisfying(Mono.class, mono -> assertThat(mono.block()).isSameAs(context));
+  }
+
+  @Test
+  void givenNoContextAttribute_whenResolvingMono_thenEmptyMonoIsReturned() throws Exception {
+    Object resolved = resolver.resolveArgumentValue(parameter(4), new BindingContext(), exchange);
+
+    assertThat(resolved)
+        .isInstanceOfSatisfying(Mono.class, mono -> assertThat(mono.block()).isNull());
+  }
+
   private static MethodParameter parameter(int index) throws NoSuchMethodException {
     return new MethodParameter(
         Handler.class.getDeclaredMethod(
-            "handle", ProblemContext.class, String.class, Optional.class, Optional.class),
+            "handle",
+            ProblemContext.class,
+            String.class,
+            Optional.class,
+            Optional.class,
+            Mono.class,
+            Mono.class),
         index);
   }
 
@@ -116,6 +154,8 @@ class ProblemContextWebFluxArgumentResolverTest {
         ProblemContext context,
         String text,
         Optional<ProblemContext> optionalContext,
-        Optional<String> optionalText) {}
+        Optional<String> optionalText,
+        Mono<ProblemContext> monoContext,
+        Mono<String> monoText) {}
   }
 }
