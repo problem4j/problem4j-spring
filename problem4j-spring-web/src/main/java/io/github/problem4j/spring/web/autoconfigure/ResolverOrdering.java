@@ -56,6 +56,23 @@ final class ResolverOrdering {
     return AnnotationAwareOrderComparator.INSTANCE.withSourceProvider(sources::get);
   }
 
+  /**
+   * Wraps the given comparator so that resolvers with equal precedence are ordered by reversed
+   * registration order, making the last registered one win.
+   *
+   * @param orderComparator comparator deciding precedence of resolvers (lower wins)
+   * @param problemResolvers resolvers by bean name, iterated in registration order
+   * @return comparator ordering resolvers by precedence, then by reversed registration order
+   */
+  static Comparator<Object> preferLastRegistered(
+      Comparator<Object> orderComparator, Map<String, ? extends ProblemResolver> problemResolvers) {
+    IdentityHashMap<Object, Integer> positions = new IdentityHashMap<>();
+    problemResolvers.values().forEach(resolver -> positions.put(resolver, positions.size()));
+    Comparator<Object> byRegistration =
+        Comparator.comparingInt(resolver -> positions.getOrDefault(resolver, -1));
+    return orderComparator.thenComparing(byRegistration.reversed());
+  }
+
   private static @Nullable Object findOrderSource(
       ConfigurableListableBeanFactory beanFactory, String beanName, ProblemResolver resolver) {
     if (!beanFactory.containsBeanDefinition(beanName)) {

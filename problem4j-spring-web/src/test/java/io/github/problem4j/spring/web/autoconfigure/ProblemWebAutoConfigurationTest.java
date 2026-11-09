@@ -30,6 +30,7 @@ import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
+import io.github.problem4j.spring.web.resolver.HttpMessageNotReadableProblemResolver;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -41,6 +42,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 class ProblemWebAutoConfigurationTest {
 
@@ -112,6 +114,65 @@ class ProblemWebAutoConfigurationTest {
                       .findResolver(DuplicatedException.class))
               .containsSame(context.getBean("firstDuplicatedResolver", ProblemResolver.class));
         });
+  }
+
+  @Test
+  void givenLastPolicyAndResolversWithEqualOrder_whenContextStarts_thenLastRegisteredWins() {
+    new WebApplicationContextRunner()
+        .withConfiguration(autoConfigurations)
+        .withUserConfiguration(EqualOrderResolversConfiguration.class)
+        .withPropertyValues("problem4j.duplicate-resolver-policy=last")
+        .run(context -> {
+          assertThat(context).hasNotFailed();
+          assertThat(
+                  context
+                      .getBean(ProblemResolverStore.class)
+                      .findResolver(DuplicatedException.class))
+              .containsSame(context.getBean("secondDuplicatedResolver", ProblemResolver.class));
+        });
+  }
+
+  @Test
+  void givenLastPolicyAndPrioritizedResolverRegisteredFirst_whenContextStarts_thenLowerOrderWins() {
+    new WebApplicationContextRunner()
+        .withConfiguration(autoConfigurations)
+        .withUserConfiguration(PrioritizedFirstResolversConfiguration.class)
+        .withPropertyValues("problem4j.duplicate-resolver-policy=last")
+        .run(context ->
+            assertThat(
+                    context
+                        .getBean(ProblemResolverStore.class)
+                        .findResolver(DuplicatedException.class))
+                .containsSame(context.getBean("prioritizedFirstResolver", ProblemResolver.class)));
+  }
+
+  @Test
+  void givenLastPolicyAndResolverForBuiltInException_whenContextStarts_thenBuiltInResolverWins() {
+    new WebApplicationContextRunner()
+        .withConfiguration(autoConfigurations)
+        .withUserConfiguration(NotReadableResolverConfiguration.class)
+        .withPropertyValues("problem4j.duplicate-resolver-policy=last")
+        .run(context ->
+            assertThat(
+                    context
+                        .getBean(ProblemResolverStore.class)
+                        .findResolver(HttpMessageNotReadableException.class))
+                .get()
+                .isInstanceOf(HttpMessageNotReadableProblemResolver.class));
+  }
+
+  @Test
+  void givenFirstPolicyAndResolverForBuiltInException_whenContextStarts_thenCustomResolverWins() {
+    new WebApplicationContextRunner()
+        .withConfiguration(autoConfigurations)
+        .withUserConfiguration(NotReadableResolverConfiguration.class)
+        .withPropertyValues("problem4j.duplicate-resolver-policy=first")
+        .run(context ->
+            assertThat(
+                    context
+                        .getBean(ProblemResolverStore.class)
+                        .findResolver(HttpMessageNotReadableException.class))
+                .containsSame(context.getBean("customNotReadableResolver", ProblemResolver.class)));
   }
 
   @Test
@@ -269,6 +330,30 @@ class ProblemWebAutoConfigurationTest {
   }
 
   @Configuration(proxyBeanMethods = false)
+  static class PrioritizedFirstResolversConfiguration {
+
+    @Order(0)
+    @Bean
+    DuplicatedResolver prioritizedFirstResolver() {
+      return new DuplicatedResolver();
+    }
+
+    @Bean
+    DuplicatedResolver plainSecondResolver() {
+      return new DuplicatedResolver();
+    }
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  static class NotReadableResolverConfiguration {
+
+    @Bean
+    NotReadableResolver customNotReadableResolver() {
+      return new NotReadableResolver();
+    }
+  }
+
+  @Configuration(proxyBeanMethods = false)
   static class BeanMethodOrderResolversConfiguration {
 
     @Bean
@@ -333,6 +418,20 @@ class ProblemWebAutoConfigurationTest {
 
   @Order(0)
   static class PrioritizedResolver extends DuplicatedResolver {}
+
+  static class NotReadableResolver implements ProblemResolver {
+
+    @Override
+    public Class<? extends Exception> getExceptionClass() {
+      return HttpMessageNotReadableException.class;
+    }
+
+    @Override
+    public Problem resolve(
+        ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+      return Problem.builder().status(400).build();
+    }
+  }
 
   static class DuplicatedException extends RuntimeException {}
 }

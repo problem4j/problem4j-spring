@@ -66,8 +66,9 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
 
   /**
    * Policy for multiple {@code ProblemResolver}-s supporting the same exception class with equal
-   * order. {@code first} uses the first one registered in the application context, {@code fail}
-   * fails application startup.
+   * order. {@code first} uses the first one registered in the application context, {@code last}
+   * uses the last one registered in the application context, {@code fail} fails application
+   * startup.
    */
   private DuplicateResolverPolicy duplicateResolverPolicy = DuplicateResolverPolicy.FAIL;
 
@@ -558,6 +559,16 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
      * @since 3.1.0
      */
     FIRST,
+
+    /**
+     * The last of the resolvers with equal order, in bean registration order, is used. As
+     * auto-configured resolvers are registered after application-defined ones, a built-in resolver
+     * wins over an application-defined resolver with equal order for the same exception class,
+     * similarly to how versions prior to 3.1.0 behaved.
+     *
+     * @since 3.1.0
+     */
+    LAST,
 
     /**
      * Application startup fails with an {@link IllegalStateException} naming the conflicting beans.
