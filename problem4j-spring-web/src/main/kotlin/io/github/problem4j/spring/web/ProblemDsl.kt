@@ -18,18 +18,10 @@ package io.github.problem4j.spring.web
 
 import io.github.problem4j.core.Problem
 import io.github.problem4j.core.ProblemBuilder
+import io.github.problem4j.core.ProblemContext
 import java.net.URI
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
-
-/**
- * Marks the Kotlin DSLs of problem4j-spring. Prevents calling members of an outer DSL receiver
- * implicitly from within a nested DSL block.
- *
- * @since 3.1.0
- */
-@DslMarker
-@Target(AnnotationTarget.CLASS) //
-public annotation class ProblemDsl
 
 /**
  * Mutable DSL receiver used by [buildProblem] functions. Exposes all configuration methods of
@@ -50,8 +42,7 @@ public annotation class ProblemDsl
  *
  * @since 3.1.0
  */
-@ProblemDsl
-public interface ProblemBuilderSpec {
+public sealed interface ProblemBuilderSpec {
 
   /**
    * Sets the problem type URI, identifying the kind of problem.
@@ -132,15 +123,6 @@ public interface ProblemBuilderSpec {
   public fun extension(name: String, value: Any?)
 
   /**
-   * Adds a single custom extension member from a [Problem.Extension]. If its value is `null`, an
-   * existing extension with the same name is removed instead.
-   *
-   * @param extension the extension to add
-   * @since 3.1.0
-   */
-  public fun extension(extension: Problem.Extension)
-
-  /**
    * Adds multiple custom extension members from a map. Entries with `null` values remove existing
    * extensions with the same key instead.
    *
@@ -148,24 +130,6 @@ public interface ProblemBuilderSpec {
    * @since 3.1.0
    */
   public fun extensions(extensions: Map<String, Any?>)
-
-  /**
-   * Adds multiple custom extension members from varargs of [Problem.Extension]. Extensions with
-   * `null` values remove existing extensions with the same name instead.
-   *
-   * @param extensions extensions to add
-   * @since 3.1.0
-   */
-  public fun extensions(vararg extensions: Problem.Extension)
-
-  /**
-   * Adds multiple custom extension members from a collection of [Problem.Extension]. Extensions
-   * with `null` values remove existing extensions with the same name instead.
-   *
-   * @param extensions extensions to add
-   * @since 3.1.0
-   */
-  public fun extensions(extensions: Iterable<Problem.Extension>)
 
   /**
    * Adds multiple custom extension members from varargs of [Pair], where each pair is a key and a
@@ -244,19 +208,7 @@ internal class ProblemBuilderSpecImpl(private var builder: ProblemBuilder) : Pro
     builder = builder.extension(name, value)
   }
 
-  override fun extension(extension: Problem.Extension) {
-    builder = builder.extension(extension)
-  }
-
   override fun extensions(extensions: Map<String, Any?>) {
-    builder = builder.extensions(extensions)
-  }
-
-  override fun extensions(vararg extensions: Problem.Extension) {
-    builder = builder.extensions(*extensions)
-  }
-
-  override fun extensions(extensions: Iterable<Problem.Extension>) {
     builder = builder.extensions(extensions)
   }
 
@@ -265,4 +217,70 @@ internal class ProblemBuilderSpecImpl(private var builder: ProblemBuilder) : Pro
   }
 
   fun build(): Problem = builder.build()
+}
+
+/**
+ * DSL receiver used by [io.github.problem4j.spring.web.resolver.problemResolver] functions. Extends
+ * [ProblemBuilderSpec] with access to the arguments of
+ * [io.github.problem4j.spring.web.resolver.ProblemResolver.resolve] and to the [ProblemFormat]
+ * configured for the application.
+ *
+ * Example:
+ * ```
+ * import io.github.problem4j.spring.web.resolver.ProblemResolver
+ * import io.github.problem4j.spring.web.resolver.problemResolver
+ * import org.springframework.context.annotation.Bean
+ * import org.springframework.http.HttpHeaders
+ *
+ * @Bean
+ * fun rateLimitProblemResolver(): ProblemResolver =
+ *     problemResolver<RateLimitException> { ex ->
+ *         status(429)
+ *         detail(formatDetail("rate limit exceeded"))
+ *         extension("userId", context["userId"])
+ *         headers.set(HttpHeaders.RETRY_AFTER, ex.retryAfterSeconds.toString())
+ *     }
+ * ```
+ *
+ * @since 3.1.0
+ */
+public sealed interface ProblemResolverSpec : ProblemBuilderSpec {
+
+  /**
+   * Problem context of the request in which the exception is being resolved.
+   *
+   * @since 3.1.0
+   */
+  public val context: ProblemContext
+
+  /**
+   * Headers of the HTTP response. Changes made to them are included in the response, which allows
+   * setting headers such as `Retry-After`.
+   *
+   * @since 3.1.0
+   */
+  public val headers: HttpHeaders
+
+  /**
+   * Formats the detail message according to the [ProblemFormat] configured for the application (see
+   * `problem4j.detail-format` property). The detail passed to [detail] is not formatted
+   * automatically.
+   *
+   * @param detail the detail message to format
+   * @return the formatted detail message
+   * @since 3.1.0
+   */
+  public fun formatDetail(detail: String?): String?
+}
+
+internal class ProblemResolverSpecImpl(
+    private val spec: ProblemBuilderSpecImpl,
+    override val context: ProblemContext,
+    override val headers: HttpHeaders,
+    private val detailFormatter: (String?) -> String?,
+) : ProblemResolverSpec, ProblemBuilderSpec by spec {
+
+  override fun formatDetail(detail: String?): String? = detailFormatter(detail)
+
+  fun build(): Problem = spec.build()
 }

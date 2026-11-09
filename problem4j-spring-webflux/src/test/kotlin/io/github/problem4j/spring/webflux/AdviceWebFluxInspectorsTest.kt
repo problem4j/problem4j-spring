@@ -35,20 +35,6 @@ class AdviceWebFluxInspectorsTest {
       MockServerWebExchange.from(MockServerHttpRequest.get("/"))
 
   @Test
-  fun givenFullInspector_whenInspecting_thenArgumentsArePassed() {
-    val captured = AtomicReference<List<Any>>()
-    val ex = IllegalStateException("boom")
-    val inspector = adviceWebFluxInspector { ctx, problem, ex, headers, status, request ->
-      captured.set(listOf(ctx, problem, ex, headers, status, request))
-    }
-
-    inspector.inspect(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
-
-    assertThat(captured.get())
-        .containsExactly(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
-  }
-
-  @Test
   fun givenInspectorWithoutHeadersAndStatus_whenInspecting_thenRemainingArgumentsArePassed() {
     val captured = AtomicReference<List<Any>>()
     val ex = IllegalStateException("boom")

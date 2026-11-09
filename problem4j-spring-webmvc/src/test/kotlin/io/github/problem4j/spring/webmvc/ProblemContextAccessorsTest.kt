@@ -27,7 +27,7 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
 
-class ProblemContextAccessorExtensionsTest {
+class ProblemContextAccessorsTest {
 
   private val context: ProblemContext = ProblemContext.create()
   private val request: WebRequest = ServletWebRequest(MockHttpServletRequest())

@@ -18,42 +18,7 @@ package io.github.problem4j.spring.webflux
 
 import io.github.problem4j.core.Problem
 import io.github.problem4j.core.ProblemContext
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatusCode
 import org.springframework.web.server.ServerWebExchange
-
-/**
- * Creates an [AdviceWebFluxInspector] from a lambda.
- *
- * Example:
- * ```
- * import io.github.problem4j.spring.webflux.AdviceWebFluxInspector
- * import io.github.problem4j.spring.webflux.adviceWebFluxInspector
- * import org.springframework.context.annotation.Bean
- *
- * @Bean
- * fun loggingInspector(): AdviceWebFluxInspector =
- *     adviceWebFluxInspector { ctx, problem, ex, headers, status, exchange ->
- *         log.warn("Resolved {} to {}", ex.message, problem.status)
- *     }
- * ```
- *
- * @param inspect observes the resolved [Problem] with all arguments of
- *   [AdviceWebFluxInspector.inspect]
- * @return an [AdviceWebFluxInspector] delegating to [inspect]
- * @since 3.1.0
- */
-public fun adviceWebFluxInspector(
-    inspect:
-        (
-            ProblemContext,
-            Problem,
-            Exception,
-            HttpHeaders,
-            HttpStatusCode,
-            ServerWebExchange,
-        ) -> Unit,
-): AdviceWebFluxInspector = AdviceWebFluxInspector(inspect)
 
 /**
  * Creates an [AdviceWebFluxInspector] from a lambda.

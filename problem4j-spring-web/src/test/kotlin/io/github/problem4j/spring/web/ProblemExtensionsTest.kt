@@ -24,64 +24,6 @@ import org.junit.jupiter.api.Test
 class ProblemExtensionsTest {
 
   @Test
-  fun givenExistingExtension_whenIndexingProblem_thenValueIsReturned() {
-    val result = buildProblem {
-      status(400)
-      extension("field", "email")
-      extension("count", 3)
-    }
-
-    assertThat(result["field"]).isEqualTo("email")
-    assertThat(result["count"]).isEqualTo(3)
-  }
-
-  @Test
-  fun givenMissingExtension_whenIndexingProblem_thenNullIsReturned() {
-    val result = buildProblem {
-      status(400)
-      extension("field", "email")
-    }
-
-    assertThat(result["reason"]).isNull()
-  }
-
-  @Test
-  fun givenNoExtensions_whenIndexingProblem_thenNullIsReturned() {
-    val result = buildProblem { status(400) }
-
-    assertThat(result["field"]).isNull()
-  }
-
-  @Test
-  fun givenMatchingType_whenReadingTypedExtension_thenValueIsReturned() {
-    val result = buildProblem {
-      status(400)
-      extension("attempts", 3)
-      extension("field", "email")
-    }
-
-    assertThat(result.extension<Int>("attempts")).isEqualTo(3)
-    assertThat(result.extension<String>("field")).isEqualTo("email")
-  }
-
-  @Test
-  fun givenMismatchedType_whenReadingTypedExtension_thenNullIsReturned() {
-    val result = buildProblem {
-      status(400)
-      extension("attempts", 3)
-    }
-
-    assertThat(result.extension<String>("attempts")).isNull()
-  }
-
-  @Test
-  fun givenMissingExtension_whenReadingTypedExtension_thenNullIsReturned() {
-    val result = buildProblem { status(400) }
-
-    assertThat(result.extension<String>("field")).isNull()
-  }
-
-  @Test
   fun givenExistingExtension_whenCheckingContains_thenTrueIsReturned() {
     val result = buildProblem {
       status(400)

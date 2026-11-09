@@ -26,6 +26,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -47,8 +48,8 @@ class CoroutineWebFluxTest {
   @ParameterizedTest
   @CsvSource({
     "/coroutine/problem-exception, coroutine conflict",
-    "/coroutine/resolver, coroutine failure",
-    "/coroutine/flow, flow failure"
+    "/coroutine/resolver, Coroutine failure",
+    "/coroutine/flow, Flow failure"
   })
   void givenCoroutineThrowingAfterSuspension_whenRequesting_thenProblemIsReturned(
       String path, String detail) {
@@ -73,6 +74,33 @@ class CoroutineWebFluxTest {
                 .detail(detail)
                 .instance("https://example.org/trace/" + TRACE_ID)
                 .build());
+  }
+
+  @ParameterizedTest
+  @CsvSource({"/coroutine/resolver", "/coroutine/flow"})
+  void givenDslResolverSettingHeader_whenRequesting_thenHeaderIsReturned(String path) {
+    webTestClient
+        .get()
+        .uri(path)
+        .header("X-Trace-Id", TRACE_ID)
+        .exchange()
+        .expectStatus()
+        .isEqualTo(HttpStatus.CONFLICT)
+        .expectHeader()
+        .valueEquals(HttpHeaders.RETRY_AFTER, "120");
+  }
+
+  @Test
+  void givenProblemExceptionNotPassingResolver_whenRequesting_thenResolverHeaderIsNotReturned() {
+    webTestClient
+        .get()
+        .uri("/coroutine/problem-exception")
+        .header("X-Trace-Id", TRACE_ID)
+        .exchange()
+        .expectStatus()
+        .isEqualTo(HttpStatus.CONFLICT)
+        .expectHeader()
+        .doesNotExist(HttpHeaders.RETRY_AFTER);
   }
 
   @Test

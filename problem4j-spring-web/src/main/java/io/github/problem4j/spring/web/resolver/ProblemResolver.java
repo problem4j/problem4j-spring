@@ -47,7 +47,8 @@ public interface ProblemResolver {
    *
    * @param context problem context
    * @param ex exception to resolve
-   * @param headers to be included in HTTP response
+   * @param headers mutable headers of HTTP response, changes made to them are included in the
+   *     response
    * @param status HTTP status recommended by caller
    * @return an immutable {@link Problem} representing the resolved problem
    * @since 3.0.0

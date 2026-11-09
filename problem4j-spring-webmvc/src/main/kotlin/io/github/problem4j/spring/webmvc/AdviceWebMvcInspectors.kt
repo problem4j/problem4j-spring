@@ -18,34 +18,7 @@ package io.github.problem4j.spring.webmvc
 
 import io.github.problem4j.core.Problem
 import io.github.problem4j.core.ProblemContext
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatusCode
 import org.springframework.web.context.request.WebRequest
-
-/**
- * Creates an [AdviceWebMvcInspector] from a lambda.
- *
- * Example:
- * ```
- * import io.github.problem4j.spring.webmvc.AdviceWebMvcInspector
- * import io.github.problem4j.spring.webmvc.adviceWebMvcInspector
- * import org.springframework.context.annotation.Bean
- *
- * @Bean
- * fun loggingInspector(): AdviceWebMvcInspector =
- *     adviceWebMvcInspector { ctx, problem, ex, headers, status, request ->
- *         log.warn("Resolved {} to {}", ex.message, problem.status)
- *     }
- * ```
- *
- * @param inspect observes the resolved [Problem] with all arguments of
- *   [AdviceWebMvcInspector.inspect]
- * @return an [AdviceWebMvcInspector] delegating to [inspect]
- * @since 3.1.0
- */
-public fun adviceWebMvcInspector(
-    inspect: (ProblemContext, Problem, Exception, HttpHeaders, HttpStatusCode, WebRequest) -> Unit,
-): AdviceWebMvcInspector = AdviceWebMvcInspector(inspect)
 
 /**
  * Creates an [AdviceWebMvcInspector] from a lambda.

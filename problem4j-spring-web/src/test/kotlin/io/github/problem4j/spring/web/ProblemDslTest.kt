@@ -128,10 +128,8 @@ class ProblemDslTest {
     val result = buildProblem {
       status(400)
       extension("a", 1)
-      extension(Problem.extension("b", 2))
-      extensions(mapOf("c" to 3))
-      extensions(Problem.extension("d", 4), Problem.extension("e", 5))
-      extensions(listOf(Problem.extension("f", 6)))
+      extensions(mapOf("b" to 2))
+      extensions("c" to 3, "d" to 4)
     }
 
     assertThat(result.extensions)
@@ -139,7 +137,5 @@ class ProblemDslTest {
         .containsEntry("b", 2)
         .containsEntry("c", 3)
         .containsEntry("d", 4)
-        .containsEntry("e", 5)
-        .containsEntry("f", 6)
   }
 }

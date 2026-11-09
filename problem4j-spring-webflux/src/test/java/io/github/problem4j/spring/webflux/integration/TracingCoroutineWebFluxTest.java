@@ -48,8 +48,8 @@ class TracingCoroutineWebFluxTest {
   @ParameterizedTest
   @CsvSource({
     "/coroutine/problem-exception, coroutine conflict",
-    "/coroutine/resolver, coroutine failure",
-    "/coroutine/flow, flow failure"
+    "/coroutine/resolver, Coroutine failure",
+    "/coroutine/flow, Flow failure"
   })
   void givenCoroutineThrowingAfterSuspension_whenRequesting_thenTraceIdOfIncomingTraceIsUsed(
       String path, String detail) {

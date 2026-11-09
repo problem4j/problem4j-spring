@@ -28,7 +28,7 @@ import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
 import reactor.util.context.Context
 
-class ProblemContextAccessorExtensionsTest {
+class ProblemContextAccessorsTest {
 
   private val context: ProblemContext = ProblemContext.create()
   private val request: ServerWebExchange =
