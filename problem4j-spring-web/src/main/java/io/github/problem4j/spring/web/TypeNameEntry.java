@@ -18,6 +18,8 @@ package io.github.problem4j.spring.web;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 
@@ -26,7 +28,9 @@ import org.jspecify.annotations.Nullable;
  *
  * @since 3.1.0
  */
-public final class TypeNameEntry {
+public final class TypeNameEntry implements Serializable {
+
+  @Serial private static final long serialVersionUID = 1L;
 
   private final Class<?> type;
   private final String name;

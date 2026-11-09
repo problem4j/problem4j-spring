@@ -1,10 +1,18 @@
 <h1 align="center">Problem4J Spring</h1>
 
 <p align="center">
-  <a href="https://codecov.io/gh/problem4j/problem4j-spring"><img src="https://codecov.io/gh/problem4j/problem4j-spring/graph/badge.svg?token=S2DOKHIXMH" alt="Codecov"></a>
-  <a href="https://github.com/problem4j/problem4j-spring/actions/workflows/ci.yml"><img src="https://github.com/problem4j/problem4j-spring/actions/workflows/ci.yml/badge.svg" alt="Build Status"></a>
-  <a href="https://central.sonatype.com/artifact/io.github.problem4j/problem4j-spring-bom"><img src="https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=!*-*" alt="Sonatype"></a>
-  <a href="https://github.com/problem4j/problem4j-spring/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-green" alt="License"></a>
+  <a href="https://codecov.io/gh/problem4j/problem4j-spring">
+    <img src="https://codecov.io/gh/problem4j/problem4j-spring/graph/badge.svg?token=S2DOKHIXMH" alt="Codecov" />
+  </a>
+  <a href="https://github.com/problem4j/problem4j-spring/actions/workflows/ci.yml">
+    <img src="https://github.com/problem4j/problem4j-spring/actions/workflows/ci.yml/badge.svg" alt="Build Status" />
+  </a>
+  <a href="https://central.sonatype.com/artifact/io.github.problem4j/problem4j-spring-bom">
+    <img src="https://img.shields.io/maven-central/v/io.github.problem4j/problem4j-spring-bom?filter=!*-*" alt="Sonatype" />
+  </a>
+  <a href="https://github.com/problem4j/problem4j-spring/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/license-Apache%202.0-green" alt="License" />
+  </a>
 </p>
 
 Designing clear and consistent error responses in a REST API is often harder than it looks. Without a shared standard,
