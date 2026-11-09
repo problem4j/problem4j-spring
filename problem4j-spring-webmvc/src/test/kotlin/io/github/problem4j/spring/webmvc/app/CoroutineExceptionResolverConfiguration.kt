@@ -21,6 +21,7 @@ import io.github.problem4j.spring.web.resolver.problemResolver
 import io.github.problem4j.spring.webmvc.app.problem.CoroutineException
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpHeaders
 
 @Configuration(proxyBeanMethods = false)
 class CoroutineExceptionResolverConfiguration {
@@ -30,6 +31,7 @@ class CoroutineExceptionResolverConfiguration {
       problemResolver<CoroutineException> { ex ->
         type("https://example.org/coroutine")
         status(409)
-        detail(ex.message)
+        detail(formatDetail(ex.message))
+        headers.set(HttpHeaders.RETRY_AFTER, "120")
       }
 }

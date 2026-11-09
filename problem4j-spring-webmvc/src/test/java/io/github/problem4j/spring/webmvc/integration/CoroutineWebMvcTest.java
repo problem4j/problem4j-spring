@@ -53,8 +53,8 @@ class CoroutineWebMvcTest {
   @ParameterizedTest
   @CsvSource({
     "/coroutine/problem-exception, coroutine conflict",
-    "/coroutine/resolver, coroutine failure",
-    "/coroutine/flow, flow failure"
+    "/coroutine/resolver, Coroutine failure",
+    "/coroutine/flow, Flow failure"
   })
   void givenCoroutineThrowingAfterSuspension_whenRequesting_thenProblemIsReturned(
       String path, String detail) {
@@ -75,6 +75,23 @@ class CoroutineWebMvcTest {
                 .detail(detail)
                 .instance("https://example.org/trace/" + TRACE_ID)
                 .build());
+  }
+
+  @ParameterizedTest
+  @CsvSource({"/coroutine/resolver", "/coroutine/flow"})
+  void givenDslResolverSettingHeader_whenRequesting_thenHeaderIsReturned(String path) {
+    ResponseEntity<String> response = exchange(path);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    assertThat(response.getHeaders().getFirst(HttpHeaders.RETRY_AFTER)).isEqualTo("120");
+  }
+
+  @Test
+  void givenProblemExceptionNotPassingResolver_whenRequesting_thenResolverHeaderIsNotReturned() {
+    ResponseEntity<String> response = exchange("/coroutine/problem-exception");
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    assertThat(response.getHeaders().containsHeader(HttpHeaders.RETRY_AFTER)).isFalse();
   }
 
   @Test

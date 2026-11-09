@@ -18,61 +18,31 @@ package io.github.problem4j.spring.web.resolver
 
 import io.github.problem4j.core.Problem
 import io.github.problem4j.core.ProblemContext
-import io.github.problem4j.spring.web.ProblemBuilderSpec
-import io.github.problem4j.spring.web.applySpec
+import io.github.problem4j.spring.web.ProblemBuilderSpecImpl
+import io.github.problem4j.spring.web.ProblemResolverSpec
+import io.github.problem4j.spring.web.ProblemResolverSpecImpl
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
 
 /**
  * Creates a [ProblemResolver] for exception type [E] from a lambda, without subclassing
- * [AbstractProblemResolver].
+ * [AbstractProblemResolver]. The builder is pre-populated with the status recommended by the
+ * caller.
  *
  * Example:
  * ```
  * import io.github.problem4j.spring.web.resolver.ProblemResolver
  * import io.github.problem4j.spring.web.resolver.problemResolver
  * import org.springframework.context.annotation.Bean
- *
- * @Bean
- * fun illegalStateProblemResolver(): ProblemResolver =
- *     problemResolver<IllegalStateException> { ctx, ex ->
- *         status(409)
- *         detail(ex.message)
- *         extension("something", ctx["something"])
- *     }
- * ```
- *
- * @param resolve resolves the exception into a [Problem]
- * @return a [ProblemResolver] handling exceptions of type [E]
- * @since 3.1.0
- */
-public inline fun <reified E : Exception> problemResolver(
-    crossinline resolve: ProblemBuilderSpec.(ProblemContext, E) -> Unit,
-): ProblemResolver =
-    object : AbstractProblemResolver(E::class.java) {
-      override fun resolve(
-          context: ProblemContext,
-          ex: Exception,
-          headers: HttpHeaders,
-          status: HttpStatusCode,
-      ): Problem = Problem.builder().status(status.value()).applySpec { resolve(context, ex as E) }
-    }
-
-/**
- * Creates a [ProblemResolver] for exception type [E] from a lambda, without subclassing
- * [AbstractProblemResolver].
- *
- * Example:
- * ```
- * import io.github.problem4j.spring.web.resolver.ProblemResolver
- * import io.github.problem4j.spring.web.resolver.problemResolver
- * import org.springframework.context.annotation.Bean
+ * import org.springframework.http.HttpHeaders
  *
  * @Bean
  * fun illegalStateProblemResolver(): ProblemResolver =
  *     problemResolver<IllegalStateException> { ex ->
  *         status(409)
- *         detail(ex.message)
+ *         detail(formatDetail(ex.message))
+ *         extension("something", context["something"])
+ *         headers.set(HttpHeaders.RETRY_AFTER, "120")
  *     }
  * ```
  *
@@ -81,5 +51,29 @@ public inline fun <reified E : Exception> problemResolver(
  * @since 3.1.0
  */
 public inline fun <reified E : Exception> problemResolver(
-    crossinline resolve: ProblemBuilderSpec.(E) -> Unit,
-): ProblemResolver = problemResolver<E> { _, ex -> resolve(ex) }
+    noinline resolve: ProblemResolverSpec.(E) -> Unit,
+): ProblemResolver = DslProblemResolver(E::class.java, resolve)
+
+@PublishedApi
+internal class DslProblemResolver<E : Exception>(
+    private val type: Class<E>,
+    private val resolve: ProblemResolverSpec.(E) -> Unit,
+) : AbstractProblemResolver(type) {
+
+  override fun resolve(
+      context: ProblemContext,
+      ex: Exception,
+      headers: HttpHeaders,
+      status: HttpStatusCode,
+  ): Problem {
+    val spec =
+        ProblemResolverSpecImpl(
+            ProblemBuilderSpecImpl(Problem.builder().status(status.value())),
+            context,
+            headers,
+            ::formatDetail,
+        )
+    spec.resolve(type.cast(ex))
+    return spec.build()
+  }
+}

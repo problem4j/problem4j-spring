@@ -18,7 +18,9 @@ package io.github.problem4j.spring.web
 
 import io.github.problem4j.core.Problem
 import io.github.problem4j.core.ProblemBuilder
+import io.github.problem4j.core.ProblemContext
 import java.net.URI
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
 
 /**
@@ -215,4 +217,70 @@ internal class ProblemBuilderSpecImpl(private var builder: ProblemBuilder) : Pro
   }
 
   fun build(): Problem = builder.build()
+}
+
+/**
+ * DSL receiver used by [io.github.problem4j.spring.web.resolver.problemResolver] functions. Extends
+ * [ProblemBuilderSpec] with access to the arguments of
+ * [io.github.problem4j.spring.web.resolver.ProblemResolver.resolve] and to the [ProblemFormat]
+ * configured for the application.
+ *
+ * Example:
+ * ```
+ * import io.github.problem4j.spring.web.resolver.ProblemResolver
+ * import io.github.problem4j.spring.web.resolver.problemResolver
+ * import org.springframework.context.annotation.Bean
+ * import org.springframework.http.HttpHeaders
+ *
+ * @Bean
+ * fun rateLimitProblemResolver(): ProblemResolver =
+ *     problemResolver<RateLimitException> { ex ->
+ *         status(429)
+ *         detail(formatDetail("rate limit exceeded"))
+ *         extension("userId", context["userId"])
+ *         headers.set(HttpHeaders.RETRY_AFTER, ex.retryAfterSeconds.toString())
+ *     }
+ * ```
+ *
+ * @since 3.1.0
+ */
+public interface ProblemResolverSpec : ProblemBuilderSpec {
+
+  /**
+   * Problem context of the request in which the exception is being resolved.
+   *
+   * @since 3.1.0
+   */
+  public val context: ProblemContext
+
+  /**
+   * Headers of the HTTP response. Changes made to them are included in the response, which allows
+   * setting headers such as `Retry-After`.
+   *
+   * @since 3.1.0
+   */
+  public val headers: HttpHeaders
+
+  /**
+   * Formats the detail message according to the [ProblemFormat] configured for the application (see
+   * `problem4j.detail-format` property). The detail passed to [detail] is not formatted
+   * automatically.
+   *
+   * @param detail the detail message to format
+   * @return the formatted detail message
+   * @since 3.1.0
+   */
+  public fun formatDetail(detail: String?): String?
+}
+
+internal class ProblemResolverSpecImpl(
+    private val spec: ProblemBuilderSpecImpl,
+    override val context: ProblemContext,
+    override val headers: HttpHeaders,
+    private val detailFormatter: (String?) -> String?,
+) : ProblemResolverSpec, ProblemBuilderSpec by spec {
+
+  override fun formatDetail(detail: String?): String? = detailFormatter(detail)
+
+  fun build(): Problem = spec.build()
 }

@@ -128,7 +128,9 @@ class ExampleExceptionResolverConfiguration {
 }
 ```
 
-It would produce the same response as the resolver above.
+It would produce the same response as the resolver above. Inside the DSL block, `context` and `headers` give access
+to the `ProblemContext` and the (mutable) response headers, e.g. `headers.set(HttpHeaders.RETRY_AFTER, "120")`, and
+`formatDetail(...)` applies the `problem4j.detail-format` setting to a detail message.
 
 ### 2. Using `@ProblemMapping` on a custom exception
 
