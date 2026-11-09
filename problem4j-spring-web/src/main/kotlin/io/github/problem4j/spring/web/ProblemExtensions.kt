@@ -42,29 +42,6 @@ public fun Problem.copy(block: ProblemBuilderSpec.() -> Unit): Problem =
     toBuilder().applySpec(block)
 
 /**
- * Returns the value of the extension with the given name, or `null` when no such extension is
- * present.
- *
- * Example:
- * ```
- * import io.github.problem4j.spring.web.get
- * import io.github.problem4j.spring.web.buildProblem
- *
- * val problem = buildProblem {
- *     status(400)
- *     extension("field", "email")
- * }
- * val field = problem["field"]
- * // field == "email"
- * ```
- *
- * @param name the extension key
- * @return the extension value, or `null` when absent
- * @since 3.1.0
- */
-public operator fun Problem.get(name: String): Any? = extensions[name]
-
-/**
  * Returns the value of the extension with the given name cast to [T], or `null` when no such
  * extension is present or its value is not a [T].
  *
