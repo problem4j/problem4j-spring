@@ -42,7 +42,7 @@ import org.springframework.http.HttpStatusCode
  *
  * @since 3.1.0
  */
-public interface ProblemBuilderSpec {
+public sealed interface ProblemBuilderSpec {
 
   /**
    * Sets the problem type URI, identifying the kind of problem.
@@ -244,7 +244,7 @@ internal class ProblemBuilderSpecImpl(private var builder: ProblemBuilder) : Pro
  *
  * @since 3.1.0
  */
-public interface ProblemResolverSpec : ProblemBuilderSpec {
+public sealed interface ProblemResolverSpec : ProblemBuilderSpec {
 
   /**
    * Problem context of the request in which the exception is being resolved.
