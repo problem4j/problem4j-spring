@@ -29,7 +29,6 @@ tasks.withType<Jar>().configureEach {
     manifest {
         attributes["Implementation-Title"] = project.name
         attributes["Implementation-Version"] = project.version
-        attributes["Build-Jdk-Spec"] = javaVersion
         attributes["Created-By"] = "Gradle ${gradle.gradleVersion}"
         attributes["Automatic-Module-Name"] = project.name.replace('-', '.')
     }
