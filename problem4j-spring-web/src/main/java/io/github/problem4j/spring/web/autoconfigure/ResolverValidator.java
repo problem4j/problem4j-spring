@@ -36,8 +36,8 @@ final class ResolverValidator {
    * Validates resolver precedence.
    *
    * @param problemResolvers resolvers by bean name
-   * @throws IllegalStateException if multiple resolvers supporting the same exception class share
-   *     the highest precedence; the message lists every such exception class
+   * @throws DuplicateProblemResolverException if multiple resolvers supporting the same exception
+   *     class share the highest precedence; the message lists every such exception class
    */
   static void validate(Map<String, ? extends ProblemResolver> problemResolvers) {
     validate(problemResolvers, AnnotationAwareOrderComparator.INSTANCE);
@@ -48,8 +48,8 @@ final class ResolverValidator {
    *
    * @param problemResolvers resolvers by bean name
    * @param orderComparator comparator deciding precedence of resolvers (lower wins)
-   * @throws IllegalStateException if multiple resolvers supporting the same exception class share
-   *     the highest precedence; the message lists every such exception class
+   * @throws DuplicateProblemResolverException if multiple resolvers supporting the same exception
+   *     class share the highest precedence; the message lists every such exception class
    */
   static void validate(
       Map<String, ? extends ProblemResolver> problemResolvers, Comparator<Object> orderComparator) {
@@ -60,22 +60,18 @@ final class ResolverValidator {
             .computeIfAbsent(resolver.getExceptionClass(), key -> new ArrayList<>())
             .add(Map.entry(beanName, resolver)));
 
-    List<String> conflicts = new ArrayList<>();
+    Map<String, List<String>> conflicts = new LinkedHashMap<>();
     byExceptionClass.forEach((exceptionClass, entries) ->
-        findConflict(exceptionClass, entries, orderComparator).ifPresent(conflicts::add));
+        findConflict(entries, orderComparator)
+            .ifPresent(tied -> conflicts.put(exceptionClass.getName(), tied)));
 
     if (!conflicts.isEmpty()) {
-      throw new IllegalStateException(
-          "Multiple ProblemResolver beans with equal order for "
-              + String.join("; for ", conflicts)
-              + ". Use @Order or Ordered to set their precedence.");
+      throw new DuplicateProblemResolverException(conflicts);
     }
   }
 
-  private static Optional<String> findConflict(
-      Class<? extends Exception> exceptionClass,
-      List<Map.Entry<String, ProblemResolver>> entries,
-      Comparator<Object> orderComparator) {
+  private static Optional<List<String>> findConflict(
+      List<Map.Entry<String, ProblemResolver>> entries, Comparator<Object> orderComparator) {
     entries.sort(Map.Entry.comparingByValue(orderComparator));
     ProblemResolver winner = entries.get(0).getValue();
 
@@ -89,7 +85,7 @@ final class ResolverValidator {
     if (tied.size() < 2) {
       return Optional.empty();
     }
-    return Optional.of(exceptionClass.getName() + ": " + String.join(", ", tied));
+    return Optional.of(tied);
   }
 
   private ResolverValidator() {}

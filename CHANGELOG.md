@@ -46,6 +46,11 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   `http.server.requests` metrics and spans report the `exception` instead of `none`. Add
   `problem4j.observation-errors` property deciding which exceptions are recorded. `server` (default) records
   exceptions resulting in a 5xx response, `all` records all of them, `none` disables recording.
+- Add `FailureAnalyzer`-s reporting startup failures caused by Problem4J configuration as a description with a
+  suggested action, instead of a stack trace. Multiple `ProblemResolver` beans with equal order for the same exception
+  class fail with `DuplicateProblemResolverException`, listing the conflicting beans, and `problem4j.tracing-source`
+  that is not available on the classpath fails with `UnavailableTracingSourceException`. Both extend
+  `IllegalStateException` and keep their previous messages.
 
 ### Changed
 

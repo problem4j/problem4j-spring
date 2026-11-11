@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.spring.web.ProblemContextSettings;
 import io.github.problem4j.spring.web.autoconfigure.ProblemAutoConfiguration;
+import io.github.problem4j.spring.web.autoconfigure.UnavailableTracingSourceException;
 import io.github.problem4j.spring.webflux.MicrometerProblemContextWebFluxFilter;
 import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
 import io.micrometer.tracing.handler.TracingObservationHandler;
@@ -89,7 +90,7 @@ class ProblemContextWebFluxFilterConfigurationTest {
                 .hasFailed()
                 .getFailure()
                 .rootCause()
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(UnavailableTracingSourceException.class)
                 .hasMessage(UNAVAILABLE_SOURCE_MESSAGE));
   }
 

@@ -16,8 +16,6 @@
 
 package io.github.problem4j.spring.webflux.autoconfigure;
 
-import static io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.UNAVAILABLE_SOURCE_MESSAGE;
-
 import io.github.problem4j.core.ProblemMapper;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
@@ -26,6 +24,7 @@ import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ErrorRecor
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnMicrometerSource;
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnSimpleSource;
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnUnavailableSource;
+import io.github.problem4j.spring.web.autoconfigure.UnavailableTracingSourceException;
 import io.github.problem4j.spring.webflux.AdviceWebFluxInspector;
 import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.MicrometerProblemContextWebFluxFilter;
@@ -232,10 +231,10 @@ public class ProblemWebFluxAutoConfiguration {
       /**
        * Always throws, as the configured {@code problem4j.tracing-source} cannot be satisfied.
        *
-       * @throws IllegalStateException always
+       * @throws UnavailableTracingSourceException always
        */
       UnavailableTracingSourceConfiguration() {
-        throw new IllegalStateException(UNAVAILABLE_SOURCE_MESSAGE);
+        throw new UnavailableTracingSourceException();
       }
     }
   }
