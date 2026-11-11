@@ -113,6 +113,7 @@ tasks.withType<Test>().configureEach {
     systemProperty("user.language", "en")
     systemProperty("user.country", "US")
     systemProperty("spring.test.context.cache.maxSize", 5)
+    systemProperty("logging.expect-correlation-id", false)
 }
 
 tasks.named<Task>("check") {
