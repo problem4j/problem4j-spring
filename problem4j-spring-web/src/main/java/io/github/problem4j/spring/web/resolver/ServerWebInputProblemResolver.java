@@ -173,6 +173,7 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
    * @param problemFormat the problem format to use
    * @since 3.1.0
    */
+  @SuppressWarnings("removal")
   @Override
   public void setProblemFormat(ProblemFormat problemFormat) {
     super.setProblemFormat(problemFormat);

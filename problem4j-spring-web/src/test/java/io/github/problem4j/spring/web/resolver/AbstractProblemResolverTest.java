@@ -185,6 +185,7 @@ class AbstractProblemResolverTest {
 
   @ParameterizedTest
   @MethodSource("defaultConstructors")
+  @SuppressWarnings("removal")
   void givenDefaultConstructor_whenSetProblemFormat_thenUsesNewFormat(
       Supplier<AbstractProblemResolver> constructor) {
     AbstractProblemResolver resolver = constructor.get();
@@ -197,6 +198,7 @@ class AbstractProblemResolverTest {
 
   @ParameterizedTest
   @MethodSource("problemFormatConstructors")
+  @SuppressWarnings("removal")
   void givenProblemFormatPassedToConstructor_whenSetProblemFormat_thenKeepsConstructorFormat(
       Function<ProblemFormat, AbstractProblemResolver> constructor) {
     ProblemFormat constructorFormat = detail -> detail;

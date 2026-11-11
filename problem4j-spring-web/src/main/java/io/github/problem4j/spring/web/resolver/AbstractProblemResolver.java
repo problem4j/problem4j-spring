@@ -110,7 +110,10 @@ public abstract class AbstractProblemResolver implements ProblemResolver, Proble
    * can propagate it to their helpers after {@link #setProblemFormat(ProblemFormat)}.
    *
    * @return the problem format in use
+   * @deprecated exists only to keep a {@link ProblemFormat} passed to the deprecated {@link
+   *     #AbstractProblemResolver(Class, ProblemFormat)} constructor; to be removed together with it
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   final ProblemFormat getProblemFormat() {
     return problemFormat;
   }
