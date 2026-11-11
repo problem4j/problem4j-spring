@@ -21,6 +21,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
 import java.net.URI;
+import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,12 @@ import org.springframework.test.web.reactive.server.WebTestClient;
       "problem4j.instance-override=https://example.org/trace/{context.traceId}",
       "problem4j.tracing.source=simple",
       "problem4j.tracing-header-name=X-Trace-Id",
-      "problem4j.detail-format=lowercase"
+      "problem4j.detail-format=lowercase",
+      "problem4j.extension-overrides.code={problem.status}",
+      "problem4j.extension-overrides.summary={problem.status} {problem.title}",
+      "problem4j.extension-overrides.traceId={context.traceId}",
+      "problem4j.extension-overrides.missing={context.missing}",
+      "problem4j.extension-overrides[app.version]=1.0"
     },
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
@@ -102,5 +108,32 @@ class ProblemOverrideWebFluxTest {
         .value(problem ->
             assertThat(problem.getInstance())
                 .isEqualTo(URI.create("https://example.org/trace/" + traceId)));
+  }
+
+  @Test
+  void givenExtensionOverrides_whenProblemThrown_thenOverridesExtensions() {
+    String traceId = "12345-trace";
+    webTestClient
+        .post()
+        .uri("/problem-override/extension-override")
+        .header("X-Trace-Id", traceId)
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue("{}")
+        .exchange()
+        .expectStatus()
+        .isEqualTo(HttpStatus.BAD_REQUEST)
+        .expectHeader()
+        .contentType(Problem.CONTENT_TYPE_JSON)
+        .expectBody(Problem.class)
+        .value(v -> assertThat(v).isNotNull())
+        .value(problem ->
+            Assertions.assertThat(problem.getExtensions())
+                .containsExactlyInAnyOrderEntriesOf(
+                    Map.of(
+                        "code", 400,
+                        "summary", "400 Bad Request",
+                        "traceId", traceId,
+                        "app.version", "1.0",
+                        "kept", "value")));
   }
 }

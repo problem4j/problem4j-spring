@@ -37,4 +37,14 @@ public class ProblemOverrideController {
     throw new ProblemException(
         Problem.builder().type("not-blank").status(HttpStatus.BAD_REQUEST.value()).build());
   }
+
+  @PostMapping(path = "/extension-override")
+  public String extensionOverride() {
+    throw new ProblemException(
+        Problem.builder()
+            .status(HttpStatus.BAD_REQUEST.value())
+            .extension("code", "original")
+            .extension("kept", "value")
+            .build());
+  }
 }

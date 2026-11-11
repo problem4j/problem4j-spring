@@ -19,6 +19,7 @@ package io.github.problem4j.spring.webmvc;
 import static io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.github.problem4j.spring.web.ProblemContextSettings;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -28,7 +29,8 @@ class ProblemContextWebMvcFilterTest {
   @Test
   void givenNoTracingHeaderName_whenFilter_thenGeneratedTraceIdIsLowercase32HexCharacters()
       throws Exception {
-    ProblemContextWebMvcFilter filter = new ProblemContextWebMvcFilter(() -> null);
+    ProblemContextWebMvcFilter filter =
+        new ProblemContextWebMvcFilter(new ProblemContextSettings() {});
     MockHttpServletRequest request = new MockHttpServletRequest();
     MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -41,7 +43,8 @@ class ProblemContextWebMvcFilterTest {
   void
       givenTracingHeaderNameConfigured_whenNoHeaderInRequest_thenGeneratedTraceIdIsLowercase32HexCharacters()
           throws Exception {
-    ProblemContextWebMvcFilter filter = new ProblemContextWebMvcFilter(() -> "X-Trace-Id");
+    ProblemContextWebMvcFilter filter =
+        new ProblemContextWebMvcFilter(tracingHeaderName("X-Trace-Id"));
     MockHttpServletRequest request = new MockHttpServletRequest();
     MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -53,7 +56,8 @@ class ProblemContextWebMvcFilterTest {
   @Test
   void givenTracingHeaderNameConfigured_whenHeaderPresentInRequest_thenUsesRequestHeaderAsTraceId()
       throws Exception {
-    ProblemContextWebMvcFilter filter = new ProblemContextWebMvcFilter(() -> "X-Trace-Id");
+    ProblemContextWebMvcFilter filter =
+        new ProblemContextWebMvcFilter(tracingHeaderName("X-Trace-Id"));
     MockHttpServletRequest request = new MockHttpServletRequest();
     request.addHeader("X-Trace-Id", "custom-trace-id");
     MockHttpServletResponse response = new MockHttpServletResponse();
@@ -61,5 +65,14 @@ class ProblemContextWebMvcFilterTest {
     filter.doFilterInternal(request, response, (req, res) -> {});
 
     assertThat((String) request.getAttribute(TRACE_ID_ATTRIBUTE)).isEqualTo("custom-trace-id");
+  }
+
+  private static ProblemContextSettings tracingHeaderName(String headerName) {
+    return new ProblemContextSettings() {
+      @Override
+      public String getTracingHeaderName() {
+        return headerName;
+      }
+    };
   }
 }

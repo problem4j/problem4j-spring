@@ -17,12 +17,14 @@
 package io.github.problem4j.spring.web.autoconfigure;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DetailFormat;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DuplicateResolverPolicy;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ResolverCaching;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.Tracing;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.TracingSource;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -51,6 +53,7 @@ class ProblemPropertiesTest {
     assertThat(properties.getTypeOverride()).isNull();
     assertThat(properties.getTitleOverride()).isNull();
     assertThat(properties.getInstanceOverride()).isNull();
+    assertThat(properties.getExtensionOverrides()).isEmpty();
     assertThat(properties.getResolverCaching()).isNotNull();
     assertThat(properties.getDuplicateResolverPolicy()).isEqualTo(DuplicateResolverPolicy.FAIL);
     assertThat(properties.getResolverCaching().isEnabled())
@@ -70,6 +73,8 @@ class ProblemPropertiesTest {
     properties.setTypeOverride("type");
     properties.setTitleOverride("title");
     properties.setInstanceOverride("instance");
+    Map<String, String> extensionOverrides = Map.of("traceId", "{context.traceId}");
+    properties.setExtensionOverrides(extensionOverrides);
     properties.setDuplicateResolverPolicy(DuplicateResolverPolicy.FIRST);
     properties.setResolverCaching(caching);
     Tracing tracing = new Tracing();
@@ -82,6 +87,7 @@ class ProblemPropertiesTest {
     assertThat(properties.getTypeOverride()).isEqualTo("type");
     assertThat(properties.getTitleOverride()).isEqualTo("title");
     assertThat(properties.getInstanceOverride()).isEqualTo("instance");
+    assertThat(properties.getExtensionOverrides()).isSameAs(extensionOverrides);
     assertThat(properties.getResolverCaching()).isSameAs(caching);
     assertThat(properties.getDuplicateResolverPolicy()).isEqualTo(DuplicateResolverPolicy.FIRST);
     assertThat(properties.getResolverCaching().isEnabled()).isTrue();
@@ -116,6 +122,25 @@ class ProblemPropertiesTest {
   }
 
   @Test
+  void givenExtensionOverridesProperties_whenBound_thenNamesAndOrderArePreserved() {
+    Map<String, String> source = new LinkedHashMap<>();
+    source.put("problem4j.extension-overrides.traceId", "{context.traceId}");
+    source.put("problem4j.extension-overrides[app.version]", "1.0");
+    source.put("problem4j.extension-overrides.code", "{problem.status}");
+
+    ProblemProperties properties =
+        new Binder(new MapConfigurationPropertySource(source))
+            .bind("problem4j", ProblemProperties.class)
+            .get();
+
+    assertThat(properties.getExtensionOverrides())
+        .containsExactly(
+            entry("traceId", "{context.traceId}"),
+            entry("app.version", "1.0"),
+            entry("code", "{problem.status}"));
+  }
+
+  @Test
   void givenDeprecatedConstructor_whenAllArgsProvided_thenValuesApplied() {
     ResolverCaching caching = new ResolverCaching(true);
 
@@ -129,6 +154,7 @@ class ProblemPropertiesTest {
     assertThat(properties.getTypeOverride()).isEqualTo("t");
     assertThat(properties.getTitleOverride()).isEqualTo("ti");
     assertThat(properties.getInstanceOverride()).isEqualTo("in");
+    assertThat(properties.getExtensionOverrides()).isEmpty();
     assertThat(properties.getResolverCaching()).isSameAs(caching);
     assertThat(properties.getResolverCaching().isEnabled()).isTrue();
   }

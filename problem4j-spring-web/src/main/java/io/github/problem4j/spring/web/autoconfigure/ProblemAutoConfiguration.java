@@ -89,12 +89,14 @@ public class ProblemAutoConfiguration {
    * instances before they are returned.
    *
    * <p>The default implementation, {@link DefaultProblemPostProcessor}, supports configurable
-   * overrides for problem fields such as {@code type} and {@code instance}, based on the properties
-   * defined in {@link ProblemProperties}. These overrides may include runtime placeholders such as:
+   * overrides for problem fields such as {@code type} and {@code instance}, as well as extensions,
+   * based on the properties defined in {@link ProblemProperties}. These overrides may include
+   * runtime placeholders such as:
    *
    * <ul>
    *   <li>{@code {problem.type}} - replaced with the original problem's type URI
    *   <li>{@code {problem.instance}} - replaced with the original problem's instance URI
+   *   <li>{@code {problem.status}} - replaced with the problem's status (extension overrides only)
    *   <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@link
    *       ProblemContext}
    * </ul>

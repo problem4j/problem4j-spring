@@ -23,6 +23,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import io.github.problem4j.core.ProblemContext;
+import io.github.problem4j.spring.web.ProblemContextSettings;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.TraceContext;
 import io.micrometer.tracing.handler.TracingObservationHandler.TracingContext;
@@ -39,7 +40,7 @@ class MicrometerProblemContextWebFluxFilterTest {
   private static final String SPAN_ID = "00f067aa0ba902b7";
 
   private final MicrometerProblemContextWebFluxFilter filter =
-      new MicrometerProblemContextWebFluxFilter(() -> "X-Trace-Id");
+      new MicrometerProblemContextWebFluxFilter(tracingHeaderName("X-Trace-Id"));
 
   @Test
   void givenCurrentSpan_whenFilter_thenTraceIdAndSpanIdOfSpanAreUsed() {
@@ -182,5 +183,14 @@ class MicrometerProblemContextWebFluxFilterTest {
     Span span = mock(Span.class);
     when(span.context()).thenReturn(traceContext);
     return span;
+  }
+
+  private static ProblemContextSettings tracingHeaderName(String headerName) {
+    return new ProblemContextSettings() {
+      @Override
+      public String getTracingHeaderName() {
+        return headerName;
+      }
+    };
   }
 }

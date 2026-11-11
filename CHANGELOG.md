@@ -36,6 +36,11 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Add `ProblemContextWebMvcArgumentResolver` and `ProblemContextWebFluxArgumentResolver`, resolving controller method
   arguments of `ProblemContext` type without any annotation, to the `ProblemContext` assigned to the current request by
   `ProblemContextWebMvcFilter` / `ProblemContextWebFluxFilter` (`null` if none is assigned).
+- Add `problem4j.extension-overrides.<name>` properties for overriding extension members of `Problem` responses with
+  `DefaultProblemPostProcessor`. Templates may use `{problem.type}`, `{problem.title}`, `{problem.status}`,
+  `{problem.detail}`, `{problem.instance}` and `{context.<key>}` placeholders. An override replaces an existing
+  extension with the same name and is skipped if any placeholder cannot be resolved. A template made of exactly one
+  placeholder keeps the type of the resolved value (e.g. `{problem.status}` is a number).
 
 ### Changed
 
@@ -55,6 +60,10 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - `ProblemResolver` instances for the same exception class are picked based on `@Order` or `Ordered` (lower value wins).
   If multiple candidates are present with the same order, the startup fails with an error (unless
   `problem4j.duplicate-resolver-policy` is set to `first` or `last`).
+- `PostProcessorSettings` methods now have default implementations returning no override (`null` for `type`, `title` and
+  `instance`, empty map for extensions), so custom implementations only need to override the settings they use.
+- `ProblemContextSettings.getTracingHeaderName()` now has a default implementation returning `null`. As the interface no
+  longer has an abstract method, it can't be implemented with a lambda anymore - use an anonymous class instead.
 
 ### Deprecated
 

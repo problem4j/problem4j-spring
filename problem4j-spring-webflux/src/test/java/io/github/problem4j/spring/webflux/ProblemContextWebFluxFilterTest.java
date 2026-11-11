@@ -19,6 +19,7 @@ package io.github.problem4j.spring.webflux;
 import static io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.github.problem4j.spring.web.ProblemContextSettings;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
@@ -28,7 +29,8 @@ class ProblemContextWebFluxFilterTest {
 
   @Test
   void givenNoTracingHeaderName_whenFilter_thenGeneratedTraceIdIsLowercase32HexCharacters() {
-    ProblemContextWebFluxFilter filter = new ProblemContextWebFluxFilter(() -> null);
+    ProblemContextWebFluxFilter filter =
+        new ProblemContextWebFluxFilter(new ProblemContextSettings() {});
     MockServerWebExchange exchange =
         MockServerWebExchange.from(MockServerHttpRequest.get("/test").build());
 
@@ -40,7 +42,8 @@ class ProblemContextWebFluxFilterTest {
   @Test
   void
       givenTracingHeaderNameConfigured_whenNoHeaderInRequest_thenGeneratedTraceIdIsLowercase32HexCharacters() {
-    ProblemContextWebFluxFilter filter = new ProblemContextWebFluxFilter(() -> "X-Trace-Id");
+    ProblemContextWebFluxFilter filter =
+        new ProblemContextWebFluxFilter(tracingHeaderName("X-Trace-Id"));
     MockServerWebExchange exchange =
         MockServerWebExchange.from(MockServerHttpRequest.get("/test").build());
 
@@ -52,7 +55,8 @@ class ProblemContextWebFluxFilterTest {
   @Test
   void
       givenTracingHeaderNameConfigured_whenHeaderPresentInRequest_thenUsesRequestHeaderAsTraceId() {
-    ProblemContextWebFluxFilter filter = new ProblemContextWebFluxFilter(() -> "X-Trace-Id");
+    ProblemContextWebFluxFilter filter =
+        new ProblemContextWebFluxFilter(tracingHeaderName("X-Trace-Id"));
     MockServerWebExchange exchange =
         MockServerWebExchange.from(
             MockServerHttpRequest.get("/test").header("X-Trace-Id", "custom-trace-id").build());
@@ -60,5 +64,14 @@ class ProblemContextWebFluxFilterTest {
     filter.filter(exchange, ex -> Mono.empty()).block();
 
     assertThat((String) exchange.getAttribute(TRACE_ID_ATTRIBUTE)).isEqualTo("custom-trace-id");
+  }
+
+  private static ProblemContextSettings tracingHeaderName(String headerName) {
+    return new ProblemContextSettings() {
+      @Override
+      public String getTracingHeaderName() {
+        return headerName;
+      }
+    };
   }
 }
