@@ -36,6 +36,10 @@ public class DuplicateProblemResolverException extends IllegalStateException {
 
   @Serial private static final long serialVersionUID = 1L;
 
+  /**
+   * Names of exception classes, mapped to descriptions of the resolver beans supporting them with
+   * equal precedence, in form of {@code 'beanName' (className)}.
+   */
   private final Map<String, List<String>> conflicts;
 
   /**
