@@ -29,6 +29,7 @@ import io.github.problem4j.spring.web.parameter.DefaultMethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupportAware;
 import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.codec.DecodingException;
 import org.springframework.http.HttpHeaders;
@@ -51,7 +52,7 @@ import tools.jackson.databind.exc.MismatchedInputException;
  * AbstractProblemResolver}, the {@link TypeNameMapper} and {@link MethodParameterSupport} are
  * assigned after construction by {@link ProblemBeanPostProcessor} through {@link
  * #setTypeNameMapper(TypeNameMapper)} and {@link
- * #setMethodParameterSupport(MethodParameterSupport)}.
+ * #setMethodParameterSupport(MethodParameterSupport)}, unless they were passed to the constructor.
  *
  * @since 1.2.0
  */
@@ -64,6 +65,22 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
   private MethodParameterSupport methodParameterSupport;
 
   /**
+   * Whether {@link #setTypeNameMapper(TypeNameMapper)} may replace the {@link TypeNameMapper}. It
+   * is {@code false} when the {@link TypeNameMapper} was passed explicitly to a (deprecated)
+   * constructor, so it is kept as in 3.0.0, where constructor arguments were never replaced
+   * afterward.
+   */
+  private final boolean typeNameMapperAssignable;
+
+  /**
+   * Whether {@link #setMethodParameterSupport(MethodParameterSupport)} may replace the {@link
+   * MethodParameterSupport}. It is {@code false} when the {@link MethodParameterSupport} was passed
+   * explicitly to a (deprecated) constructor, so it is kept as in 3.0.0, where constructor
+   * arguments were never replaced afterward.
+   */
+  private final boolean methodParameterSupportAssignable;
+
+  /**
    * Creates a new {@link ServerWebInputProblemResolver} with default problem format.
    *
    * @since 1.2.0
@@ -74,6 +91,8 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
     this.methodParameterSupport = new DefaultMethodParameterSupport();
     this.typeMismatchHelper = new TypeMismatchHelper(ProblemFormat.identity(), typeNameMapper);
     this.jacksonErrorHelper = new JacksonErrorHelper(ProblemFormat.identity(), typeNameMapper);
+    this.typeNameMapperAssignable = true;
+    this.methodParameterSupportAssignable = true;
   }
 
   /**
@@ -86,7 +105,7 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
    */
   @Deprecated(since = "3.1.0", forRemoval = true)
   public ServerWebInputProblemResolver(ProblemFormat problemFormat) {
-    this(problemFormat, new DefaultMethodParameterSupport());
+    this(problemFormat, null, null);
   }
 
   /**
@@ -102,18 +121,28 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
   @Deprecated(since = "3.1.0", forRemoval = true)
   public ServerWebInputProblemResolver(
       ProblemFormat problemFormat, MethodParameterSupport methodParameterSupport) {
-    this(problemFormat, new SimpleTypeNameMapper(), methodParameterSupport);
+    this(problemFormat, null, methodParameterSupport);
   }
 
+  /*
+   * Collaborators passed as null are created as defaults and remain assignable by setters, while
+   * non-null ones come from a public constructor and are kept for backwards compatibility.
+   */
   @SuppressWarnings("removal")
   private ServerWebInputProblemResolver(
       ProblemFormat problemFormat,
-      TypeNameMapper typeNameMapper,
-      MethodParameterSupport methodParameterSupport) {
+      @Nullable TypeNameMapper typeNameMapper,
+      @Nullable MethodParameterSupport methodParameterSupport) {
     super(ServerWebInputException.class, problemFormat);
-    this.methodParameterSupport = methodParameterSupport;
-    this.typeMismatchHelper = new TypeMismatchHelper(problemFormat, typeNameMapper);
-    this.jacksonErrorHelper = new JacksonErrorHelper(problemFormat, typeNameMapper);
+    TypeNameMapper mapper = typeNameMapper != null ? typeNameMapper : new SimpleTypeNameMapper();
+    this.methodParameterSupport =
+        methodParameterSupport != null
+            ? methodParameterSupport
+            : new DefaultMethodParameterSupport();
+    this.typeMismatchHelper = new TypeMismatchHelper(problemFormat, mapper);
+    this.jacksonErrorHelper = new JacksonErrorHelper(problemFormat, mapper);
+    this.typeNameMapperAssignable = typeNameMapper == null;
+    this.methodParameterSupportAssignable = methodParameterSupport == null;
   }
 
   /**
@@ -128,21 +157,18 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
    * @deprecated since 3.1.0 as other constructors and {@link ProblemBeanPostProcessor
    *     ProblemBeanPostProcessor} should be used to apply components of this class
    */
-  @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)
   public ServerWebInputProblemResolver(
       ProblemFormat problemFormat,
       TypeMismatchProblemResolver typeMismatchProblemResolver,
       MethodParameterSupport methodParameterSupport,
       TypeNameMapper typeNameMapper) {
-    super(ServerWebInputException.class, problemFormat);
-    this.methodParameterSupport = methodParameterSupport;
-    this.typeMismatchHelper = new TypeMismatchHelper(problemFormat, typeNameMapper);
-    this.jacksonErrorHelper = new JacksonErrorHelper(problemFormat, typeNameMapper);
+    this(problemFormat, typeNameMapper, methodParameterSupport);
   }
 
   /**
-   * Replaces the {@link ProblemFormat} used by this resolver.
+   * Replaces the {@link ProblemFormat} used by this resolver, unless one was passed to the
+   * constructor, in which case this method has no effect.
    *
    * @param problemFormat the problem format to use
    * @since 3.1.0
@@ -150,31 +176,37 @@ public class ServerWebInputProblemResolver extends AbstractProblemResolver
   @Override
   public void setProblemFormat(ProblemFormat problemFormat) {
     super.setProblemFormat(problemFormat);
-    typeMismatchHelper.setProblemFormat(problemFormat);
-    jacksonErrorHelper.setProblemFormat(problemFormat);
+    typeMismatchHelper.setProblemFormat(getProblemFormat());
+    jacksonErrorHelper.setProblemFormat(getProblemFormat());
   }
 
   /**
-   * Replaces the {@link TypeNameMapper} used by this resolver.
+   * Replaces the {@link TypeNameMapper} used by this resolver, unless one was passed to the
+   * constructor, in which case this method has no effect.
    *
    * @param typeNameMapper the type name mapper to use
    * @since 3.1.0
    */
   @Override
   public void setTypeNameMapper(TypeNameMapper typeNameMapper) {
-    typeMismatchHelper.setTypeNameMapper(typeNameMapper);
-    jacksonErrorHelper.setTypeNameMapper(typeNameMapper);
+    if (typeNameMapperAssignable) {
+      typeMismatchHelper.setTypeNameMapper(typeNameMapper);
+      jacksonErrorHelper.setTypeNameMapper(typeNameMapper);
+    }
   }
 
   /**
-   * Replaces the {@link MethodParameterSupport} used by this resolver.
+   * Replaces the {@link MethodParameterSupport} used by this resolver, unless one was passed to the
+   * constructor, in which case this method has no effect.
    *
    * @param methodParameterSupport the support for extracting parameter names
    * @since 3.1.0
    */
   @Override
   public void setMethodParameterSupport(MethodParameterSupport methodParameterSupport) {
-    this.methodParameterSupport = methodParameterSupport;
+    if (methodParameterSupportAssignable) {
+      this.methodParameterSupport = methodParameterSupport;
+    }
   }
 
   /**

@@ -9,9 +9,9 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 ### Added
 
 - Make `AbstractProblemResolver` and its subclasses take additional arguments via `BeanPostProcessor` for easier
-  overrides. When a resolver is registered as a bean, its `ProblemFormat` is replaced after construction by the
-  container's `ProblemFormat` bean, regardless of what was passed to a constructor. Do not rely on a per-resolver
-  `ProblemFormat` that differs from the container one.
+  overrides. When a resolver is registered as a bean, its collaborators (e.g. `ProblemFormat`) are replaced after
+  construction by the container's beans. For backwards compatibility with `3.0.0`, collaborators passed explicitly to
+  a (deprecated) constructor are kept and never replaced.
 - Add `*Aware` callback interfaces (`ProblemFormatAware`, `TypeNameMapperAware`, `BindingResultSupportAware`,
   `MethodValidationResultSupportAware`, `MethodParameterSupportAware`) that any bean can implement to receive the
   corresponding Problem4J collaborator from `ProblemBeanPostProcessor` after construction.

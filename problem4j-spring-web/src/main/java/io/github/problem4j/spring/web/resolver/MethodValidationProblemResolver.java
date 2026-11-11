@@ -52,7 +52,8 @@ import org.springframework.validation.method.MethodValidationException;
  * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
  * AbstractProblemResolver}, the {@link MethodValidationResultSupport} is assigned after
  * construction by {@link ProblemBeanPostProcessor} through {@link
- * #setMethodValidationResultSupport(MethodValidationResultSupport)}.
+ * #setMethodValidationResultSupport(MethodValidationResultSupport)}, unless it was passed to the
+ * constructor.
  *
  * @see jakarta.validation.ConstraintViolationException
  * @since 1.2.0
@@ -63,6 +64,14 @@ public class MethodValidationProblemResolver extends AbstractProblemResolver
   private MethodValidationResultSupport methodValidationResultSupport;
 
   /**
+   * Whether {@link #setMethodValidationResultSupport(MethodValidationResultSupport)} may replace
+   * the {@link MethodValidationResultSupport}. It is {@code false} when the {@link
+   * MethodValidationResultSupport} was passed explicitly to a (deprecated) constructor, so it is
+   * kept as in 3.0.0, where constructor arguments were never replaced afterward.
+   */
+  private final boolean methodValidationResultSupportAssignable;
+
+  /**
    * Creates a new {@link MethodValidationProblemResolver} with default problem format.
    *
    * @since 1.2.0
@@ -70,6 +79,7 @@ public class MethodValidationProblemResolver extends AbstractProblemResolver
   public MethodValidationProblemResolver() {
     super(MethodValidationException.class);
     this.methodValidationResultSupport = new DefaultMethodValidationResultSupport();
+    this.methodValidationResultSupportAssignable = true;
   }
 
   /**
@@ -80,9 +90,12 @@ public class MethodValidationProblemResolver extends AbstractProblemResolver
    * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
    *     construction; use {@link #MethodValidationProblemResolver()}
    */
+  @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)
   public MethodValidationProblemResolver(ProblemFormat problemFormat) {
-    this(problemFormat, new DefaultMethodValidationResultSupport());
+    super(MethodValidationException.class, problemFormat);
+    this.methodValidationResultSupport = new DefaultMethodValidationResultSupport();
+    this.methodValidationResultSupportAssignable = true;
   }
 
   /**
@@ -101,10 +114,12 @@ public class MethodValidationProblemResolver extends AbstractProblemResolver
       ProblemFormat problemFormat, MethodValidationResultSupport methodValidationResultSupport) {
     super(MethodValidationException.class, problemFormat);
     this.methodValidationResultSupport = methodValidationResultSupport;
+    this.methodValidationResultSupportAssignable = false;
   }
 
   /**
-   * Replaces the {@link MethodValidationResultSupport} used by this resolver.
+   * Replaces the {@link MethodValidationResultSupport} used by this resolver, unless one was passed
+   * to the constructor, in which case this method has no effect.
    *
    * @param methodValidationResultSupport the method validation result support to use
    * @since 3.1.0
@@ -112,7 +127,9 @@ public class MethodValidationProblemResolver extends AbstractProblemResolver
   @Override
   public void setMethodValidationResultSupport(
       MethodValidationResultSupport methodValidationResultSupport) {
-    this.methodValidationResultSupport = methodValidationResultSupport;
+    if (methodValidationResultSupportAssignable) {
+      this.methodValidationResultSupport = methodValidationResultSupport;
+    }
   }
 
   /**

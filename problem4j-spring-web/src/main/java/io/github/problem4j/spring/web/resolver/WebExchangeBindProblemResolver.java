@@ -43,7 +43,8 @@ import org.springframework.web.bind.support.WebExchangeBindException;
  *
  * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
  * AbstractProblemResolver}, the {@link BindingResultSupport} is assigned after construction by
- * {@link ProblemBeanPostProcessor} through {@link #setBindingResultSupport(BindingResultSupport)}.
+ * {@link ProblemBeanPostProcessor} through {@link #setBindingResultSupport(BindingResultSupport)},
+ * unless it was passed to the constructor.
  *
  * @since 1.2.0
  */
@@ -53,6 +54,14 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver
   private BindingResultSupport bindingResultSupport;
 
   /**
+   * Whether {@link #setBindingResultSupport(BindingResultSupport)} may replace the {@link
+   * BindingResultSupport}. It is {@code false} when the {@link BindingResultSupport} was passed
+   * explicitly to a (deprecated) constructor, so it is kept as in 3.0.0, where constructor
+   * arguments were never replaced afterward.
+   */
+  private final boolean bindingResultSupportAssignable;
+
+  /**
    * Creates a new {@link WebExchangeBindProblemResolver} with default problem format.
    *
    * @since 1.2.0
@@ -60,6 +69,7 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver
   public WebExchangeBindProblemResolver() {
     super(WebExchangeBindException.class);
     this.bindingResultSupport = new DefaultBindingResultSupport();
+    this.bindingResultSupportAssignable = true;
   }
 
   /**
@@ -70,9 +80,12 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver
    * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
    *     construction; use {@link #WebExchangeBindProblemResolver()}
    */
+  @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)
   public WebExchangeBindProblemResolver(ProblemFormat problemFormat) {
-    this(problemFormat, new DefaultBindingResultSupport());
+    super(WebExchangeBindException.class, problemFormat);
+    this.bindingResultSupport = new DefaultBindingResultSupport();
+    this.bindingResultSupportAssignable = true;
   }
 
   /**
@@ -91,17 +104,21 @@ public class WebExchangeBindProblemResolver extends AbstractProblemResolver
       ProblemFormat problemFormat, BindingResultSupport bindingResultSupport) {
     super(WebExchangeBindException.class, problemFormat);
     this.bindingResultSupport = bindingResultSupport;
+    this.bindingResultSupportAssignable = false;
   }
 
   /**
-   * Replaces the {@link BindingResultSupport} used by this resolver.
+   * Replaces the {@link BindingResultSupport} used by this resolver, unless one was passed to the
+   * constructor, in which case this method has no effect.
    *
    * @param bindingResultSupport the binding result support to use
    * @since 3.1.0
    */
   @Override
   public void setBindingResultSupport(BindingResultSupport bindingResultSupport) {
-    this.bindingResultSupport = bindingResultSupport;
+    if (bindingResultSupportAssignable) {
+      this.bindingResultSupport = bindingResultSupport;
+    }
   }
 
   /**

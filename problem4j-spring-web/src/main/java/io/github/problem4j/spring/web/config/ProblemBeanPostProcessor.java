@@ -56,6 +56,9 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
  * is only queried when a bean actually implements the matching callback interface, and a {@code
  * null} result leaves the bean untouched.
  *
+ * <p>Built-in resolvers keep collaborators passed explicitly to their (deprecated) constructors,
+ * ignoring the values offered by this processor, for backwards compatibility with 3.0.0.
+ *
  * <p>Beans that implement none of the callbacks are skipped with a single {@link
  * ProblemUtilityAware} {@code instanceof} check, since every callback extends it.
  *

@@ -41,7 +41,8 @@ import tools.jackson.databind.exc.MismatchedInputException;
  *
  * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
  * AbstractProblemResolver}, the {@link TypeNameMapper} is assigned after construction by {@link
- * ProblemBeanPostProcessor} through {@link #setTypeNameMapper(TypeNameMapper)}.
+ * ProblemBeanPostProcessor} through {@link #setTypeNameMapper(TypeNameMapper)}, unless it was
+ * passed to the constructor.
  *
  * @see org.springframework.http.converter.HttpMessageConverter
  * @since 1.2.0
@@ -52,6 +53,14 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
   private final JacksonErrorHelper jacksonErrorHelper;
 
   /**
+   * Whether {@link #setTypeNameMapper(TypeNameMapper)} may replace the {@link TypeNameMapper}. It
+   * is {@code false} when the {@link TypeNameMapper} was passed explicitly to a (deprecated)
+   * constructor, so it is kept as in 3.0.0, where constructor arguments were never replaced
+   * afterward.
+   */
+  private final boolean typeNameMapperAssignable;
+
+  /**
    * Creates a new {@link HttpMessageNotReadableProblemResolver} with default problem format.
    *
    * @since 1.2.0
@@ -60,6 +69,7 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
     super(HttpMessageNotReadableException.class);
     this.jacksonErrorHelper =
         new JacksonErrorHelper(ProblemFormat.identity(), new SimpleTypeNameMapper());
+    this.typeNameMapperAssignable = true;
   }
 
   /**
@@ -70,9 +80,12 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
    * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
    *     construction; use {@link #HttpMessageNotReadableProblemResolver()}
    */
+  @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)
   public HttpMessageNotReadableProblemResolver(ProblemFormat problemFormat) {
-    this(problemFormat, new SimpleTypeNameMapper());
+    super(HttpMessageNotReadableException.class, problemFormat);
+    this.jacksonErrorHelper = new JacksonErrorHelper(problemFormat, new SimpleTypeNameMapper());
+    this.typeNameMapperAssignable = true;
   }
 
   /**
@@ -91,10 +104,12 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
       ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
     super(HttpMessageNotReadableException.class, problemFormat);
     this.jacksonErrorHelper = new JacksonErrorHelper(problemFormat, typeNameMapper);
+    this.typeNameMapperAssignable = false;
   }
 
   /**
-   * Replaces the {@link ProblemFormat} used by this resolver.
+   * Replaces the {@link ProblemFormat} used by this resolver, unless one was passed to the
+   * constructor, in which case this method has no effect.
    *
    * @param problemFormat the problem format to use
    * @since 3.1.0
@@ -102,18 +117,21 @@ public class HttpMessageNotReadableProblemResolver extends AbstractProblemResolv
   @Override
   public void setProblemFormat(ProblemFormat problemFormat) {
     super.setProblemFormat(problemFormat);
-    jacksonErrorHelper.setProblemFormat(problemFormat);
+    jacksonErrorHelper.setProblemFormat(getProblemFormat());
   }
 
   /**
-   * Replaces the {@link TypeNameMapper} used by this resolver.
+   * Replaces the {@link TypeNameMapper} used by this resolver, unless one was passed to the
+   * constructor, in which case this method has no effect.
    *
    * @param typeNameMapper the type name mapper to use
    * @since 3.1.0
    */
   @Override
   public void setTypeNameMapper(TypeNameMapper typeNameMapper) {
-    jacksonErrorHelper.setTypeNameMapper(typeNameMapper);
+    if (typeNameMapperAssignable) {
+      jacksonErrorHelper.setTypeNameMapper(typeNameMapper);
+    }
   }
 
   /**
