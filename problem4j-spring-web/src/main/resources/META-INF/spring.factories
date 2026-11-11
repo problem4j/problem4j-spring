@@ -1,0 +1,3 @@
+org.springframework.boot.diagnostics.FailureAnalyzer=\
+io.github.problem4j.spring.web.autoconfigure.DuplicateProblemResolverFailureAnalyzer,\
+io.github.problem4j.spring.web.autoconfigure.UnavailableTracingSourceFailureAnalyzer

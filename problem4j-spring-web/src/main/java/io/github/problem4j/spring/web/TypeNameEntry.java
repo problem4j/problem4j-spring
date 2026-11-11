@@ -32,7 +32,10 @@ public final class TypeNameEntry implements Serializable {
 
   @Serial private static final long serialVersionUID = 1L;
 
+  /** The Java type to map, matching also its subtypes. */
   private final Class<?> type;
+
+  /** The name the type is mapped to. */
   private final String name;
 
   /**

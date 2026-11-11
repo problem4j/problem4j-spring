@@ -16,13 +16,16 @@
 
 package io.github.problem4j.spring.web.autoconfigure;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.entry;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
@@ -96,7 +99,7 @@ class ResolverValidatorTest {
             "secondResolver", new UnorderedResolver(FirstException.class));
 
     assertThatThrownBy(() -> ResolverValidator.validate(resolvers))
-        .isInstanceOf(IllegalStateException.class)
+        .isInstanceOf(DuplicateProblemResolverException.class)
         .hasMessageContaining("equal order for " + FirstException.class.getName())
         .hasMessageContaining("'firstResolver' (" + UnorderedResolver.class.getName() + ")")
         .hasMessageContaining("'secondResolver' (" + UnorderedResolver.class.getName() + ")");
@@ -110,7 +113,7 @@ class ResolverValidatorTest {
             "secondResolver", new OrderedResolver(FirstException.class, 3));
 
     assertThatThrownBy(() -> ResolverValidator.validate(resolvers))
-        .isInstanceOf(IllegalStateException.class)
+        .isInstanceOf(DuplicateProblemResolverException.class)
         .hasMessageContaining("'firstResolver'")
         .hasMessageContaining("'secondResolver'");
   }
@@ -123,7 +126,7 @@ class ResolverValidatorTest {
             "ordered", new OrderedResolver(FirstException.class, 5));
 
     assertThatThrownBy(() -> ResolverValidator.validate(resolvers))
-        .isInstanceOf(IllegalStateException.class)
+        .isInstanceOf(DuplicateProblemResolverException.class)
         .hasMessageContaining("'annotated'")
         .hasMessageContaining("'ordered'");
   }
@@ -137,7 +140,7 @@ class ResolverValidatorTest {
             "lower", new OrderedResolver(FirstException.class, 2));
 
     assertThatThrownBy(() -> ResolverValidator.validate(resolvers))
-        .isInstanceOf(IllegalStateException.class)
+        .isInstanceOf(DuplicateProblemResolverException.class)
         .hasMessageContaining("'tiedA'")
         .hasMessageContaining("'tiedB'")
         .hasMessageNotContaining("'lower'");
@@ -153,7 +156,7 @@ class ResolverValidatorTest {
             "secondB", new UnorderedResolver(SecondException.class));
 
     assertThatThrownBy(() -> ResolverValidator.validate(resolvers))
-        .isInstanceOf(IllegalStateException.class)
+        .isInstanceOf(DuplicateProblemResolverException.class)
         .hasMessage(
             "Multiple ProblemResolver beans with equal order for "
                 + FirstException.class.getName()
@@ -171,6 +174,33 @@ class ResolverValidatorTest {
   }
 
   @Test
+  void givenTiesForMultipleExceptionClasses_whenValidating_thenExposesConflictsInOrder() {
+    Map<String, ProblemResolver> resolvers =
+        resolvers(
+            "firstA", new OrderedResolver(FirstException.class, 1),
+            "firstB", new OrderedResolver(FirstException.class, 1),
+            "secondA", new UnorderedResolver(SecondException.class),
+            "secondB", new UnorderedResolver(SecondException.class));
+
+    assertThatThrownBy(() -> ResolverValidator.validate(resolvers))
+        .isInstanceOfSatisfying(
+            DuplicateProblemResolverException.class,
+            ex ->
+                assertThat(ex.getConflicts())
+                    .containsExactly(
+                        entry(
+                            FirstException.class.getName(),
+                            List.of(
+                                "'firstA' (" + OrderedResolver.class.getName() + ")",
+                                "'firstB' (" + OrderedResolver.class.getName() + ")")),
+                        entry(
+                            SecondException.class.getName(),
+                            List.of(
+                                "'secondA' (" + UnorderedResolver.class.getName() + ")",
+                                "'secondB' (" + UnorderedResolver.class.getName() + ")"))));
+  }
+
+  @Test
   void givenTieForOneExceptionClassAndUniqueWinnerForAnother_whenValidating_thenReportsOnlyTie() {
     Map<String, ProblemResolver> resolvers =
         resolvers(
@@ -180,7 +210,7 @@ class ResolverValidatorTest {
             "secondB", new UnorderedResolver(SecondException.class));
 
     assertThatThrownBy(() -> ResolverValidator.validate(resolvers))
-        .isInstanceOf(IllegalStateException.class)
+        .isInstanceOf(DuplicateProblemResolverException.class)
         .hasMessageContaining(SecondException.class.getName())
         .hasMessageNotContaining(FirstException.class.getName());
   }
