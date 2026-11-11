@@ -39,7 +39,7 @@ import tools.jackson.databind.json.JsonMapper;
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
       "problem4j.instance-override=https://example.org/trace/{context.traceId}",
-      "problem4j.tracing.source=simple",
+      "problem4j.tracing-source=simple",
       "problem4j.tracing-header-name=X-Trace-Id"
     })
 @AutoConfigureTestRestTemplate

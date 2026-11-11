@@ -80,7 +80,7 @@ class ObservationErrorWebFluxTest {
   @SpringBootTest(
       classes = {WebFluxTestApp.class, ObservationCaptureConfiguration.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-      properties = {"problem4j.observation.record-errors=all"})
+      properties = {"problem4j.observation-errors=all"})
   @AutoConfigureWebTestClient
   @Nested
   class WithAllRecording {
@@ -105,7 +105,7 @@ class ObservationErrorWebFluxTest {
   @SpringBootTest(
       classes = {WebFluxTestApp.class, ObservationCaptureConfiguration.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-      properties = {"problem4j.observation.record-errors=none"})
+      properties = {"problem4j.observation-errors=none"})
   @AutoConfigureWebTestClient
   @Nested
   class WithNoRecording {

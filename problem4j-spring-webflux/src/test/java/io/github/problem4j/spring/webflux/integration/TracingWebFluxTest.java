@@ -51,7 +51,7 @@ class TracingWebFluxTest {
       classes = {WebFluxTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.tracing.source=micrometer",
+        "problem4j.tracing-source=micrometer",
         "problem4j.tracing-header-name=X-Trace-Id",
         "problem4j.instance-override=https://example.org/trace/{context.traceId}/span/{context.spanId}"
       })
@@ -151,7 +151,7 @@ class TracingWebFluxTest {
       classes = {WebFluxTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.tracing.source=simple",
+        "problem4j.tracing-source=simple",
         "problem4j.tracing-header-name=X-Trace-Id",
         "problem4j.instance-override=https://example.org/trace/{context.traceId}"
       })

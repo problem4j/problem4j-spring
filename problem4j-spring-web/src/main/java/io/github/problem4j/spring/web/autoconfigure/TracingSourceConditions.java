@@ -23,9 +23,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 /**
  * Conditions used by WebMVC and WebFlux autoconfigurations to pick the {@code ProblemContext}
- * filter matching {@code problem4j.tracing.source}.
+ * filter matching {@code problem4j.tracing-source}.
  *
- * @see ProblemProperties.Tracing#getSource()
+ * @see ProblemProperties#getTracingSource()
  * @since 3.1.0
  */
 public final class TracingSourceConditions {
@@ -39,22 +39,22 @@ public final class TracingSourceConditions {
       "io.micrometer.tracing.handler.TracingObservationHandler";
 
   /**
-   * Message of the exception failing application startup if {@code problem4j.tracing.source} is set
+   * Message of the exception failing application startup if {@code problem4j.tracing-source} is set
    * to a source that cannot be used, as its required dependencies are not on the classpath.
    *
    * @since 3.1.0
    */
   public static final String UNAVAILABLE_SOURCE_MESSAGE =
-      "problem4j.tracing.source is set to a source that is not available on the classpath"
+      "problem4j.tracing-source is set to a source that is not available on the classpath"
           + " (micrometer requires io.micrometer:micrometer-tracing), add the missing dependency or"
-          + " set problem4j.tracing.source to auto or simple";
+          + " set problem4j.tracing-source to auto or simple";
 
-  private static final String SOURCE_PROPERTY = "problem4j.tracing.source";
+  private static final String SOURCE_PROPERTY = "problem4j.tracing-source";
 
   private TracingSourceConditions() {}
 
   /**
-   * Matches if {@code problem4j.tracing.source} is {@code micrometer} or {@code auto} (default),
+   * Matches if {@code problem4j.tracing-source} is {@code micrometer} or {@code auto} (default),
    * and Micrometer Tracing is on the classpath.
    *
    * @since 3.1.0
@@ -80,7 +80,7 @@ public final class TracingSourceConditions {
   }
 
   /**
-   * Matches if {@code problem4j.tracing.source} is {@code simple}, or {@code auto} (default)
+   * Matches if {@code problem4j.tracing-source} is {@code simple}, or {@code auto} (default)
    * without Micrometer Tracing on the classpath.
    *
    * @since 3.1.0
@@ -105,7 +105,7 @@ public final class TracingSourceConditions {
   }
 
   /**
-   * Matches if {@code problem4j.tracing.source} is set to a source that cannot be used, as its
+   * Matches if {@code problem4j.tracing-source} is set to a source that cannot be used, as its
    * required dependencies are not on the classpath. This is the case for {@code micrometer} without
    * Micrometer Tracing.
    *

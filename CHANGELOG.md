@@ -27,7 +27,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Register Problem4J autoconfigurations in Spring Boot test slices: `@AutoConfigureJson`, `@AutoConfigureWebFlux` and
   `@AutoConfigureWebMvc`, to make it possible to use `@JsonTest`, `@WebFluxTest`, `@WebMvcTest`, `@RestClientTest` and
   `@WebClientTest`.
-- Add `problem4j.tracing.source` property deciding where `traceId` of `ProblemContext` comes from. `micrometer`
+- Add `problem4j.tracing-source` property deciding where `traceId` of `ProblemContext` comes from. `micrometer`
   registers `MicrometerProblemContextWebMvcFilter` / `MicrometerProblemContextWebFluxFilter`, which take `traceId` and
   `spanId` of the current Micrometer Tracing span, falling back to `problem4j.tracing-header-name` header or a random
   trace ID if no span is available. `micrometer` requires `io.micrometer:micrometer-tracing` on the classpath, otherwise
@@ -44,19 +44,19 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Add `ObservationErrorWebMvcInspector` and `ObservationErrorWebFluxInspector`, recording exceptions handled by
   Problem4J as errors of the current HTTP server observation (`ServerRequestObservationContext`), so that
   `http.server.requests` metrics and spans report the `exception` instead of `none`. Add
-  `problem4j.observation.record-errors` property deciding which exceptions are recorded. `server` (default) records
+  `problem4j.observation-errors` property deciding which exceptions are recorded. `server` (default) records
   exceptions resulting in a 5xx response, `all` records all of them, `none` disables recording.
 
 ### Changed
 
 - With `io.micrometer:micrometer-tracing` on the classpath, `traceId` of `ProblemContext` comes from the current tracing
-  span by default (`problem4j.tracing.source=auto`), instead of the `problem4j.tracing-header-name` header or a random
+  span by default (`problem4j.tracing-source=auto`), instead of the `problem4j.tracing-header-name` header or a random
   trace ID. The header value is used only if no span is available, and the header is still written into responses with
-  the span's `traceId`. Set `problem4j.tracing.source=simple` to keep the previous behavior.
+  the span's `traceId`. Set `problem4j.tracing-source=simple` to keep the previous behavior.
 - Exceptions handled by Problem4J resulting in a 5xx response are recorded as errors of the current HTTP server
-  observation by default (`problem4j.observation.record-errors=server`), so the `exception` key of
+  observation by default (`problem4j.observation-errors=server`), so the `exception` key of
   `http.server.requests` metrics and spans contains the exception class name instead of `none`. Set
-  `problem4j.observation.record-errors=none` to keep the previous behavior.
+  `problem4j.observation-errors=none` to keep the previous behavior.
 - Bump `problem4j-core` to `2.0.1`.
 - `ServerWebInputProblemResolver` no longer delegates type-mismatch handling to the `TypeMismatchProblemResolver` bean.
 - Split `ProblemAutoConfiguration` into several auto-configurations. `ProblemAutoConfiguration` now keeps only generic

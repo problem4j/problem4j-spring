@@ -51,7 +51,7 @@ class ProblemContextWebMvcFilterConfigurationTest {
   @Test
   void givenSimpleTracingSource_whenContextStarts_thenDefaultFilterIsRegistered() {
     contextRunner
-        .withPropertyValues("problem4j.tracing.source=simple")
+        .withPropertyValues("problem4j.tracing-source=simple")
         .run(context ->
             assertThat(context)
                 .getBean(ProblemContextWebMvcFilter.class)
@@ -61,7 +61,7 @@ class ProblemContextWebMvcFilterConfigurationTest {
   @Test
   void givenMicrometerTracingSource_whenContextStarts_thenMicrometerFilterIsRegistered() {
     contextRunner
-        .withPropertyValues("problem4j.tracing.source=micrometer")
+        .withPropertyValues("problem4j.tracing-source=micrometer")
         .run(context ->
             assertThat(context)
                 .getBean(ProblemContextWebMvcFilter.class)
@@ -71,7 +71,7 @@ class ProblemContextWebMvcFilterConfigurationTest {
   @Test
   void givenMicrometerTracingSourceAndCustomFilter_whenContextStarts_thenCustomFilterIsKept() {
     contextRunner
-        .withPropertyValues("problem4j.tracing.source=micrometer")
+        .withPropertyValues("problem4j.tracing-source=micrometer")
         .withUserConfiguration(CustomFilterConfiguration.class)
         .run(context ->
             assertThat(context)
@@ -82,7 +82,7 @@ class ProblemContextWebMvcFilterConfigurationTest {
   @Test
   void givenMicrometerTracingSourceWithoutMicrometerTracing_whenContextStarts_thenStartupFails() {
     contextRunner
-        .withPropertyValues("problem4j.tracing.source=micrometer")
+        .withPropertyValues("problem4j.tracing-source=micrometer")
         .withClassLoader(new FilteredClassLoader(TracingObservationHandler.class))
         .run(context ->
             assertThat(context)
@@ -109,7 +109,7 @@ class ProblemContextWebMvcFilterConfigurationTest {
       givenFilterDisabledWithMicrometerTracingSourceWithoutMicrometerTracing_whenContextStarts_thenNoFilterIsRegistered() {
     contextRunner
         .withPropertyValues(
-            "problem4j.tracing.source=micrometer",
+            "problem4j.tracing-source=micrometer",
             "problem4j.webmvc.problem-context-filter.enabled=false")
         .withClassLoader(new FilteredClassLoader(TracingObservationHandler.class))
         .run(context -> assertThat(context).doesNotHaveBean(ProblemContextWebMvcFilter.class));
@@ -118,7 +118,7 @@ class ProblemContextWebMvcFilterConfigurationTest {
   @Test
   void givenAutoTracingSource_whenContextStarts_thenMicrometerFilterIsRegistered() {
     contextRunner
-        .withPropertyValues("problem4j.tracing.source=auto")
+        .withPropertyValues("problem4j.tracing-source=auto")
         .run(context ->
             assertThat(context)
                 .getBean(ProblemContextWebMvcFilter.class)
@@ -129,7 +129,7 @@ class ProblemContextWebMvcFilterConfigurationTest {
   void
       givenAutoTracingSourceWithoutMicrometerTracing_whenContextStarts_thenDefaultFilterIsRegistered() {
     contextRunner
-        .withPropertyValues("problem4j.tracing.source=auto")
+        .withPropertyValues("problem4j.tracing-source=auto")
         .withClassLoader(new FilteredClassLoader(TracingObservationHandler.class))
         .run(context ->
             assertThat(context)
@@ -141,7 +141,7 @@ class ProblemContextWebMvcFilterConfigurationTest {
   void
       givenSimpleTracingSourceWithoutMicrometerTracing_whenContextStarts_thenDefaultFilterIsRegistered() {
     contextRunner
-        .withPropertyValues("problem4j.tracing.source=simple")
+        .withPropertyValues("problem4j.tracing-source=simple")
         .withClassLoader(new FilteredClassLoader(TracingObservationHandler.class))
         .run(context ->
             assertThat(context)
@@ -153,7 +153,7 @@ class ProblemContextWebMvcFilterConfigurationTest {
   void
       givenMicrometerTracingSourceWithoutMicrometerTracingAndCustomFilter_whenContextStarts_thenCustomFilterIsKept() {
     contextRunner
-        .withPropertyValues("problem4j.tracing.source=micrometer")
+        .withPropertyValues("problem4j.tracing-source=micrometer")
         .withClassLoader(new FilteredClassLoader(TracingObservationHandler.class))
         .withUserConfiguration(CustomFilterConfiguration.class)
         .run(context ->

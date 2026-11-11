@@ -85,15 +85,22 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   private ResolverCaching resolverCaching = new ResolverCaching();
 
   /**
-   * Tracing configuration, deciding where trace identifiers of {@code ProblemContext} come from.
+   * Source of trace identifiers of {@code ProblemContext}. {@code auto} uses {@code micrometer} if
+   * {@code io.micrometer:micrometer-tracing} is on the classpath, and {@code simple} otherwise.
+   * {@code simple} takes the trace ID from the {@code problem4j.tracing-header-name} header or
+   * generates a random one. {@code micrometer} takes the trace ID and span ID of the current
+   * Micrometer Tracing span first, falling back to {@code simple} behavior if no span is available,
+   * and fails application startup if Micrometer Tracing is not on the classpath.
    */
-  private Tracing tracing = new Tracing();
+  private TracingSource tracingSource = TracingSource.AUTO;
 
   /**
-   * Observation configuration, deciding which exceptions handled by Problem4J are recorded as
-   * errors of the current HTTP server observation.
+   * Which handled exceptions are recorded as errors of the current HTTP server observation
+   * (affecting the {@code exception} key of {@code http.server.requests} metrics and spans). {@code
+   * server} records exceptions resulting in a 5xx response, {@code all} records all of them, {@code
+   * none} disables recording.
    */
-  private Observation observation = new Observation();
+  private ErrorRecording observationErrors = ErrorRecording.SERVER;
 
   /**
    * Creates a new instance of {@link ProblemProperties} with default values.
@@ -394,43 +401,43 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   }
 
   /**
-   * Returns the tracing configuration.
+   * Returns the source of trace identifiers of {@code ProblemContext}.
    *
-   * @return tracing settings
+   * @return the tracing source
    * @since 3.1.0
    */
-  public Tracing getTracing() {
-    return tracing;
+  public TracingSource getTracingSource() {
+    return tracingSource;
   }
 
   /**
-   * Sets the tracing configuration.
+   * Sets the source of trace identifiers of {@code ProblemContext}.
    *
-   * @param tracing tracing settings
+   * @param tracingSource the tracing source
    * @since 3.1.0
    */
-  public void setTracing(Tracing tracing) {
-    this.tracing = tracing;
+  public void setTracingSource(TracingSource tracingSource) {
+    this.tracingSource = tracingSource;
   }
 
   /**
-   * Returns the observation configuration.
+   * Returns which handled exceptions are recorded as errors of the current HTTP server observation.
    *
-   * @return observation settings
+   * @return the error recording mode
    * @since 3.1.0
    */
-  public Observation getObservation() {
-    return observation;
+  public ErrorRecording getObservationErrors() {
+    return observationErrors;
   }
 
   /**
-   * Sets the observation configuration.
+   * Sets which handled exceptions are recorded as errors of the current HTTP server observation.
    *
-   * @param observation observation settings
+   * @param observationErrors the error recording mode
    * @since 3.1.0
    */
-  public void setObservation(Observation observation) {
-    this.observation = observation;
+  public void setObservationErrors(ErrorRecording observationErrors) {
+    this.observationErrors = observationErrors;
   }
 
   /**
@@ -505,99 +512,10 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   }
 
   /**
-   * Tracing configuration, deciding where trace identifiers of {@code ProblemContext} come from.
-   *
-   * @since 3.1.0
-   */
-  public static class Tracing {
-
-    /**
-     * Source of trace identifiers. {@code auto} uses {@code micrometer} if {@code
-     * io.micrometer:micrometer-tracing} is on the classpath, and {@code simple} otherwise. {@code
-     * simple} takes the trace ID from the {@code problem4j.tracing-header-name} header or generates
-     * a random one. {@code micrometer} takes the trace ID and span ID of the current Micrometer
-     * Tracing span first, falling back to {@code simple} behavior if no span is available, and
-     * fails application startup if Micrometer Tracing is not on the classpath.
-     */
-    private TracingSource source = TracingSource.AUTO;
-
-    /**
-     * Creates a new instance of {@link Tracing} with default values.
-     *
-     * @since 3.1.0
-     */
-    public Tracing() {}
-
-    /**
-     * Returns the source of trace identifiers.
-     *
-     * @return the tracing source
-     * @since 3.1.0
-     */
-    public TracingSource getSource() {
-      return source;
-    }
-
-    /**
-     * Sets the source of trace identifiers.
-     *
-     * @param source the tracing source
-     * @since 3.1.0
-     */
-    public void setSource(TracingSource source) {
-      this.source = source;
-    }
-  }
-
-  /**
-   * Observation configuration, deciding which exceptions handled by Problem4J are recorded as
-   * errors of the current HTTP server observation.
-   *
-   * @since 3.1.0
-   */
-  public static class Observation {
-
-    /**
-     * Which handled exceptions are recorded as errors of the current HTTP server observation
-     * (affecting the {@code exception} key of {@code http.server.requests} metrics and spans).
-     * {@code server} records exceptions resulting in a 5xx response, {@code all} records all of
-     * them, {@code none} disables recording.
-     */
-    private ErrorRecording recordErrors = ErrorRecording.SERVER;
-
-    /**
-     * Creates a new instance of {@link Observation} with default values.
-     *
-     * @since 3.1.0
-     */
-    public Observation() {}
-
-    /**
-     * Returns which handled exceptions are recorded as observation errors.
-     *
-     * @return the error recording mode
-     * @since 3.1.0
-     */
-    public ErrorRecording getRecordErrors() {
-      return recordErrors;
-    }
-
-    /**
-     * Sets which handled exceptions are recorded as observation errors.
-     *
-     * @param recordErrors the error recording mode
-     * @since 3.1.0
-     */
-    public void setRecordErrors(ErrorRecording recordErrors) {
-      this.recordErrors = recordErrors;
-    }
-  }
-
-  /**
    * Decides which exceptions handled by Problem4J are recorded as errors of the current HTTP server
    * observation.
    *
-   * @see Observation#getRecordErrors()
+   * @see #getObservationErrors()
    * @since 3.1.0
    */
   public enum ErrorRecording {
@@ -638,7 +556,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   /**
    * Source of trace identifiers stored in {@code ProblemContext}.
    *
-   * @see Tracing#getSource()
+   * @see #getTracingSource()
    * @since 3.1.0
    */
   public enum TracingSource {

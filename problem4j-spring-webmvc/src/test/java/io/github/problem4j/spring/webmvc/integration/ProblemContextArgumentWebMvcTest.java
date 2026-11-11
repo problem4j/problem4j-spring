@@ -40,7 +40,7 @@ class ProblemContextArgumentWebMvcTest {
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-      properties = {"problem4j.tracing.source=simple", "problem4j.tracing-header-name=X-Trace-Id"})
+      properties = {"problem4j.tracing-source=simple", "problem4j.tracing-header-name=X-Trace-Id"})
   @AutoConfigureTestRestTemplate
   @Nested
   class WithProblemContextFilter {
@@ -77,7 +77,7 @@ class ProblemContextArgumentWebMvcTest {
       classes = {WebMvcTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.tracing.source=simple",
+        "problem4j.tracing-source=simple",
         "problem4j.tracing-header-name=X-Trace-Id",
         "problem4j.webmvc.problem-context-filter.enabled=false"
       })

@@ -46,7 +46,7 @@ import org.springframework.web.filter.ServerHttpObservationFilter;
  * ignored.
  *
  * <p>Requires {@code io.micrometer:micrometer-tracing} on the classpath. Registered instead of
- * {@link ProblemContextWebMvcFilter} with {@code problem4j.tracing.source=micrometer}, or with
+ * {@link ProblemContextWebMvcFilter} with {@code problem4j.tracing-source=micrometer}, or with
  * {@code auto} (default) if Micrometer Tracing is on the classpath.
  *
  * @since 3.1.0
