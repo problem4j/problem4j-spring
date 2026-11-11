@@ -176,7 +176,7 @@ public class ProblemWebFluxAutoConfiguration {
     /**
      * Registers the default {@link ProblemContextWebFluxFilter}, which takes trace identifiers from
      * the configured tracing header or generates new ones. Used with {@code
-     * problem4j.tracing.source=simple}, or {@code auto} (default) without Micrometer Tracing.
+     * problem4j.tracing-source=simple}, or {@code auto} (default) without Micrometer Tracing.
      */
     @Conditional(OnSimpleSource.class)
     @Configuration(proxyBeanMethods = false)
@@ -198,7 +198,7 @@ public class ProblemWebFluxAutoConfiguration {
 
     /**
      * Registers {@link MicrometerProblemContextWebFluxFilter}, which takes trace identifiers from
-     * the current Micrometer Tracing span. Used with {@code problem4j.tracing.source=micrometer},
+     * the current Micrometer Tracing span. Used with {@code problem4j.tracing-source=micrometer},
      * or {@code auto} (default) with Micrometer Tracing.
      */
     @Conditional(OnMicrometerSource.class)
@@ -220,7 +220,7 @@ public class ProblemWebFluxAutoConfiguration {
     }
 
     /**
-     * Fails application startup if {@code problem4j.tracing.source} is set to a source that cannot
+     * Fails application startup if {@code problem4j.tracing-source} is set to a source that cannot
      * be used, as its required dependencies are not on the classpath. Skipped if a custom {@link
      * ProblemContextWebFluxFilter} bean is defined, as the tracing source is not used then.
      */
@@ -230,7 +230,7 @@ public class ProblemWebFluxAutoConfiguration {
     static class UnavailableTracingSourceConfiguration {
 
       /**
-       * Always throws, as the configured {@code problem4j.tracing.source} cannot be satisfied.
+       * Always throws, as the configured {@code problem4j.tracing-source} cannot be satisfied.
        *
        * @throws IllegalStateException always
        */

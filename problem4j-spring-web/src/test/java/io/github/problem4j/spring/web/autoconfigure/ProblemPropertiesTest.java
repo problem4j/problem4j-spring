@@ -23,7 +23,6 @@ import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DetailForm
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DuplicateResolverPolicy;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ErrorRecording;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ResolverCaching;
-import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.Tracing;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.TracingSource;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -59,7 +58,7 @@ class ProblemPropertiesTest {
     assertThat(properties.getDuplicateResolverPolicy()).isEqualTo(DuplicateResolverPolicy.FAIL);
     assertThat(properties.getResolverCaching().isEnabled())
         .isEqualTo(ResolverCaching.DEFAULT_ENABLED);
-    assertThat(properties.getTracing().getSource()).isEqualTo(TracingSource.AUTO);
+    assertThat(properties.getTracingSource()).isEqualTo(TracingSource.AUTO);
   }
 
   @Test
@@ -78,9 +77,7 @@ class ProblemPropertiesTest {
     properties.setExtensionOverrides(extensionOverrides);
     properties.setDuplicateResolverPolicy(DuplicateResolverPolicy.FIRST);
     properties.setResolverCaching(caching);
-    Tracing tracing = new Tracing();
-    tracing.setSource(TracingSource.MICROMETER);
-    properties.setTracing(tracing);
+    properties.setTracingSource(TracingSource.MICROMETER);
 
     assertThat(properties.isEnabled()).isFalse();
     assertThat(properties.getDetailFormat()).isEqualTo(DetailFormat.UPPERCASE);
@@ -92,8 +89,7 @@ class ProblemPropertiesTest {
     assertThat(properties.getResolverCaching()).isSameAs(caching);
     assertThat(properties.getDuplicateResolverPolicy()).isEqualTo(DuplicateResolverPolicy.FIRST);
     assertThat(properties.getResolverCaching().isEnabled()).isTrue();
-    assertThat(properties.getTracing()).isSameAs(tracing);
-    assertThat(properties.getTracing().getSource()).isEqualTo(TracingSource.MICROMETER);
+    assertThat(properties.getTracingSource()).isEqualTo(TracingSource.MICROMETER);
   }
 
   @ParameterizedTest
@@ -101,11 +97,11 @@ class ProblemPropertiesTest {
   void givenTracingSourceProperty_whenBound_thenTracingSourceIsSet(
       String value, TracingSource expected) {
     ProblemProperties properties =
-        new Binder(new MapConfigurationPropertySource(Map.of("problem4j.tracing.source", value)))
+        new Binder(new MapConfigurationPropertySource(Map.of("problem4j.tracing-source", value)))
             .bind("problem4j", ProblemProperties.class)
             .get();
 
-    assertThat(properties.getTracing().getSource()).isEqualTo(expected);
+    assertThat(properties.getTracingSource()).isEqualTo(expected);
   }
 
   @ParameterizedTest

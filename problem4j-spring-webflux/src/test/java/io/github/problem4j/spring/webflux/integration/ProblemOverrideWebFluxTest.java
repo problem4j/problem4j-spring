@@ -36,7 +36,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
     properties = {
       "problem4j.type-override=https://example.org/type/{problem.type}",
       "problem4j.instance-override=https://example.org/trace/{context.traceId}",
-      "problem4j.tracing.source=simple",
+      "problem4j.tracing-source=simple",
       "problem4j.tracing-header-name=X-Trace-Id",
       "problem4j.detail-format=lowercase",
       "problem4j.extension-overrides.code={problem.status}",

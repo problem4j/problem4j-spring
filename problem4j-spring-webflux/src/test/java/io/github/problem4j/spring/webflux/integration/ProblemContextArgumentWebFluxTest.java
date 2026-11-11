@@ -37,7 +37,7 @@ class ProblemContextArgumentWebFluxTest {
   @SpringBootTest(
       classes = {WebFluxTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-      properties = {"problem4j.tracing.source=simple", "problem4j.tracing-header-name=X-Trace-Id"})
+      properties = {"problem4j.tracing-source=simple", "problem4j.tracing-header-name=X-Trace-Id"})
   @AutoConfigureWebTestClient
   @Nested
   class WithProblemContextFilter {
@@ -75,7 +75,7 @@ class ProblemContextArgumentWebFluxTest {
       classes = {WebFluxTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.tracing.source=simple",
+        "problem4j.tracing-source=simple",
         "problem4j.tracing-header-name=X-Trace-Id",
         "problem4j.webflux.problem-context-filter.enabled=false"
       })

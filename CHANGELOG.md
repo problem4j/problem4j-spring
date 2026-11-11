@@ -27,7 +27,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Register Problem4J autoconfigurations in Spring Boot test slices: `@AutoConfigureJson`, `@AutoConfigureWebFlux` and
   `@AutoConfigureWebMvc`, to make it possible to use `@JsonTest`, `@WebFluxTest`, `@WebMvcTest`, `@RestClientTest` and
   `@WebClientTest`.
-- Add `problem4j.tracing.source` property deciding where `traceId` of `ProblemContext` comes from. `micrometer`
+- Add `problem4j.tracing-source` property deciding where `traceId` of `ProblemContext` comes from. `micrometer`
   registers `MicrometerProblemContextWebMvcFilter` / `MicrometerProblemContextWebFluxFilter`, which take `traceId` and
   `spanId` of the current Micrometer Tracing span, falling back to `problem4j.tracing-header-name` header or a random
   trace ID if no span is available. `micrometer` requires `io.micrometer:micrometer-tracing` on the classpath, otherwise
@@ -50,9 +50,9 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 ### Changed
 
 - With `io.micrometer:micrometer-tracing` on the classpath, `traceId` of `ProblemContext` comes from the current tracing
-  span by default (`problem4j.tracing.source=auto`), instead of the `problem4j.tracing-header-name` header or a random
+  span by default (`problem4j.tracing-source=auto`), instead of the `problem4j.tracing-header-name` header or a random
   trace ID. The header value is used only if no span is available, and the header is still written into responses with
-  the span's `traceId`. Set `problem4j.tracing.source=simple` to keep the previous behavior.
+  the span's `traceId`. Set `problem4j.tracing-source=simple` to keep the previous behavior.
 - Exceptions handled by Problem4J resulting in a 5xx response are recorded as errors of the current HTTP server
   observation by default (`problem4j.observation-errors=server`), so the `exception` key of
   `http.server.requests` metrics and spans contains the exception class name instead of `none`. Set

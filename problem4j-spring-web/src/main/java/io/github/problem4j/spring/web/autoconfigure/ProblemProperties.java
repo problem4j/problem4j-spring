@@ -85,9 +85,14 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   private ResolverCaching resolverCaching = new ResolverCaching();
 
   /**
-   * Tracing configuration, deciding where trace identifiers of {@code ProblemContext} come from.
+   * Source of trace identifiers of {@code ProblemContext}. {@code auto} uses {@code micrometer} if
+   * {@code io.micrometer:micrometer-tracing} is on the classpath, and {@code simple} otherwise.
+   * {@code simple} takes the trace ID from the {@code problem4j.tracing-header-name} header or
+   * generates a random one. {@code micrometer} takes the trace ID and span ID of the current
+   * Micrometer Tracing span first, falling back to {@code simple} behavior if no span is available,
+   * and fails application startup if Micrometer Tracing is not on the classpath.
    */
-  private Tracing tracing = new Tracing();
+  private TracingSource tracingSource = TracingSource.AUTO;
 
   /**
    * Which handled exceptions are recorded as errors of the current HTTP server observation
@@ -396,23 +401,23 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   }
 
   /**
-   * Returns the tracing configuration.
+   * Returns the source of trace identifiers of {@code ProblemContext}.
    *
-   * @return tracing settings
+   * @return the tracing source
    * @since 3.1.0
    */
-  public Tracing getTracing() {
-    return tracing;
+  public TracingSource getTracingSource() {
+    return tracingSource;
   }
 
   /**
-   * Sets the tracing configuration.
+   * Sets the source of trace identifiers of {@code ProblemContext}.
    *
-   * @param tracing tracing settings
+   * @param tracingSource the tracing source
    * @since 3.1.0
    */
-  public void setTracing(Tracing tracing) {
-    this.tracing = tracing;
+  public void setTracingSource(TracingSource tracingSource) {
+    this.tracingSource = tracingSource;
   }
 
   /**
@@ -507,51 +512,6 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   }
 
   /**
-   * Tracing configuration, deciding where trace identifiers of {@code ProblemContext} come from.
-   *
-   * @since 3.1.0
-   */
-  public static class Tracing {
-
-    /**
-     * Source of trace identifiers. {@code auto} uses {@code micrometer} if {@code
-     * io.micrometer:micrometer-tracing} is on the classpath, and {@code simple} otherwise. {@code
-     * simple} takes the trace ID from the {@code problem4j.tracing-header-name} header or generates
-     * a random one. {@code micrometer} takes the trace ID and span ID of the current Micrometer
-     * Tracing span first, falling back to {@code simple} behavior if no span is available, and
-     * fails application startup if Micrometer Tracing is not on the classpath.
-     */
-    private TracingSource source = TracingSource.AUTO;
-
-    /**
-     * Creates a new instance of {@link Tracing} with default values.
-     *
-     * @since 3.1.0
-     */
-    public Tracing() {}
-
-    /**
-     * Returns the source of trace identifiers.
-     *
-     * @return the tracing source
-     * @since 3.1.0
-     */
-    public TracingSource getSource() {
-      return source;
-    }
-
-    /**
-     * Sets the source of trace identifiers.
-     *
-     * @param source the tracing source
-     * @since 3.1.0
-     */
-    public void setSource(TracingSource source) {
-      this.source = source;
-    }
-  }
-
-  /**
    * Decides which exceptions handled by Problem4J are recorded as errors of the current HTTP server
    * observation.
    *
@@ -596,7 +556,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   /**
    * Source of trace identifiers stored in {@code ProblemContext}.
    *
-   * @see Tracing#getSource()
+   * @see #getTracingSource()
    * @since 3.1.0
    */
   public enum TracingSource {

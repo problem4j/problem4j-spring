@@ -35,7 +35,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
       "problem4j.instance-override=https://example.org/trace/{context.traceId}",
-      "problem4j.tracing.source=simple",
+      "problem4j.tracing-source=simple",
       "problem4j.tracing-header-name=X-Trace-Id"
     })
 @AutoConfigureWebTestClient
