@@ -50,6 +50,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.server.reactive.observation.ServerRequestObservationContext;
 import org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.server.WebFilter;
 
@@ -134,16 +135,27 @@ public class ProblemWebFluxAutoConfiguration {
   }
 
   /**
-   * Registers the default {@link ObservationErrorWebFluxInspector}, recording handled exceptions as
-   * errors of the current HTTP server observation, according to {@code
-   * problem4j.observation.record-errors}.
+   * Nested configuration that registers the {@link ObservationErrorWebFluxInspector}, recording
+   * handled exceptions as errors of the current HTTP server observation.
    */
-  @ConditionalOnClass(name = "io.micrometer.observation.Observation")
-  @ConditionalOnMissingBean(ObservationErrorWebFluxInspector.class)
-  @Bean
-  ObservationErrorWebFluxInspector observationErrorWebFluxInspector(ProblemProperties properties) {
-    ErrorRecording recordErrors = properties.getObservation().getRecordErrors();
-    return new ObservationErrorWebFluxInspector(status -> recordErrors.matches(status.value()));
+  @ConditionalOnClass(ServerRequestObservationContext.class)
+  @Configuration(proxyBeanMethods = false)
+  static class ObservationErrorConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    ObservationErrorConfiguration() {}
+
+    /**
+     * Registers the default {@link ObservationErrorWebFluxInspector}, recording handled exceptions
+     * according to {@code problem4j.observation.record-errors}.
+     */
+    @ConditionalOnMissingBean(ObservationErrorWebFluxInspector.class)
+    @Bean
+    ObservationErrorWebFluxInspector observationErrorWebFluxInspector(
+        ProblemProperties properties) {
+      ErrorRecording recordErrors = properties.getObservation().getRecordErrors();
+      return new ObservationErrorWebFluxInspector(status -> recordErrors.matches(status.value()));
+    }
   }
 
   /**

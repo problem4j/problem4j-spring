@@ -50,6 +50,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.server.observation.ServerRequestObservationContext;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -152,16 +153,26 @@ public class ProblemWebMvcAutoConfiguration {
   }
 
   /**
-   * Registers the default {@link ObservationErrorWebMvcInspector}, recording handled exceptions as
-   * errors of the current HTTP server observation, according to {@code
-   * problem4j.observation.record-errors}.
+   * Nested configuration that registers the {@link ObservationErrorWebMvcInspector}, recording
+   * handled exceptions as errors of the current HTTP server observation.
    */
-  @ConditionalOnClass(name = "io.micrometer.observation.Observation")
-  @ConditionalOnMissingBean(ObservationErrorWebMvcInspector.class)
-  @Bean
-  ObservationErrorWebMvcInspector observationErrorWebMvcInspector(ProblemProperties properties) {
-    ErrorRecording recordErrors = properties.getObservation().getRecordErrors();
-    return new ObservationErrorWebMvcInspector(status -> recordErrors.matches(status.value()));
+  @ConditionalOnClass(ServerRequestObservationContext.class)
+  @Configuration(proxyBeanMethods = false)
+  static class ObservationErrorConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    ObservationErrorConfiguration() {}
+
+    /**
+     * Registers the default {@link ObservationErrorWebMvcInspector}, recording handled exceptions
+     * according to {@code problem4j.observation.record-errors}.
+     */
+    @ConditionalOnMissingBean(ObservationErrorWebMvcInspector.class)
+    @Bean
+    ObservationErrorWebMvcInspector observationErrorWebMvcInspector(ProblemProperties properties) {
+      ErrorRecording recordErrors = properties.getObservation().getRecordErrors();
+      return new ObservationErrorWebMvcInspector(status -> recordErrors.matches(status.value()));
+    }
   }
 
   /**
