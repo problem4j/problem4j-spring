@@ -631,11 +631,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
      * @since 3.1.0
      */
     public boolean matches(int status) {
-      return switch (this) {
-        case NONE -> false;
-        case SERVER -> status >= 500 && status < 600;
-        case ALL -> true;
-      };
+      return this == ALL || (this == SERVER && status >= 500 && status < 600);
     }
   }
 

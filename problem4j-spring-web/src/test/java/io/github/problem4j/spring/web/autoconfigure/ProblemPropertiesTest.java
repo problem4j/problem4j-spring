@@ -183,6 +183,8 @@ class ProblemPropertiesTest {
     "SERVER, 422, false",
     "SERVER, 500, true",
     "SERVER, 503, true",
+    "SERVER, 599, true",
+    "SERVER, 600, false",
     "ALL, 200, true",
     "ALL, 400, true",
     "ALL, 500, true"
