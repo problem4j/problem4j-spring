@@ -165,13 +165,14 @@ public class ProblemWebMvcAutoConfiguration {
 
     /**
      * Registers the default {@link ObservationErrorWebMvcInspector}, recording handled exceptions
-     * according to {@code problem4j.observation.record-errors}.
+     * according to {@code problem4j.observation-errors}.
      */
     @ConditionalOnMissingBean(ObservationErrorWebMvcInspector.class)
     @Bean
     ObservationErrorWebMvcInspector observationErrorWebMvcInspector(ProblemProperties properties) {
-      ErrorRecording recordErrors = properties.getObservation().getRecordErrors();
-      return new ObservationErrorWebMvcInspector(status -> recordErrors.matches(status.value()));
+      ErrorRecording observationErrors = properties.getObservationErrors();
+      return new ObservationErrorWebMvcInspector(
+          status -> observationErrors.matches(status.value()));
     }
   }
 

@@ -90,10 +90,12 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   private Tracing tracing = new Tracing();
 
   /**
-   * Observation configuration, deciding which exceptions handled by Problem4J are recorded as
-   * errors of the current HTTP server observation.
+   * Which handled exceptions are recorded as errors of the current HTTP server observation
+   * (affecting the {@code exception} key of {@code http.server.requests} metrics and spans). {@code
+   * server} records exceptions resulting in a 5xx response, {@code all} records all of them, {@code
+   * none} disables recording.
    */
-  private Observation observation = new Observation();
+  private ErrorRecording observationErrors = ErrorRecording.SERVER;
 
   /**
    * Creates a new instance of {@link ProblemProperties} with default values.
@@ -414,23 +416,23 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   }
 
   /**
-   * Returns the observation configuration.
+   * Returns which handled exceptions are recorded as errors of the current HTTP server observation.
    *
-   * @return observation settings
+   * @return the error recording mode
    * @since 3.1.0
    */
-  public Observation getObservation() {
-    return observation;
+  public ErrorRecording getObservationErrors() {
+    return observationErrors;
   }
 
   /**
-   * Sets the observation configuration.
+   * Sets which handled exceptions are recorded as errors of the current HTTP server observation.
    *
-   * @param observation observation settings
+   * @param observationErrors the error recording mode
    * @since 3.1.0
    */
-  public void setObservation(Observation observation) {
-    this.observation = observation;
+  public void setObservationErrors(ErrorRecording observationErrors) {
+    this.observationErrors = observationErrors;
   }
 
   /**
@@ -550,54 +552,10 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   }
 
   /**
-   * Observation configuration, deciding which exceptions handled by Problem4J are recorded as
-   * errors of the current HTTP server observation.
-   *
-   * @since 3.1.0
-   */
-  public static class Observation {
-
-    /**
-     * Which handled exceptions are recorded as errors of the current HTTP server observation
-     * (affecting the {@code exception} key of {@code http.server.requests} metrics and spans).
-     * {@code server} records exceptions resulting in a 5xx response, {@code all} records all of
-     * them, {@code none} disables recording.
-     */
-    private ErrorRecording recordErrors = ErrorRecording.SERVER;
-
-    /**
-     * Creates a new instance of {@link Observation} with default values.
-     *
-     * @since 3.1.0
-     */
-    public Observation() {}
-
-    /**
-     * Returns which handled exceptions are recorded as observation errors.
-     *
-     * @return the error recording mode
-     * @since 3.1.0
-     */
-    public ErrorRecording getRecordErrors() {
-      return recordErrors;
-    }
-
-    /**
-     * Sets which handled exceptions are recorded as observation errors.
-     *
-     * @param recordErrors the error recording mode
-     * @since 3.1.0
-     */
-    public void setRecordErrors(ErrorRecording recordErrors) {
-      this.recordErrors = recordErrors;
-    }
-  }
-
-  /**
    * Decides which exceptions handled by Problem4J are recorded as errors of the current HTTP server
    * observation.
    *
-   * @see Observation#getRecordErrors()
+   * @see #getObservationErrors()
    * @since 3.1.0
    */
   public enum ErrorRecording {

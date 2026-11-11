@@ -35,8 +35,8 @@ import org.springframework.web.server.ServerWebExchange;
  * Spring Framework for handled exceptions. An error already recorded in the observation context is
  * never replaced.
  *
- * <p>Registered automatically with {@code problem4j.observation.record-errors} property deciding
- * which response statuses are recorded ({@code server} by default).
+ * <p>Registered automatically with {@code problem4j.observation-errors} property deciding which
+ * response statuses are recorded ({@code server} by default).
  *
  * @since 3.1.0
  */

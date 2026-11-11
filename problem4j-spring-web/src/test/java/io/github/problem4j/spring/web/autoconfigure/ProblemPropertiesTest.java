@@ -22,7 +22,6 @@ import static org.assertj.core.api.Assertions.entry;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DetailFormat;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DuplicateResolverPolicy;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ErrorRecording;
-import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.Observation;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ResolverCaching;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.Tracing;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.TracingSource;
@@ -143,36 +142,32 @@ class ProblemPropertiesTest {
   }
 
   @Test
-  void givenNoArgConstructor_whenCreated_thenObservationDefaultsApplied() {
+  void givenNoArgConstructor_whenCreated_thenObservationErrorsDefaultApplied() {
     ProblemProperties properties = new ProblemProperties();
 
-    assertThat(properties.getObservation().getRecordErrors()).isEqualTo(ErrorRecording.SERVER);
+    assertThat(properties.getObservationErrors()).isEqualTo(ErrorRecording.SERVER);
   }
 
   @Test
-  void givenObservationSetters_whenInvoked_thenValuesRoundTrip() {
+  void givenObservationErrorsSetter_whenInvoked_thenValueRoundTrips() {
     ProblemProperties properties = new ProblemProperties();
-    Observation observation = new Observation();
-    observation.setRecordErrors(ErrorRecording.ALL);
 
-    properties.setObservation(observation);
+    properties.setObservationErrors(ErrorRecording.ALL);
 
-    assertThat(properties.getObservation()).isSameAs(observation);
-    assertThat(properties.getObservation().getRecordErrors()).isEqualTo(ErrorRecording.ALL);
+    assertThat(properties.getObservationErrors()).isEqualTo(ErrorRecording.ALL);
   }
 
   @ParameterizedTest
   @CsvSource({"none, NONE", "server, SERVER", "all, ALL", "ALL, ALL"})
-  void givenRecordErrorsProperty_whenBound_thenErrorRecordingIsSet(
+  void givenObservationErrorsProperty_whenBound_thenErrorRecordingIsSet(
       String value, ErrorRecording expected) {
     ProblemProperties properties =
         new Binder(
-                new MapConfigurationPropertySource(
-                    Map.of("problem4j.observation.record-errors", value)))
+                new MapConfigurationPropertySource(Map.of("problem4j.observation-errors", value)))
             .bind("problem4j", ProblemProperties.class)
             .get();
 
-    assertThat(properties.getObservation().getRecordErrors()).isEqualTo(expected);
+    assertThat(properties.getObservationErrors()).isEqualTo(expected);
   }
 
   @ParameterizedTest

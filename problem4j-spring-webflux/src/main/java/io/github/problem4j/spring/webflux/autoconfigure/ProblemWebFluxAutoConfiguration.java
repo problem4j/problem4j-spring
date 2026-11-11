@@ -147,14 +147,15 @@ public class ProblemWebFluxAutoConfiguration {
 
     /**
      * Registers the default {@link ObservationErrorWebFluxInspector}, recording handled exceptions
-     * according to {@code problem4j.observation.record-errors}.
+     * according to {@code problem4j.observation-errors}.
      */
     @ConditionalOnMissingBean(ObservationErrorWebFluxInspector.class)
     @Bean
     ObservationErrorWebFluxInspector observationErrorWebFluxInspector(
         ProblemProperties properties) {
-      ErrorRecording recordErrors = properties.getObservation().getRecordErrors();
-      return new ObservationErrorWebFluxInspector(status -> recordErrors.matches(status.value()));
+      ErrorRecording observationErrors = properties.getObservationErrors();
+      return new ObservationErrorWebFluxInspector(
+          status -> observationErrors.matches(status.value()));
     }
   }
 

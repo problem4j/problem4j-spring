@@ -85,7 +85,7 @@ class ObservationErrorWebMvcTest {
   @SpringBootTest(
       classes = {WebMvcTestApp.class, ObservationCaptureConfiguration.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-      properties = {"problem4j.observation.record-errors=all"})
+      properties = {"problem4j.observation-errors=all"})
   @AutoConfigureTestRestTemplate
   @Nested
   class WithAllRecording {
@@ -112,7 +112,7 @@ class ObservationErrorWebMvcTest {
   @SpringBootTest(
       classes = {WebMvcTestApp.class, ObservationCaptureConfiguration.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-      properties = {"problem4j.observation.record-errors=none"})
+      properties = {"problem4j.observation-errors=none"})
   @AutoConfigureTestRestTemplate
   @Nested
   class WithNoRecording {
