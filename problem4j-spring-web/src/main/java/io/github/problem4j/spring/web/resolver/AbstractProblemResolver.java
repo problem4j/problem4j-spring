@@ -25,10 +25,13 @@ import org.jspecify.annotations.Nullable;
  * Convenience base class for {@link ProblemResolver}-s.
  *
  * <p>When used as a Spring bean under {@code problem4j-spring-web} autoconfiguration, the {@link
- * ProblemFormat} held by this resolver is (re)assigned after construction by {@link
- * ProblemBeanPostProcessor} through {@link #setProblemFormat(ProblemFormat)}, overriding whatever
- * the constructor received. Subclasses may have further collaborators injected the same way; each
- * documents its own.
+ * ProblemFormat} held by this resolver is assigned after construction by {@link
+ * ProblemBeanPostProcessor} through {@link #setProblemFormat(ProblemFormat)}. Subclasses may have
+ * further collaborators injected the same way; each documents its own.
+ *
+ * <p>For backwards compatibility with 3.0.0, a collaborator passed explicitly to a (deprecated)
+ * constructor is never replaced afterward - its setter has no effect. Only collaborators created by
+ * the resolver itself as defaults can be replaced.
  *
  * @since 1.2.0
  */
@@ -37,6 +40,14 @@ public abstract class AbstractProblemResolver implements ProblemResolver, Proble
   private final Class<? extends Exception> clazz;
 
   private ProblemFormat problemFormat;
+
+  /**
+   * Whether {@link #setProblemFormat(ProblemFormat)} may replace the {@link ProblemFormat}. It is
+   * {@code false} when the {@link ProblemFormat} was passed explicitly to a (deprecated)
+   * constructor, so it is kept as in 3.0.0, where constructor arguments were never replaced
+   * afterward.
+   */
+  private final boolean problemFormatAssignable;
 
   /**
    * Creates a resolver for the given exception type using {@link ProblemFormat#identity()} (no
@@ -48,11 +59,15 @@ public abstract class AbstractProblemResolver implements ProblemResolver, Proble
   public AbstractProblemResolver(Class<? extends Exception> clazz) {
     this.clazz = clazz;
     this.problemFormat = ProblemFormat.identity();
+    this.problemFormatAssignable = true;
   }
 
   /**
    * Creates a resolver for the given exception type with a custom {@link ProblemFormat} applied to
    * any detail text via {@link #formatDetail(String)}.
+   *
+   * <p>The given {@link ProblemFormat} is kept for the lifetime of this resolver and is not
+   * replaced by {@link #setProblemFormat(ProblemFormat)}.
    *
    * @param clazz exception subtype this resolver is responsible for
    * @param problemFormat formatting strategy for detail (must not be {@code null})
@@ -65,6 +80,7 @@ public abstract class AbstractProblemResolver implements ProblemResolver, Proble
   public AbstractProblemResolver(Class<? extends Exception> clazz, ProblemFormat problemFormat) {
     this.clazz = clazz;
     this.problemFormat = problemFormat;
+    this.problemFormatAssignable = false;
   }
 
   /**
@@ -90,13 +106,32 @@ public abstract class AbstractProblemResolver implements ProblemResolver, Proble
   }
 
   /**
-   * Replaces the {@link ProblemFormat} used by this resolver.
+   * Returns the {@link ProblemFormat} currently used by this resolver, so that built-in subclasses
+   * can propagate it to their helpers after {@link #setProblemFormat(ProblemFormat)}.
+   *
+   * @return the problem format in use
+   * @deprecated exists only to keep a {@link ProblemFormat} passed to the deprecated {@link
+   *     #AbstractProblemResolver(Class, ProblemFormat)} constructor; to be removed together with it
+   */
+  @Deprecated(since = "3.1.0", forRemoval = true)
+  final ProblemFormat getProblemFormat() {
+    return problemFormat;
+  }
+
+  /**
+   * Replaces the {@link ProblemFormat} used by this resolver, unless one was passed to the
+   * constructor, in which case this method has no effect.
+   *
+   * <p>Subclasses overriding this method should call {@code super}, so that a {@link ProblemFormat}
+   * passed to the constructor is kept.
    *
    * @param problemFormat the problem format to use
    * @since 3.1.0
    */
   @Override
   public void setProblemFormat(ProblemFormat problemFormat) {
-    this.problemFormat = problemFormat;
+    if (problemFormatAssignable) {
+      this.problemFormat = problemFormat;
+    }
   }
 }

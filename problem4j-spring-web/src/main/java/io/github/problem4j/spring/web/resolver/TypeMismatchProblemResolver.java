@@ -41,7 +41,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  *
  * <p>When used as a Spring bean, in addition to the {@link ProblemFormat} injected via {@link
  * AbstractProblemResolver}, the {@link TypeNameMapper} is assigned after construction by {@link
- * ProblemBeanPostProcessor} through {@link #setTypeNameMapper(TypeNameMapper)}.
+ * ProblemBeanPostProcessor} through {@link #setTypeNameMapper(TypeNameMapper)}, unless it was
+ * passed to the constructor.
  *
  * @since 1.2.0
  */
@@ -49,6 +50,14 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
     implements TypeNameMapperAware {
 
   private final TypeMismatchHelper typeMismatchHelper;
+
+  /**
+   * Whether {@link #setTypeNameMapper(TypeNameMapper)} may replace the {@link TypeNameMapper}. It
+   * is {@code false} when the {@link TypeNameMapper} was passed explicitly to a (deprecated)
+   * constructor, so it is kept as in 3.0.0, where constructor arguments were never replaced
+   * afterward.
+   */
+  private final boolean typeNameMapperAssignable;
 
   /**
    * Creates a new {@link TypeMismatchProblemResolver} with default problem format.
@@ -59,6 +68,7 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
     super(TypeMismatchException.class);
     this.typeMismatchHelper =
         new TypeMismatchHelper(ProblemFormat.identity(), new SimpleTypeNameMapper());
+    this.typeNameMapperAssignable = true;
   }
 
   /**
@@ -69,9 +79,12 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
    * @deprecated since 3.1.0 as {@link ProblemBeanPostProcessor} now assigns collaborators after
    *     construction; use {@link #TypeMismatchProblemResolver()}
    */
+  @SuppressWarnings("removal")
   @Deprecated(since = "3.1.0", forRemoval = true)
   public TypeMismatchProblemResolver(ProblemFormat problemFormat) {
-    this(problemFormat, new SimpleTypeNameMapper());
+    super(TypeMismatchException.class, problemFormat);
+    this.typeMismatchHelper = new TypeMismatchHelper(problemFormat, new SimpleTypeNameMapper());
+    this.typeNameMapperAssignable = true;
   }
 
   /**
@@ -89,29 +102,35 @@ public class TypeMismatchProblemResolver extends AbstractProblemResolver
   public TypeMismatchProblemResolver(ProblemFormat problemFormat, TypeNameMapper typeNameMapper) {
     super(TypeMismatchException.class, problemFormat);
     this.typeMismatchHelper = new TypeMismatchHelper(problemFormat, typeNameMapper);
+    this.typeNameMapperAssignable = false;
   }
 
   /**
-   * Replaces the {@link TypeNameMapper} used by this resolver.
+   * Replaces the {@link TypeNameMapper} used by this resolver, unless one was passed to the
+   * constructor, in which case this method has no effect.
    *
    * @param typeNameMapper the type name mapper to use
    * @since 3.1.0
    */
   @Override
   public void setTypeNameMapper(TypeNameMapper typeNameMapper) {
-    typeMismatchHelper.setTypeNameMapper(typeNameMapper);
+    if (typeNameMapperAssignable) {
+      typeMismatchHelper.setTypeNameMapper(typeNameMapper);
+    }
   }
 
   /**
-   * Replaces the {@link ProblemFormat} used by this resolver.
+   * Replaces the {@link ProblemFormat} used by this resolver, unless one was passed to the
+   * constructor, in which case this method has no effect.
    *
    * @param problemFormat the problem format to use
    * @since 3.1.0
    */
+  @SuppressWarnings("removal")
   @Override
   public void setProblemFormat(ProblemFormat problemFormat) {
     super.setProblemFormat(problemFormat);
-    typeMismatchHelper.setProblemFormat(problemFormat);
+    typeMismatchHelper.setProblemFormat(getProblemFormat());
   }
 
   /**

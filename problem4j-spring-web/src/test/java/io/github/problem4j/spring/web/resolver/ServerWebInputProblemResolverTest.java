@@ -243,4 +243,84 @@ class ServerWebInputProblemResolverTest {
   static class DummyController {
     public void paramMethod(Boolean value) {}
   }
+
+  @Test
+  @SuppressWarnings("removal")
+  void givenCollaboratorsPassedToConstructor_whenSetters_thenKeepsConstructorCollaborators()
+      throws NoSuchMethodException {
+    ServerWebInputProblemResolver resolver =
+        new ServerWebInputProblemResolver(
+            ProblemFormat.identity(),
+            new TypeMismatchProblemResolver(),
+            mp -> Optional.of("constructor-name"),
+            type -> Optional.of("constructor"));
+    resolver.setProblemFormat(detail -> detail == null ? null : detail.toUpperCase());
+    resolver.setTypeNameMapper(type -> Optional.of("custom"));
+    resolver.setMethodParameterSupport(mp -> Optional.of("custom-name"));
+
+    Problem problem =
+        resolver.resolve(
+            ProblemContext.create(),
+            typeMismatchWithParameter(),
+            new HttpHeaders(),
+            HttpStatusCode.valueOf(400));
+
+    assertThat(problem.getDetail()).isEqualTo("Type mismatch");
+    assertThat(problem.getExtensions())
+        .containsEntry("kind", "constructor")
+        .containsEntry("property", "constructor-name");
+  }
+
+  @Test
+  @SuppressWarnings("removal")
+  void givenMethodParameterSupportPassedToConstructor_whenSetters_thenReplacesOnlyTypeNameMapper()
+      throws NoSuchMethodException {
+    ServerWebInputProblemResolver resolver =
+        new ServerWebInputProblemResolver(
+            ProblemFormat.identity(), mp -> Optional.of("constructor-name"));
+    resolver.setTypeNameMapper(type -> Optional.of("custom"));
+    resolver.setMethodParameterSupport(mp -> Optional.of("custom-name"));
+
+    Problem problem =
+        resolver.resolve(
+            ProblemContext.create(),
+            typeMismatchWithParameter(),
+            new HttpHeaders(),
+            HttpStatusCode.valueOf(400));
+
+    assertThat(problem.getExtensions())
+        .containsEntry("kind", "custom")
+        .containsEntry("property", "constructor-name");
+  }
+
+  @Test
+  @SuppressWarnings("removal")
+  void givenOnlyProblemFormatPassedToConstructor_whenSetters_thenReplacesOtherCollaborators()
+      throws NoSuchMethodException {
+    ServerWebInputProblemResolver resolver =
+        new ServerWebInputProblemResolver(ProblemFormat.identity());
+    resolver.setProblemFormat(detail -> detail == null ? null : detail.toUpperCase());
+    resolver.setTypeNameMapper(type -> Optional.of("custom"));
+    resolver.setMethodParameterSupport(mp -> Optional.of("custom-name"));
+
+    Problem problem =
+        resolver.resolve(
+            ProblemContext.create(),
+            typeMismatchWithParameter(),
+            new HttpHeaders(),
+            HttpStatusCode.valueOf(400));
+
+    assertThat(problem.getDetail()).isEqualTo("Type mismatch");
+    assertThat(problem.getExtensions())
+        .containsEntry("kind", "custom")
+        .containsEntry("property", "custom-name");
+  }
+
+  private ServerWebInputException typeMismatchWithParameter() throws NoSuchMethodException {
+    Method method = DummyController.class.getMethod("paramMethod", Boolean.class);
+    MethodParameter parameter = new MethodParameter(method, 0);
+    parameter.initParameterNameDiscovery(new DefaultParameterNameDiscoverer());
+    TypeMismatchException cause = new TypeMismatchException("42", Boolean.class);
+    return new ServerWebInputException("irrelevant reason", parameter, cause);
+  }
 }

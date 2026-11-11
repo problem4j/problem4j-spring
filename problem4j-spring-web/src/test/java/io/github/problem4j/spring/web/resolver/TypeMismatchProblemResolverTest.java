@@ -148,4 +148,39 @@ class TypeMismatchProblemResolverTest {
                 .extension("property", "field")
                 .build());
   }
+
+  @Test
+  @SuppressWarnings("removal")
+  void givenCollaboratorsPassedToConstructor_whenSetters_thenKeepsConstructorCollaborators() {
+    TypeMismatchProblemResolver resolver =
+        new TypeMismatchProblemResolver(
+            ProblemFormat.identity(), type -> Optional.of("constructor"));
+    resolver.setProblemFormat(detail -> detail == null ? null : detail.toUpperCase());
+    resolver.setTypeNameMapper(type -> Optional.of("custom"));
+    TypeMismatchException ex = new TypeMismatchException("42", Integer.class);
+
+    Problem problem =
+        resolver.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+
+    assertThat(problem.getDetail()).isEqualTo("Type mismatch");
+    assertThat(problem.getExtensions()).containsEntry("kind", "constructor");
+  }
+
+  @Test
+  @SuppressWarnings("removal")
+  void givenOnlyProblemFormatPassedToConstructor_whenSetTypeNameMapper_thenUsesNewMapper() {
+    TypeMismatchProblemResolver resolver =
+        new TypeMismatchProblemResolver(ProblemFormat.identity());
+    resolver.setProblemFormat(detail -> detail == null ? null : detail.toUpperCase());
+    resolver.setTypeNameMapper(type -> Optional.of("custom"));
+    TypeMismatchException ex = new TypeMismatchException("42", Integer.class);
+
+    Problem problem =
+        resolver.resolve(
+            ProblemContext.create(), ex, new HttpHeaders(), HttpStatusCode.valueOf(400));
+
+    assertThat(problem.getDetail()).isEqualTo("Type mismatch");
+    assertThat(problem.getExtensions()).containsEntry("kind", "custom");
+  }
 }
