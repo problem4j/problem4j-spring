@@ -18,10 +18,14 @@ package io.github.problem4j.spring.web;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jspecify.annotations.Nullable;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -54,6 +58,15 @@ import org.springframework.util.StringUtils;
  *         <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current
  *             {@link ProblemContext}
  *       </ul>
+ *   <li><b>For extension overrides:</b>
+ *       <ul>
+ *         <li>{@code {problem.type}}, {@code {problem.title}}, {@code {problem.status}}, {@code
+ *             {problem.detail}}, {@code {problem.instance}} - replaced with the corresponding field
+ *             of the problem, after {@code type}, {@code title} and {@code instance} overrides are
+ *             applied
+ *         <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current
+ *             {@link ProblemContext}
+ *       </ul>
  * </ul>
  *
  * <p>If an override template contains a {@code {context.<key>}} placeholder whose value is absent
@@ -62,12 +75,19 @@ import org.springframework.util.StringUtils;
  * <p>If an override template produces the same value as the existing field, no change is applied.
  * If no override results in a change, the original {@link Problem} instance is returned unchanged.
  *
+ * <p>An extension override template consisting of exactly one placeholder keeps the type of the
+ * resolved value (e.g. {@code {problem.status}} is an integer). An overridden extension replaces an
+ * existing extension with the same name.
+ *
  * <p>Example configuration:
  *
  * <pre>{@code
  * problem4j.type-override=https://errors.example.com/{problem.type}
  * problem4j.title-override={problem.title} on {context.env}
  * problem4j.instance-override=/errors/{context.traceId}
+ * problem4j.extension-overrides.traceId={context.traceId}
+ * problem4j.extension-overrides.code={problem.status}
+ * problem4j.extension-overrides.summary={problem.status} {problem.title}
  * }</pre>
  *
  * @since 1.2.0
@@ -98,6 +118,9 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
    */
   protected static final Pattern PLACEHOLDER_PATTERN = Pattern.compile(PLACEHOLDER_REGEX);
 
+  private static final Set<String> PROBLEM_FIELD_NAMES =
+      Set.of("type", "title", "status", "detail", "instance");
+
   private final PostProcessorSettings settings;
 
   /**
@@ -111,7 +134,8 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
   }
 
   /**
-   * Applies configured overrides to {@code type}, {@code title}, and/or {@code instance}.
+   * Applies configured overrides to {@code type}, {@code title}, {@code instance}, and/or
+   * extensions.
    *
    * <p>About {@code about:blank}: when the original type is {@code null} or {@link
    * Problem#BLANK_TYPE}, the placeholder {@code {problem.type}} resolves to an empty string
@@ -133,6 +157,7 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
     problem = overrideProblemType(context, problem);
     problem = overrideProblemTitle(context, problem);
     problem = overrideProblemInstance(context, problem);
+    problem = overrideProblemExtensions(context, problem);
     return problem;
   }
 
@@ -325,6 +350,86 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
   }
 
   /**
+   * Applies configured extension overrides.
+   *
+   * <p>Each override is resolved independently with {@link #overrideExtension(ProblemContext,
+   * Problem, String)}. Overrides that cannot be resolved are skipped, leaving any existing
+   * extension with the same name unchanged. Resolved overrides replace existing extensions with the
+   * same name. Names of standard problem fields ({@code type}, {@code title}, {@code status},
+   * {@code detail}, {@code instance}) are ignored, as they cannot be used as extension names.
+   *
+   * @param context the problem context
+   * @param problem the original problem
+   * @return the updated problem if any override was applied, or the original problem unchanged
+   * @since 3.1.0
+   */
+  protected Problem overrideProblemExtensions(ProblemContext context, Problem problem) {
+    Map<String, String> overrides = settings.getExtensionOverrides();
+    if (CollectionUtils.isEmpty(overrides)) {
+      return problem;
+    }
+
+    Map<String, Object> newExtensions = new LinkedHashMap<>();
+    for (Map.Entry<String, String> override : overrides.entrySet()) {
+      String name = override.getKey();
+      if (!StringUtils.hasLength(name) || PROBLEM_FIELD_NAMES.contains(name)) {
+        continue;
+      }
+      overrideExtension(context, problem, override.getValue())
+          .filter(value -> !value.equals(problem.getExtensions().get(name)))
+          .ifPresent(value -> newExtensions.put(name, value));
+    }
+
+    if (newExtensions.isEmpty()) {
+      return problem;
+    }
+    return problem.toBuilder().extensions(newExtensions).build();
+  }
+
+  /**
+   * Resolves a single extension override template.
+   *
+   * <p>If the template consists of exactly one placeholder, the resolved value keeps its type (e.g.
+   * {@code {problem.status}} resolves to an {@link Integer}). Otherwise, all placeholders are
+   * replaced within the template and the result is a {@link String}.
+   *
+   * <p>Only standard problem fields ({@code {problem.type}}, {@code {problem.title}}, {@code
+   * {problem.status}}, {@code {problem.detail}}, {@code {problem.instance}}) and {@code
+   * {context.<key>}} placeholders are supported. If any placeholder is unknown or its value is
+   * absent or empty (including {@code type} equal to {@link Problem#BLANK_TYPE}), the override is
+   * skipped.
+   *
+   * @param context the problem context
+   * @param problem the problem whose fields are used for placeholders
+   * @param template the extension override template
+   * @return an optional containing the resolved extension value if override is possible
+   * @since 3.1.0
+   */
+  protected Optional<Object> overrideExtension(
+      ProblemContext context, Problem problem, @Nullable String template) {
+    if (!StringUtils.hasLength(template)) {
+      return Optional.empty();
+    }
+
+    Matcher matcher = PLACEHOLDER_PATTERN.matcher(template);
+    if (matcher.matches()) {
+      return resolveExtensionPlaceholder(matcher.group(1), context, problem);
+    }
+
+    matcher.reset();
+    StringBuilder result = new StringBuilder();
+    while (matcher.find()) {
+      Optional<Object> value = resolveExtensionPlaceholder(matcher.group(1), context, problem);
+      if (value.isEmpty()) {
+        return Optional.empty();
+      }
+      matcher.appendReplacement(result, Matcher.quoteReplacement(value.get().toString()));
+    }
+    matcher.appendTail(result);
+    return Optional.of(result.toString());
+  }
+
+  /**
    * Converts the given value to a string or returns an empty string if {@code null}.
    *
    * @param value the value to convert
@@ -369,6 +474,26 @@ public class DefaultProblemPostProcessor implements ProblemPostProcessor {
       }
     }
     return true;
+  }
+
+  private Optional<Object> resolveExtensionPlaceholder(
+      String key, ProblemContext context, Problem problem) {
+    if (key.startsWith(CONTEXT_PREFIX)) {
+      return nonEmpty(context.get(key.substring(CONTEXT_PREFIX.length())));
+    }
+    return switch (key) {
+      case "problem.type" ->
+          problem.isTypeNonBlank() ? nonEmpty(problem.getType().toString()) : Optional.empty();
+      case "problem.title" -> nonEmpty(problem.getTitle());
+      case "problem.status" -> Optional.of(problem.getStatus());
+      case "problem.detail" -> nonEmpty(problem.getDetail());
+      case "problem.instance" -> nonEmpty(stringOrEmpty(problem.getInstance()));
+      default -> Optional.empty();
+    };
+  }
+
+  private Optional<Object> nonEmpty(@Nullable String value) {
+    return StringUtils.hasLength(value) ? Optional.of(value) : Optional.empty();
   }
 
   private String resolveContextPlaceholders(String template, ProblemContext context) {

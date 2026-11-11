@@ -18,6 +18,8 @@ package io.github.problem4j.spring.web.autoconfigure;
 
 import io.github.problem4j.spring.web.PostProcessorSettings;
 import io.github.problem4j.spring.web.ProblemContextSettings;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.jspecify.annotations.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -63,6 +65,14 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    * placeholders like {@code {problem.instance}} and {@code {context.<key>}} for dynamic values.
    */
   private @Nullable String instanceOverride;
+
+  /**
+   * Templates for overriding extension members of a Problem response, keyed by extension name. May
+   * contain placeholders like {@code {problem.type}}, {@code {problem.title}}, {@code
+   * {problem.status}}, {@code {problem.detail}}, {@code {problem.instance}} and {@code
+   * {context.<key>}}. An overridden extension replaces an existing extension with the same name.
+   */
+  private Map<String, String> extensionOverrides = new LinkedHashMap<>();
 
   /**
    * Policy for multiple {@code ProblemResolver}-s supporting the same exception class with equal
@@ -298,6 +308,42 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    */
   public void setInstanceOverride(@Nullable String instanceOverride) {
     this.instanceOverride = instanceOverride;
+  }
+
+  /**
+   * Returns the configured extension overrides, keyed by extension name.
+   *
+   * <p>Each value may contain special placeholders that will be replaced at runtime:
+   *
+   * <ul>
+   *   <li>{@code {problem.type}}, {@code {problem.title}}, {@code {problem.status}}, {@code
+   *       {problem.detail}}, {@code {problem.instance}} - replaced with the corresponding field of
+   *       the problem
+   *   <li>{@code {context.<key>}} - replaced with the value for {@code key} from the current {@code
+   *       ProblemContext}
+   * </ul>
+   *
+   * <p>Extension names with dots or other special characters must be written in bracket notation,
+   * e.g. {@code problem4j.extension-overrides[app.version]=1.0}.
+   *
+   * @return the configured extension override templates, never {@code null}
+   * @see io.github.problem4j.core.ProblemContext
+   * @since 3.1.0
+   */
+  @Override
+  public Map<String, String> getExtensionOverrides() {
+    return extensionOverrides;
+  }
+
+  /**
+   * Sets the templates for overriding extension members, keyed by extension name.
+   *
+   * @param extensionOverrides templates for overriding extension members; may contain {@code
+   *     {problem.<field>}} and {@code {context.<key>}} placeholders
+   * @since 3.1.0
+   */
+  public void setExtensionOverrides(Map<String, String> extensionOverrides) {
+    this.extensionOverrides = extensionOverrides;
   }
 
   /**
