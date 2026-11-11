@@ -19,6 +19,7 @@ package io.github.problem4j.spring.webmvc.autoconfigure;
 import static io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.UNAVAILABLE_SOURCE_MESSAGE;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.github.problem4j.spring.web.ProblemContextSettings;
 import io.github.problem4j.spring.web.autoconfigure.ProblemAutoConfiguration;
 import io.github.problem4j.spring.webmvc.MicrometerProblemContextWebMvcFilter;
 import io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter;
@@ -165,7 +166,8 @@ class ProblemContextWebMvcFilterConfigurationTest {
   @Configuration(proxyBeanMethods = false)
   static class CustomFilterConfiguration {
 
-    final ProblemContextWebMvcFilter filter = new ProblemContextWebMvcFilter(() -> null);
+    final ProblemContextWebMvcFilter filter =
+        new ProblemContextWebMvcFilter(new ProblemContextSettings() {});
 
     @Bean
     ProblemContextWebMvcFilter customProblemContextWebMvcFilter() {

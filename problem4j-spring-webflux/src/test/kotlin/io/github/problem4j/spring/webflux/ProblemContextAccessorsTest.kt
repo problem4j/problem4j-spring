@@ -18,6 +18,7 @@ package io.github.problem4j.spring.webflux
 
 import io.github.problem4j.core.ProblemContext
 import io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE
+import io.github.problem4j.spring.web.ProblemContextSettings
 import java.util.concurrent.atomic.AtomicReference
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -73,7 +74,7 @@ class ProblemContextAccessorsTest {
   @Test
   fun givenFilteredExchange_whenReadingDownstream_thenFilterContextIsReturned() {
     val captured = AtomicReference<List<ProblemContext?>>()
-    val filter = ProblemContextWebFluxFilter { null }
+    val filter = ProblemContextWebFluxFilter(object : ProblemContextSettings {})
     val exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"))
     val chain = WebFilterChain { ex ->
       Mono.deferContextual { ctx ->

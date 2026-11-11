@@ -18,6 +18,7 @@ package io.github.problem4j.spring.webmvc
 
 import io.github.problem4j.core.ProblemContext
 import io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE
+import io.github.problem4j.spring.web.ProblemContextSettings
 import jakarta.servlet.http.HttpServletRequest
 import java.util.concurrent.atomic.AtomicReference
 import org.assertj.core.api.Assertions.assertThat
@@ -76,7 +77,7 @@ class ProblemContextAccessorsTest {
   @Test
   fun givenFilteredRequest_whenReadingFromServletRequest_thenFilterContextIsReturned() {
     val captured = AtomicReference<ProblemContext>()
-    val filter = ProblemContextWebMvcFilter { null }
+    val filter = ProblemContextWebMvcFilter(object : ProblemContextSettings {})
     val request = MockHttpServletRequest()
 
     filter.doFilter(request, MockHttpServletResponse()) { req, _ ->

@@ -21,6 +21,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import java.net.URI;
+import java.util.Map;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
@@ -41,7 +43,12 @@ import tools.jackson.databind.json.JsonMapper;
       "problem4j.instance-override=https://example.org/trace/{context.traceId}",
       "problem4j.tracing.source=simple",
       "problem4j.tracing-header-name=X-Trace-Id",
-      "problem4j.detail-format=lowercase"
+      "problem4j.detail-format=lowercase",
+      "problem4j.extension-overrides.code={problem.status}",
+      "problem4j.extension-overrides.summary={problem.status} {problem.title}",
+      "problem4j.extension-overrides.traceId={context.traceId}",
+      "problem4j.extension-overrides.missing={context.missing}",
+      "problem4j.extension-overrides[app.version]=1.0"
     })
 @AutoConfigureTestRestTemplate
 class ProblemOverrideWebMvcTest {
@@ -103,5 +110,32 @@ class ProblemOverrideWebMvcTest {
     Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
 
     assertThat(problem.getInstance()).isEqualTo(URI.create("https://example.org/trace/" + traceId));
+  }
+
+  @Test
+  void givenExtensionOverrides_whenProblemThrown_thenOverridesExtensions() {
+    String traceId = "12345-trace";
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set("X-Trace-ID", traceId);
+
+    HttpEntity<String> request = new HttpEntity<>("{}", headers);
+
+    ResponseEntity<String> response =
+        restTemplate.postForEntity("/problem-override/extension-override", request, String.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
+
+    Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
+
+    Assertions.assertThat(problem.getExtensions())
+        .containsExactlyInAnyOrderEntriesOf(
+            Map.of(
+                "code", 400,
+                "summary", "400 Bad Request",
+                "traceId", traceId,
+                "app.version", "1.0",
+                "kept", "value"));
   }
 }

@@ -40,5 +40,7 @@ public interface ProblemContextSettings {
    * @return the tracing header name, or {@code null} if tracing is disabled / not configured
    * @since 1.2.0
    */
-  @Nullable String getTracingHeaderName();
+  default @Nullable String getTracingHeaderName() {
+    return null;
+  }
 }

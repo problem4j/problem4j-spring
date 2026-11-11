@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
+import java.util.Map;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -330,15 +331,233 @@ class DefaultProblemPostProcessorTest {
     assertThat(processor.getSettings()).isSameAs(settings);
   }
 
-  private PostProcessorSettings getSettings(
-      @Nullable String typeOverride, @Nullable String instanceOverride) {
-    return getSettings(typeOverride, null, instanceOverride);
+  @Test
+  void givenStatusOnlyExtensionOverride_whenProcess_thenExtensionKeepsIntegerType() {
+    PostProcessorSettings settings = getExtensionSettings(Map.of("code", "{problem.status}"));
+
+    Problem problem = Problem.of(400);
+
+    Problem result = new DefaultProblemPostProcessor(settings).process(null, problem);
+
+    assertThat(result.getExtensions()).containsExactlyEntriesOf(Map.of("code", 400));
+  }
+
+  @Test
+  void givenCompositeExtensionOverride_whenProcess_thenExtensionIsString() {
+    PostProcessorSettings settings =
+        getExtensionSettings(Map.of("summary", "{problem.status} {problem.title} ({context.env})"));
+
+    ProblemContext context = ProblemContext.create().put("env", "prod");
+    Problem problem = Problem.of(400);
+
+    Problem result = new DefaultProblemPostProcessor(settings).process(context, problem);
+
+    assertThat(result.getExtensions())
+        .containsExactlyEntriesOf(Map.of("summary", "400 Bad Request (prod)"));
+  }
+
+  @Test
+  void givenStaticExtensionOverride_whenProcess_thenAddsExtension() {
+    PostProcessorSettings settings = getExtensionSettings(Map.of("app", "my-app"));
+
+    Problem problem = Problem.of(400);
+
+    Problem result = new DefaultProblemPostProcessor(settings).process(null, problem);
+
+    assertThat(result).isEqualTo(problem.toBuilder().extension("app", "my-app").build());
+  }
+
+  @Test
+  void givenContextExtensionOverride_whenContextHasValue_thenAddsExtension() {
+    PostProcessorSettings settings = getExtensionSettings(Map.of("traceId", "{context.traceId}"));
+
+    ProblemContext context = ProblemContext.create().put("traceId", "trace-123");
+    Problem problem = Problem.of(400);
+
+    Problem result = new DefaultProblemPostProcessor(settings).process(context, problem);
+
+    assertThat(result.getExtensions()).containsExactlyEntriesOf(Map.of("traceId", "trace-123"));
+  }
+
+  @Test
+  void givenContextExtensionOverride_whenContextValueMissing_thenKeepsExistingExtension() {
+    PostProcessorSettings settings =
+        getExtensionSettings(Map.of("traceId", "trace:{context.traceId}"));
+
+    Problem problem = Problem.builder().status(400).extension("traceId", "original").build();
+
+    Problem result =
+        new DefaultProblemPostProcessor(settings).process(ProblemContext.create(), problem);
+
+    assertThat(result).isSameAs(problem);
+  }
+
+  @Test
+  void givenExtensionOverride_whenExtensionAlreadyExists_thenOverrideWins() {
+    PostProcessorSettings settings = getExtensionSettings(Map.of("code", "{problem.status}"));
+
+    Problem problem =
+        Problem.builder().status(404).extension("code", "original").extension("kept", 1).build();
+
+    Problem result = new DefaultProblemPostProcessor(settings).process(null, problem);
+
+    assertThat(result.getExtensions())
+        .containsExactlyInAnyOrderEntriesOf(Map.of("code", 404, "kept", 1));
+  }
+
+  @Test
+  void givenExtensionOverride_whenResolvedValueEqualsExisting_thenReturnsSameProblem() {
+    PostProcessorSettings settings = getExtensionSettings(Map.of("code", "{problem.status}"));
+
+    Problem problem = Problem.builder().status(400).extension("code", 400).build();
+
+    Problem result = new DefaultProblemPostProcessor(settings).process(null, problem);
+
+    assertThat(result).isSameAs(problem);
+  }
+
+  @Test
+  void givenExtensionPlaceholderInOverride_whenProcess_thenSkipsOverride() {
+    PostProcessorSettings settings =
+        getExtensionSettings(Map.of("copy", "{problem.userId}", "other", "x-{problem.userId}"));
+
+    Problem problem = Problem.builder().status(400).extension("userId", "user-1").build();
+
+    Problem result = new DefaultProblemPostProcessor(settings).process(null, problem);
+
+    assertThat(result).isSameAs(problem);
+  }
+
+  @Test
+  void givenUnknownPlaceholderInOverride_whenProcess_thenSkipsOverride() {
+    PostProcessorSettings settings = getExtensionSettings(Map.of("value", "{unknown}"));
+
+    Problem problem = Problem.of(400);
+
+    Problem result = new DefaultProblemPostProcessor(settings).process(null, problem);
+
+    assertThat(result).isSameAs(problem);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"type", "title", "status", "detail", "instance"})
+  void givenProblemFieldNameAsExtensionName_whenProcess_thenIgnoresOverride(String name) {
+    PostProcessorSettings settings = getExtensionSettings(Map.of(name, "value"));
+
+    Problem problem = Problem.of(400);
+
+    Problem result = new DefaultProblemPostProcessor(settings).process(null, problem);
+
+    assertThat(result).isSameAs(problem);
+  }
+
+  @Test
+  void givenEmptyExtensionNameOrTemplate_whenProcess_thenIgnoresOverride() {
+    PostProcessorSettings settings = getExtensionSettings(Map.of("", "value", "empty", ""));
+
+    Problem problem = Problem.of(400);
+
+    Problem result = new DefaultProblemPostProcessor(settings).process(null, problem);
+
+    assertThat(result).isSameAs(problem);
+  }
+
+  @Test
+  void givenTypeExtensionOverride_whenTypeIsBlank_thenSkipsOverride() {
+    PostProcessorSettings settings = getExtensionSettings(Map.of("problemType", "{problem.type}"));
+
+    Problem problem = Problem.of(400);
+
+    Problem result = new DefaultProblemPostProcessor(settings).process(null, problem);
+
+    assertThat(result).isSameAs(problem);
+  }
+
+  @Test
+  void givenFieldExtensionOverrides_whenFieldsPresent_thenExtensionsAreStrings() {
+    PostProcessorSettings settings =
+        getExtensionSettings(
+            Map.of(
+                "problemType", "{problem.type}",
+                "problemDetail", "{problem.detail}",
+                "problemInstance", "{problem.instance}"));
+
+    Problem problem =
+        Problem.builder()
+            .type("https://example.org/bad-request")
+            .status(400)
+            .detail("Invalid input")
+            .instance("/requests/1")
+            .build();
+
+    Problem result = new DefaultProblemPostProcessor(settings).process(null, problem);
+
+    assertThat(result.getExtensions())
+        .containsExactlyInAnyOrderEntriesOf(
+            Map.of(
+                "problemType", "https://example.org/bad-request",
+                "problemDetail", "Invalid input",
+                "problemInstance", "/requests/1"));
+  }
+
+  @Test
+  void givenDetailExtensionOverride_whenDetailMissing_thenSkipsOverride() {
+    PostProcessorSettings settings =
+        getExtensionSettings(Map.of("problemDetail", "detail: {problem.detail}"));
+
+    Problem problem = Problem.of(400);
+
+    Problem result = new DefaultProblemPostProcessor(settings).process(null, problem);
+
+    assertThat(result).isSameAs(problem);
+  }
+
+  @Test
+  void givenTypeOverrideAndTypeExtensionOverride_whenProcess_thenExtensionUsesOverriddenType() {
+    PostProcessorSettings settings =
+        getSettings(
+            "https://example.org/{problem.type}",
+            null,
+            null,
+            Map.of("problemType", "{problem.type}"));
+
+    Problem problem = Problem.builder().type("bad-request").status(400).build();
+
+    Problem result = new DefaultProblemPostProcessor(settings).process(null, problem);
+
+    assertThat(result)
+        .isEqualTo(
+            Problem.builder()
+                .type("https://example.org/bad-request")
+                .status(400)
+                .extension("problemType", "https://example.org/bad-request")
+                .build());
+  }
+
+  @Test
+  void givenSettingsWithoutOverrides_whenGetOverrides_thenDefaultsToNoOverrides() {
+    PostProcessorSettings settings = new PostProcessorSettings() {};
+
+    assertThat(settings.getTypeOverride()).isNull();
+    assertThat(settings.getTitleOverride()).isNull();
+    assertThat(settings.getInstanceOverride()).isNull();
+    assertThat(settings.getExtensionOverrides()).isEmpty();
+  }
+
+  private PostProcessorSettings getExtensionSettings(Map<String, String> extensionOverrides) {
+    return new PostProcessorSettings() {
+      @Override
+      public Map<String, String> getExtensionOverrides() {
+        return extensionOverrides;
+      }
+    };
   }
 
   private PostProcessorSettings getSettings(
       @Nullable String typeOverride,
       @Nullable String titleOverride,
-      @Nullable String instanceOverride) {
+      @Nullable String instanceOverride,
+      Map<String, String> extensionOverrides) {
     return new PostProcessorSettings() {
       @Override
       public @Nullable String getTypeOverride() {
@@ -354,6 +573,23 @@ class DefaultProblemPostProcessorTest {
       public @Nullable String getInstanceOverride() {
         return instanceOverride;
       }
+
+      @Override
+      public Map<String, String> getExtensionOverrides() {
+        return extensionOverrides;
+      }
     };
+  }
+
+  private PostProcessorSettings getSettings(
+      @Nullable String typeOverride, @Nullable String instanceOverride) {
+    return getSettings(typeOverride, null, instanceOverride);
+  }
+
+  private PostProcessorSettings getSettings(
+      @Nullable String typeOverride,
+      @Nullable String titleOverride,
+      @Nullable String instanceOverride) {
+    return getSettings(typeOverride, titleOverride, instanceOverride, Map.of());
   }
 }
