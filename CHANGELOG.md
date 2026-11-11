@@ -41,6 +41,11 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   `{problem.detail}`, `{problem.instance}` and `{context.<key>}` placeholders. An override replaces an existing
   extension with the same name and is skipped if any placeholder cannot be resolved. A template made of exactly one
   placeholder keeps the type of the resolved value (e.g. `{problem.status}` is a number).
+- Add `ObservationErrorWebMvcInspector` and `ObservationErrorWebFluxInspector`, recording exceptions handled by
+  Problem4J as errors of the current HTTP server observation (`ServerRequestObservationContext`), so that
+  `http.server.requests` metrics and spans report the `exception` instead of `none`. Add
+  `problem4j.observation.record-errors` property deciding which exceptions are recorded. `server` (default) records
+  exceptions resulting in a 5xx response, `all` records all of them, `none` disables recording.
 
 ### Changed
 
@@ -48,6 +53,10 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   span by default (`problem4j.tracing.source=auto`), instead of the `problem4j.tracing-header-name` header or a random
   trace ID. The header value is used only if no span is available, and the header is still written into responses with
   the span's `traceId`. Set `problem4j.tracing.source=simple` to keep the previous behavior.
+- Exceptions handled by Problem4J resulting in a 5xx response are recorded as errors of the current HTTP server
+  observation by default (`problem4j.observation.record-errors=server`), so the `exception` key of
+  `http.server.requests` metrics and spans contains the exception class name instead of `none`. Set
+  `problem4j.observation.record-errors=none` to keep the previous behavior.
 - Bump `problem4j-core` to `2.0.1`.
 - `ServerWebInputProblemResolver` no longer delegates type-mismatch handling to the `TypeMismatchProblemResolver` bean.
 - Split `ProblemAutoConfiguration` into several auto-configurations. `ProblemAutoConfiguration` now keeps only generic

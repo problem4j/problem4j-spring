@@ -22,12 +22,14 @@ import io.github.problem4j.core.ProblemMapper;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties;
+import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ErrorRecording;
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnMicrometerSource;
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnSimpleSource;
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnUnavailableSource;
 import io.github.problem4j.spring.webflux.AdviceWebFluxInspector;
 import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.MicrometerProblemContextWebFluxFilter;
+import io.github.problem4j.spring.webflux.ObservationErrorWebFluxInspector;
 import io.github.problem4j.spring.webflux.ProblemContextWebFluxArgumentResolver;
 import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
 import io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler;
@@ -129,6 +131,19 @@ public class ProblemWebFluxAutoConfiguration {
   @Bean
   ProblemContextWebFluxArgumentResolver problemContextWebFluxArgumentResolver() {
     return new ProblemContextWebFluxArgumentResolver();
+  }
+
+  /**
+   * Registers the default {@link ObservationErrorWebFluxInspector}, recording handled exceptions as
+   * errors of the current HTTP server observation, according to {@code
+   * problem4j.observation.record-errors}.
+   */
+  @ConditionalOnClass(name = "io.micrometer.observation.Observation")
+  @ConditionalOnMissingBean(ObservationErrorWebFluxInspector.class)
+  @Bean
+  ObservationErrorWebFluxInspector observationErrorWebFluxInspector(ProblemProperties properties) {
+    ErrorRecording recordErrors = properties.getObservation().getRecordErrors();
+    return new ObservationErrorWebFluxInspector(status -> recordErrors.matches(status.value()));
   }
 
   /**

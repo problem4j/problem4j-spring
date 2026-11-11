@@ -90,6 +90,12 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   private Tracing tracing = new Tracing();
 
   /**
+   * Observation configuration, deciding which exceptions handled by Problem4J are recorded as
+   * errors of the current HTTP server observation.
+   */
+  private Observation observation = new Observation();
+
+  /**
    * Creates a new instance of {@link ProblemProperties} with default values.
    *
    * @since 3.1.0
@@ -408,6 +414,26 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   }
 
   /**
+   * Returns the observation configuration.
+   *
+   * @return observation settings
+   * @since 3.1.0
+   */
+  public Observation getObservation() {
+    return observation;
+  }
+
+  /**
+   * Sets the observation configuration.
+   *
+   * @param observation observation settings
+   * @since 3.1.0
+   */
+  public void setObservation(Observation observation) {
+    this.observation = observation;
+  }
+
+  /**
    * Caching configuration for ({@code CachingProblemResolverStore}).
    *
    * <p>Controls whether resolver lookup caching is enabled and its maximum size.
@@ -520,6 +546,96 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
      */
     public void setSource(TracingSource source) {
       this.source = source;
+    }
+  }
+
+  /**
+   * Observation configuration, deciding which exceptions handled by Problem4J are recorded as
+   * errors of the current HTTP server observation.
+   *
+   * @since 3.1.0
+   */
+  public static class Observation {
+
+    /**
+     * Which handled exceptions are recorded as errors of the current HTTP server observation
+     * (affecting the {@code exception} key of {@code http.server.requests} metrics and spans).
+     * {@code server} records exceptions resulting in a 5xx response, {@code all} records all of
+     * them, {@code none} disables recording.
+     */
+    private ErrorRecording recordErrors = ErrorRecording.SERVER;
+
+    /**
+     * Creates a new instance of {@link Observation} with default values.
+     *
+     * @since 3.1.0
+     */
+    public Observation() {}
+
+    /**
+     * Returns which handled exceptions are recorded as observation errors.
+     *
+     * @return the error recording mode
+     * @since 3.1.0
+     */
+    public ErrorRecording getRecordErrors() {
+      return recordErrors;
+    }
+
+    /**
+     * Sets which handled exceptions are recorded as observation errors.
+     *
+     * @param recordErrors the error recording mode
+     * @since 3.1.0
+     */
+    public void setRecordErrors(ErrorRecording recordErrors) {
+      this.recordErrors = recordErrors;
+    }
+  }
+
+  /**
+   * Decides which exceptions handled by Problem4J are recorded as errors of the current HTTP server
+   * observation.
+   *
+   * @see Observation#getRecordErrors()
+   * @since 3.1.0
+   */
+  public enum ErrorRecording {
+
+    /**
+     * No exceptions are recorded.
+     *
+     * @since 3.1.0
+     */
+    NONE,
+
+    /**
+     * Exceptions resulting in a 5xx response are recorded.
+     *
+     * @since 3.1.0
+     */
+    SERVER,
+
+    /**
+     * All handled exceptions are recorded, regardless of the response status.
+     *
+     * @since 3.1.0
+     */
+    ALL;
+
+    /**
+     * Decides whether an exception resulting in the given response status should be recorded.
+     *
+     * @param status the response status code
+     * @return {@code true} if the exception should be recorded as an observation error
+     * @since 3.1.0
+     */
+    public boolean matches(int status) {
+      return switch (this) {
+        case NONE -> false;
+        case SERVER -> status >= 500 && status < 600;
+        case ALL -> true;
+      };
     }
   }
 
