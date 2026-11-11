@@ -23,6 +23,7 @@ import static org.mockito.Mockito.mock;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
+import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.parameter.Violation;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,6 +76,40 @@ class HandlerMethodValidationProblemResolverTest {
     Problem problem =
         handlerMethodValidationProblemResolver.resolve(
             ProblemContext.create(), ex, new HttpHeaders(), ex.getStatusCode());
+
+    assertThat(problem.getExtensions()).containsEntry(ERRORS_EXTENSION, violations);
+  }
+
+  @Test
+  @SuppressWarnings("removal")
+  void
+      givenSupportPassedToConstructor_whenSetMethodValidationResultSupport_thenKeepsConstructorSupport() {
+    List<Violation> violations = List.of(new Violation("field", "constructor"));
+    HandlerMethodValidationProblemResolver resolver =
+        new HandlerMethodValidationProblemResolver(ProblemFormat.identity(), result -> violations);
+    resolver.setMethodValidationResultSupport(result -> List.of(new Violation("field", "custom")));
+    HandlerMethodValidationException ex =
+        new HandlerMethodValidationException(mock(MethodValidationResult.class));
+
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), ex.getStatusCode());
+
+    assertThat(problem.getExtensions()).containsEntry(ERRORS_EXTENSION, violations);
+  }
+
+  @Test
+  @SuppressWarnings("removal")
+  void
+      givenOnlyProblemFormatPassedToConstructor_whenSetMethodValidationResultSupport_thenUsesNewSupport() {
+    List<Violation> violations = List.of(new Violation("field", "custom"));
+    HandlerMethodValidationProblemResolver resolver =
+        new HandlerMethodValidationProblemResolver(ProblemFormat.identity());
+    resolver.setMethodValidationResultSupport(result -> violations);
+    HandlerMethodValidationException ex =
+        new HandlerMethodValidationException(mock(MethodValidationResult.class));
+
+    Problem problem =
+        resolver.resolve(ProblemContext.create(), ex, new HttpHeaders(), ex.getStatusCode());
 
     assertThat(problem.getExtensions()).containsEntry(ERRORS_EXTENSION, violations);
   }

@@ -22,6 +22,8 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import io.github.problem4j.core.Problem;
+import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.ProblemFormatAware;
 import io.github.problem4j.spring.web.TypeNameMapper;
@@ -34,6 +36,7 @@ import io.github.problem4j.spring.web.parameter.MethodParameterSupportAware;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupportAware;
 import io.github.problem4j.spring.web.parameter.Violation;
+import io.github.problem4j.spring.web.resolver.TypeMismatchProblemResolver;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -44,7 +47,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.method.MethodValidationResult;
 
@@ -89,6 +95,31 @@ class ProblemBeanPostProcessorTest {
 
     assertThat(result).isSameAs(bean);
     assertThat(bean.problemFormat).isSameAs(problemFormat);
+  }
+
+  @Test
+  void givenResolverWithDefaultConstructor_whenPostProcess_thenUsesInjectedCollaborators() {
+    TypeMismatchProblemResolver resolver = new TypeMismatchProblemResolver();
+
+    processor.postProcessBeforeInitialization(resolver, "resolver");
+
+    Problem problem = resolveTypeMismatch(resolver);
+    assertThat(problem.getDetail()).isEqualTo("TYPE MISMATCH");
+    assertThat(problem.getExtensions()).containsEntry("kind", "mapped");
+  }
+
+  @Test
+  @SuppressWarnings("removal")
+  void givenResolverWithCollaboratorsPassedToConstructor_whenPostProcess_thenKeepsThem() {
+    TypeMismatchProblemResolver resolver =
+        new TypeMismatchProblemResolver(
+            ProblemFormat.identity(), type -> Optional.of("constructor"));
+
+    processor.postProcessBeforeInitialization(resolver, "resolver");
+
+    Problem problem = resolveTypeMismatch(resolver);
+    assertThat(problem.getDetail()).isEqualTo("Type mismatch");
+    assertThat(problem.getExtensions()).containsEntry("kind", "constructor");
   }
 
   @Test
@@ -278,6 +309,14 @@ class ProblemBeanPostProcessorTest {
 
   private static <T> Supplier<@Nullable T> emptySupplier() {
     return () -> null;
+  }
+
+  private Problem resolveTypeMismatch(TypeMismatchProblemResolver resolver) {
+    return resolver.resolve(
+        ProblemContext.create(),
+        new TypeMismatchException("42", Integer.class),
+        new HttpHeaders(),
+        HttpStatusCode.valueOf(400));
   }
 
   @NullMarked

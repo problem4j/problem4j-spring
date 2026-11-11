@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
+import io.github.problem4j.spring.web.ProblemFormat;
 import java.io.IOException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -92,5 +93,50 @@ class HttpMessageNotReadableProblemResolverTest {
             ProblemContext.create(), ex, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 
     assertThat(problem.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+  }
+
+  @Test
+  @SuppressWarnings("removal")
+  void givenCollaboratorsPassedToConstructor_whenSetters_thenKeepsConstructorCollaborators()
+      throws IOException {
+    HttpMessageNotReadableProblemResolver resolver =
+        new HttpMessageNotReadableProblemResolver(
+            ProblemFormat.identity(), type -> Optional.of("constructor"));
+    resolver.setProblemFormat(detail -> detail == null ? null : detail.toUpperCase());
+    resolver.setTypeNameMapper(type -> Optional.of("custom-int"));
+
+    Problem problem =
+        resolver.resolve(
+            ProblemContext.create(), mismatchedInput(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+
+    assertThat(problem.getDetail()).isEqualTo("Type mismatch");
+    assertThat(problem.getExtensions()).containsEntry("kind", "constructor");
+  }
+
+  @Test
+  @SuppressWarnings("removal")
+  void givenOnlyProblemFormatPassedToConstructor_whenSetTypeNameMapper_thenUsesNewMapper()
+      throws IOException {
+    HttpMessageNotReadableProblemResolver resolver =
+        new HttpMessageNotReadableProblemResolver(ProblemFormat.identity());
+    resolver.setProblemFormat(detail -> detail == null ? null : detail.toUpperCase());
+    resolver.setTypeNameMapper(type -> Optional.of("custom-int"));
+
+    Problem problem =
+        resolver.resolve(
+            ProblemContext.create(), mismatchedInput(), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+
+    assertThat(problem.getDetail()).isEqualTo("Type mismatch");
+    assertThat(problem.getExtensions()).containsEntry("kind", "custom-int");
+  }
+
+  private HttpMessageNotReadableException mismatchedInput() throws IOException {
+    MismatchedInputException cause;
+    try (JsonParser parser = JsonMapper.builder().build().createParser("{}")) {
+      parser.nextToken();
+      cause = MismatchedInputException.from(parser, Integer.class, "msg");
+      cause.prependPath(HttpMessageNotReadableProblemResolverTest.class, "age");
+    }
+    return new HttpMessageNotReadableException("msg", cause, new MockHttpInputMessage(new byte[0]));
   }
 }
