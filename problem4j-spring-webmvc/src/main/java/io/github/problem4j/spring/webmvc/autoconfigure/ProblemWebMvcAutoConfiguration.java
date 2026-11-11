@@ -22,12 +22,14 @@ import io.github.problem4j.core.ProblemMapper;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties;
+import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ErrorRecording;
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnMicrometerSource;
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnSimpleSource;
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnUnavailableSource;
 import io.github.problem4j.spring.webmvc.AdviceWebMvcInspector;
 import io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice;
 import io.github.problem4j.spring.webmvc.MicrometerProblemContextWebMvcFilter;
+import io.github.problem4j.spring.webmvc.ObservationErrorWebMvcInspector;
 import io.github.problem4j.spring.webmvc.ProblemContextWebMvcArgumentResolver;
 import io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter;
 import io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler;
@@ -48,6 +50,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.server.observation.ServerRequestObservationContext;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -147,6 +150,29 @@ public class ProblemWebMvcAutoConfiguration {
         resolvers.add(resolver);
       }
     };
+  }
+
+  /**
+   * Nested configuration that registers the {@link ObservationErrorWebMvcInspector}, recording
+   * handled exceptions as errors of the current HTTP server observation.
+   */
+  @ConditionalOnClass(ServerRequestObservationContext.class)
+  @Configuration(proxyBeanMethods = false)
+  static class ObservationErrorConfiguration {
+
+    /** Creates a new instance of this configuration. */
+    ObservationErrorConfiguration() {}
+
+    /**
+     * Registers the default {@link ObservationErrorWebMvcInspector}, recording handled exceptions
+     * according to {@code problem4j.observation.record-errors}.
+     */
+    @ConditionalOnMissingBean(ObservationErrorWebMvcInspector.class)
+    @Bean
+    ObservationErrorWebMvcInspector observationErrorWebMvcInspector(ProblemProperties properties) {
+      ErrorRecording recordErrors = properties.getObservation().getRecordErrors();
+      return new ObservationErrorWebMvcInspector(status -> recordErrors.matches(status.value()));
+    }
   }
 
   /**

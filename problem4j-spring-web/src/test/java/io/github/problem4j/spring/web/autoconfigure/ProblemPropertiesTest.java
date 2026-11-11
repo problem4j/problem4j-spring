@@ -21,6 +21,8 @@ import static org.assertj.core.api.Assertions.entry;
 
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DetailFormat;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DuplicateResolverPolicy;
+import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ErrorRecording;
+import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.Observation;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ResolverCaching;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.Tracing;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.TracingSource;
@@ -138,6 +140,58 @@ class ProblemPropertiesTest {
             entry("traceId", "{context.traceId}"),
             entry("app.version", "1.0"),
             entry("code", "{problem.status}"));
+  }
+
+  @Test
+  void givenNoArgConstructor_whenCreated_thenObservationDefaultsApplied() {
+    ProblemProperties properties = new ProblemProperties();
+
+    assertThat(properties.getObservation().getRecordErrors()).isEqualTo(ErrorRecording.SERVER);
+  }
+
+  @Test
+  void givenObservationSetters_whenInvoked_thenValuesRoundTrip() {
+    ProblemProperties properties = new ProblemProperties();
+    Observation observation = new Observation();
+    observation.setRecordErrors(ErrorRecording.ALL);
+
+    properties.setObservation(observation);
+
+    assertThat(properties.getObservation()).isSameAs(observation);
+    assertThat(properties.getObservation().getRecordErrors()).isEqualTo(ErrorRecording.ALL);
+  }
+
+  @ParameterizedTest
+  @CsvSource({"none, NONE", "server, SERVER", "all, ALL", "ALL, ALL"})
+  void givenRecordErrorsProperty_whenBound_thenErrorRecordingIsSet(
+      String value, ErrorRecording expected) {
+    ProblemProperties properties =
+        new Binder(
+                new MapConfigurationPropertySource(
+                    Map.of("problem4j.observation.record-errors", value)))
+            .bind("problem4j", ProblemProperties.class)
+            .get();
+
+    assertThat(properties.getObservation().getRecordErrors()).isEqualTo(expected);
+  }
+
+  @ParameterizedTest
+  @CsvSource({
+    "NONE, 400, false",
+    "NONE, 500, false",
+    "SERVER, 400, false",
+    "SERVER, 422, false",
+    "SERVER, 500, true",
+    "SERVER, 503, true",
+    "SERVER, 599, true",
+    "SERVER, 600, false",
+    "ALL, 200, true",
+    "ALL, 400, true",
+    "ALL, 500, true"
+  })
+  void givenErrorRecording_whenMatchingStatus_thenRecordsExpectedStatuses(
+      ErrorRecording recordErrors, int status, boolean expected) {
+    assertThat(recordErrors.matches(status)).isEqualTo(expected);
   }
 
   @Test
