@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.ProblemContextMethodArgumentResolver;
-import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
+import io.github.problem4j.spring.webflux.ProblemContextWebFilter;
 import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
 import org.junit.jupiter.api.Nested;
@@ -175,7 +175,7 @@ class ProblemWebFluxAutoConfigurationTest {
   class WithProblemContextFilterEnabled {
 
     @Autowired(required = false)
-    private ProblemContextWebFluxFilter problemContextWebFluxFilter;
+    private ProblemContextWebFilter problemContextWebFluxFilter;
 
     @Autowired private ProblemWebFluxProperties properties;
 
@@ -193,7 +193,7 @@ class ProblemWebFluxAutoConfigurationTest {
   class WithProblemContextFilterDisabled {
 
     @Autowired(required = false)
-    private ProblemContextWebFluxFilter problemContextWebFluxFilter;
+    private ProblemContextWebFilter problemContextWebFluxFilter;
 
     @Autowired private ProblemWebFluxProperties properties;
 

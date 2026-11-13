@@ -26,8 +26,9 @@ import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnSi
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnUnavailableSource;
 import io.github.problem4j.spring.web.autoconfigure.UnavailableTracingSourceException;
 import io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice;
-import io.github.problem4j.spring.webmvc.MicrometerProblemContextWebMvcFilter;
+import io.github.problem4j.spring.webmvc.MicrometerProblemContextFilter;
 import io.github.problem4j.spring.webmvc.ObservationErrorProblemInspector;
+import io.github.problem4j.spring.webmvc.ProblemContextFilter;
 import io.github.problem4j.spring.webmvc.ProblemContextMethodArgumentResolver;
 import io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter;
 import io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler;
@@ -177,8 +178,8 @@ public class ProblemWebMvcAutoConfiguration {
   }
 
   /**
-   * Nested configuration that registers the {@link ProblemContextWebMvcFilter} responsible for
-   * preparing and propagating the Problem4J context across WebMVC request handling.
+   * Nested configuration that registers the {@link ProblemContextFilter} responsible for preparing
+   * and propagating the Problem4J context across WebMVC request handling.
    */
   @ConditionalOnBooleanProperty(
       name = "problem4j.webmvc.problem-context-filter.enabled",
@@ -191,8 +192,8 @@ public class ProblemWebMvcAutoConfiguration {
     ProblemContextMvcFilterConfiguration() {}
 
     /**
-     * Registers the default {@link ProblemContextWebMvcFilter}, which takes trace identifiers from
-     * the configured tracing header or generates new ones. Used with {@code
+     * Registers the default {@link ProblemContextFilter}, which takes trace identifiers from the
+     * configured tracing header or generates new ones. Used with {@code
      * problem4j.tracing-source=simple}, or {@code auto} (default) without Micrometer Tracing.
      */
     @Conditional(OnSimpleSource.class)
@@ -203,20 +204,25 @@ public class ProblemWebMvcAutoConfiguration {
       SimpleTracingConfiguration() {}
 
       /**
-       * Registers the default {@link ProblemContextWebMvcFilter}, which initializes and propagates
+       * Registers the default {@link ProblemContextFilter}, which initializes and propagates
        * Problem4J contextual metadata throughout the request lifecycle.
+       *
+       * <p>Creates deprecated {@link ProblemContextWebMvcFilter} (a {@link ProblemContextFilter})
+       * until it is removed, so that applications injecting the filter by its former type keep
+       * working.
        */
-      @ConditionalOnMissingBean(ProblemContextWebMvcFilter.class)
+      @ConditionalOnMissingBean(ProblemContextFilter.class)
       @Bean
+      @SuppressWarnings("removal")
       ProblemContextWebMvcFilter problemContextWebMvcFilter(ProblemProperties properties) {
         return new ProblemContextWebMvcFilter(properties);
       }
     }
 
     /**
-     * Registers {@link MicrometerProblemContextWebMvcFilter}, which takes trace identifiers from
-     * the current Micrometer Tracing span. Used with {@code problem4j.tracing-source=micrometer},
-     * or {@code auto} (default) with Micrometer Tracing.
+     * Registers {@link MicrometerProblemContextFilter}, which takes trace identifiers from the
+     * current Micrometer Tracing span. Used with {@code problem4j.tracing-source=micrometer}, or
+     * {@code auto} (default) with Micrometer Tracing.
      */
     @Conditional(OnMicrometerSource.class)
     @Configuration(proxyBeanMethods = false)
@@ -226,23 +232,23 @@ public class ProblemWebMvcAutoConfiguration {
       MicrometerTracingConfiguration() {}
 
       /**
-       * Registers {@link MicrometerProblemContextWebMvcFilter}, which initializes and propagates
+       * Registers {@link MicrometerProblemContextFilter}, which initializes and propagates
        * Problem4J contextual metadata throughout the request lifecycle.
        */
-      @ConditionalOnMissingBean(ProblemContextWebMvcFilter.class)
+      @ConditionalOnMissingBean(ProblemContextFilter.class)
       @Bean
-      ProblemContextWebMvcFilter problemContextWebMvcFilter(ProblemProperties properties) {
-        return new MicrometerProblemContextWebMvcFilter(properties);
+      ProblemContextFilter problemContextWebMvcFilter(ProblemProperties properties) {
+        return new MicrometerProblemContextFilter(properties);
       }
     }
 
     /**
      * Fails application startup if {@code problem4j.tracing-source} is set to a source that cannot
      * be used, as its required dependencies are not on the classpath. Skipped if a custom {@link
-     * ProblemContextWebMvcFilter} bean is defined, as the tracing source is not used then.
+     * ProblemContextFilter} bean is defined, as the tracing source is not used then.
      */
     @Conditional(OnUnavailableSource.class)
-    @ConditionalOnMissingBean(ProblemContextWebMvcFilter.class)
+    @ConditionalOnMissingBean(ProblemContextFilter.class)
     @Configuration(proxyBeanMethods = false)
     static class UnavailableTracingSourceConfiguration {
 

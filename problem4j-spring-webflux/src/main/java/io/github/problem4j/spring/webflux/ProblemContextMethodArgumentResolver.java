@@ -31,8 +31,8 @@ import reactor.core.publisher.Mono;
  * Resolves controller method arguments of {@link ProblemContext} type, without any annotation.
  *
  * <p>Resolves to the {@link ProblemContext} assigned to the current exchange by {@link
- * ProblemContextWebFluxFilter}, the same one used for creating {@code Problem} responses. If none
- * is assigned (e.g. the filter is disabled), resolves to {@code null}.
+ * ProblemContextWebFilter}, the same one used for creating {@code Problem} responses. If none is
+ * assigned (e.g. the filter is disabled), resolves to {@code null}.
  *
  * <p>Parameters declared as {@link ProblemContext}, {@code Optional<ProblemContext>} or {@code
  * Mono<ProblemContext>} are supported. The wrappers resolve to an empty {@link Optional} or an

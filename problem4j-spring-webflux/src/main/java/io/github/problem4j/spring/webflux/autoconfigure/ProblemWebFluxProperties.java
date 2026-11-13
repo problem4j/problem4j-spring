@@ -38,7 +38,7 @@ public class ProblemWebFluxProperties {
   /** Configuration for {@code ProblemExceptionWebFluxAdvice}. */
   private ProblemExceptionAdvice problemExceptionAdvice = new ProblemExceptionAdvice();
 
-  /** Configuration for {@code ProblemContextWebFluxFilter}. */
+  /** Configuration for {@code ProblemContextWebFilter}. */
   private ProblemContextFilter problemContextFilter = new ProblemContextFilter();
 
   /** Configuration for {@code ProblemEnhancedWebFluxHandler} replacement. */
@@ -60,12 +60,12 @@ public class ProblemWebFluxProperties {
    * @param enabled whether Problem4J integration with WebFlux is enabled
    * @param exceptionAdvice configuration for {@code ExceptionWebFluxAdvice}
    * @param problemExceptionAdvice configuration for {@code ProblemExceptionWebFluxAdvice}
-   * @param problemContextFilter configuration for {@code ProblemContextWebFluxFilter}
+   * @param problemContextFilter configuration for {@code ProblemContextWebFilter}
    * @param exceptionHandler configuration for {@code ProblemEnhancedWebFluxHandler}
    * @param errorWebExceptionHandler configuration for {@code ProblemErrorWebExceptionHandler}
    * @see io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice
    * @see io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice
-   * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
+   * @see io.github.problem4j.spring.webflux.ProblemContextWebFilter
    * @see io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
    * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
    * @since 1.2.0
@@ -165,12 +165,12 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemContextWebFluxFilter}, which enriches request handling
-   * with {@code ProblemContext}.
+   * Returns configuration for {@code ProblemContextWebFilter}, which enriches request handling with
+   * {@code ProblemContext}.
    *
-   * @return the configuration for the {@code ProblemContextWebFluxFilter}
+   * @return the configuration for the {@code ProblemContextWebFilter}
    * @see io.github.problem4j.core.ProblemContext
-   * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
+   * @see io.github.problem4j.spring.webflux.ProblemContextWebFilter
    * @since 1.2.0
    */
   public ProblemContextFilter getProblemContextFilter() {
@@ -178,10 +178,10 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Sets configuration for {@code ProblemContextWebFluxFilter}.
+   * Sets configuration for {@code ProblemContextWebFilter}.
    *
-   * @param problemContextFilter configuration for {@code ProblemContextWebFluxFilter}
-   * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
+   * @param problemContextFilter configuration for {@code ProblemContextWebFilter}
+   * @see io.github.problem4j.spring.webflux.ProblemContextWebFilter
    * @since 3.1.0
    */
   public void setProblemContextFilter(ProblemContextFilter problemContextFilter) {
@@ -389,11 +389,11 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Configuration group for {@code ProblemContextWebFluxFilter}.
+   * Configuration group for {@code ProblemContextWebFilter}.
    *
    * <p>Controlled by the property {@code problem4j.webflux.problem-context-filter.enabled}.
    *
-   * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
+   * @see io.github.problem4j.spring.webflux.ProblemContextWebFilter
    * @since 1.2.0
    */
   public static class ProblemContextFilter {
@@ -415,13 +415,13 @@ public class ProblemWebFluxProperties {
     @Deprecated(since = "3.1.0", forRemoval = true)
     public static final String DEFAULT_ENABLED_VALUE = "true";
 
-    /** Whether the {@code ProblemContextWebFluxFilter} bean should be registered. */
+    /** Whether the {@code ProblemContextWebFilter} bean should be registered. */
     private boolean enabled = DEFAULT_ENABLED;
 
     /**
      * Creates a new configuration group with default values.
      *
-     * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
+     * @see io.github.problem4j.spring.webflux.ProblemContextWebFilter
      * @since 3.1.0
      */
     public ProblemContextFilter() {}
@@ -429,8 +429,8 @@ public class ProblemWebFluxProperties {
     /**
      * Creates a new configuration group.
      *
-     * @param enabled whether the {@code ProblemContextWebFluxFilter} bean should be registered
-     * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
+     * @param enabled whether the {@code ProblemContextWebFilter} bean should be registered
+     * @see io.github.problem4j.spring.webflux.ProblemContextWebFilter
      * @since 1.2.0
      * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
      *     together with the corresponding setters instead
@@ -441,10 +441,10 @@ public class ProblemWebFluxProperties {
     }
 
     /**
-     * Returns whether {@code ProblemContextWebFluxFilter} should be registered.
+     * Returns whether {@code ProblemContextWebFilter} should be registered.
      *
      * @return {@code true} if the context filter is enabled, otherwise {@code false}
-     * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
+     * @see io.github.problem4j.spring.webflux.ProblemContextWebFilter
      * @since 1.2.0
      */
     public boolean isEnabled() {
@@ -452,10 +452,10 @@ public class ProblemWebFluxProperties {
     }
 
     /**
-     * Sets whether the {@code ProblemContextWebFluxFilter} bean should be registered.
+     * Sets whether the {@code ProblemContextWebFilter} bean should be registered.
      *
-     * @param enabled whether the {@code ProblemContextWebFluxFilter} bean should be registered
-     * @see io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter
+     * @param enabled whether the {@code ProblemContextWebFilter} bean should be registered
+     * @see io.github.problem4j.spring.webflux.ProblemContextWebFilter
      * @since 3.1.0
      */
     public void setEnabled(boolean enabled) {

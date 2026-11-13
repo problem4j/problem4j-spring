@@ -23,8 +23,8 @@ import reactor.util.context.Context
 import reactor.util.context.ContextView
 
 /**
- * The [ProblemContext] assigned to this exchange by [ProblemContextWebFluxFilter], or `null` if
- * none is assigned (e.g. the filter is disabled or has not processed this exchange yet).
+ * The [ProblemContext] assigned to this exchange by [ProblemContextWebFilter], or `null` if none is
+ * assigned (e.g. the filter is disabled or has not processed this exchange yet).
  *
  * Example:
  * ```
@@ -50,8 +50,8 @@ public val ServerWebExchange.problemContext: ProblemContext?
   get() = getAttribute<Any>(PROBLEM_CONTEXT_ATTRIBUTE) as? ProblemContext
 
 /**
- * The [ProblemContext] propagated through Reactor [Context] by [ProblemContextWebFluxFilter], or
- * `null` if none is present (e.g. the filter is disabled or this pipeline is not downstream of it).
+ * The [ProblemContext] propagated through Reactor [Context] by [ProblemContextWebFilter], or `null`
+ * if none is present (e.g. the filter is disabled or this pipeline is not downstream of it).
  *
  * Example:
  * ```

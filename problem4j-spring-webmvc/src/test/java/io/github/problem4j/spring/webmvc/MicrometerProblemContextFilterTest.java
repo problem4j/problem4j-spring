@@ -34,13 +34,13 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.filter.ServerHttpObservationFilter;
 
-class MicrometerProblemContextWebMvcFilterTest {
+class MicrometerProblemContextFilterTest {
 
   private static final String TRACE_ID = "4bf92f3577b34da6a3ce929b0e0e4736";
   private static final String SPAN_ID = "00f067aa0ba902b7";
 
-  private final MicrometerProblemContextWebMvcFilter filter =
-      new MicrometerProblemContextWebMvcFilter(tracingHeaderName("X-Trace-Id"));
+  private final MicrometerProblemContextFilter filter =
+      new MicrometerProblemContextFilter(tracingHeaderName("X-Trace-Id"));
 
   private final MockHttpServletRequest request = new MockHttpServletRequest();
   private final MockHttpServletResponse response = new MockHttpServletResponse();

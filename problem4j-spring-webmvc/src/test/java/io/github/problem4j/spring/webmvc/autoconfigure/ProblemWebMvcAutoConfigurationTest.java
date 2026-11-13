@@ -19,8 +19,8 @@ package io.github.problem4j.spring.webmvc.autoconfigure;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice;
+import io.github.problem4j.spring.webmvc.ProblemContextFilter;
 import io.github.problem4j.spring.webmvc.ProblemContextMethodArgumentResolver;
-import io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter;
 import io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import org.junit.jupiter.api.Nested;
@@ -189,7 +189,7 @@ class ProblemWebMvcAutoConfigurationTest {
   class WithProblemContextFilterEnabled {
 
     @Autowired(required = false)
-    private ProblemContextWebMvcFilter problemContextWebMvcFilter;
+    private ProblemContextFilter problemContextWebMvcFilter;
 
     @Autowired(required = false)
     private ProblemWebMvcProperties properties;
@@ -208,7 +208,7 @@ class ProblemWebMvcAutoConfigurationTest {
   class WithProblemContextFilterDisabled {
 
     @Autowired(required = false)
-    private ProblemContextWebMvcFilter problemContextWebMvcFilter;
+    private ProblemContextFilter problemContextWebMvcFilter;
 
     @Autowired private ProblemWebMvcProperties properties;
 

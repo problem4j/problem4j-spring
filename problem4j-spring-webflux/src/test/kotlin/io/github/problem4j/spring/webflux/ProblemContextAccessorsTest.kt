@@ -74,7 +74,7 @@ class ProblemContextAccessorsTest {
   @Test
   fun givenFilteredExchange_whenReadingDownstream_thenFilterContextIsReturned() {
     val captured = AtomicReference<List<ProblemContext?>>()
-    val filter = ProblemContextWebFluxFilter(object : ProblemContextSettings {})
+    val filter = ProblemContextWebFilter(object : ProblemContextSettings {})
     val exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"))
     val chain = WebFilterChain { ex ->
       Mono.deferContextual { ctx ->

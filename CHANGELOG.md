@@ -20,6 +20,9 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   `type to name` pairs.
 - Add `problem4j-gson` and register `ProblemTypeAdapterFactory` if present on the classpath.
 - Add Kotlin extensions and DSL functions for common Problem4J classes and utilities.
+- Add `ProblemContextFilter` (WebMVC) and `ProblemContextWebFilter` (WebFlux), replacing `ProblemContextWebMvcFilter` /
+  `ProblemContextWebFluxFilter`. The former filters extend the new ones and are still registered by default with
+  `problem4j.tracing-source=simple`, while a custom bean of either type replaces them.
 - Add `ProblemInspector` interfaces (`io.github.problem4j.spring.webmvc.ProblemInspector` and
   `io.github.problem4j.spring.webflux.ProblemInspector`) to peek on `Problem` objects before returning a response, and
   `problemInspector(...)` Kotlin functions creating them. All `ProblemInspector` beans are invoked, including the ones
@@ -32,14 +35,14 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   `@AutoConfigureWebMvc`, to make it possible to use `@JsonTest`, `@WebFluxTest`, `@WebMvcTest`, `@RestClientTest` and
   `@WebClientTest`.
 - Add `problem4j.tracing-source` property deciding where `traceId` of `ProblemContext` comes from. `micrometer`
-  registers `MicrometerProblemContextWebMvcFilter` / `MicrometerProblemContextWebFluxFilter`, which take `traceId` and
+  registers `MicrometerProblemContextFilter` / `MicrometerProblemContextWebFilter`, which take `traceId` and
   `spanId` of the current Micrometer Tracing span, falling back to `problem4j.tracing-header-name` header or a random
   trace ID if no span is available. `micrometer` requires `io.micrometer:micrometer-tracing` on the classpath, otherwise
   application startup fails. `simple` keeps the previous behavior (header or a random trace ID). `auto` (default)
   uses `micrometer` if `io.micrometer:micrometer-tracing` is on the classpath, and `simple` otherwise.
 - Add `ProblemContextMethodArgumentResolver` (for both WebMVC and WebFlux), resolving controller method arguments of
   `ProblemContext` type without any annotation, to the `ProblemContext` assigned to the current request by
-  `ProblemContextWebMvcFilter` / `ProblemContextWebFluxFilter` (`null` if none is assigned).
+  `ProblemContextFilter` / `ProblemContextWebFilter` (`null` if none is assigned).
 - Add `problem4j.extension-overrides.<name>` properties for overriding extension members of `Problem` responses with
   `DefaultProblemPostProcessor`. Templates may use `{problem.type}`, `{problem.title}`, `{problem.status}`,
   `{problem.detail}`, `{problem.instance}` and `{context.<key>}` placeholders. An override replaces an existing
@@ -90,6 +93,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   construction by `ProblemBeanPostProcessor`; use the no-arg constructor (`AbstractProblemResolver(Class)` for custom
   subclasses).
 - Deprecate `AdviceWebMvcInspector` and `AdviceWebFluxInspector` in favor of `ProblemInspector`, which they now extend.
+- Deprecate `ProblemContextWebMvcFilter` and `ProblemContextWebFluxFilter` in favor of `ProblemContextFilter` and
+  `ProblemContextWebFilter`, which they now extend.
 
 ### Fixed
 
