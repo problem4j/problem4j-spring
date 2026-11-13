@@ -21,14 +21,11 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Add `problem4j-gson` and register `ProblemTypeAdapterFactory` if present on the classpath.
 - Add Kotlin extensions and DSL functions for common Problem4J classes and utilities.
 - Add `ProblemContextFilter` (WebMVC) and `ProblemContextWebFilter` (WebFlux), replacing `ProblemContextWebMvcFilter` /
-  `ProblemContextWebFluxFilter`. The former filters extend the new ones and are still registered by default with
-  `problem4j.tracing-source=simple`, while a custom bean of either type replaces them.
+  `ProblemContextWebFluxFilter`.
 - Add `ProblemResponseEntityExceptionHandler` (for both WebMVC and WebFlux), replacing `ProblemEnhancedWebMvcHandler` /
   `ProblemEnhancedWebFluxHandler`. The former classes extend the new one and are still registered by default.
-- Add `ProblemInspector` interfaces (`io.github.problem4j.spring.webmvc.ProblemInspector` and
-  `io.github.problem4j.spring.webflux.ProblemInspector`) to peek on `Problem` objects before returning a response, and
-  `problemInspector(...)` Kotlin functions creating them. All `ProblemInspector` beans are invoked, including the ones
-  implementing deprecated `AdviceWebMvcInspector` / `AdviceWebFluxInspector`.
+- Add `ProblemInspector` interfaces to peek on `Problem` objects before returning a response. All `ProblemInspector`
+  beans are invoked, including the ones implementing deprecated `AdviceWebMvcInspector` / `AdviceWebFluxInspector`.
 - Add `problem4j.duplicate-resolver-policy` property to control what happens when multiple `ProblemResolver` instances
   for the same exception class have equal order. `fail` (default) fails application startup, `first` picks the first
   one registered in the application context, `last` picks the last one registered in the application context (so a
