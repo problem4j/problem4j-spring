@@ -19,7 +19,7 @@ package io.github.problem4j.spring.webmvc.autoconfigure;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice;
-import io.github.problem4j.spring.webmvc.ProblemContextWebMvcArgumentResolver;
+import io.github.problem4j.spring.webmvc.ProblemContextMethodArgumentResolver;
 import io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter;
 import io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
@@ -257,17 +257,17 @@ class ProblemWebMvcAutoConfigurationTest {
   @Nested
   class WithDefaultProblemContextArgumentResolver {
 
-    @Autowired private ProblemContextWebMvcArgumentResolver problemContextArgumentResolver;
+    @Autowired private ProblemContextMethodArgumentResolver problemContextArgumentResolver;
 
     @Autowired
-    @Qualifier("problemContextWebMvcArgumentResolverConfigurer")
-    private WebMvcConfigurer problemContextWebMvcArgumentResolverConfigurer;
+    @Qualifier("problemContextMethodArgumentResolverConfigurer")
+    private WebMvcConfigurer problemContextMethodArgumentResolverConfigurer;
 
     @Test
     void contextLoadsWithDefaultResolver() {
       assertThat(problemContextArgumentResolver)
-          .isExactlyInstanceOf(ProblemContextWebMvcArgumentResolver.class);
-      assertThat(problemContextWebMvcArgumentResolverConfigurer).isNotNull();
+          .isExactlyInstanceOf(ProblemContextMethodArgumentResolver.class);
+      assertThat(problemContextMethodArgumentResolverConfigurer).isNotNull();
     }
   }
 
@@ -276,7 +276,7 @@ class ProblemWebMvcAutoConfigurationTest {
   @Nested
   class WithCustomProblemContextArgumentResolver {
 
-    @Autowired private ProblemContextWebMvcArgumentResolver problemContextArgumentResolver;
+    @Autowired private ProblemContextMethodArgumentResolver problemContextArgumentResolver;
 
     @Test
     void contextLoadsWithCustomResolver() {
@@ -288,11 +288,11 @@ class ProblemWebMvcAutoConfigurationTest {
   @Configuration(proxyBeanMethods = false)
   static class CustomProblemContextArgumentResolverConfiguration {
 
-    static final ProblemContextWebMvcArgumentResolver RESOLVER =
-        new ProblemContextWebMvcArgumentResolver();
+    static final ProblemContextMethodArgumentResolver RESOLVER =
+        new ProblemContextMethodArgumentResolver();
 
     @Bean
-    ProblemContextWebMvcArgumentResolver customProblemContextArgumentResolver() {
+    ProblemContextMethodArgumentResolver customProblemContextArgumentResolver() {
       return RESOLVER;
     }
   }

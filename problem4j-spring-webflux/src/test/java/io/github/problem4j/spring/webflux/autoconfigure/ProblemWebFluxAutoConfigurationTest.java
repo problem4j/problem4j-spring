@@ -19,7 +19,7 @@ package io.github.problem4j.spring.webflux.autoconfigure;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
-import io.github.problem4j.spring.webflux.ProblemContextWebFluxArgumentResolver;
+import io.github.problem4j.spring.webflux.ProblemContextMethodArgumentResolver;
 import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
 import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
@@ -242,12 +242,12 @@ class ProblemWebFluxAutoConfigurationTest {
   @Nested
   class WithDefaultProblemContextArgumentResolver {
 
-    @Autowired private ProblemContextWebFluxArgumentResolver problemContextArgumentResolver;
+    @Autowired private ProblemContextMethodArgumentResolver problemContextArgumentResolver;
 
     @Test
     void contextLoadsWithDefaultResolver() {
       assertThat(problemContextArgumentResolver)
-          .isExactlyInstanceOf(ProblemContextWebFluxArgumentResolver.class);
+          .isExactlyInstanceOf(ProblemContextMethodArgumentResolver.class);
     }
   }
 
@@ -256,7 +256,7 @@ class ProblemWebFluxAutoConfigurationTest {
   @Nested
   class WithCustomProblemContextArgumentResolver {
 
-    @Autowired private ProblemContextWebFluxArgumentResolver problemContextArgumentResolver;
+    @Autowired private ProblemContextMethodArgumentResolver problemContextArgumentResolver;
 
     @Test
     void contextLoadsWithCustomResolver() {
@@ -268,11 +268,11 @@ class ProblemWebFluxAutoConfigurationTest {
   @Configuration(proxyBeanMethods = false)
   static class CustomProblemContextArgumentResolverConfiguration {
 
-    static final ProblemContextWebFluxArgumentResolver RESOLVER =
-        new ProblemContextWebFluxArgumentResolver();
+    static final ProblemContextMethodArgumentResolver RESOLVER =
+        new ProblemContextMethodArgumentResolver();
 
     @Bean
-    ProblemContextWebFluxArgumentResolver customProblemContextArgumentResolver() {
+    ProblemContextMethodArgumentResolver customProblemContextArgumentResolver() {
       return RESOLVER;
     }
   }

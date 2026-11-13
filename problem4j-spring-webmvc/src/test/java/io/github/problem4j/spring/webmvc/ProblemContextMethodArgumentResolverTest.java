@@ -26,10 +26,10 @@ import org.springframework.core.MethodParameter;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 
-class ProblemContextWebMvcArgumentResolverTest {
+class ProblemContextMethodArgumentResolverTest {
 
-  private final ProblemContextWebMvcArgumentResolver resolver =
-      new ProblemContextWebMvcArgumentResolver();
+  private final ProblemContextMethodArgumentResolver resolver =
+      new ProblemContextMethodArgumentResolver();
 
   private final MockHttpServletRequest request = new MockHttpServletRequest();
 

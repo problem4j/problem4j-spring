@@ -37,8 +37,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   trace ID if no span is available. `micrometer` requires `io.micrometer:micrometer-tracing` on the classpath, otherwise
   application startup fails. `simple` keeps the previous behavior (header or a random trace ID). `auto` (default)
   uses `micrometer` if `io.micrometer:micrometer-tracing` is on the classpath, and `simple` otherwise.
-- Add `ProblemContextWebMvcArgumentResolver` and `ProblemContextWebFluxArgumentResolver`, resolving controller method
-  arguments of `ProblemContext` type without any annotation, to the `ProblemContext` assigned to the current request by
+- Add `ProblemContextMethodArgumentResolver` (for both WebMVC and WebFlux), resolving controller method arguments of
+  `ProblemContext` type without any annotation, to the `ProblemContext` assigned to the current request by
   `ProblemContextWebMvcFilter` / `ProblemContextWebFluxFilter` (`null` if none is assigned).
 - Add `problem4j.extension-overrides.<name>` properties for overriding extension members of `Problem` responses with
   `DefaultProblemPostProcessor`. Templates may use `{problem.type}`, `{problem.title}`, `{problem.status}`,

@@ -28,7 +28,7 @@ import io.github.problem4j.spring.web.autoconfigure.UnavailableTracingSourceExce
 import io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice;
 import io.github.problem4j.spring.webmvc.MicrometerProblemContextWebMvcFilter;
 import io.github.problem4j.spring.webmvc.ObservationErrorProblemInspector;
-import io.github.problem4j.spring.webmvc.ProblemContextWebMvcArgumentResolver;
+import io.github.problem4j.spring.webmvc.ProblemContextMethodArgumentResolver;
 import io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter;
 import io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler;
 import io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice;
@@ -128,21 +128,21 @@ public class ProblemWebMvcAutoConfiguration {
   }
 
   /**
-   * Registers the default {@link ProblemContextWebMvcArgumentResolver}, resolving controller method
+   * Registers the default {@link ProblemContextMethodArgumentResolver}, resolving controller method
    * arguments of {@code ProblemContext} type without any annotation.
    */
-  @ConditionalOnMissingBean(ProblemContextWebMvcArgumentResolver.class)
+  @ConditionalOnMissingBean(ProblemContextMethodArgumentResolver.class)
   @Bean
-  ProblemContextWebMvcArgumentResolver problemContextWebMvcArgumentResolver() {
-    return new ProblemContextWebMvcArgumentResolver();
+  ProblemContextMethodArgumentResolver problemContextMethodArgumentResolver() {
+    return new ProblemContextMethodArgumentResolver();
   }
 
   /**
-   * Adds {@link ProblemContextWebMvcArgumentResolver} to the custom argument resolvers of WebMVC.
+   * Adds {@link ProblemContextMethodArgumentResolver} to the custom argument resolvers of WebMVC.
    */
   @Bean
-  WebMvcConfigurer problemContextWebMvcArgumentResolverConfigurer(
-      ProblemContextWebMvcArgumentResolver resolver) {
+  WebMvcConfigurer problemContextMethodArgumentResolverConfigurer(
+      ProblemContextMethodArgumentResolver resolver) {
     return new WebMvcConfigurer() {
       @Override
       public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {

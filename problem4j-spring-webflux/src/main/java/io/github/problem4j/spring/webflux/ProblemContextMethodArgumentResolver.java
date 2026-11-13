@@ -48,14 +48,14 @@ import reactor.core.publisher.Mono;
  *
  * @since 3.1.0
  */
-public class ProblemContextWebFluxArgumentResolver implements SyncHandlerMethodArgumentResolver {
+public class ProblemContextMethodArgumentResolver implements SyncHandlerMethodArgumentResolver {
 
   /**
-   * Creates a new {@code ProblemContextWebFluxArgumentResolver}.
+   * Creates a new {@code ProblemContextMethodArgumentResolver}.
    *
    * @since 3.1.0
    */
-  public ProblemContextWebFluxArgumentResolver() {}
+  public ProblemContextMethodArgumentResolver() {}
 
   /**
    * Checks whether the given parameter is of {@link ProblemContext}, {@code

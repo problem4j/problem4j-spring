@@ -49,14 +49,14 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  *
  * @since 3.1.0
  */
-public class ProblemContextWebMvcArgumentResolver implements HandlerMethodArgumentResolver {
+public class ProblemContextMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
   /**
-   * Creates a new {@code ProblemContextWebMvcArgumentResolver}.
+   * Creates a new {@code ProblemContextMethodArgumentResolver}.
    *
    * @since 3.1.0
    */
-  public ProblemContextWebMvcArgumentResolver() {}
+  public ProblemContextMethodArgumentResolver() {}
 
   /**
    * Checks whether the given parameter is of {@link ProblemContext} or {@code
