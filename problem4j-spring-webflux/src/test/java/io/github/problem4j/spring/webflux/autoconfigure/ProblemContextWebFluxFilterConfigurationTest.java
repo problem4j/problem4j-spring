@@ -22,7 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.problem4j.spring.web.ProblemContextSettings;
 import io.github.problem4j.spring.web.autoconfigure.ProblemAutoConfiguration;
 import io.github.problem4j.spring.web.autoconfigure.UnavailableTracingSourceException;
-import io.github.problem4j.spring.webflux.MicrometerProblemContextWebFluxFilter;
+import io.github.problem4j.spring.webflux.MicrometerProblemContextWebFilter;
+import io.github.problem4j.spring.webflux.ProblemContextWebFilter;
 import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
 import io.micrometer.tracing.handler.TracingObservationHandler;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ import org.springframework.boot.test.context.runner.ReactiveWebApplicationContex
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@SuppressWarnings("removal")
 class ProblemContextWebFluxFilterConfigurationTest {
 
   private final ReactiveWebApplicationContextRunner contextRunner =
@@ -45,8 +47,8 @@ class ProblemContextWebFluxFilterConfigurationTest {
   void givenNoTracingSource_whenContextStarts_thenMicrometerFilterIsRegistered() {
     contextRunner.run(context ->
         assertThat(context)
-            .getBean(ProblemContextWebFluxFilter.class)
-            .isExactlyInstanceOf(MicrometerProblemContextWebFluxFilter.class));
+            .getBean(ProblemContextWebFilter.class)
+            .isExactlyInstanceOf(MicrometerProblemContextWebFilter.class));
   }
 
   @Test
@@ -55,7 +57,8 @@ class ProblemContextWebFluxFilterConfigurationTest {
         .withPropertyValues("problem4j.tracing-source=simple")
         .run(context ->
             assertThat(context)
-                .getBean(ProblemContextWebFluxFilter.class)
+                .hasSingleBean(ProblemContextWebFluxFilter.class)
+                .getBean(ProblemContextWebFilter.class)
                 .isExactlyInstanceOf(ProblemContextWebFluxFilter.class));
   }
 
@@ -65,8 +68,8 @@ class ProblemContextWebFluxFilterConfigurationTest {
         .withPropertyValues("problem4j.tracing-source=micrometer")
         .run(context ->
             assertThat(context)
-                .getBean(ProblemContextWebFluxFilter.class)
-                .isExactlyInstanceOf(MicrometerProblemContextWebFluxFilter.class));
+                .getBean(ProblemContextWebFilter.class)
+                .isExactlyInstanceOf(MicrometerProblemContextWebFilter.class));
   }
 
   @Test
@@ -76,7 +79,7 @@ class ProblemContextWebFluxFilterConfigurationTest {
         .withUserConfiguration(CustomFilterConfiguration.class)
         .run(context ->
             assertThat(context)
-                .getBean(ProblemContextWebFluxFilter.class)
+                .getBean(ProblemContextWebFilter.class)
                 .isSameAs(context.getBean(CustomFilterConfiguration.class).filter));
   }
 
@@ -101,7 +104,7 @@ class ProblemContextWebFluxFilterConfigurationTest {
         .withClassLoader(new FilteredClassLoader(TracingObservationHandler.class))
         .run(context ->
             assertThat(context)
-                .getBean(ProblemContextWebFluxFilter.class)
+                .getBean(ProblemContextWebFilter.class)
                 .isExactlyInstanceOf(ProblemContextWebFluxFilter.class));
   }
 
@@ -113,7 +116,7 @@ class ProblemContextWebFluxFilterConfigurationTest {
             "problem4j.tracing-source=micrometer",
             "problem4j.webflux.problem-context-filter.enabled=false")
         .withClassLoader(new FilteredClassLoader(TracingObservationHandler.class))
-        .run(context -> assertThat(context).doesNotHaveBean(ProblemContextWebFluxFilter.class));
+        .run(context -> assertThat(context).doesNotHaveBean(ProblemContextWebFilter.class));
   }
 
   @Test
@@ -122,8 +125,8 @@ class ProblemContextWebFluxFilterConfigurationTest {
         .withPropertyValues("problem4j.tracing-source=auto")
         .run(context ->
             assertThat(context)
-                .getBean(ProblemContextWebFluxFilter.class)
-                .isExactlyInstanceOf(MicrometerProblemContextWebFluxFilter.class));
+                .getBean(ProblemContextWebFilter.class)
+                .isExactlyInstanceOf(MicrometerProblemContextWebFilter.class));
   }
 
   @Test
@@ -134,7 +137,7 @@ class ProblemContextWebFluxFilterConfigurationTest {
         .withClassLoader(new FilteredClassLoader(TracingObservationHandler.class))
         .run(context ->
             assertThat(context)
-                .getBean(ProblemContextWebFluxFilter.class)
+                .getBean(ProblemContextWebFilter.class)
                 .isExactlyInstanceOf(ProblemContextWebFluxFilter.class));
   }
 
@@ -146,7 +149,7 @@ class ProblemContextWebFluxFilterConfigurationTest {
         .withClassLoader(new FilteredClassLoader(TracingObservationHandler.class))
         .run(context ->
             assertThat(context)
-                .getBean(ProblemContextWebFluxFilter.class)
+                .getBean(ProblemContextWebFilter.class)
                 .isExactlyInstanceOf(ProblemContextWebFluxFilter.class));
   }
 
@@ -160,8 +163,32 @@ class ProblemContextWebFluxFilterConfigurationTest {
         .run(context ->
             assertThat(context)
                 .hasNotFailed()
-                .getBean(ProblemContextWebFluxFilter.class)
+                .getBean(ProblemContextWebFilter.class)
                 .isSameAs(context.getBean(CustomFilterConfiguration.class).filter));
+  }
+
+  @Test
+  void givenCustomFilterOfNewType_whenContextStarts_thenCustomFilterIsKept() {
+    contextRunner
+        .withPropertyValues("problem4j.tracing-source=simple")
+        .withUserConfiguration(CustomNewTypeFilterConfiguration.class)
+        .run(context ->
+            assertThat(context)
+                .hasSingleBean(ProblemContextWebFilter.class)
+                .getBean(ProblemContextWebFilter.class)
+                .isSameAs(context.getBean(CustomNewTypeFilterConfiguration.class).filter));
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  static class CustomNewTypeFilterConfiguration {
+
+    final ProblemContextWebFilter filter =
+        new ProblemContextWebFilter(new ProblemContextSettings() {});
+
+    @Bean
+    ProblemContextWebFilter customProblemContextFilter() {
+      return filter;
+    }
   }
 
   @Configuration(proxyBeanMethods = false)

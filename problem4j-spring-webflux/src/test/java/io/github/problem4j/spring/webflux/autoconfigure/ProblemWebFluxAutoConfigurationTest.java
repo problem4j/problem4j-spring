@@ -19,9 +19,10 @@ package io.github.problem4j.spring.webflux.autoconfigure;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
-import io.github.problem4j.spring.webflux.ProblemContextWebFluxArgumentResolver;
-import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
+import io.github.problem4j.spring.webflux.ProblemContextMethodArgumentResolver;
+import io.github.problem4j.spring.webflux.ProblemContextWebFilter;
 import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
+import io.github.problem4j.spring.webflux.ProblemResponseEntityExceptionHandler;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -172,10 +173,26 @@ class ProblemWebFluxAutoConfigurationTest {
 
   @SpringBootTest(classes = {WebFluxTestApp.class})
   @Nested
+  @SuppressWarnings("removal")
+  class WithFormerResponseEntityExceptionHandlerType {
+
+    @Autowired
+    private io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
+        responseEntityExceptionHandler;
+
+    @Test
+    void contextLoadsWithDefaultHandlerInjectableByFormerType() {
+      assertThat(responseEntityExceptionHandler)
+          .isInstanceOf(ProblemResponseEntityExceptionHandler.class);
+    }
+  }
+
+  @SpringBootTest(classes = {WebFluxTestApp.class})
+  @Nested
   class WithProblemContextFilterEnabled {
 
     @Autowired(required = false)
-    private ProblemContextWebFluxFilter problemContextWebFluxFilter;
+    private ProblemContextWebFilter problemContextWebFluxFilter;
 
     @Autowired private ProblemWebFluxProperties properties;
 
@@ -193,7 +210,7 @@ class ProblemWebFluxAutoConfigurationTest {
   class WithProblemContextFilterDisabled {
 
     @Autowired(required = false)
-    private ProblemContextWebFluxFilter problemContextWebFluxFilter;
+    private ProblemContextWebFilter problemContextWebFluxFilter;
 
     @Autowired private ProblemWebFluxProperties properties;
 
@@ -242,12 +259,12 @@ class ProblemWebFluxAutoConfigurationTest {
   @Nested
   class WithDefaultProblemContextArgumentResolver {
 
-    @Autowired private ProblemContextWebFluxArgumentResolver problemContextArgumentResolver;
+    @Autowired private ProblemContextMethodArgumentResolver problemContextArgumentResolver;
 
     @Test
     void contextLoadsWithDefaultResolver() {
       assertThat(problemContextArgumentResolver)
-          .isExactlyInstanceOf(ProblemContextWebFluxArgumentResolver.class);
+          .isExactlyInstanceOf(ProblemContextMethodArgumentResolver.class);
     }
   }
 
@@ -256,7 +273,7 @@ class ProblemWebFluxAutoConfigurationTest {
   @Nested
   class WithCustomProblemContextArgumentResolver {
 
-    @Autowired private ProblemContextWebFluxArgumentResolver problemContextArgumentResolver;
+    @Autowired private ProblemContextMethodArgumentResolver problemContextArgumentResolver;
 
     @Test
     void contextLoadsWithCustomResolver() {
@@ -268,11 +285,11 @@ class ProblemWebFluxAutoConfigurationTest {
   @Configuration(proxyBeanMethods = false)
   static class CustomProblemContextArgumentResolverConfiguration {
 
-    static final ProblemContextWebFluxArgumentResolver RESOLVER =
-        new ProblemContextWebFluxArgumentResolver();
+    static final ProblemContextMethodArgumentResolver RESOLVER =
+        new ProblemContextMethodArgumentResolver();
 
     @Bean
-    ProblemContextWebFluxArgumentResolver customProblemContextArgumentResolver() {
+    ProblemContextMethodArgumentResolver customProblemContextArgumentResolver() {
       return RESOLVER;
     }
   }

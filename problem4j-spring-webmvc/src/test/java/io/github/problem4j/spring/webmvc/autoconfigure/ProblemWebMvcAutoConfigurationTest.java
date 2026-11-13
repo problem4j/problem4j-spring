@@ -19,9 +19,10 @@ package io.github.problem4j.spring.webmvc.autoconfigure;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice;
-import io.github.problem4j.spring.webmvc.ProblemContextWebMvcArgumentResolver;
-import io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter;
+import io.github.problem4j.spring.webmvc.ProblemContextFilter;
+import io.github.problem4j.spring.webmvc.ProblemContextMethodArgumentResolver;
 import io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice;
+import io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -186,10 +187,26 @@ class ProblemWebMvcAutoConfigurationTest {
 
   @SpringBootTest(classes = {WebMvcTestApp.class})
   @Nested
+  @SuppressWarnings("removal")
+  class WithFormerResponseEntityExceptionHandlerType {
+
+    @Autowired
+    private io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
+        responseEntityExceptionHandler;
+
+    @Test
+    void contextLoadsWithDefaultHandlerInjectableByFormerType() {
+      assertThat(responseEntityExceptionHandler)
+          .isInstanceOf(ProblemResponseEntityExceptionHandler.class);
+    }
+  }
+
+  @SpringBootTest(classes = {WebMvcTestApp.class})
+  @Nested
   class WithProblemContextFilterEnabled {
 
     @Autowired(required = false)
-    private ProblemContextWebMvcFilter problemContextWebMvcFilter;
+    private ProblemContextFilter problemContextWebMvcFilter;
 
     @Autowired(required = false)
     private ProblemWebMvcProperties properties;
@@ -208,7 +225,7 @@ class ProblemWebMvcAutoConfigurationTest {
   class WithProblemContextFilterDisabled {
 
     @Autowired(required = false)
-    private ProblemContextWebMvcFilter problemContextWebMvcFilter;
+    private ProblemContextFilter problemContextWebMvcFilter;
 
     @Autowired private ProblemWebMvcProperties properties;
 
@@ -257,17 +274,17 @@ class ProblemWebMvcAutoConfigurationTest {
   @Nested
   class WithDefaultProblemContextArgumentResolver {
 
-    @Autowired private ProblemContextWebMvcArgumentResolver problemContextArgumentResolver;
+    @Autowired private ProblemContextMethodArgumentResolver problemContextArgumentResolver;
 
     @Autowired
-    @Qualifier("problemContextWebMvcArgumentResolverConfigurer")
-    private WebMvcConfigurer problemContextWebMvcArgumentResolverConfigurer;
+    @Qualifier("problemContextMethodArgumentResolverConfigurer")
+    private WebMvcConfigurer problemContextMethodArgumentResolverConfigurer;
 
     @Test
     void contextLoadsWithDefaultResolver() {
       assertThat(problemContextArgumentResolver)
-          .isExactlyInstanceOf(ProblemContextWebMvcArgumentResolver.class);
-      assertThat(problemContextWebMvcArgumentResolverConfigurer).isNotNull();
+          .isExactlyInstanceOf(ProblemContextMethodArgumentResolver.class);
+      assertThat(problemContextMethodArgumentResolverConfigurer).isNotNull();
     }
   }
 
@@ -276,7 +293,7 @@ class ProblemWebMvcAutoConfigurationTest {
   @Nested
   class WithCustomProblemContextArgumentResolver {
 
-    @Autowired private ProblemContextWebMvcArgumentResolver problemContextArgumentResolver;
+    @Autowired private ProblemContextMethodArgumentResolver problemContextArgumentResolver;
 
     @Test
     void contextLoadsWithCustomResolver() {
@@ -288,11 +305,11 @@ class ProblemWebMvcAutoConfigurationTest {
   @Configuration(proxyBeanMethods = false)
   static class CustomProblemContextArgumentResolverConfiguration {
 
-    static final ProblemContextWebMvcArgumentResolver RESOLVER =
-        new ProblemContextWebMvcArgumentResolver();
+    static final ProblemContextMethodArgumentResolver RESOLVER =
+        new ProblemContextMethodArgumentResolver();
 
     @Bean
-    ProblemContextWebMvcArgumentResolver customProblemContextArgumentResolver() {
+    ProblemContextMethodArgumentResolver customProblemContextArgumentResolver() {
       return RESOLVER;
     }
   }

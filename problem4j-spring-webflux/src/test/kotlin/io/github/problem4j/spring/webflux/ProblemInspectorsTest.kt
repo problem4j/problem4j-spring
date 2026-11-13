@@ -27,7 +27,7 @@ import org.springframework.mock.http.server.reactive.MockServerHttpRequest
 import org.springframework.mock.web.server.MockServerWebExchange
 import org.springframework.web.server.ServerWebExchange
 
-class AdviceWebFluxInspectorsTest {
+class ProblemInspectorsTest {
 
   private val context: ProblemContext = ProblemContext.create()
   private val problem: Problem = Problem.of(409)
@@ -38,7 +38,7 @@ class AdviceWebFluxInspectorsTest {
   fun givenInspectorWithoutHeadersAndStatus_whenInspecting_thenRemainingArgumentsArePassed() {
     val captured = AtomicReference<List<Any>>()
     val ex = IllegalStateException("boom")
-    val inspector = adviceWebFluxInspector { ctx, problem, ex, request ->
+    val inspector = problemInspector { ctx, problem, ex, request ->
       captured.set(listOf(ctx, problem, ex, request))
     }
 
@@ -51,7 +51,7 @@ class AdviceWebFluxInspectorsTest {
   fun givenShortInspector_whenInspecting_thenProblemAndExceptionArePassed() {
     val captured = AtomicReference<List<Any>>()
     val ex = IllegalStateException("boom")
-    val inspector = adviceWebFluxInspector { problem, ex -> captured.set(listOf(problem, ex)) }
+    val inspector = problemInspector { problem, ex -> captured.set(listOf(problem, ex)) }
 
     inspector.inspect(context, problem, ex, HttpHeaders.EMPTY, HttpStatus.CONFLICT, request)
 
@@ -62,7 +62,7 @@ class AdviceWebFluxInspectorsTest {
   fun givenInspectorNotInvoked_whenCreating_thenLambdaIsNotCalled() {
     val captured = AtomicReference<Exception>()
 
-    adviceWebFluxInspector { _, ex -> captured.set(ex) }
+    problemInspector { _, ex -> captured.set(ex) }
 
     assertThat(captured.get()).isNull()
   }

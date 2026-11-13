@@ -25,14 +25,16 @@ import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnMi
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnSimpleSource;
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnUnavailableSource;
 import io.github.problem4j.spring.web.autoconfigure.UnavailableTracingSourceException;
-import io.github.problem4j.spring.webflux.AdviceWebFluxInspector;
 import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
-import io.github.problem4j.spring.webflux.MicrometerProblemContextWebFluxFilter;
-import io.github.problem4j.spring.webflux.ObservationErrorWebFluxInspector;
-import io.github.problem4j.spring.webflux.ProblemContextWebFluxArgumentResolver;
+import io.github.problem4j.spring.webflux.MicrometerProblemContextWebFilter;
+import io.github.problem4j.spring.webflux.ObservationErrorProblemInspector;
+import io.github.problem4j.spring.webflux.ProblemContextMethodArgumentResolver;
+import io.github.problem4j.spring.webflux.ProblemContextWebFilter;
 import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
 import io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler;
 import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
+import io.github.problem4j.spring.webflux.ProblemInspector;
+import io.github.problem4j.spring.webflux.ProblemResponseEntityExceptionHandler;
 import java.util.List;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -97,9 +99,9 @@ public class ProblemWebFluxAutoConfiguration {
       ProblemMapper problemMapper,
       ProblemResolverStore problemResolverStore,
       ProblemPostProcessor problemPostProcessor,
-      List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
+      List<? extends ProblemInspector> problemInspectors) {
     return new ExceptionWebFluxAdvice(
-        problemMapper, problemResolverStore, problemPostProcessor, adviceWebFluxInspectors);
+        problemMapper, problemResolverStore, problemPostProcessor, problemInspectors);
   }
 
   /**
@@ -117,24 +119,24 @@ public class ProblemWebFluxAutoConfiguration {
   @Bean
   ProblemExceptionWebFluxAdvice problemExceptionWebFluxAdvice(
       ProblemPostProcessor problemPostProcessor,
-      List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
-    return new ProblemExceptionWebFluxAdvice(problemPostProcessor, adviceWebFluxInspectors);
+      List<? extends ProblemInspector> problemInspectors) {
+    return new ProblemExceptionWebFluxAdvice(problemPostProcessor, problemInspectors);
   }
 
   /**
-   * Registers the default {@link ProblemContextWebFluxArgumentResolver}, resolving controller
-   * method arguments of {@code ProblemContext} type without any annotation. Spring Boot's {@code
+   * Registers the default {@link ProblemContextMethodArgumentResolver}, resolving controller method
+   * arguments of {@code ProblemContext} type without any annotation. Spring Boot's {@code
    * WebFluxAutoConfiguration} adds all {@code HandlerMethodArgumentResolver} beans to the custom
    * argument resolvers of WebFlux, so the bean is not registered via {@code WebFluxConfigurer}.
    */
-  @ConditionalOnMissingBean(ProblemContextWebFluxArgumentResolver.class)
+  @ConditionalOnMissingBean(ProblemContextMethodArgumentResolver.class)
   @Bean
-  ProblemContextWebFluxArgumentResolver problemContextWebFluxArgumentResolver() {
-    return new ProblemContextWebFluxArgumentResolver();
+  ProblemContextMethodArgumentResolver problemContextMethodArgumentResolver() {
+    return new ProblemContextMethodArgumentResolver();
   }
 
   /**
-   * Nested configuration that registers the {@link ObservationErrorWebFluxInspector}, recording
+   * Nested configuration that registers the {@link ObservationErrorProblemInspector}, recording
    * handled exceptions as errors of the current HTTP server observation.
    */
   @ConditionalOnClass(ServerRequestObservationContext.class)
@@ -145,21 +147,21 @@ public class ProblemWebFluxAutoConfiguration {
     ObservationErrorConfiguration() {}
 
     /**
-     * Registers the default {@link ObservationErrorWebFluxInspector}, recording handled exceptions
+     * Registers the default {@link ObservationErrorProblemInspector}, recording handled exceptions
      * according to {@code problem4j.observation-errors}.
      */
-    @ConditionalOnMissingBean(ObservationErrorWebFluxInspector.class)
+    @ConditionalOnMissingBean(ObservationErrorProblemInspector.class)
     @Bean
-    ObservationErrorWebFluxInspector observationErrorWebFluxInspector(
+    ObservationErrorProblemInspector observationErrorProblemInspector(
         ProblemProperties properties) {
       ErrorRecording observationErrors = properties.getObservationErrors();
-      return new ObservationErrorWebFluxInspector(
+      return new ObservationErrorProblemInspector(
           status -> observationErrors.matches(status.value()));
     }
   }
 
   /**
-   * Nested configuration that registers the {@link ProblemContextWebFluxFilter} responsible for
+   * Nested configuration that registers the {@link ProblemContextWebFilter} responsible for
    * preparing and propagating the Problem4J context across WebFlux request handling.
    */
   @ConditionalOnBooleanProperty(
@@ -173,8 +175,8 @@ public class ProblemWebFluxAutoConfiguration {
     ProblemContextWebFluxFilterConfiguration() {}
 
     /**
-     * Registers the default {@link ProblemContextWebFluxFilter}, which takes trace identifiers from
-     * the configured tracing header or generates new ones. Used with {@code
+     * Registers the default {@link ProblemContextWebFilter}, which takes trace identifiers from the
+     * configured tracing header or generates new ones. Used with {@code
      * problem4j.tracing-source=simple}, or {@code auto} (default) without Micrometer Tracing.
      */
     @Conditional(OnSimpleSource.class)
@@ -185,20 +187,25 @@ public class ProblemWebFluxAutoConfiguration {
       SimpleTracingConfiguration() {}
 
       /**
-       * Registers the default {@link ProblemContextWebFluxFilter}, which initializes and propagates
+       * Registers the default {@link ProblemContextWebFilter}, which initializes and propagates
        * Problem4J contextual metadata throughout the request lifecycle.
+       *
+       * <p>Creates deprecated {@link ProblemContextWebFluxFilter} (a {@link
+       * ProblemContextWebFilter}) until it is removed, so that applications injecting the filter by
+       * its former type keep working.
        */
-      @ConditionalOnMissingBean(ProblemContextWebFluxFilter.class)
+      @ConditionalOnMissingBean(ProblemContextWebFilter.class)
       @Bean
+      @SuppressWarnings("removal")
       ProblemContextWebFluxFilter problemContextWebFluxFilter(ProblemProperties properties) {
         return new ProblemContextWebFluxFilter(properties);
       }
     }
 
     /**
-     * Registers {@link MicrometerProblemContextWebFluxFilter}, which takes trace identifiers from
-     * the current Micrometer Tracing span. Used with {@code problem4j.tracing-source=micrometer},
-     * or {@code auto} (default) with Micrometer Tracing.
+     * Registers {@link MicrometerProblemContextWebFilter}, which takes trace identifiers from the
+     * current Micrometer Tracing span. Used with {@code problem4j.tracing-source=micrometer}, or
+     * {@code auto} (default) with Micrometer Tracing.
      */
     @Conditional(OnMicrometerSource.class)
     @Configuration(proxyBeanMethods = false)
@@ -208,23 +215,23 @@ public class ProblemWebFluxAutoConfiguration {
       MicrometerTracingConfiguration() {}
 
       /**
-       * Registers {@link MicrometerProblemContextWebFluxFilter}, which initializes and propagates
+       * Registers {@link MicrometerProblemContextWebFilter}, which initializes and propagates
        * Problem4J contextual metadata throughout the request lifecycle.
        */
-      @ConditionalOnMissingBean(ProblemContextWebFluxFilter.class)
+      @ConditionalOnMissingBean(ProblemContextWebFilter.class)
       @Bean
-      ProblemContextWebFluxFilter problemContextWebFluxFilter(ProblemProperties properties) {
-        return new MicrometerProblemContextWebFluxFilter(properties);
+      ProblemContextWebFilter problemContextWebFluxFilter(ProblemProperties properties) {
+        return new MicrometerProblemContextWebFilter(properties);
       }
     }
 
     /**
      * Fails application startup if {@code problem4j.tracing-source} is set to a source that cannot
      * be used, as its required dependencies are not on the classpath. Skipped if a custom {@link
-     * ProblemContextWebFluxFilter} bean is defined, as the tracing source is not used then.
+     * ProblemContextWebFilter} bean is defined, as the tracing source is not used then.
      */
     @Conditional(OnUnavailableSource.class)
-    @ConditionalOnMissingBean(ProblemContextWebFluxFilter.class)
+    @ConditionalOnMissingBean(ProblemContextWebFilter.class)
     @Configuration(proxyBeanMethods = false)
     static class UnavailableTracingSourceConfiguration {
 
@@ -256,16 +263,21 @@ public class ProblemWebFluxAutoConfiguration {
     /**
      * Provides the Problem4J-enhanced {@link ResponseEntityExceptionHandler} implementation for
      * WebFlux applications.
+     *
+     * <p>Creates deprecated {@link ProblemEnhancedWebFluxHandler} (a {@link
+     * ProblemResponseEntityExceptionHandler}) until it is removed, so that applications injecting
+     * it by its former type keep working.
      */
     @Order(Ordered.LOWEST_PRECEDENCE - 10)
     @ConditionalOnMissingBean(ResponseEntityExceptionHandler.class)
+    @SuppressWarnings("removal")
     @Bean
     ResponseEntityExceptionHandler problemEnhancedWebFluxHandler(
         ProblemResolverStore problemResolverStore,
         ProblemPostProcessor problemPostProcessor,
-        List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
+        List<? extends ProblemInspector> problemInspectors) {
       return new ProblemEnhancedWebFluxHandler(
-          problemResolverStore, problemPostProcessor, adviceWebFluxInspectors);
+          problemResolverStore, problemPostProcessor, problemInspectors);
     }
   }
 }

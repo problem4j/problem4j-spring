@@ -57,7 +57,7 @@ import org.springframework.web.context.request.WebRequest;
  *
  * <p>Intended as a <b>generic fallback</b>, it ensures that unexpected exceptions still produce a
  * consistent {@link Problem} response. For more specific exception handling, use {@link
- * ProblemEnhancedWebMvcHandler}, {@link ProblemExceptionWebMvcAdvice}.
+ * ProblemResponseEntityExceptionHandler}, {@link ProblemExceptionWebMvcAdvice}.
  *
  * @since 1.2.0
  */
@@ -70,7 +70,7 @@ public class ExceptionWebMvcAdvice {
   private final ProblemResolverStore problemResolverStore;
   private final ProblemPostProcessor problemPostProcessor;
 
-  private final List<AdviceWebMvcInspector> adviceWebMvcInspectors;
+  private final List<ProblemInspector> problemInspectors;
 
   /**
    * Creates a new {@link ExceptionWebMvcAdvice}.
@@ -78,18 +78,18 @@ public class ExceptionWebMvcAdvice {
    * @param problemMapper the problem mapper
    * @param problemResolverStore the resolver store
    * @param problemPostProcessor the post-processor
-   * @param adviceWebMvcInspectors the inspectors to invoke after handling
+   * @param problemInspectors the inspectors to invoke after handling
    * @since 1.2.0
    */
   public ExceptionWebMvcAdvice(
       ProblemMapper problemMapper,
       ProblemResolverStore problemResolverStore,
       ProblemPostProcessor problemPostProcessor,
-      List<? extends AdviceWebMvcInspector> adviceWebMvcInspectors) {
+      List<? extends ProblemInspector> problemInspectors) {
     this.problemMapper = problemMapper;
     this.problemResolverStore = problemResolverStore;
     this.problemPostProcessor = problemPostProcessor;
-    this.adviceWebMvcInspectors = new ArrayList<>(adviceWebMvcInspectors);
+    this.problemInspectors = new ArrayList<>(problemInspectors);
   }
 
   /**
@@ -126,7 +126,7 @@ public class ExceptionWebMvcAdvice {
         Optional.ofNullable(HttpStatus.resolve(problem.getStatus()))
             .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
-    for (AdviceWebMvcInspector inspector : adviceWebMvcInspectors) {
+    for (ProblemInspector inspector : problemInspectors) {
       inspector.inspect(context, problem, ex, headers, status, request);
     }
 

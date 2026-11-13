@@ -77,7 +77,7 @@ class ProblemContextAccessorsTest {
   @Test
   fun givenFilteredRequest_whenReadingFromServletRequest_thenFilterContextIsReturned() {
     val captured = AtomicReference<ProblemContext>()
-    val filter = ProblemContextWebMvcFilter(object : ProblemContextSettings {})
+    val filter = ProblemContextFilter(object : ProblemContextSettings {})
     val request = MockHttpServletRequest()
 
     filter.doFilter(request, MockHttpServletResponse()) { req, _ ->

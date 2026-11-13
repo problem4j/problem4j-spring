@@ -38,9 +38,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
-class ProblemEnhancedWebMvcHandlerTest {
+class ProblemResponseEntityExceptionHandlerTest {
 
-  private ProblemEnhancedWebMvcHandler advice;
+  private ProblemResponseEntityExceptionHandler advice;
 
   private AtomicInteger hits;
 
@@ -48,7 +48,7 @@ class ProblemEnhancedWebMvcHandlerTest {
   void beforeEach() {
     hits = new AtomicInteger(0);
     advice =
-        new ProblemEnhancedWebMvcHandler(
+        new ProblemResponseEntityExceptionHandler(
             new DefaultProblemResolverStore(List.of()),
             ProblemPostProcessor.identity(),
             List.of((context, problem, ex, headers, status, exchange) -> hits.incrementAndGet()));
@@ -93,7 +93,7 @@ class ProblemEnhancedWebMvcHandlerTest {
           }
         };
     advice =
-        new ProblemEnhancedWebMvcHandler(
+        new ProblemResponseEntityExceptionHandler(
             new DefaultProblemResolverStore(List.of(resolver)),
             ProblemPostProcessor.identity(),
             List.of());
@@ -129,7 +129,7 @@ class ProblemEnhancedWebMvcHandlerTest {
   @Test
   void givenPostProcessor_whenHandleExceptionInternal_thenPostProcessorIsApplied() {
     advice =
-        new ProblemEnhancedWebMvcHandler(
+        new ProblemResponseEntityExceptionHandler(
             new DefaultProblemResolverStore(List.of()),
             (ctx, problem) -> problem.toBuilder().detail("processed").build(),
             List.of());
@@ -149,7 +149,7 @@ class ProblemEnhancedWebMvcHandlerTest {
   @Test
   void givenPostProcessorThrows_whenHandleExceptionInternal_thenFallsBackToInternalServerError() {
     advice =
-        new ProblemEnhancedWebMvcHandler(
+        new ProblemResponseEntityExceptionHandler(
             new DefaultProblemResolverStore(List.of()),
             (ctx, problem) -> {
               throw new RuntimeException("post-processor failure");

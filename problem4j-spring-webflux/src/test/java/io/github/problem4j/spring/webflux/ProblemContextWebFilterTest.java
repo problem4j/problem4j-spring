@@ -25,12 +25,11 @@ import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import reactor.core.publisher.Mono;
 
-class ProblemContextWebFluxFilterTest {
+class ProblemContextWebFilterTest {
 
   @Test
   void givenNoTracingHeaderName_whenFilter_thenGeneratedTraceIdIsLowercase32HexCharacters() {
-    ProblemContextWebFluxFilter filter =
-        new ProblemContextWebFluxFilter(new ProblemContextSettings() {});
+    ProblemContextWebFilter filter = new ProblemContextWebFilter(new ProblemContextSettings() {});
     MockServerWebExchange exchange =
         MockServerWebExchange.from(MockServerHttpRequest.get("/test").build());
 
@@ -42,8 +41,7 @@ class ProblemContextWebFluxFilterTest {
   @Test
   void
       givenTracingHeaderNameConfigured_whenNoHeaderInRequest_thenGeneratedTraceIdIsLowercase32HexCharacters() {
-    ProblemContextWebFluxFilter filter =
-        new ProblemContextWebFluxFilter(tracingHeaderName("X-Trace-Id"));
+    ProblemContextWebFilter filter = new ProblemContextWebFilter(tracingHeaderName("X-Trace-Id"));
     MockServerWebExchange exchange =
         MockServerWebExchange.from(MockServerHttpRequest.get("/test").build());
 
@@ -55,8 +53,7 @@ class ProblemContextWebFluxFilterTest {
   @Test
   void
       givenTracingHeaderNameConfigured_whenHeaderPresentInRequest_thenUsesRequestHeaderAsTraceId() {
-    ProblemContextWebFluxFilter filter =
-        new ProblemContextWebFluxFilter(tracingHeaderName("X-Trace-Id"));
+    ProblemContextWebFilter filter = new ProblemContextWebFilter(tracingHeaderName("X-Trace-Id"));
     MockServerWebExchange exchange =
         MockServerWebExchange.from(
             MockServerHttpRequest.get("/test").header("X-Trace-Id", "custom-trace-id").build());

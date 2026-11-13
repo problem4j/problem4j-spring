@@ -28,10 +28,10 @@ import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.reactive.BindingContext;
 import reactor.core.publisher.Mono;
 
-class ProblemContextWebFluxArgumentResolverTest {
+class ProblemContextMethodArgumentResolverTest {
 
-  private final ProblemContextWebFluxArgumentResolver resolver =
-      new ProblemContextWebFluxArgumentResolver();
+  private final ProblemContextMethodArgumentResolver resolver =
+      new ProblemContextMethodArgumentResolver();
 
   private final MockServerWebExchange exchange =
       MockServerWebExchange.from(MockServerHttpRequest.get("/"));

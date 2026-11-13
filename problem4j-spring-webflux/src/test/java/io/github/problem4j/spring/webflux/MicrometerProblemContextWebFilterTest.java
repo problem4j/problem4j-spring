@@ -34,13 +34,13 @@ import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import reactor.core.publisher.Mono;
 
-class MicrometerProblemContextWebFluxFilterTest {
+class MicrometerProblemContextWebFilterTest {
 
   private static final String TRACE_ID = "4bf92f3577b34da6a3ce929b0e0e4736";
   private static final String SPAN_ID = "00f067aa0ba902b7";
 
-  private final MicrometerProblemContextWebFluxFilter filter =
-      new MicrometerProblemContextWebFluxFilter(tracingHeaderName("X-Trace-Id"));
+  private final MicrometerProblemContextWebFilter filter =
+      new MicrometerProblemContextWebFilter(tracingHeaderName("X-Trace-Id"));
 
   @Test
   void givenCurrentSpan_whenFilter_thenTraceIdAndSpanIdOfSpanAreUsed() {

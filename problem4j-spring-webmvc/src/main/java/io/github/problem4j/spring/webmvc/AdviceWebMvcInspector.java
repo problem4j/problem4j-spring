@@ -32,9 +32,12 @@ import org.springframework.web.context.request.WebRequest;
  * <p>Typical use cases include logging, monitoring, or auditing error responses.
  *
  * @since 1.2.0
+ * @deprecated since 3.1.0 in favor of {@link ProblemInspector}, which this interface extends;
+ *     implementations of both are invoked
  */
+@Deprecated(since = "3.1.0", forRemoval = true)
 @FunctionalInterface
-public interface AdviceWebMvcInspector {
+public interface AdviceWebMvcInspector extends ProblemInspector {
 
   /**
    * Observe the details of a Problem response before it is sent to the client.
@@ -48,6 +51,7 @@ public interface AdviceWebMvcInspector {
    * @param request the current {@link WebRequest} associated with the handling
    * @since 1.2.0
    */
+  @Override
   void inspect(
       ProblemContext context,
       Problem problem,

@@ -14,54 +14,56 @@
  * limitations under the License.
  */
 
-package io.github.problem4j.spring.webflux;
+package io.github.problem4j.spring.webmvc;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import java.util.function.Predicate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.http.server.reactive.observation.ServerRequestObservationContext;
-import org.springframework.web.server.ServerWebExchange;
+import org.springframework.http.server.observation.ServerRequestObservationContext;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.filter.ServerHttpObservationFilter;
 
 /**
- * {@link AdviceWebFluxInspector} recording exceptions handled by Problem4J as errors of the current
- * HTTP server observation.
+ * {@link ProblemInspector} recording exceptions handled by Problem4J as errors of the current HTTP
+ * server observation.
  *
- * <p>WebFlux records only exceptions that are not handled by the web framework. As Problem4J
- * handles exceptions in controller advices, without this inspector {@code http.server.requests}
- * metrics and spans report {@code exception=none} even for 5xx responses. The exception is set on
- * the {@link ServerRequestObservationContext} stored in exchange attributes, as recommended by
- * Spring Framework for handled exceptions. An error already recorded in the observation context is
- * never replaced.
+ * <p>{@link ServerHttpObservationFilter} records only exceptions that are not handled by the web
+ * framework. As Problem4J handles exceptions in controller advices, without this inspector {@code
+ * http.server.requests} metrics and spans report {@code exception=none} even for 5xx responses. The
+ * exception is set on the {@link ServerRequestObservationContext} stored in request attributes, as
+ * recommended by Spring Framework for handled exceptions. An error already recorded in the
+ * observation context is never replaced.
  *
  * <p>Registered automatically with {@code problem4j.observation-errors} property deciding which
  * response statuses are recorded ({@code server} by default).
  *
  * @since 3.1.0
  */
-public class ObservationErrorWebFluxInspector implements AdviceWebFluxInspector {
+public class ObservationErrorProblemInspector implements ProblemInspector {
 
   private final Predicate<HttpStatusCode> statusFilter;
 
   /**
-   * Creates a new {@code ObservationErrorWebFluxInspector} recording exceptions resulting in 5xx
+   * Creates a new {@code ObservationErrorProblemInspector} recording exceptions resulting in 5xx
    * responses.
    *
    * @since 3.1.0
    */
-  public ObservationErrorWebFluxInspector() {
+  public ObservationErrorProblemInspector() {
     this(HttpStatusCode::is5xxServerError);
   }
 
   /**
-   * Creates a new {@code ObservationErrorWebFluxInspector} recording exceptions resulting in
+   * Creates a new {@code ObservationErrorProblemInspector} recording exceptions resulting in
    * responses with status matching given predicate.
    *
    * @param statusFilter decides whether an exception resulting in given response status is recorded
    * @since 3.1.0
    */
-  public ObservationErrorWebFluxInspector(Predicate<HttpStatusCode> statusFilter) {
+  public ObservationErrorProblemInspector(Predicate<HttpStatusCode> statusFilter) {
     this.statusFilter = statusFilter;
   }
 
@@ -74,7 +76,7 @@ public class ObservationErrorWebFluxInspector implements AdviceWebFluxInspector 
    * @param ex the handled exception
    * @param headers the HTTP headers of the response
    * @param status the HTTP status code of the response
-   * @param exchange the current exchange
+   * @param request the current request
    * @since 3.1.0
    */
   @Override
@@ -84,12 +86,17 @@ public class ObservationErrorWebFluxInspector implements AdviceWebFluxInspector 
       Exception ex,
       HttpHeaders headers,
       HttpStatusCode status,
-      ServerWebExchange exchange) {
+      WebRequest request) {
     if (!statusFilter.test(status)) {
       return;
     }
-    ServerRequestObservationContext.findCurrent(exchange.getAttributes())
-        .filter(observation -> observation.getError() == null)
-        .ifPresent(observation -> observation.setError(ex));
+    Object attribute =
+        request.getAttribute(
+            ServerHttpObservationFilter.CURRENT_OBSERVATION_CONTEXT_ATTRIBUTE,
+            RequestAttributes.SCOPE_REQUEST);
+    if (attribute instanceof ServerRequestObservationContext observation
+        && observation.getError() == null) {
+      observation.setError(ex);
+    }
   }
 }

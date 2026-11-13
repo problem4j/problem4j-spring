@@ -54,20 +54,20 @@ public class ProblemExceptionWebMvcAdvice {
 
   private final ProblemPostProcessor problemPostProcessor;
 
-  private final List<AdviceWebMvcInspector> adviceWebMvcInspectors;
+  private final List<ProblemInspector> problemInspectors;
 
   /**
    * Creates a new {@code ProblemExceptionWebMvcAdvice}.
    *
    * @param problemPostProcessor the post-processor
-   * @param adviceWebMvcInspectors the list of inspectors
+   * @param problemInspectors the list of inspectors
    * @since 1.2.0
    */
   public ProblemExceptionWebMvcAdvice(
       ProblemPostProcessor problemPostProcessor,
-      List<? extends AdviceWebMvcInspector> adviceWebMvcInspectors) {
+      List<? extends ProblemInspector> problemInspectors) {
     this.problemPostProcessor = problemPostProcessor;
-    this.adviceWebMvcInspectors = new ArrayList<>(adviceWebMvcInspectors);
+    this.problemInspectors = new ArrayList<>(problemInspectors);
   }
 
   /**
@@ -104,7 +104,7 @@ public class ProblemExceptionWebMvcAdvice {
         Optional.ofNullable(HttpStatus.resolve(problem.getStatus()))
             .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
-    for (AdviceWebMvcInspector inspector : adviceWebMvcInspectors) {
+    for (ProblemInspector inspector : problemInspectors) {
       inspector.inspect(context, problem, ex, headers, status, request);
     }
 

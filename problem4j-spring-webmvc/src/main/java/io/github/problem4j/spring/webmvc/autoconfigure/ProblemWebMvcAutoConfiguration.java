@@ -25,14 +25,16 @@ import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnMi
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnSimpleSource;
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnUnavailableSource;
 import io.github.problem4j.spring.web.autoconfigure.UnavailableTracingSourceException;
-import io.github.problem4j.spring.webmvc.AdviceWebMvcInspector;
 import io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice;
-import io.github.problem4j.spring.webmvc.MicrometerProblemContextWebMvcFilter;
-import io.github.problem4j.spring.webmvc.ObservationErrorWebMvcInspector;
-import io.github.problem4j.spring.webmvc.ProblemContextWebMvcArgumentResolver;
+import io.github.problem4j.spring.webmvc.MicrometerProblemContextFilter;
+import io.github.problem4j.spring.webmvc.ObservationErrorProblemInspector;
+import io.github.problem4j.spring.webmvc.ProblemContextFilter;
+import io.github.problem4j.spring.webmvc.ProblemContextMethodArgumentResolver;
 import io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter;
 import io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler;
 import io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice;
+import io.github.problem4j.spring.webmvc.ProblemInspector;
+import io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler;
 import java.util.List;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -103,9 +105,9 @@ public class ProblemWebMvcAutoConfiguration {
       ProblemMapper problemMapper,
       ProblemResolverStore problemResolverStore,
       ProblemPostProcessor problemPostProcessor,
-      List<? extends AdviceWebMvcInspector> adviceWebMvcInspectors) {
+      List<? extends ProblemInspector> problemInspectors) {
     return new ExceptionWebMvcAdvice(
-        problemMapper, problemResolverStore, problemPostProcessor, adviceWebMvcInspectors);
+        problemMapper, problemResolverStore, problemPostProcessor, problemInspectors);
   }
 
   /**
@@ -123,26 +125,26 @@ public class ProblemWebMvcAutoConfiguration {
   @Bean
   ProblemExceptionWebMvcAdvice problemExceptionWebMvcAdvice(
       ProblemPostProcessor problemPostProcessor,
-      List<? extends AdviceWebMvcInspector> adviceWebMvcInspectors) {
-    return new ProblemExceptionWebMvcAdvice(problemPostProcessor, adviceWebMvcInspectors);
+      List<? extends ProblemInspector> problemInspectors) {
+    return new ProblemExceptionWebMvcAdvice(problemPostProcessor, problemInspectors);
   }
 
   /**
-   * Registers the default {@link ProblemContextWebMvcArgumentResolver}, resolving controller method
+   * Registers the default {@link ProblemContextMethodArgumentResolver}, resolving controller method
    * arguments of {@code ProblemContext} type without any annotation.
    */
-  @ConditionalOnMissingBean(ProblemContextWebMvcArgumentResolver.class)
+  @ConditionalOnMissingBean(ProblemContextMethodArgumentResolver.class)
   @Bean
-  ProblemContextWebMvcArgumentResolver problemContextWebMvcArgumentResolver() {
-    return new ProblemContextWebMvcArgumentResolver();
+  ProblemContextMethodArgumentResolver problemContextMethodArgumentResolver() {
+    return new ProblemContextMethodArgumentResolver();
   }
 
   /**
-   * Adds {@link ProblemContextWebMvcArgumentResolver} to the custom argument resolvers of WebMVC.
+   * Adds {@link ProblemContextMethodArgumentResolver} to the custom argument resolvers of WebMVC.
    */
   @Bean
-  WebMvcConfigurer problemContextWebMvcArgumentResolverConfigurer(
-      ProblemContextWebMvcArgumentResolver resolver) {
+  WebMvcConfigurer problemContextMethodArgumentResolverConfigurer(
+      ProblemContextMethodArgumentResolver resolver) {
     return new WebMvcConfigurer() {
       @Override
       public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
@@ -152,7 +154,7 @@ public class ProblemWebMvcAutoConfiguration {
   }
 
   /**
-   * Nested configuration that registers the {@link ObservationErrorWebMvcInspector}, recording
+   * Nested configuration that registers the {@link ObservationErrorProblemInspector}, recording
    * handled exceptions as errors of the current HTTP server observation.
    */
   @ConditionalOnClass(ServerRequestObservationContext.class)
@@ -163,21 +165,22 @@ public class ProblemWebMvcAutoConfiguration {
     ObservationErrorConfiguration() {}
 
     /**
-     * Registers the default {@link ObservationErrorWebMvcInspector}, recording handled exceptions
+     * Registers the default {@link ObservationErrorProblemInspector}, recording handled exceptions
      * according to {@code problem4j.observation-errors}.
      */
-    @ConditionalOnMissingBean(ObservationErrorWebMvcInspector.class)
+    @ConditionalOnMissingBean(ObservationErrorProblemInspector.class)
     @Bean
-    ObservationErrorWebMvcInspector observationErrorWebMvcInspector(ProblemProperties properties) {
+    ObservationErrorProblemInspector observationErrorProblemInspector(
+        ProblemProperties properties) {
       ErrorRecording observationErrors = properties.getObservationErrors();
-      return new ObservationErrorWebMvcInspector(
+      return new ObservationErrorProblemInspector(
           status -> observationErrors.matches(status.value()));
     }
   }
 
   /**
-   * Nested configuration that registers the {@link ProblemContextWebMvcFilter} responsible for
-   * preparing and propagating the Problem4J context across WebMVC request handling.
+   * Nested configuration that registers the {@link ProblemContextFilter} responsible for preparing
+   * and propagating the Problem4J context across WebMVC request handling.
    */
   @ConditionalOnBooleanProperty(
       name = "problem4j.webmvc.problem-context-filter.enabled",
@@ -190,8 +193,8 @@ public class ProblemWebMvcAutoConfiguration {
     ProblemContextMvcFilterConfiguration() {}
 
     /**
-     * Registers the default {@link ProblemContextWebMvcFilter}, which takes trace identifiers from
-     * the configured tracing header or generates new ones. Used with {@code
+     * Registers the default {@link ProblemContextFilter}, which takes trace identifiers from the
+     * configured tracing header or generates new ones. Used with {@code
      * problem4j.tracing-source=simple}, or {@code auto} (default) without Micrometer Tracing.
      */
     @Conditional(OnSimpleSource.class)
@@ -202,20 +205,25 @@ public class ProblemWebMvcAutoConfiguration {
       SimpleTracingConfiguration() {}
 
       /**
-       * Registers the default {@link ProblemContextWebMvcFilter}, which initializes and propagates
+       * Registers the default {@link ProblemContextFilter}, which initializes and propagates
        * Problem4J contextual metadata throughout the request lifecycle.
+       *
+       * <p>Creates deprecated {@link ProblemContextWebMvcFilter} (a {@link ProblemContextFilter})
+       * until it is removed, so that applications injecting the filter by its former type keep
+       * working.
        */
-      @ConditionalOnMissingBean(ProblemContextWebMvcFilter.class)
+      @ConditionalOnMissingBean(ProblemContextFilter.class)
       @Bean
+      @SuppressWarnings("removal")
       ProblemContextWebMvcFilter problemContextWebMvcFilter(ProblemProperties properties) {
         return new ProblemContextWebMvcFilter(properties);
       }
     }
 
     /**
-     * Registers {@link MicrometerProblemContextWebMvcFilter}, which takes trace identifiers from
-     * the current Micrometer Tracing span. Used with {@code problem4j.tracing-source=micrometer},
-     * or {@code auto} (default) with Micrometer Tracing.
+     * Registers {@link MicrometerProblemContextFilter}, which takes trace identifiers from the
+     * current Micrometer Tracing span. Used with {@code problem4j.tracing-source=micrometer}, or
+     * {@code auto} (default) with Micrometer Tracing.
      */
     @Conditional(OnMicrometerSource.class)
     @Configuration(proxyBeanMethods = false)
@@ -225,23 +233,23 @@ public class ProblemWebMvcAutoConfiguration {
       MicrometerTracingConfiguration() {}
 
       /**
-       * Registers {@link MicrometerProblemContextWebMvcFilter}, which initializes and propagates
+       * Registers {@link MicrometerProblemContextFilter}, which initializes and propagates
        * Problem4J contextual metadata throughout the request lifecycle.
        */
-      @ConditionalOnMissingBean(ProblemContextWebMvcFilter.class)
+      @ConditionalOnMissingBean(ProblemContextFilter.class)
       @Bean
-      ProblemContextWebMvcFilter problemContextWebMvcFilter(ProblemProperties properties) {
-        return new MicrometerProblemContextWebMvcFilter(properties);
+      ProblemContextFilter problemContextWebMvcFilter(ProblemProperties properties) {
+        return new MicrometerProblemContextFilter(properties);
       }
     }
 
     /**
      * Fails application startup if {@code problem4j.tracing-source} is set to a source that cannot
      * be used, as its required dependencies are not on the classpath. Skipped if a custom {@link
-     * ProblemContextWebMvcFilter} bean is defined, as the tracing source is not used then.
+     * ProblemContextFilter} bean is defined, as the tracing source is not used then.
      */
     @Conditional(OnUnavailableSource.class)
-    @ConditionalOnMissingBean(ProblemContextWebMvcFilter.class)
+    @ConditionalOnMissingBean(ProblemContextFilter.class)
     @Configuration(proxyBeanMethods = false)
     static class UnavailableTracingSourceConfiguration {
 
@@ -273,16 +281,21 @@ public class ProblemWebMvcAutoConfiguration {
     /**
      * Provides the Problem4J-enhanced {@link ResponseEntityExceptionHandler} implementation for
      * WebMVC applications.
+     *
+     * <p>Creates deprecated {@link ProblemEnhancedWebMvcHandler} (a {@link
+     * ProblemResponseEntityExceptionHandler}) until it is removed, so that applications injecting
+     * it by its former type keep working.
      */
     @Order(Ordered.LOWEST_PRECEDENCE - 10)
     @ConditionalOnMissingBean(ResponseEntityExceptionHandler.class)
+    @SuppressWarnings("removal")
     @Bean
     ResponseEntityExceptionHandler problemEnhancedWebMvcHandler(
         ProblemResolverStore problemResolverStore,
         ProblemPostProcessor problemPostProcessor,
-        List<? extends AdviceWebMvcInspector> adviceWebMvcInspectors) {
+        List<? extends ProblemInspector> problemInspectors) {
       return new ProblemEnhancedWebMvcHandler(
-          problemResolverStore, problemPostProcessor, adviceWebMvcInspectors);
+          problemResolverStore, problemPostProcessor, problemInspectors);
     }
   }
 }

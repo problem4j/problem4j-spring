@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.problem4j.spring.webflux;
+package io.github.problem4j.spring.webmvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -26,20 +26,22 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.http.server.reactive.observation.ServerRequestObservationContext;
-import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
-import org.springframework.mock.web.server.MockServerWebExchange;
+import org.springframework.http.server.observation.ServerRequestObservationContext;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.filter.ServerHttpObservationFilter;
 
-class ObservationErrorWebFluxInspectorTest {
+class ObservationErrorProblemInspectorTest {
 
   @ParameterizedTest
   @ValueSource(ints = {500, 503})
   void givenServerErrorStatus_whenInspecting_thenExceptionIsRecorded(int status) {
-    MockServerWebExchange exchange = exchange();
-    ServerRequestObservationContext observationContext = withObservationContext(exchange);
+    MockHttpServletRequest request = new MockHttpServletRequest();
+    ServerRequestObservationContext observationContext = withObservationContext(request);
     Exception ex = new IllegalStateException("boom");
 
-    inspect(new ObservationErrorWebFluxInspector(), ex, status, exchange);
+    inspect(new ObservationErrorProblemInspector(), ex, status, request);
 
     assertThat(observationContext.getError()).isSameAs(ex);
   }
@@ -47,78 +49,67 @@ class ObservationErrorWebFluxInspectorTest {
   @ParameterizedTest
   @ValueSource(ints = {400, 404, 422})
   void givenClientErrorStatus_whenInspectingWithDefaults_thenExceptionIsNotRecorded(int status) {
-    MockServerWebExchange exchange = exchange();
-    ServerRequestObservationContext observationContext = withObservationContext(exchange);
+    MockHttpServletRequest request = new MockHttpServletRequest();
+    ServerRequestObservationContext observationContext = withObservationContext(request);
 
-    inspect(new ObservationErrorWebFluxInspector(), new IllegalStateException(), status, exchange);
+    inspect(new ObservationErrorProblemInspector(), new IllegalStateException(), status, request);
 
     assertThat(observationContext.getError()).isNull();
   }
 
   @Test
   void givenCustomStatusFilter_whenStatusMatches_thenExceptionIsRecorded() {
-    MockServerWebExchange exchange = exchange();
-    ServerRequestObservationContext observationContext = withObservationContext(exchange);
+    MockHttpServletRequest request = new MockHttpServletRequest();
+    ServerRequestObservationContext observationContext = withObservationContext(request);
     Exception ex = new IllegalArgumentException();
 
-    inspect(new ObservationErrorWebFluxInspector(status -> true), ex, 400, exchange);
+    inspect(new ObservationErrorProblemInspector(status -> true), ex, 400, request);
 
     assertThat(observationContext.getError()).isSameAs(ex);
   }
 
   @Test
   void givenErrorAlreadyRecorded_whenInspecting_thenErrorIsNotReplaced() {
-    MockServerWebExchange exchange = exchange();
-    ServerRequestObservationContext observationContext = withObservationContext(exchange);
+    MockHttpServletRequest request = new MockHttpServletRequest();
+    ServerRequestObservationContext observationContext = withObservationContext(request);
     Exception existing = new IllegalStateException("existing");
     observationContext.setError(existing);
 
-    inspect(new ObservationErrorWebFluxInspector(), new IllegalStateException(), 500, exchange);
+    inspect(new ObservationErrorProblemInspector(), new IllegalStateException(), 500, request);
 
     assertThat(observationContext.getError()).isSameAs(existing);
   }
 
   @Test
   void givenNoObservationContext_whenInspecting_thenNothingHappens() {
-    MockServerWebExchange exchange = exchange();
+    MockHttpServletRequest request = new MockHttpServletRequest();
 
     assertThatNoException()
         .isThrownBy(() ->
             inspect(
-                new ObservationErrorWebFluxInspector(),
-                new IllegalStateException(),
-                500,
-                exchange));
-  }
-
-  private static MockServerWebExchange exchange() {
-    return MockServerWebExchange.from(MockServerHttpRequest.get("/"));
+                new ObservationErrorProblemInspector(), new IllegalStateException(), 500, request));
   }
 
   private static ServerRequestObservationContext withObservationContext(
-      MockServerWebExchange exchange) {
+      MockHttpServletRequest request) {
     ServerRequestObservationContext observationContext =
-        new ServerRequestObservationContext(
-            exchange.getRequest(), exchange.getResponse(), exchange.getAttributes());
-    exchange
-        .getAttributes()
-        .put(
-            ServerRequestObservationContext.CURRENT_OBSERVATION_CONTEXT_ATTRIBUTE,
-            observationContext);
+        new ServerRequestObservationContext(request, new MockHttpServletResponse());
+    request.setAttribute(
+        ServerHttpObservationFilter.CURRENT_OBSERVATION_CONTEXT_ATTRIBUTE, observationContext);
     return observationContext;
   }
 
   private static void inspect(
-      ObservationErrorWebFluxInspector inspector,
+      ObservationErrorProblemInspector inspector,
       Exception ex,
       int status,
-      MockServerWebExchange exchange) {
+      MockHttpServletRequest request) {
     inspector.inspect(
         ProblemContext.create(),
         Problem.builder().status(status).build(),
         ex,
         new HttpHeaders(),
         HttpStatusCode.valueOf(status),
-        exchange);
+        new ServletWebRequest(request));
   }
 }

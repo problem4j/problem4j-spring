@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package io.github.problem4j.spring.webflux;
+package io.github.problem4j.spring.webmvc;
 
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemContextSettings;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.TraceContext;
 import io.micrometer.tracing.handler.TracingObservationHandler.TracingContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
-import org.springframework.http.server.reactive.observation.ServerRequestObservationContext;
-import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.filter.ServerHttpObservationFilter;
 
 /**
- * {@link ProblemContextWebFluxFilter} taking trace identifiers from the current Micrometer Tracing
- * span, so that {@code traceId} of {@code ProblemContext} is the same one that appears in logs.
+ * {@link ProblemContextFilter} taking trace identifiers from the current Micrometer Tracing span,
+ * so that {@code traceId} of {@code ProblemContext} is the same one that appears in logs.
  *
- * <p>The server observation of WebFlux is started before any {@code WebFilter}, but it lives in the
- * Reactor context, not in thread locals, so {@code Tracer.currentSpan()} is not available here.
- * Therefore the server span is read from the observation context stored in exchange attributes. The
- * trace identifier is resolved in the following order:
+ * <p>The server span is read from the observation context that {@link ServerHttpObservationFilter}
+ * stores in request attributes. The trace identifier is resolved in the following order:
  *
  * <ol>
- *   <li>trace ID already stored in exchange attributes,
+ *   <li>trace ID already stored in request attributes,
  *   <li>trace ID of the current span,
  *   <li>value of the configured tracing header,
  *   <li>newly generated trace ID.
@@ -47,36 +46,38 @@ import org.springframework.web.server.ServerWebExchange;
  * ignored.
  *
  * <p>Requires {@code io.micrometer:micrometer-tracing} on the classpath. Registered instead of
- * {@link ProblemContextWebFluxFilter} with {@code problem4j.tracing-source=micrometer}, or with
- * {@code auto} (default) if Micrometer Tracing is on the classpath.
+ * {@link ProblemContextFilter} with {@code problem4j.tracing-source=micrometer}, or with {@code
+ * auto} (default) if Micrometer Tracing is on the classpath.
  *
  * @since 3.1.0
  */
-public class MicrometerProblemContextWebFluxFilter extends ProblemContextWebFluxFilter {
+public class MicrometerProblemContextFilter extends ProblemContextFilter {
 
   /**
-   * Creates a new {@code MicrometerProblemContextWebFluxFilter}.
+   * Creates a new {@code MicrometerProblemContextFilter}.
    *
    * @param settings the context settings to use
    * @since 3.1.0
    */
-  public MicrometerProblemContextWebFluxFilter(ProblemContextSettings settings) {
+  public MicrometerProblemContextFilter(ProblemContextSettings settings) {
     super(settings);
   }
 
   /**
-   * Builds or retrieves an existing {@link ProblemContext} for the given exchange, adding {@code
+   * Builds or retrieves an existing {@link ProblemContext} for the given request, adding {@code
    * spanId} of the current span if not present yet, and if the trace ID comes from that span.
    *
-   * @param exchange the current server exchange
+   * @param request the current server request
+   * @param response the current server response
    * @return an existing or newly created {@link ProblemContext}
    * @since 3.1.0
    */
   @Override
-  protected ProblemContext buildProblemContext(ServerWebExchange exchange) {
-    ProblemContext context = super.buildProblemContext(exchange);
+  protected ProblemContext buildProblemContext(
+      HttpServletRequest request, HttpServletResponse response) {
+    ProblemContext context = super.buildProblemContext(request, response);
     if (context.get("spanId") == null) {
-      findTraceContext(exchange)
+      findTraceContext(request)
           .filter(trace -> trace.traceId().equals(context.get("traceId")))
           .ifPresent(trace -> context.put("spanId", trace.spanId()));
     }
@@ -87,26 +88,27 @@ public class MicrometerProblemContextWebFluxFilter extends ProblemContextWebFlux
    * Initializes the trace identifier from the current span, falling back to the configured tracing
    * header or a newly generated one.
    *
-   * @param exchange the current server exchange
+   * @param request the current server request
+   * @param response the current server response
    * @return trace identifier of the current span, or the one resolved by the superclass
    * @since 3.1.0
    */
   @Override
-  protected String initTraceId(ServerWebExchange exchange) {
-    return findTraceContext(exchange)
+  protected String initTraceId(HttpServletRequest request, HttpServletResponse response) {
+    return findTraceContext(request)
         .map(TraceContext::traceId)
-        .orElseGet(() -> super.initTraceId(exchange));
+        .orElseGet(() -> super.initTraceId(request, response));
   }
 
   /**
    * Finds the trace context of the current server span.
    *
-   * @param exchange the current server exchange
+   * @param request the current server request
    * @return trace context of the current span, or empty if no span with a trace ID is available
    * @since 3.1.0
    */
-  protected Optional<TraceContext> findTraceContext(ServerWebExchange exchange) {
-    return ServerRequestObservationContext.findCurrent(exchange.getAttributes())
+  protected Optional<TraceContext> findTraceContext(HttpServletRequest request) {
+    return ServerHttpObservationFilter.findObservationContext(request)
         .map(observation -> observation.<TracingContext>get(TracingContext.class))
         .map(TracingContext::getSpan)
         .map(Span::context)

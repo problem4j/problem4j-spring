@@ -37,9 +37,9 @@ import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.server.ResponseStatusException;
 
-class ProblemEnhancedWebFluxHandlerTest {
+class ProblemResponseEntityExceptionHandlerTest {
 
-  private ProblemEnhancedWebFluxHandler advice;
+  private ProblemResponseEntityExceptionHandler advice;
 
   private AtomicInteger hits;
 
@@ -47,7 +47,7 @@ class ProblemEnhancedWebFluxHandlerTest {
   void beforeEach() {
     hits = new AtomicInteger(0);
     advice =
-        new ProblemEnhancedWebFluxHandler(
+        new ProblemResponseEntityExceptionHandler(
             new DefaultProblemResolverStore(List.of()),
             ProblemPostProcessor.identity(),
             List.of((context, problem, ex, headers, status, exchange) -> hits.incrementAndGet()));
@@ -94,7 +94,7 @@ class ProblemEnhancedWebFluxHandlerTest {
           }
         };
     advice =
-        new ProblemEnhancedWebFluxHandler(
+        new ProblemResponseEntityExceptionHandler(
             new DefaultProblemResolverStore(List.of(resolver)),
             ProblemPostProcessor.identity(),
             List.of());
@@ -134,7 +134,7 @@ class ProblemEnhancedWebFluxHandlerTest {
   @Test
   void givenPostProcessor_whenHandleExceptionInternal_thenPostProcessorIsApplied() {
     advice =
-        new ProblemEnhancedWebFluxHandler(
+        new ProblemResponseEntityExceptionHandler(
             new DefaultProblemResolverStore(List.of()),
             (ctx, problem) -> problem.toBuilder().detail("processed").build(),
             List.of());
@@ -156,7 +156,7 @@ class ProblemEnhancedWebFluxHandlerTest {
   @Test
   void givenPostProcessorThrows_whenHandleExceptionInternal_thenFallsBackToInternalServerError() {
     advice =
-        new ProblemEnhancedWebFluxHandler(
+        new ProblemResponseEntityExceptionHandler(
             new DefaultProblemResolverStore(List.of()),
             (ctx, problem) -> {
               throw new RuntimeException("post-processor failure");
