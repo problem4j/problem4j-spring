@@ -23,6 +23,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Add `ProblemContextFilter` (WebMVC) and `ProblemContextWebFilter` (WebFlux), replacing `ProblemContextWebMvcFilter` /
   `ProblemContextWebFluxFilter`. The former filters extend the new ones and are still registered by default with
   `problem4j.tracing-source=simple`, while a custom bean of either type replaces them.
+- Add `ProblemResponseEntityExceptionHandler` (for both WebMVC and WebFlux), replacing `ProblemEnhancedWebMvcHandler` /
+  `ProblemEnhancedWebFluxHandler`. The former classes extend the new one and are still registered by default.
 - Add `ProblemInspector` interfaces (`io.github.problem4j.spring.webmvc.ProblemInspector` and
   `io.github.problem4j.spring.webflux.ProblemInspector`) to peek on `Problem` objects before returning a response, and
   `problemInspector(...)` Kotlin functions creating them. All `ProblemInspector` beans are invoked, including the ones
@@ -95,6 +97,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Deprecate `AdviceWebMvcInspector` and `AdviceWebFluxInspector` in favor of `ProblemInspector`, which they now extend.
 - Deprecate `ProblemContextWebMvcFilter` and `ProblemContextWebFluxFilter` in favor of `ProblemContextFilter` and
   `ProblemContextWebFilter`, which they now extend.
+- Deprecate `ProblemEnhancedWebMvcHandler` and `ProblemEnhancedWebFluxHandler` in favor of
+  `ProblemResponseEntityExceptionHandler`, which they now extend.
 
 ### Fixed
 

@@ -41,7 +41,7 @@ public class ProblemWebMvcProperties {
   /** Configuration for {@code ProblemContextFilter}. */
   private ProblemContextFilter problemContextFilter = new ProblemContextFilter();
 
-  /** Configuration for {@code ProblemEnhancedWebMvcHandler} replacement. */
+  /** Configuration for {@code ProblemResponseEntityExceptionHandler} replacement. */
   private ExceptionHandler exceptionHandler = new ExceptionHandler();
 
   /** Configuration for {@code ProblemErrorController} replacement. */
@@ -61,12 +61,12 @@ public class ProblemWebMvcProperties {
    * @param exceptionAdvice configuration for {@code ExceptionWebMvcAdvice}
    * @param problemExceptionAdvice configuration for {@code ProblemExceptionWebMvcAdvice}
    * @param problemContextFilter configuration for {@code ProblemContextFilter}
-   * @param exceptionHandler configuration for {@code ProblemEnhancedWebMvcHandler}
+   * @param exceptionHandler configuration for {@code ProblemResponseEntityExceptionHandler}
    * @param errorController configuration for {@code ProblemErrorController}
    * @see io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice
    * @see io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice
    * @see io.github.problem4j.spring.webmvc.ProblemContextFilter
-   * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
+   * @see io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler
    * @see io.github.problem4j.spring.webmvc.ProblemErrorController
    * @since 1.2.0
    * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
@@ -189,12 +189,12 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemEnhancedWebMvcHandler} replacement, which allows
-   * Problem4J to take control of exception handling normally performed by Spring's {@code
+   * Returns configuration for {@code ProblemResponseEntityExceptionHandler} replacement, which
+   * allows Problem4J to take control of exception handling normally performed by Spring's {@code
    * ResponseEntityExceptionHandler}.
    *
    * @return the configuration for the overwritten exception handler
-   * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
+   * @see io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler
    * @see org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
    * @since 1.2.0
    */
@@ -203,10 +203,10 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Sets configuration for {@code ProblemEnhancedWebMvcHandler} replacement.
+   * Sets configuration for {@code ProblemResponseEntityExceptionHandler} replacement.
    *
-   * @param exceptionHandler configuration for {@code ProblemEnhancedWebMvcHandler}
-   * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
+   * @param exceptionHandler configuration for {@code ProblemResponseEntityExceptionHandler}
+   * @see io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler
    * @since 3.1.0
    */
   public void setExceptionHandler(ExceptionHandler exceptionHandler) {
@@ -464,11 +464,11 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Configuration group for {@code ProblemEnhancedWebMvcHandler} override.
+   * Configuration group for {@code ProblemResponseEntityExceptionHandler} override.
    *
    * <p>Controlled by the property {@code problem4j.webmvc.exception-handler.enabled}.
    *
-   * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
+   * @see io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler
    * @since 1.2.0
    */
   public static class ExceptionHandler {
@@ -490,24 +490,24 @@ public class ProblemWebMvcProperties {
     @Deprecated(since = "3.1.0", forRemoval = true)
     public static final String DEFAULT_ENABLED_VALUE = "true";
 
-    /** Whether the {@code ProblemEnhancedWebMvcHandler} should be registered. */
+    /** Whether the {@code ProblemResponseEntityExceptionHandler} should be registered. */
     private boolean enabled = DEFAULT_ENABLED;
 
     /**
-     * Creates a new configuration group for {@code ProblemEnhancedWebMvcHandler} with default
-     * values.
+     * Creates a new configuration group for {@code ProblemResponseEntityExceptionHandler} with
+     * default values.
      *
-     * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
+     * @see io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler
      * @since 3.1.0
      */
     public ExceptionHandler() {}
 
     /**
-     * Creates a new configuration group for {@code ProblemEnhancedWebMvcHandler}.
+     * Creates a new configuration group for {@code ProblemResponseEntityExceptionHandler}.
      *
      * @param enabled whether the {@code ResponseEntityExceptionHandler} should be replaced with
-     *     {@code ProblemEnhancedWebMvcHandler}
-     * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
+     *     {@code ProblemResponseEntityExceptionHandler}
+     * @see io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler
      * @see org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
      * @since 1.2.0
      * @deprecated retained only for binary backwards compatibility; use the no-arg constructor
@@ -519,10 +519,10 @@ public class ProblemWebMvcProperties {
     }
 
     /**
-     * Returns whether {@code ProblemEnhancedWebMvcHandler} should be registered.
+     * Returns whether {@code ProblemResponseEntityExceptionHandler} should be registered.
      *
      * @return {@code true} if the overwritten exception handler is enabled, otherwise {@code false}
-     * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
+     * @see io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler
      * @since 1.2.0
      */
     public boolean isEnabled() {
@@ -530,11 +530,11 @@ public class ProblemWebMvcProperties {
     }
 
     /**
-     * Sets whether the {@code ProblemEnhancedWebMvcHandler} should be registered.
+     * Sets whether the {@code ProblemResponseEntityExceptionHandler} should be registered.
      *
      * @param enabled whether the {@code ResponseEntityExceptionHandler} should be replaced with
-     *     {@code ProblemEnhancedWebMvcHandler}
-     * @see io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
+     *     {@code ProblemResponseEntityExceptionHandler}
+     * @see io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler
      * @see org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
      * @since 3.1.0
      */

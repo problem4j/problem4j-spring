@@ -34,6 +34,7 @@ import io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter;
 import io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler;
 import io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice;
 import io.github.problem4j.spring.webmvc.ProblemInspector;
+import io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler;
 import java.util.List;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -280,9 +281,14 @@ public class ProblemWebMvcAutoConfiguration {
     /**
      * Provides the Problem4J-enhanced {@link ResponseEntityExceptionHandler} implementation for
      * WebMVC applications.
+     *
+     * <p>Creates deprecated {@link ProblemEnhancedWebMvcHandler} (a {@link
+     * ProblemResponseEntityExceptionHandler}) until it is removed, so that applications injecting
+     * it by its former type keep working.
      */
     @Order(Ordered.LOWEST_PRECEDENCE - 10)
     @ConditionalOnMissingBean(ResponseEntityExceptionHandler.class)
+    @SuppressWarnings("removal")
     @Bean
     ResponseEntityExceptionHandler problemEnhancedWebMvcHandler(
         ProblemResolverStore problemResolverStore,

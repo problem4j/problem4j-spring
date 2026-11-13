@@ -57,7 +57,7 @@ import reactor.core.publisher.Mono;
  *
  * <p>Intended as a <b>generic fallback</b>, it ensures that unexpected exceptions still produce a
  * consistent {@link Problem} response. For more specific exception handling, use {@link
- * ProblemEnhancedWebFluxHandler}, {@link ProblemExceptionWebFluxAdvice}.
+ * ProblemResponseEntityExceptionHandler}, {@link ProblemExceptionWebFluxAdvice}.
  *
  * @since 1.2.0
  */

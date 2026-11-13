@@ -16,56 +16,21 @@
 
 package io.github.problem4j.spring.webflux;
 
-import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
-import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.logAdviceException;
-
-import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import org.jspecify.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
 
 /**
- * Handles Spring framework exceptions using registered {@code ProblemResolver}s.
+ * Former name of {@link ProblemResponseEntityExceptionHandler}, kept for backwards compatibility.
  *
- * <p>This class extends {@link ResponseEntityExceptionHandler} and overrides {@link
- * #handleExceptionInternal} to replace the response body with a {@link Problem} object.
- *
- * <p>Behavior:
- *
- * <ul>
- *   <li>Delegates exception-to-problem mapping to {@link ProblemResolverStore}.
- *   <li>Sets content type to {@code application/problem+json}.
- *   <li>Falls back to {@link HttpStatus#INTERNAL_SERVER_ERROR} if mapping fails.
- * </ul>
- *
- * @see #handleExceptionInternal
- * @see io.github.problem4j.spring.web.resolver.ProblemResolver
  * @since 1.2.0
+ * @deprecated since 3.1.0 in favor of {@link ProblemResponseEntityExceptionHandler}, which this
+ *     class extends
  */
+@Deprecated(since = "3.1.0", forRemoval = true)
 @RestControllerAdvice
-public class ProblemEnhancedWebFluxHandler extends ResponseEntityExceptionHandler {
-
-  private static final Logger log = LoggerFactory.getLogger(ProblemEnhancedWebFluxHandler.class);
-
-  private final ProblemResolverStore problemResolverStore;
-  private final ProblemPostProcessor problemPostProcessor;
-
-  private final List<ProblemInspector> problemInspectors;
+public class ProblemEnhancedWebFluxHandler extends ProblemResponseEntityExceptionHandler {
 
   /**
    * Constructs a new {@code ProblemEnhancedWebFluxHandler}.
@@ -79,85 +44,6 @@ public class ProblemEnhancedWebFluxHandler extends ResponseEntityExceptionHandle
       ProblemResolverStore problemResolverStore,
       ProblemPostProcessor problemPostProcessor,
       List<? extends ProblemInspector> problemInspectors) {
-    this.problemResolverStore = problemResolverStore;
-    this.problemPostProcessor = problemPostProcessor;
-    this.problemInspectors = new ArrayList<>(problemInspectors);
-  }
-
-  /**
-   * Overrides the default exception handling to produce a {@link Problem} response. It attempts to
-   * resolve the exception using registered resolvers, sets the content type, applies
-   * post-processing, and falls back to a generic problem if resolution fails. It also applies any
-   * configured inspectors.
-   *
-   * @param ex the exception to handle
-   * @param body the body to use for the response
-   * @param headers the headers to use for the response
-   * @param status the status code to use for the response
-   * @param exchange the current request and response
-   * @return a {@link Mono} emitting the response entity with a {@link Problem} body
-   * @since 1.2.0
-   */
-  @Override
-  protected Mono<ResponseEntity<Object>> handleExceptionInternal(
-      Exception ex,
-      @Nullable Object body,
-      @Nullable HttpHeaders headers,
-      HttpStatusCode status,
-      ServerWebExchange exchange) {
-    ProblemContext context =
-        exchange.getAttributeOrDefault(PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create());
-
-    headers = headers != null ? new HttpHeaders(headers) : new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
-
-    Problem problem;
-    try {
-      problem = getProblemForOverridingBody(context, ex, headers, status);
-      problem = problemPostProcessor.process(context, problem);
-    } catch (Exception e) {
-      logAdviceException(log, ex, exchange, e);
-      problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
-    }
-
-    status =
-        Optional.ofNullable(HttpStatus.resolve(problem.getStatus()))
-            .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
-
-    for (ProblemInspector inspector : problemInspectors) {
-      inspector.inspect(context, problem, ex, headers, status, exchange);
-    }
-
-    return super.handleExceptionInternal(ex, problem, headers, status, exchange);
-  }
-
-  /**
-   * Returns a {@link Problem} for the given exception, using a resolver if available, or a fallback
-   * otherwise.
-   *
-   * @param context the problem context
-   * @param ex the exception to resolve
-   * @param headers the HTTP headers
-   * @param status the HTTP status code
-   * @return a {@link Problem} for the exception
-   * @since 1.2.0
-   */
-  protected Problem getProblemForOverridingBody(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return problemResolverStore
-        .findResolver(ex.getClass())
-        .map(resolver -> resolver.resolve(context, ex, headers, status))
-        .orElseGet(() -> fallbackProblem(status));
-  }
-
-  /**
-   * Returns a fallback {@link Problem} with the given status.
-   *
-   * @param status the HTTP status code
-   * @return a fallback {@link Problem}
-   * @since 1.2.0
-   */
-  protected Problem fallbackProblem(HttpStatusCode status) {
-    return Problem.of(status.value());
+    super(problemResolverStore, problemPostProcessor, problemInspectors);
   }
 }

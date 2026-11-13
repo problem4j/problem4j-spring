@@ -22,6 +22,7 @@ import io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice;
 import io.github.problem4j.spring.webmvc.ProblemContextFilter;
 import io.github.problem4j.spring.webmvc.ProblemContextMethodArgumentResolver;
 import io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice;
+import io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -181,6 +182,22 @@ class ProblemWebMvcAutoConfigurationTest {
     void contextLoadsWithoutExceptionAdvice() {
       assertThat(problemExceptionWebMvcAdvice).isNull();
       assertThat(properties.getProblemExceptionAdvice().isEnabled()).isFalse();
+    }
+  }
+
+  @SpringBootTest(classes = {WebMvcTestApp.class})
+  @Nested
+  @SuppressWarnings("removal")
+  class WithFormerResponseEntityExceptionHandlerType {
+
+    @Autowired
+    private io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler
+        responseEntityExceptionHandler;
+
+    @Test
+    void contextLoadsWithDefaultHandlerInjectableByFormerType() {
+      assertThat(responseEntityExceptionHandler)
+          .isInstanceOf(ProblemResponseEntityExceptionHandler.class);
     }
   }
 

@@ -22,6 +22,7 @@ import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.ProblemContextMethodArgumentResolver;
 import io.github.problem4j.spring.webflux.ProblemContextWebFilter;
 import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
+import io.github.problem4j.spring.webflux.ProblemResponseEntityExceptionHandler;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -167,6 +168,22 @@ class ProblemWebFluxAutoConfigurationTest {
     void contextLoadsWithoutExceptionAdvice() {
       assertThat(problemExceptionWebFluxAdvice).isNull();
       assertThat(properties.getProblemExceptionAdvice().isEnabled()).isFalse();
+    }
+  }
+
+  @SpringBootTest(classes = {WebFluxTestApp.class})
+  @Nested
+  @SuppressWarnings("removal")
+  class WithFormerResponseEntityExceptionHandlerType {
+
+    @Autowired
+    private io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler
+        responseEntityExceptionHandler;
+
+    @Test
+    void contextLoadsWithDefaultHandlerInjectableByFormerType() {
+      assertThat(responseEntityExceptionHandler)
+          .isInstanceOf(ProblemResponseEntityExceptionHandler.class);
     }
   }
 

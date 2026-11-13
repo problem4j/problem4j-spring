@@ -34,6 +34,7 @@ import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
 import io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler;
 import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.ProblemInspector;
+import io.github.problem4j.spring.webflux.ProblemResponseEntityExceptionHandler;
 import java.util.List;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -262,9 +263,14 @@ public class ProblemWebFluxAutoConfiguration {
     /**
      * Provides the Problem4J-enhanced {@link ResponseEntityExceptionHandler} implementation for
      * WebFlux applications.
+     *
+     * <p>Creates deprecated {@link ProblemEnhancedWebFluxHandler} (a {@link
+     * ProblemResponseEntityExceptionHandler}) until it is removed, so that applications injecting
+     * it by its former type keep working.
      */
     @Order(Ordered.LOWEST_PRECEDENCE - 10)
     @ConditionalOnMissingBean(ResponseEntityExceptionHandler.class)
+    @SuppressWarnings("removal")
     @Bean
     ResponseEntityExceptionHandler problemEnhancedWebFluxHandler(
         ProblemResolverStore problemResolverStore,
