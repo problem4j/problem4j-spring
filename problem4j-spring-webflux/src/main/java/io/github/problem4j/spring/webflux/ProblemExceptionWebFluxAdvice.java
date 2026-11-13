@@ -54,20 +54,20 @@ public class ProblemExceptionWebFluxAdvice {
 
   private final ProblemPostProcessor problemPostProcessor;
 
-  private final List<AdviceWebFluxInspector> adviceWebFluxInspectors;
+  private final List<ProblemInspector> problemInspectors;
 
   /**
    * Constructs a new {@code ProblemExceptionWebFluxAdvice}.
    *
    * @param problemPostProcessor the post-processor for problems
-   * @param adviceWebFluxInspectors the inspectors to apply to advice
+   * @param problemInspectors the inspectors to apply to advice
    * @since 1.2.0
    */
   public ProblemExceptionWebFluxAdvice(
       ProblemPostProcessor problemPostProcessor,
-      List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
+      List<? extends ProblemInspector> problemInspectors) {
     this.problemPostProcessor = problemPostProcessor;
-    this.adviceWebFluxInspectors = new ArrayList<>(adviceWebFluxInspectors);
+    this.problemInspectors = new ArrayList<>(problemInspectors);
   }
 
   /**
@@ -101,7 +101,7 @@ public class ProblemExceptionWebFluxAdvice {
         Optional.ofNullable(HttpStatus.resolve(problem.getStatus()))
             .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
-    for (AdviceWebFluxInspector inspector : adviceWebFluxInspectors) {
+    for (ProblemInspector inspector : problemInspectors) {
       inspector.inspect(context, problem, ex, headers, status, exchange);
     }
 

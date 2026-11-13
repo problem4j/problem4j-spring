@@ -64,23 +64,23 @@ public class ProblemEnhancedWebMvcHandler extends ResponseEntityExceptionHandler
   private final ProblemResolverStore problemResolverStore;
   private final ProblemPostProcessor problemPostProcessor;
 
-  private final List<AdviceWebMvcInspector> adviceWebMvcInspectors;
+  private final List<ProblemInspector> problemInspectors;
 
   /**
    * Creates a new {@link ProblemEnhancedWebMvcHandler}.
    *
    * @param problemResolverStore the resolver store
    * @param problemPostProcessor the post-processor
-   * @param adviceWebMvcInspectors the inspectors
+   * @param problemInspectors the inspectors
    * @since 1.2.0
    */
   public ProblemEnhancedWebMvcHandler(
       ProblemResolverStore problemResolverStore,
       ProblemPostProcessor problemPostProcessor,
-      List<? extends AdviceWebMvcInspector> adviceWebMvcInspectors) {
+      List<? extends ProblemInspector> problemInspectors) {
     this.problemResolverStore = problemResolverStore;
     this.problemPostProcessor = problemPostProcessor;
-    this.adviceWebMvcInspectors = new ArrayList<>(adviceWebMvcInspectors);
+    this.problemInspectors = new ArrayList<>(problemInspectors);
   }
 
   /**
@@ -125,7 +125,7 @@ public class ProblemEnhancedWebMvcHandler extends ResponseEntityExceptionHandler
         Optional.ofNullable(HttpStatus.resolve(problem.getStatus()))
             .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
-    for (AdviceWebMvcInspector inspector : adviceWebMvcInspectors) {
+    for (ProblemInspector inspector : problemInspectors) {
       inspector.inspect(context, problem, ex, headers, status, request);
     }
 

@@ -33,9 +33,12 @@ import org.springframework.web.server.ServerWebExchange;
  * <p>Typical use cases include logging, monitoring, or auditing error responses.
  *
  * @since 1.2.0
+ * @deprecated since 3.1.0 in favor of {@link ProblemInspector}, which this interface extends;
+ *     implementations of both are invoked
  */
+@Deprecated(since = "3.1.0", forRemoval = true)
 @FunctionalInterface
-public interface AdviceWebFluxInspector {
+public interface AdviceWebFluxInspector extends ProblemInspector {
 
   /**
    * Observe the details of a Problem response before it is sent to the client.
@@ -49,6 +52,7 @@ public interface AdviceWebFluxInspector {
    * @param exchange the current {@link ServerWebExchange} associated with the handling
    * @since 1.2.0
    */
+  @Override
   void inspect(
       ProblemContext context,
       Problem problem,

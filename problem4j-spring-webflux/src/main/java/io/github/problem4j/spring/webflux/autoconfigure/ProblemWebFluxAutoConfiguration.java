@@ -25,14 +25,14 @@ import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnMi
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnSimpleSource;
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnUnavailableSource;
 import io.github.problem4j.spring.web.autoconfigure.UnavailableTracingSourceException;
-import io.github.problem4j.spring.webflux.AdviceWebFluxInspector;
 import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.MicrometerProblemContextWebFluxFilter;
-import io.github.problem4j.spring.webflux.ObservationErrorWebFluxInspector;
+import io.github.problem4j.spring.webflux.ObservationErrorProblemInspector;
 import io.github.problem4j.spring.webflux.ProblemContextWebFluxArgumentResolver;
 import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
 import io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler;
 import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
+import io.github.problem4j.spring.webflux.ProblemInspector;
 import java.util.List;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -97,9 +97,9 @@ public class ProblemWebFluxAutoConfiguration {
       ProblemMapper problemMapper,
       ProblemResolverStore problemResolverStore,
       ProblemPostProcessor problemPostProcessor,
-      List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
+      List<? extends ProblemInspector> problemInspectors) {
     return new ExceptionWebFluxAdvice(
-        problemMapper, problemResolverStore, problemPostProcessor, adviceWebFluxInspectors);
+        problemMapper, problemResolverStore, problemPostProcessor, problemInspectors);
   }
 
   /**
@@ -117,8 +117,8 @@ public class ProblemWebFluxAutoConfiguration {
   @Bean
   ProblemExceptionWebFluxAdvice problemExceptionWebFluxAdvice(
       ProblemPostProcessor problemPostProcessor,
-      List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
-    return new ProblemExceptionWebFluxAdvice(problemPostProcessor, adviceWebFluxInspectors);
+      List<? extends ProblemInspector> problemInspectors) {
+    return new ProblemExceptionWebFluxAdvice(problemPostProcessor, problemInspectors);
   }
 
   /**
@@ -134,7 +134,7 @@ public class ProblemWebFluxAutoConfiguration {
   }
 
   /**
-   * Nested configuration that registers the {@link ObservationErrorWebFluxInspector}, recording
+   * Nested configuration that registers the {@link ObservationErrorProblemInspector}, recording
    * handled exceptions as errors of the current HTTP server observation.
    */
   @ConditionalOnClass(ServerRequestObservationContext.class)
@@ -145,15 +145,15 @@ public class ProblemWebFluxAutoConfiguration {
     ObservationErrorConfiguration() {}
 
     /**
-     * Registers the default {@link ObservationErrorWebFluxInspector}, recording handled exceptions
+     * Registers the default {@link ObservationErrorProblemInspector}, recording handled exceptions
      * according to {@code problem4j.observation-errors}.
      */
-    @ConditionalOnMissingBean(ObservationErrorWebFluxInspector.class)
+    @ConditionalOnMissingBean(ObservationErrorProblemInspector.class)
     @Bean
-    ObservationErrorWebFluxInspector observationErrorWebFluxInspector(
+    ObservationErrorProblemInspector observationErrorProblemInspector(
         ProblemProperties properties) {
       ErrorRecording observationErrors = properties.getObservationErrors();
-      return new ObservationErrorWebFluxInspector(
+      return new ObservationErrorProblemInspector(
           status -> observationErrors.matches(status.value()));
     }
   }
@@ -263,9 +263,9 @@ public class ProblemWebFluxAutoConfiguration {
     ResponseEntityExceptionHandler problemEnhancedWebFluxHandler(
         ProblemResolverStore problemResolverStore,
         ProblemPostProcessor problemPostProcessor,
-        List<? extends AdviceWebFluxInspector> adviceWebFluxInspectors) {
+        List<? extends ProblemInspector> problemInspectors) {
       return new ProblemEnhancedWebFluxHandler(
-          problemResolverStore, problemPostProcessor, adviceWebFluxInspectors);
+          problemResolverStore, problemPostProcessor, problemInspectors);
     }
   }
 }

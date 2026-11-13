@@ -20,6 +20,10 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   `type to name` pairs.
 - Add `problem4j-gson` and register `ProblemTypeAdapterFactory` if present on the classpath.
 - Add Kotlin extensions and DSL functions for common Problem4J classes and utilities.
+- Add `ProblemInspector` interfaces (`io.github.problem4j.spring.webmvc.ProblemInspector` and
+  `io.github.problem4j.spring.webflux.ProblemInspector`) to peek on `Problem` objects before returning a response, and
+  `problemInspector(...)` Kotlin functions creating them. All `ProblemInspector` beans are invoked, including the ones
+  implementing deprecated `AdviceWebMvcInspector` / `AdviceWebFluxInspector`.
 - Add `problem4j.duplicate-resolver-policy` property to control what happens when multiple `ProblemResolver` instances
   for the same exception class have equal order. `fail` (default) fails application startup, `first` picks the first
   one registered in the application context, `last` picks the last one registered in the application context (so a
@@ -41,8 +45,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   `{problem.detail}`, `{problem.instance}` and `{context.<key>}` placeholders. An override replaces an existing
   extension with the same name and is skipped if any placeholder cannot be resolved. A template made of exactly one
   placeholder keeps the type of the resolved value (e.g. `{problem.status}` is a number).
-- Add `ObservationErrorWebMvcInspector` and `ObservationErrorWebFluxInspector`, recording exceptions handled by
-  Problem4J as errors of the current HTTP server observation (`ServerRequestObservationContext`), so that
+- Add `ObservationErrorProblemInspector` (for both WebMVC and WebFlux), recording exceptions handled by Problem4J as
+  errors of the current HTTP server observation (`ServerRequestObservationContext`), so that
   `http.server.requests` metrics and spans report the `exception` instead of `none`. Add
   `problem4j.observation-errors` property deciding which exceptions are recorded. `server` (default) records
   exceptions resulting in a 5xx response, `all` records all of them, `none` disables recording.
@@ -85,6 +89,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   other collaborators), including `AbstractProblemResolver(Class, ProblemFormat)`. Collaborators are now injected after
   construction by `ProblemBeanPostProcessor`; use the no-arg constructor (`AbstractProblemResolver(Class)` for custom
   subclasses).
+- Deprecate `AdviceWebMvcInspector` and `AdviceWebFluxInspector` in favor of `ProblemInspector`, which they now extend.
 
 ### Fixed
 

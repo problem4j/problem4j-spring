@@ -14,59 +14,59 @@
  * limitations under the License.
  */
 
-package io.github.problem4j.spring.webflux
+package io.github.problem4j.spring.webmvc
 
 import io.github.problem4j.core.Problem
 import io.github.problem4j.core.ProblemContext
-import org.springframework.web.server.ServerWebExchange
+import org.springframework.web.context.request.WebRequest
 
 /**
- * Creates an [AdviceWebFluxInspector] from a lambda.
+ * Creates an [ProblemInspector] from a lambda.
  *
  * Example:
  * ```
- * import io.github.problem4j.spring.webflux.AdviceWebFluxInspector
- * import io.github.problem4j.spring.webflux.adviceWebFluxInspector
+ * import io.github.problem4j.spring.webmvc.ProblemInspector
+ * import io.github.problem4j.spring.webmvc.problemInspector
  * import org.springframework.context.annotation.Bean
  *
  * @Bean
- * fun loggingInspector(): AdviceWebFluxInspector =
- *     adviceWebFluxInspector { ctx, problem, ex, exchange ->
+ * fun loggingInspector(): ProblemInspector =
+ *     problemInspector { ctx, problem, ex, request ->
  *         log.warn("Resolved {} to {}", ex.message, problem.status)
  *     }
  * ```
  *
  * @param inspect observes the resolved [Problem] together with the exception that caused it
- * @return an [AdviceWebFluxInspector] delegating to [inspect]
+ * @return an [ProblemInspector] delegating to [inspect]
  * @since 3.1.0
  */
-public fun adviceWebFluxInspector(
-    inspect: (ProblemContext, Problem, Exception, ServerWebExchange) -> Unit,
-): AdviceWebFluxInspector = AdviceWebFluxInspector { context, problem, ex, _, _, exchange ->
-  inspect(context, problem, ex, exchange)
+public fun problemInspector(
+    inspect: (ProblemContext, Problem, Exception, WebRequest) -> Unit,
+): ProblemInspector = ProblemInspector { context, problem, ex, _, _, request ->
+  inspect(context, problem, ex, request)
 }
 
 /**
- * Creates an [AdviceWebFluxInspector] from a lambda.
+ * Creates an [ProblemInspector] from a lambda.
  *
  * Example:
  * ```
- * import io.github.problem4j.spring.webflux.AdviceWebFluxInspector
- * import io.github.problem4j.spring.webflux.adviceWebFluxInspector
+ * import io.github.problem4j.spring.webmvc.ProblemInspector
+ * import io.github.problem4j.spring.webmvc.problemInspector
  * import org.springframework.context.annotation.Bean
  *
  * @Bean
- * fun loggingInspector(): AdviceWebFluxInspector =
- *     adviceWebFluxInspector { problem, ex ->
+ * fun loggingInspector(): ProblemInspector =
+ *     problemInspector { problem, ex ->
  *         log.warn("Resolved {} to {}", ex.message, problem.status)
  *     }
  * ```
  *
  * @param inspect observes the resolved [Problem] together with the exception that caused it
- * @return an [AdviceWebFluxInspector] delegating to [inspect]
+ * @return an [ProblemInspector] delegating to [inspect]
  * @since 3.1.0
  */
-public fun adviceWebFluxInspector(inspect: (Problem, Exception) -> Unit): AdviceWebFluxInspector =
-    AdviceWebFluxInspector { _, problem, ex, _, _, _ ->
+public fun problemInspector(inspect: (Problem, Exception) -> Unit): ProblemInspector =
+    ProblemInspector { _, problem, ex, _, _, _ ->
       inspect(problem, ex)
     }
