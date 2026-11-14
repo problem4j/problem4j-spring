@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -49,8 +51,18 @@ import reactor.core.publisher.Mono;
  *
  * @since 1.2.0
  */
+@Order(ProblemExceptionWebFluxAdvice.PRECEDENCE)
 @RestControllerAdvice
 public class ProblemExceptionWebFluxAdvice {
+
+  /**
+   * Precedence of this advice, {@code Ordered.LOWEST_PRECEDENCE - 10}. It is applied before
+   * controller advices of the application with default order, and before {@link
+   * ExceptionWebFluxAdvice}. Inherited by subclasses, unless they declare their own {@code @Order}.
+   *
+   * @since 3.1.0
+   */
+  public static final int PRECEDENCE = Ordered.LOWEST_PRECEDENCE - 10;
 
   private static final Logger log = LoggerFactory.getLogger(ProblemExceptionWebFluxAdvice.class);
 

@@ -32,6 +32,8 @@ import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -59,8 +61,18 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  * @see io.github.problem4j.spring.web.resolver.ProblemResolver
  * @since 3.1.0
  */
+@Order(ProblemResponseEntityExceptionHandler.PRECEDENCE)
 @RestControllerAdvice
 public class ProblemResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+
+  /**
+   * Precedence of this advice, {@code Ordered.LOWEST_PRECEDENCE - 10}. It is applied before
+   * controller advices of the application with default order, and before {@link
+   * ExceptionWebMvcAdvice}. Inherited by subclasses, unless they declare their own {@code @Order}.
+   *
+   * @since 3.1.0
+   */
+  public static final int PRECEDENCE = Ordered.LOWEST_PRECEDENCE - 10;
 
   private static final Logger log =
       LoggerFactory.getLogger(ProblemResponseEntityExceptionHandler.class);

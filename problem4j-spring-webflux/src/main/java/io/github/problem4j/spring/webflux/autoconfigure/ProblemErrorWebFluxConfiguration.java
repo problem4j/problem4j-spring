@@ -28,7 +28,6 @@ import org.springframework.boot.webflux.error.ErrorWebExceptionHandler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.web.reactive.result.view.ViewResolver;
 
@@ -66,12 +65,12 @@ class ProblemErrorWebFluxConfiguration {
 
   /**
    * Overrides {@link ErrorWebExceptionHandler} defined in {@code ErrorWebFluxAutoConfiguration} to
-   * return problem JSONs. Must be declared with {@code @Order(-2)}, as default one declared in
-   * {@code ErrorWebFluxAutoConfiguration} has {@code @Order(-1)} (the lower value wins).
+   * return problem JSONs. It is ordered with {@link ProblemErrorWebExceptionHandler#PRECEDENCE}
+   * ({@code -2}), as default one declared in {@code ErrorWebFluxAutoConfiguration} has
+   * {@code @Order(-1)} (the lower value wins).
    *
    * @see org.springframework.boot.webflux.autoconfigure.error.ErrorWebFluxAutoConfiguration
    */
-  @Order(-2)
   @ConditionalOnMissingBean(ErrorWebExceptionHandler.class)
   @Bean
   ErrorWebExceptionHandler problemErrorWebExceptionHandler(
