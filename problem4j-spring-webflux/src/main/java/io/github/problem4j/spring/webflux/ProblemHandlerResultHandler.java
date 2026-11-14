@@ -136,7 +136,7 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
   /**
    * Checks whether the result may carry a {@link Problem}, {@link ProblemDetail} or {@link
    * ErrorResponse}, directly, as {@link HttpEntity} body, or wrapped in a single-value reactive
-   * type, and whether any delegate supports it.
+   * type (also as {@link HttpEntity} body), and whether any delegate supports it.
    *
    * @param result the result of handler invocation
    * @return {@code true} if the result may need transformation
@@ -162,6 +162,14 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
     }
     if (HttpEntity.class.isAssignableFrom(type.toClass())) {
       type = type.as(HttpEntity.class).getGeneric();
+      Class<?> bodyType = type.resolve();
+      ReactiveAdapter bodyAdapter = bodyType != null ? adapterRegistry.getAdapter(bodyType) : null;
+      if (bodyAdapter != null) {
+        if (bodyAdapter.isMultiValue() || bodyAdapter.isNoValue()) {
+          return false;
+        }
+        type = type.getGeneric();
+      }
     }
     Class<?> clazz = type.toClass();
     return clazz == Object.class
@@ -220,8 +228,36 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
                   exchange, withReturnValue(result, adapter.fromPublisher(Mono.justOrEmpty(v)))));
     }
 
-    @Nullable Object transformed = value != null ? safeTransform(value, entity, exchange) : null;
+    if (value instanceof HttpEntity<?> httpEntity && httpEntity.getBody() != null) {
+      Object body = httpEntity.getBody();
+      ReactiveAdapter bodyAdapter = adapterRegistry.getAdapter(body.getClass(), body);
+      if (bodyAdapter != null && !bodyAdapter.isMultiValue() && !bodyAdapter.isNoValue()) {
+        // The body is awaited for the same reason, and wrapped back into its reactive type, as the
+        // delegate expects the body declared by the return type.
+        return Mono.from(bodyAdapter.toPublisher(body))
+            .map(v -> Optional.of(safeTransform(withBody(httpEntity, v), entity, exchange)))
+            .defaultIfEmpty(Optional.empty())
+            .map(v ->
+                v.map(transformed -> withReactiveBody(transformed, bodyAdapter)).orElse(httpEntity))
+            .flatMap(v -> delegate.handleResult(exchange, withReturnValue(result, v)));
+      }
+    }
+
+    Object transformed = value != null ? safeTransform(value, entity, exchange) : null;
     return delegate.handleResult(exchange, withReturnValue(result, transformed));
+  }
+
+  private static HttpEntity<?> withBody(HttpEntity<?> httpEntity, @Nullable Object body) {
+    return httpEntity instanceof ResponseEntity<?> responseEntity
+        ? new ResponseEntity<>(body, responseEntity.getHeaders(), responseEntity.getStatusCode())
+        : new HttpEntity<>(body, httpEntity.getHeaders());
+  }
+
+  private static Object withReactiveBody(Object value, ReactiveAdapter bodyAdapter) {
+    if (!(value instanceof HttpEntity<?> httpEntity)) {
+      return value;
+    }
+    return withBody(httpEntity, bodyAdapter.fromPublisher(Mono.justOrEmpty(httpEntity.getBody())));
   }
 
   private static HandlerResult withReturnValue(HandlerResult result, @Nullable Object value) {

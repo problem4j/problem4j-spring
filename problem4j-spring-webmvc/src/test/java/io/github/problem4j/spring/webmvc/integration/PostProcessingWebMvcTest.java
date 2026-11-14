@@ -66,7 +66,14 @@ class PostProcessingWebMvcTest {
     @CsvSource({
       "/post-processing/problem, 409, returned problem",
       "/post-processing/problem-detail, 409, returned problem detail",
+      "/post-processing/problem-entity, 409, returned problem",
+      "/post-processing/problem-detail-entity, 409, returned problem detail",
+      "/post-processing/problem-object-entity, 409, returned problem",
+      "/post-processing/error-response, 409, returned error response",
+      "/post-processing/problem-future, 409, returned problem",
+      "/post-processing/problem-entity-future, 409, returned problem",
       "/post-processing/local-handler, 400, local handler",
+      "/post-processing/local-entity-handler, 400, local handler",
       "/post-processing/advice-handler, 422, advice handler"
     })
     void givenReturnedProblemOrProblemDetail_whenRequesting_thenPostProcessed(

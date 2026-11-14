@@ -395,6 +395,55 @@ class ProblemHandlerResultHandlerTest {
   }
 
   @Test
+  void givenEntitiesWithReactiveBodies_whenCheckingSupport_thenOnlySingleValueSupported() {
+    ProblemHandlerResultHandler handler = handler(bodyHandler);
+
+    assertThat(handler.supports(result("monoEntity", null))).isTrue();
+    assertThat(handler.supports(result("fluxEntity", null))).isFalse();
+  }
+
+  @Test
+  void givenResponseEntityWithMonoOfProblem_whenHandling_thenBodyPostProcessedAndKeptReactive() {
+    MockServerWebExchange exchange = exchange();
+    exchange
+        .getAttributes()
+        .put(PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create().put("traceId", "abc"));
+    ResponseEntity<Mono<Problem>> entity =
+        ResponseEntity.status(HttpStatus.CONFLICT).body(Mono.just(conflict()));
+
+    handler(entityHandler).handleResult(exchange, result("monoEntity", entity)).block();
+
+    assertThat(entityHandler.value())
+        .isInstanceOfSatisfying(
+            ResponseEntity.class,
+            transformed -> {
+              assertThat(transformed.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+              assertThat(transformed.getHeaders().getContentType())
+                  .isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
+              assertThat(transformed.getBody())
+                  .isInstanceOfSatisfying(
+                      Mono.class,
+                      body ->
+                          assertThat(body.block())
+                              .isInstanceOfSatisfying(
+                                  Problem.class,
+                                  problem ->
+                                      assertThat(problem.getExtensions())
+                                          .containsEntry("traceId", "abc")));
+            });
+  }
+
+  @Test
+  void givenResponseEntityWithEmptyMono_whenHandling_thenEntityIsKept() {
+    ResponseEntity<Mono<Problem>> entity =
+        ResponseEntity.status(HttpStatus.CONFLICT).body(Mono.empty());
+
+    handler(entityHandler).handleResult(exchange(), result("monoEntity", entity)).block();
+
+    assertThat(entityHandler.value()).isSameAs(entity);
+  }
+
+  @Test
   void givenEmptyMono_whenHandling_thenDelegatedWithEmptyValue() {
     handler(bodyHandler).handleResult(exchange(), result("mono", Mono.<Problem>empty())).block();
 
@@ -536,6 +585,14 @@ class ProblemHandlerResultHandlerTest {
 
     Mono<Problem> mono() {
       return Mono.just(conflict());
+    }
+
+    ResponseEntity<Mono<Problem>> monoEntity() {
+      return ResponseEntity.status(409).body(Mono.just(conflict()));
+    }
+
+    ResponseEntity<Flux<Problem>> fluxEntity() {
+      return ResponseEntity.ok(Flux.just(conflict()));
     }
 
     Flux<Problem> flux() {
