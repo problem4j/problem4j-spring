@@ -216,8 +216,15 @@ class ProblemResponseBodyAdviceTest {
   }
 
   @Test
-  void givenProblemWithUnknownStatus_whenWriting_thenStatusIsKept() {
+  void givenProblemWithNonStandardStatus_whenWriting_thenStatusIsApplied() {
     write(Problem.of(599), "problem", MediaType.APPLICATION_JSON);
+
+    assertThat(servletResponse.getStatus()).isEqualTo(599);
+  }
+
+  @Test
+  void givenProblemWithoutStatus_whenWriting_thenStatusIsKept() {
+    write(Problem.builder().title("No status").build(), "problem", MediaType.APPLICATION_JSON);
 
     assertThat(servletResponse.getStatus()).isEqualTo(200);
   }

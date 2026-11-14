@@ -162,9 +162,14 @@ public class ProblemResponseBodyAdvice implements ResponseBodyAdvice<Object> {
   private static void applyStatus(Problem problem, ServerHttpResponse response) {
     if (response instanceof ServletServerHttpResponse servletResponse
         && servletResponse.getServletResponse().getStatus() == HttpStatus.OK.value()
-        && HttpStatus.resolve(problem.getStatus()) != null) {
+        && isValidStatus(problem.getStatus())) {
       response.setStatusCode(HttpStatusCode.valueOf(problem.getStatus()));
     }
+  }
+
+  // A problem may carry no status (0) or one outside the 100-999 range of HttpStatusCode.
+  private static boolean isValidStatus(int status) {
+    return status >= 100 && status <= 999;
   }
 
   private static void applyContentType(
