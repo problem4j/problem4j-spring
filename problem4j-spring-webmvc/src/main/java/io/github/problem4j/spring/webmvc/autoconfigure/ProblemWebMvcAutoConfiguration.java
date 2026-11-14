@@ -49,8 +49,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.server.observation.ServerRequestObservationContext;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -95,7 +93,6 @@ public class ProblemWebMvcAutoConfiguration {
    * <p>The advice intercepts thrown exceptions and resolves them to {@code Problem} objects
    * according {@code ProblemResolver}-s managed by {@link ProblemResolverStore}.
    */
-  @Order(Ordered.LOWEST_PRECEDENCE)
   @ConditionalOnBooleanProperty(
       name = "problem4j.webmvc.exception-advice.enabled",
       matchIfMissing = true)
@@ -117,7 +114,6 @@ public class ProblemWebMvcAutoConfiguration {
    * <p>This advice focuses on translating {@code Problem}-domain exceptions into standardized
    * problem responses, using the configured post processor and inspectors.
    */
-  @Order(Ordered.LOWEST_PRECEDENCE - 10)
   @ConditionalOnBooleanProperty(
       name = "problem4j.webmvc.problem-exception-advice.enabled",
       matchIfMissing = true)
@@ -286,7 +282,6 @@ public class ProblemWebMvcAutoConfiguration {
      * ProblemResponseEntityExceptionHandler}) until it is removed, so that applications injecting
      * it by its former type keep working.
      */
-    @Order(Ordered.LOWEST_PRECEDENCE - 10)
     @ConditionalOnMissingBean(ResponseEntityExceptionHandler.class)
     @SuppressWarnings("removal")
     @Bean

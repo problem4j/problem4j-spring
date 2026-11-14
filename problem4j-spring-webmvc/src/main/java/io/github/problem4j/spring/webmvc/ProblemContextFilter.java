@@ -28,6 +28,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.core.Ordered;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -41,9 +42,22 @@ import org.springframework.web.filter.OncePerRequestFilter;
  *
  * @since 3.1.0
  */
-public class ProblemContextFilter extends OncePerRequestFilter {
+public class ProblemContextFilter extends OncePerRequestFilter implements Ordered {
+
+  /**
+   * Default order of this filter, {@code Ordered.HIGHEST_PRECEDENCE + 10}. It runs before filters
+   * of the application, including the ones registered with default order, so that exceptions thrown
+   * by them are rendered with the trace identifier, and after Spring Boot's {@code
+   * ServerHttpObservationFilter} ({@code HIGHEST_PRECEDENCE + 1}), so that the current span is
+   * available.
+   *
+   * @since 3.1.0
+   */
+  public static final int DEFAULT_ORDER = Ordered.HIGHEST_PRECEDENCE + 10;
 
   private final ProblemContextSettings settings;
+
+  private int order = DEFAULT_ORDER;
 
   /**
    * Creates a new {@code ProblemContextFilter}.
@@ -200,5 +214,26 @@ public class ProblemContextFilter extends OncePerRequestFilter {
    */
   protected final ProblemContextSettings getSettings() {
     return settings;
+  }
+
+  /**
+   * Returns the order of this filter, {@link #DEFAULT_ORDER} by default.
+   *
+   * @return the order of this filter
+   * @since 3.1.0
+   */
+  @Override
+  public int getOrder() {
+    return order;
+  }
+
+  /**
+   * Sets the order of this filter.
+   *
+   * @param order the order of this filter
+   * @since 3.1.0
+   */
+  public void setOrder(int order) {
+    this.order = order;
   }
 }

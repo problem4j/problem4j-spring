@@ -83,6 +83,15 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   `instance`, empty map for extensions), so custom implementations only need to override the settings they use.
 - `ProblemContextSettings.getTracingHeaderName()` now has a default implementation returning `null`. As the interface no
   longer has an abstract method, it can't be implemented with a lambda anymore - use an anonymous class instead.
+- `ProblemContextFilter` and `ProblemContextWebFilter` implement `Ordered`, with `DEFAULT_ORDER`
+  (`Ordered.HIGHEST_PRECEDENCE + 10`) changeable with `setOrder(int)`. They run after Spring Boot's
+  `ServerHttpObservationFilter` and before filters of the application with default order, so that exceptions thrown by
+  those filters are rendered with `traceId`.
+- Order of `ExceptionWebMvcAdvice` / `ExceptionWebFluxAdvice`, `ProblemExceptionWebMvcAdvice` /
+  `ProblemExceptionWebFluxAdvice`, `ProblemResponseEntityExceptionHandler` and `ProblemErrorWebExceptionHandler` is
+  declared with `@Order` on the classes, exposed as `PRECEDENCE` constants, instead of `@Bean` methods of the
+  auto-configurations. Subclasses registered by the application inherit it, unless they declare their own `@Order`.
+  Previously, they had `Ordered.LOWEST_PRECEDENCE` by default.
 
 ### Deprecated
 

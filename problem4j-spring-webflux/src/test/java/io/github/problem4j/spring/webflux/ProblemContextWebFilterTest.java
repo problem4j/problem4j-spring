@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.spring.web.ProblemContextSettings;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.Ordered;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -70,5 +71,17 @@ class ProblemContextWebFilterTest {
         return headerName;
       }
     };
+  }
+
+  @Test
+  void givenDefaultOrder_whenSettingOrder_thenOrderIsChanged() {
+    ProblemContextSettings settings = new ProblemContextSettings() {};
+    ProblemContextWebFilter filter = new ProblemContextWebFilter(settings);
+
+    assertThat(filter.getOrder()).isEqualTo(ProblemContextWebFilter.DEFAULT_ORDER);
+    assertThat(ProblemContextWebFilter.DEFAULT_ORDER).isEqualTo(Ordered.HIGHEST_PRECEDENCE + 10);
+    assertThat(filter.getSettings()).isSameAs(settings);
+    filter.setOrder(42);
+    assertThat(filter.getOrder()).isEqualTo(42);
   }
 }

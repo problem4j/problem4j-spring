@@ -29,6 +29,7 @@ import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.webflux.autoconfigure.error.DefaultErrorWebExceptionHandler;
 import org.springframework.boot.webflux.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -45,7 +46,17 @@ import reactor.core.publisher.Mono;
  *
  * @since 1.2.0
  */
+@Order(ProblemErrorWebExceptionHandler.PRECEDENCE)
 public class ProblemErrorWebExceptionHandler extends DefaultErrorWebExceptionHandler {
+
+  /**
+   * Precedence of this handler, {@code -2}. It is applied before {@code ErrorWebExceptionHandler}
+   * of Spring Boot, declared with {@code -1} in {@code ErrorWebFluxAutoConfiguration}. Inherited by
+   * subclasses, unless they declare their own {@code @Order}.
+   *
+   * @since 3.1.0
+   */
+  public static final int PRECEDENCE = -2;
 
   private final ProblemPostProcessor problemPostProcessor;
 
