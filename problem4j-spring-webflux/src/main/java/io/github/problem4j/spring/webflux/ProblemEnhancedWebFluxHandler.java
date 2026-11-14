@@ -18,6 +18,7 @@ package io.github.problem4j.spring.webflux;
 
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
+import io.github.problem4j.spring.web.operations.ProblemOperations;
 import java.util.List;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -40,10 +41,24 @@ public class ProblemEnhancedWebFluxHandler extends ProblemResponseEntityExceptio
    * @param problemInspectors the inspectors to apply to advice
    * @since 1.2.0
    */
+  @SuppressWarnings("removal")
   public ProblemEnhancedWebFluxHandler(
       ProblemResolverStore problemResolverStore,
       ProblemPostProcessor problemPostProcessor,
       List<? extends ProblemInspector> problemInspectors) {
     super(problemResolverStore, problemPostProcessor, problemInspectors);
+  }
+
+  /**
+   * Creates a new {@link ProblemEnhancedWebFluxHandler}, resolving and post-processing exceptions
+   * with {@link ProblemOperations}.
+   *
+   * @param problemOperations the operations resolving and post-processing problems
+   * @param problemInspectors the inspectors
+   * @since 3.1.0
+   */
+  public ProblemEnhancedWebFluxHandler(
+      ProblemOperations problemOperations, List<? extends ProblemInspector> problemInspectors) {
+    super(problemOperations, problemInspectors);
   }
 }

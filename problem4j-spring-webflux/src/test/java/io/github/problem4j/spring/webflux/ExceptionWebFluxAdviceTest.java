@@ -21,8 +21,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.DefaultProblemMapper;
 import io.github.problem4j.core.Problem;
+import io.github.problem4j.core.ProblemException;
 import io.github.problem4j.spring.web.DefaultProblemResolverStore;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
+import io.github.problem4j.spring.web.operations.ProblemOperations;
+import io.github.problem4j.spring.web.operations.ProblemTemplate;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +37,15 @@ import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+// Former constructors are covered until they are removed.
+@SuppressWarnings("removal")
 class ExceptionWebFluxAdviceTest {
+
+  private final ProblemOperations operations =
+      ProblemTemplate.builder()
+          .problemPostProcessor(
+              (context, problem) -> problem.toBuilder().detail("via operations").build())
+          .build();
 
   private ExceptionWebFluxAdvice advice;
 
@@ -126,6 +137,20 @@ class ExceptionWebFluxAdviceTest {
         requireNonNull(advice.handleException(new RuntimeException(), exchange()).block());
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @Test
+  void givenProblemOperations_whenHandlingProblemException_thenTranslatedWithThem() {
+    ExceptionWebFluxAdvice operationsAdvice = new ExceptionWebFluxAdvice(operations, List.of());
+
+    ResponseEntity<Problem> response =
+        requireNonNull(
+            operationsAdvice
+                .handleException(new ProblemException(Problem.of(409)), exchange())
+                .block());
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    assertThat(requireNonNull(response.getBody()).getDetail()).isEqualTo("via operations");
   }
 
   private static MockServerWebExchange exchange() {

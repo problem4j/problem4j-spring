@@ -56,6 +56,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   class fail with `DuplicateProblemResolverException`, listing the conflicting beans, and `problem4j.tracing-source`
   that is not available on the classpath fails with `UnavailableTracingSourceException`. Both extend
   `IllegalStateException` and keep their previous messages.
+- Add `ProblemOperations` facade, resolving exceptions into `Problem`s, post-processing `Problem`s and `ProblemDetail`s,
+  or both at once. A `ProblemDetail` is post-processed in place, keeping its type.
 
 ### Changed
 
@@ -83,15 +85,15 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   `instance`, empty map for extensions), so custom implementations only need to override the settings they use.
 - `ProblemContextSettings.getTracingHeaderName()` now has a default implementation returning `null`. As the interface no
   longer has an abstract method, it can't be implemented with a lambda anymore - use an anonymous class instead.
-- `ProblemContextFilter` and `ProblemContextWebFilter` implement `Ordered`, with `PRECEDENCE`
-  (`Ordered.HIGHEST_PRECEDENCE + 10`) changeable with `setOrder(int)`. They run after Spring Boot's
-  `ServerHttpObservationFilter` and before filters of the application with default order, so that exceptions thrown by
-  those filters are rendered with `traceId`.
-- Order of `ExceptionWebMvcAdvice` / `ExceptionWebFluxAdvice`, `ProblemExceptionWebMvcAdvice` /
-  `ProblemExceptionWebFluxAdvice`, `ProblemResponseEntityExceptionHandler` and `ProblemErrorWebExceptionHandler` is
-  declared with `@Order` on the classes, exposed as `PRECEDENCE` constants, instead of `@Bean` methods of the
+- Filters implement `Ordered`, with `PRECEDENCE` (`Ordered.HIGHEST_PRECEDENCE + 10`) changeable with `setOrder(int)`. They
+  run after Spring Boot's `ServerHttpObservationFilter` and before filters of the application with default order, so that
+  exceptions thrown by those filters are rendered with `traceId`.
+- Order of advices is declared with `@Order` on the classes, exposed as `PRECEDENCE` constants, instead of `@Bean` methods of the
   auto-configurations. Subclasses registered by the application inherit it, unless they declare their own `@Order`.
   Previously, they had `Ordered.LOWEST_PRECEDENCE` by default.
+- `ExceptionWebMvcAdvice` / `ExceptionWebFluxAdvice` resolve exceptions with `ProblemOperations`, so they also use the
+  `Problem` of `ProblemException` and the status and headers of `ErrorResponse` exceptions, which are otherwise handled
+  by `ProblemExceptionWebMvcAdvice` / `ProblemExceptionWebFluxAdvice` and `ProblemResponseEntityExceptionHandler` first.
 
 ### Deprecated
 
@@ -104,6 +106,9 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   `ProblemContextWebFilter`, which they now extend.
 - Deprecate `ProblemEnhancedWebMvcHandler` and `ProblemEnhancedWebFluxHandler` in favor of
   `ProblemResponseEntityExceptionHandler`, which they now extend.
+- Deprecate constructors of `ExceptionWebMvcAdvice` / `ExceptionWebFluxAdvice`, `ProblemExceptionWebMvcAdvice` /
+  `ProblemExceptionWebFluxAdvice` and `ProblemResponseEntityExceptionHandler` taking `ProblemPostProcessor` (and
+  `ProblemMapper`, `ProblemResolverStore`), in favor of the ones taking `ProblemOperations`.
 
 ### Fixed
 

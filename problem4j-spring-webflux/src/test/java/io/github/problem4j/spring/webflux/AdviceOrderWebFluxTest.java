@@ -44,6 +44,7 @@ class AdviceOrderWebFluxTest {
   }
 
   @Test
+  @SuppressWarnings("removal")
   void givenAdvicesAndSubclasses_whenResolvingOrder_thenClassPrecedenceIsUsedAndInherited() {
     try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
       context.registerBean(
@@ -86,6 +87,7 @@ class AdviceOrderWebFluxTest {
   @RestControllerAdvice
   static class InheritedHandler extends ProblemResponseEntityExceptionHandler {
 
+    @SuppressWarnings("removal")
     InheritedHandler() {
       super(STORE, ProblemPostProcessor.identity(), List.of());
     }
@@ -95,6 +97,7 @@ class AdviceOrderWebFluxTest {
   @RestControllerAdvice
   static class OrderedInheritedHandler extends ProblemResponseEntityExceptionHandler {
 
+    @SuppressWarnings("removal")
     OrderedInheritedHandler() {
       super(STORE, ProblemPostProcessor.identity(), List.of());
     }

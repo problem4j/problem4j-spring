@@ -23,6 +23,8 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
+import io.github.problem4j.spring.web.operations.ProblemOperations;
+import io.github.problem4j.spring.web.operations.ProblemTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +52,8 @@ import reactor.core.publisher.Mono;
  * <p>Behavior:
  *
  * <ul>
- *   <li>Delegates exception-to-problem mapping to {@link ProblemResolverStore}.
+ *   <li>Delegates exception-to-problem mapping to {@code ProblemOperations}, with the status chosen
+ *       by Spring.
  *   <li>Sets content type to {@code application/problem+json}.
  *   <li>Falls back to {@link HttpStatus#INTERNAL_SERVER_ERROR} if mapping fails.
  * </ul>
@@ -75,9 +78,7 @@ public class ProblemResponseEntityExceptionHandler extends ResponseEntityExcepti
   private static final Logger log =
       LoggerFactory.getLogger(ProblemResponseEntityExceptionHandler.class);
 
-  private final ProblemResolverStore problemResolverStore;
-  private final ProblemPostProcessor problemPostProcessor;
-
+  private final ProblemOperations problemOperations;
   private final List<ProblemInspector> problemInspectors;
 
   /**
@@ -87,13 +88,32 @@ public class ProblemResponseEntityExceptionHandler extends ResponseEntityExcepti
    * @param problemPostProcessor the post-processor for problems
    * @param problemInspectors the inspectors to apply to advice
    * @since 3.1.0
+   * @deprecated use {@link #ProblemResponseEntityExceptionHandler(ProblemOperations, List)} instead
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public ProblemResponseEntityExceptionHandler(
       ProblemResolverStore problemResolverStore,
       ProblemPostProcessor problemPostProcessor,
       List<? extends ProblemInspector> problemInspectors) {
-    this.problemResolverStore = problemResolverStore;
-    this.problemPostProcessor = problemPostProcessor;
+    this(
+        ProblemTemplate.builder()
+            .problemResolverStore(problemResolverStore)
+            .problemPostProcessor(problemPostProcessor)
+            .build(),
+        problemInspectors);
+  }
+
+  /**
+   * Creates a new {@link ProblemResponseEntityExceptionHandler}, resolving and post-processing
+   * exceptions with {@link ProblemOperations}, with the status chosen by Spring.
+   *
+   * @param problemOperations the operations resolving and post-processing problems
+   * @param problemInspectors the inspectors
+   * @since 3.1.0
+   */
+  public ProblemResponseEntityExceptionHandler(
+      ProblemOperations problemOperations, List<? extends ProblemInspector> problemInspectors) {
+    this.problemOperations = problemOperations;
     this.problemInspectors = new ArrayList<>(problemInspectors);
   }
 
@@ -127,7 +147,7 @@ public class ProblemResponseEntityExceptionHandler extends ResponseEntityExcepti
     Problem problem;
     try {
       problem = getProblemForOverridingBody(context, ex, headers, status);
-      problem = problemPostProcessor.process(context, problem);
+      problem = problemOperations.postProcess(context, problem);
     } catch (Exception e) {
       logAdviceException(log, ex, exchange, e);
       problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -145,8 +165,8 @@ public class ProblemResponseEntityExceptionHandler extends ResponseEntityExcepti
   }
 
   /**
-   * Returns a {@link Problem} for the given exception, using a resolver if available, or a fallback
-   * otherwise.
+   * Returns a {@link Problem} for the given exception, resolved with {@link ProblemOperations} if
+   * it supports the exception, or {@link #fallbackProblem} otherwise.
    *
    * @param context the problem context
    * @param ex the exception to resolve
@@ -157,14 +177,14 @@ public class ProblemResponseEntityExceptionHandler extends ResponseEntityExcepti
    */
   protected Problem getProblemForOverridingBody(
       ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    return problemResolverStore
-        .findResolver(ex.getClass())
-        .map(resolver -> resolver.resolve(context, ex, headers, status))
-        .orElseGet(() -> fallbackProblem(status));
+    return problemOperations.supports(ex)
+        ? problemOperations.resolve(context, ex, headers, status)
+        : fallbackProblem(status);
   }
 
   /**
-   * Returns a fallback {@link Problem} with the given status.
+   * Returns a fallback {@link Problem} with the given status, for exceptions not supported by
+   * {@link ProblemOperations}.
    *
    * @param status the HTTP status code
    * @return a fallback {@link Problem}

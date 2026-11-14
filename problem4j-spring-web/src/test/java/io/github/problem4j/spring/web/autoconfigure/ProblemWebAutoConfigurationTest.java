@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
+import io.github.problem4j.core.ProblemException;
 import io.github.problem4j.core.ProblemMapper;
 import io.github.problem4j.spring.web.CachingProblemResolverStore;
 import io.github.problem4j.spring.web.ProblemFormat;
@@ -27,6 +28,8 @@ import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.TypeNameMapper;
 import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
+import io.github.problem4j.spring.web.operations.ProblemOperations;
+import io.github.problem4j.spring.web.operations.ProblemTemplate;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
@@ -58,6 +61,7 @@ class ProblemWebAutoConfigurationTest {
           assertThat(context).hasSingleBean(ProblemWebAutoConfiguration.class);
           assertThat(context).hasSingleBean(ProblemFormat.class);
           assertThat(context).hasSingleBean(ProblemResolverStore.class);
+          assertThat(context).hasSingleBean(ProblemOperations.class);
           assertThat(context).hasSingleBean(MethodParameterSupport.class);
           assertThat(context).hasSingleBean(BindingResultSupport.class);
           assertThat(context).hasSingleBean(MethodValidationResultSupport.class);
@@ -80,11 +84,40 @@ class ProblemWebAutoConfigurationTest {
 
           assertThat(context).doesNotHaveBean(ProblemWebAutoConfiguration.class);
           assertThat(context).doesNotHaveBean(ProblemResolverStore.class);
+          assertThat(context).doesNotHaveBean(ProblemOperations.class);
           assertThat(context).doesNotHaveBean(ProblemResolver.class);
           assertThat(context).doesNotHaveBean(MethodParameterSupport.class);
           assertThat(context).doesNotHaveBean(BindingResultSupport.class);
           assertThat(context).doesNotHaveBean(MethodValidationResultSupport.class);
         });
+  }
+
+  @Test
+  void givenExtensionOverride_whenTranslatingWithDefaultOperations_thenContainerBeansAreUsed() {
+    new WebApplicationContextRunner()
+        .withConfiguration(autoConfigurations)
+        .withPropertyValues("problem4j.extension-overrides.traceId={context.traceId}")
+        .run(context -> {
+          Problem problem =
+              context
+                  .getBean(ProblemOperations.class)
+                  .translate(
+                      ProblemContext.create().put("traceId", "abc"),
+                      new ProblemException(Problem.of(409)),
+                      new HttpHeaders());
+
+          assertThat(problem.getStatus()).isEqualTo(409);
+          assertThat(problem.getExtensions()).containsEntry("traceId", "abc");
+        });
+  }
+
+  @Test
+  void givenCustomProblemOperations_whenContextStarts_thenItIsNotReplaced() {
+    ProblemOperations custom = ProblemTemplate.builder().build();
+    new WebApplicationContextRunner()
+        .withConfiguration(autoConfigurations)
+        .withBean(ProblemOperations.class, () -> custom)
+        .run(context -> assertThat(context.getBean(ProblemOperations.class)).isSameAs(custom));
   }
 
   @Test

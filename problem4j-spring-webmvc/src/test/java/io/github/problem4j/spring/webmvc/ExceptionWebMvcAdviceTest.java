@@ -21,8 +21,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.DefaultProblemMapper;
 import io.github.problem4j.core.Problem;
+import io.github.problem4j.core.ProblemException;
 import io.github.problem4j.spring.web.DefaultProblemResolverStore;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
+import io.github.problem4j.spring.web.operations.ProblemOperations;
+import io.github.problem4j.spring.web.operations.ProblemTemplate;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +38,15 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.ServletWebRequest;
 
+// Former constructors are covered until they are removed.
+@SuppressWarnings("removal")
 class ExceptionWebMvcAdviceTest {
+
+  private final ProblemOperations operations =
+      ProblemTemplate.builder()
+          .problemPostProcessor(
+              (context, problem) -> problem.toBuilder().detail("via operations").build())
+          .build();
 
   private ExceptionWebMvcAdvice advice;
 
@@ -124,6 +135,18 @@ class ExceptionWebMvcAdviceTest {
     ResponseEntity<Object> response = advice.handleException(new RuntimeException(), request());
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @Test
+  void givenProblemOperations_whenHandlingProblemException_thenTranslatedWithThem() {
+    ExceptionWebMvcAdvice operationsAdvice = new ExceptionWebMvcAdvice(operations, List.of());
+
+    ResponseEntity<Object> response =
+        operationsAdvice.handleException(new ProblemException(Problem.of(409)), request());
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    assertThat(requireNonNull((Problem) response.getBody()).getDetail())
+        .isEqualTo("via operations");
   }
 
   private static ServletWebRequest request() {
