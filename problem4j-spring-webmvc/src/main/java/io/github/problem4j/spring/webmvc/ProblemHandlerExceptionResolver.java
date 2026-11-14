@@ -18,6 +18,7 @@ package io.github.problem4j.spring.webmvc;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE;
+import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.logAdviceException;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
@@ -155,12 +156,13 @@ public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionRes
             ? attribute
             : ProblemContext.create();
     HttpHeaders headers = new HttpHeaders();
+    ServletWebRequest webRequest = new ServletWebRequest(request, response);
 
     Problem problem;
     try {
       problem = problemOperations.translate(context, ex, headers);
     } catch (Exception e) {
-      logTranslationFailure(request, ex, e);
+      logAdviceException(log, ex, webRequest, e);
       problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
@@ -168,7 +170,6 @@ public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionRes
         Optional.ofNullable(HttpStatus.resolve(problem.getStatus()))
             .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
-    ServletWebRequest webRequest = new ServletWebRequest(request, response);
     for (ProblemInspector inspector : inspectors) {
       inspector.inspect(context, problem, ex, headers, status, webRequest);
     }
@@ -223,17 +224,5 @@ public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionRes
       }
     }
     throw new IllegalStateException("No HttpMessageConverter for " + problem.getClass());
-  }
-
-  private void logTranslationFailure(HttpServletRequest request, Exception ex, Exception e) {
-    log.warn(
-        "Unable to resolve problem response (method={}, endpoint={}, traceId={}, message={}, originalException=[{} : {}])",
-        request.getMethod(),
-        request.getRequestURI(),
-        request.getAttribute(TRACE_ID_ATTRIBUTE),
-        e.getMessage(),
-        ex.getClass().getName(),
-        ex.getMessage(),
-        e);
   }
 }

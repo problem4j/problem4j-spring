@@ -18,6 +18,7 @@ package io.github.problem4j.spring.webflux;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE;
+import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.logAdviceException;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
@@ -179,7 +180,7 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
     try {
       problem = problemOperations.translate(context, exception, headers);
     } catch (Exception e) {
-      logTranslationFailure(exchange, exception, e);
+      logAdviceException(log, exception, exchange, e);
       problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
@@ -232,17 +233,5 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
       }
     }
     return Mono.error(ex);
-  }
-
-  private void logTranslationFailure(ServerWebExchange exchange, Exception ex, Exception e) {
-    log.warn(
-        "Unable to resolve problem response (method={}, path={}, traceId={}, message={}, originalException=[{} : {}])",
-        exchange.getRequest().getMethod(),
-        exchange.getRequest().getPath(),
-        exchange.getAttribute(TRACE_ID_ATTRIBUTE),
-        e.getMessage(),
-        ex.getClass().getName(),
-        ex.getMessage(),
-        e);
   }
 }
