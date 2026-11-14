@@ -44,14 +44,13 @@ import reactor.test.StepVerifier;
 
 class ProblemWebExceptionHandlerTest {
 
-  private static final List<HttpMessageWriter<?>> WRITERS =
-      ServerCodecConfigurer.create().getWriters();
-
+  private List<HttpMessageWriter<?>> writers;
   private MockServerWebExchange exchange;
   private List<ProblemContext> inspectedContexts;
 
   @BeforeEach
   void beforeEach() {
+    writers = ServerCodecConfigurer.create().getWriters();
     exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/test"));
     inspectedContexts = new ArrayList<>();
   }
@@ -66,7 +65,7 @@ class ProblemWebExceptionHandlerTest {
   }
 
   private ProblemWebExceptionHandler handler() {
-    return handler(ProblemTemplate.builder().build(), WRITERS);
+    return handler(ProblemTemplate.builder().build(), writers);
   }
 
   @Test
@@ -162,7 +161,7 @@ class ProblemWebExceptionHandlerTest {
   @Test
   void givenFailingTranslation_whenHandling_thenInternalServerErrorProblemIsWritten() {
     StepVerifier.create(
-            handler(new FailingOperations(), WRITERS).handle(exchange, new IllegalStateException()))
+            handler(new FailingOperations(), writers).handle(exchange, new IllegalStateException()))
         .verifyComplete();
 
     assertThat(exchange.getResponse().getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
