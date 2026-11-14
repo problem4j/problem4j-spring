@@ -180,6 +180,11 @@ public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionRes
       writeProblem(response, problem, headers, status);
     } catch (IOException | RuntimeException e) {
       log.warn("Unable to write problem response for {}", ex.getClass().getName(), e);
+      if (response.isCommitted()) {
+        // Nothing else can render a sensible response once part of the problem was written.
+        return new ModelAndView();
+      }
+      response.reset();
       return null;
     }
     return new ModelAndView();
