@@ -28,9 +28,11 @@ import org.springframework.boot.webmvc.error.ErrorController;
 
 class ProblemErrorMvcConfigurationTest {
 
-  @SpringBootTest(classes = {WebMvcTestApp.class})
+  @SpringBootTest(
+      classes = {WebMvcTestApp.class},
+      properties = {"problem4j.exception-handling.mode=advice"})
   @Nested
-  class WithEnabled {
+  class WithAdviceMode {
 
     @Autowired(required = false)
     private ProblemErrorMvcConfiguration problemErrorMvcConfiguration;
@@ -40,7 +42,7 @@ class ProblemErrorMvcConfigurationTest {
     @Autowired private ProblemWebMvcProperties properties;
 
     @Test
-    void contextLoads() {
+    void contextLoadsWithProblemErrorController() {
       assertThat(problemErrorMvcConfiguration).isNotNull();
       assertThat(errorController).isInstanceOf(ProblemErrorController.class);
       assertThat(properties.getErrorController().isEnabled()).isTrue();
@@ -49,22 +51,61 @@ class ProblemErrorMvcConfigurationTest {
 
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
-      properties = {"problem4j.webmvc.error-controller.enabled=false"})
+      properties = {
+        "problem4j.exception-handling.mode=advice",
+        "problem4j.webmvc.error-controller.enabled=false"
+      })
   @Nested
-  class WithDisabled {
+  class WithAdviceModeAndDisabled {
 
     @Autowired(required = false)
     private ProblemErrorMvcConfiguration problemErrorMvcConfiguration;
 
     @Autowired private ErrorController errorController;
 
-    @Autowired private ProblemWebMvcProperties properties;
-
     @Test
-    void contextLoads() {
+    void contextLoadsWithoutProblemErrorController() {
       assertThat(problemErrorMvcConfiguration).isNull();
       assertThat(errorController).isNotInstanceOf(ProblemErrorController.class);
-      assertThat(properties.getErrorController().isEnabled()).isFalse();
+    }
+  }
+
+  @SpringBootTest(
+      classes = {WebMvcTestApp.class},
+      properties = {"problem4j.exception-handling.mode=deferred"})
+  @Nested
+  class WithDeferredMode {
+
+    @Autowired(required = false)
+    private ProblemErrorMvcConfiguration problemErrorMvcConfiguration;
+
+    @Autowired private ErrorController errorController;
+
+    @Test
+    void contextLoadsWithProblemErrorController() {
+      assertThat(problemErrorMvcConfiguration).isNotNull();
+      assertThat(errorController).isInstanceOf(ProblemErrorController.class);
+    }
+  }
+
+  @SpringBootTest(
+      classes = {WebMvcTestApp.class},
+      properties = {
+        "problem4j.exception-handling.mode=deferred",
+        "problem4j.webmvc.error-controller.enabled=false"
+      })
+  @Nested
+  class WithDeferredModeAndDisabled {
+
+    @Autowired(required = false)
+    private ProblemErrorMvcConfiguration problemErrorMvcConfiguration;
+
+    @Autowired private ErrorController errorController;
+
+    @Test
+    void contextLoadsWithoutProblemErrorController() {
+      assertThat(problemErrorMvcConfiguration).isNull();
+      assertThat(errorController).isNotInstanceOf(ProblemErrorController.class);
     }
   }
 }
