@@ -28,7 +28,9 @@ import org.springframework.boot.webflux.error.ErrorWebExceptionHandler;
 
 class ProblemErrorWebFluxConfigurationTest {
 
-  @SpringBootTest(classes = {WebFluxTestApp.class})
+  @SpringBootTest(
+      classes = {WebFluxTestApp.class},
+      properties = {"problem4j.exception-handling.mode=advice"})
   @Nested
   class WithEnabled {
 
