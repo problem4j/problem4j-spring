@@ -50,6 +50,9 @@ public class ProblemWebMvcProperties {
   /** Configuration for {@code ProblemHandlerExceptionResolver}. */
   private HandlerExceptionResolver handlerExceptionResolver = new HandlerExceptionResolver();
 
+  /** Configuration for {@code ProblemResponseBodyAdvice}. */
+  private ResponseBodyAdvice responseBodyAdvice = new ResponseBodyAdvice();
+
   /**
    * Creates a new instance of {@link ProblemWebMvcProperties} with default values.
    *
@@ -260,6 +263,28 @@ public class ProblemWebMvcProperties {
    */
   public void setHandlerExceptionResolver(HandlerExceptionResolver handlerExceptionResolver) {
     this.handlerExceptionResolver = handlerExceptionResolver;
+  }
+
+  /**
+   * Returns configuration for {@code ProblemResponseBodyAdvice}, which post-processes {@code
+   * Problem}s and {@code ProblemDetail}s written as response bodies. Applies only to {@code
+   * problem4j.exception-handling.mode=deferred}.
+   *
+   * @return the configuration for {@code ProblemResponseBodyAdvice}
+   * @since 3.1.0
+   */
+  public ResponseBodyAdvice getResponseBodyAdvice() {
+    return responseBodyAdvice;
+  }
+
+  /**
+   * Sets configuration for {@code ProblemResponseBodyAdvice}.
+   *
+   * @param responseBodyAdvice configuration for {@code ProblemResponseBodyAdvice}
+   * @since 3.1.0
+   */
+  public void setResponseBodyAdvice(ResponseBodyAdvice responseBodyAdvice) {
+    this.responseBodyAdvice = responseBodyAdvice;
   }
 
   /**
@@ -696,6 +721,54 @@ public class ProblemWebMvcProperties {
      * Sets whether {@code ProblemHandlerExceptionResolver} should be registered.
      *
      * @param enabled whether {@code ProblemHandlerExceptionResolver} should be registered
+     * @since 3.1.0
+     */
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
+    }
+  }
+
+  /**
+   * Configuration group for {@code ProblemResponseBodyAdvice}. Applies only to {@code
+   * problem4j.exception-handling.mode=deferred}.
+   *
+   * <p>Controlled by the property {@code problem4j.webmvc.response-body-advice.enabled}.
+   *
+   * @since 3.1.0
+   */
+  public static class ResponseBodyAdvice {
+
+    /**
+     * Default enabled flag for {@code ProblemResponseBodyAdvice}.
+     *
+     * @since 3.1.0
+     */
+    public static final boolean DEFAULT_ENABLED = true;
+
+    /** Whether the {@code ProblemResponseBodyAdvice} should be registered. */
+    private boolean enabled = DEFAULT_ENABLED;
+
+    /**
+     * Creates a new configuration group with default values.
+     *
+     * @since 3.1.0
+     */
+    public ResponseBodyAdvice() {}
+
+    /**
+     * Returns whether {@code ProblemResponseBodyAdvice} should be registered.
+     *
+     * @return {@code true} if enabled, otherwise {@code false}
+     * @since 3.1.0
+     */
+    public boolean isEnabled() {
+      return enabled;
+    }
+
+    /**
+     * Sets whether {@code ProblemResponseBodyAdvice} should be registered.
+     *
+     * @param enabled whether {@code ProblemResponseBodyAdvice} should be registered
      * @since 3.1.0
      */
     public void setEnabled(boolean enabled) {
