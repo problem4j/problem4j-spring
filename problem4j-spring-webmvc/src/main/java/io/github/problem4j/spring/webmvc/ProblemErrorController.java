@@ -133,7 +133,6 @@ public class ProblemErrorController extends AbstractErrorController {
             : ProblemContext.create();
 
     HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
 
     if (problemOperations == null) {
       Problem problem = problemPostProcessor.process(context, Problem.of(status.value()));
@@ -169,7 +168,6 @@ public class ProblemErrorController extends AbstractErrorController {
     HttpStatus responseStatus =
         Optional.ofNullable(HttpStatus.resolve(problem.getStatus()))
             .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
-    headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
 
     for (ProblemInspector inspector : problemInspectors) {
       inspector.inspect(context, problem, ex, headers, responseStatus, webRequest);
@@ -180,6 +178,7 @@ public class ProblemErrorController extends AbstractErrorController {
 
   private static ResponseEntity<Problem> postProcessed(
       HttpServletRequest request, Problem problem, HttpHeaders headers, HttpStatus status) {
+    headers.setContentType(MediaType.APPLICATION_PROBLEM_JSON);
     request.setAttribute(POST_PROCESSED_PROBLEM_ATTRIBUTE, problem);
     return new ResponseEntity<>(problem, headers, status);
   }
