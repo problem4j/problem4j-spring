@@ -24,6 +24,7 @@ import io.github.problem4j.spring.webmvc.autoconfigure.ProblemWebMvcProperties.E
 import io.github.problem4j.spring.webmvc.autoconfigure.ProblemWebMvcProperties.HandlerExceptionResolver;
 import io.github.problem4j.spring.webmvc.autoconfigure.ProblemWebMvcProperties.ProblemContextFilter;
 import io.github.problem4j.spring.webmvc.autoconfigure.ProblemWebMvcProperties.ProblemExceptionAdvice;
+import io.github.problem4j.spring.webmvc.autoconfigure.ProblemWebMvcProperties.ResponseBodyAdvice;
 import org.junit.jupiter.api.Test;
 
 // These tests exist only to play with getters/setters and the deprecated constructors so they are
@@ -167,11 +168,16 @@ class ProblemWebMvcPropertiesTest {
   void givenDeferredModeGroups_whenUsed_thenDefaultsAndValuesRoundTrip() {
     ProblemWebMvcProperties properties = new ProblemWebMvcProperties();
     assertThat(properties.getHandlerExceptionResolver().isEnabled()).isTrue();
+    assertThat(properties.getResponseBodyAdvice().isEnabled()).isTrue();
 
     HandlerExceptionResolver handlerExceptionResolver = new HandlerExceptionResolver();
+    ResponseBodyAdvice responseBodyAdvice = new ResponseBodyAdvice();
     handlerExceptionResolver.setEnabled(false);
+    responseBodyAdvice.setEnabled(false);
     properties.setHandlerExceptionResolver(handlerExceptionResolver);
+    properties.setResponseBodyAdvice(responseBodyAdvice);
 
     assertThat(properties.getHandlerExceptionResolver().isEnabled()).isFalse();
+    assertThat(properties.getResponseBodyAdvice().isEnabled()).isFalse();
   }
 }

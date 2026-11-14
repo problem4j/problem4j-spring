@@ -34,6 +34,7 @@ import io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler;
 import io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice;
 import io.github.problem4j.spring.webmvc.ProblemHandlerExceptionResolver;
 import io.github.problem4j.spring.webmvc.ProblemInspector;
+import io.github.problem4j.spring.webmvc.ProblemResponseBodyAdvice;
 import io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler;
 import java.util.List;
 import java.util.function.Supplier;
@@ -314,7 +315,8 @@ public class ProblemWebMvcAutoConfiguration {
   /**
    * Nested configuration of {@code problem4j.exception-handling.mode=deferred}, which registers no
    * controller advices handling exceptions. Exceptions not handled by the application are rendered
-   * by {@link ProblemHandlerExceptionResolver}.
+   * by {@link ProblemHandlerExceptionResolver}, and {@code Problem}s or {@code ProblemDetail}s
+   * returned by the application are post-processed by {@link ProblemResponseBodyAdvice}.
    */
   @ConditionalOnProperty(name = "problem4j.exception-handling.mode", havingValue = "deferred")
   @Configuration(proxyBeanMethods = false)
@@ -394,6 +396,19 @@ public class ProblemWebMvcAutoConfiguration {
           }
         };
       }
+    }
+
+    /**
+     * Registers {@link ProblemResponseBodyAdvice}, applying post-processing to {@code Problem}s and
+     * {@code ProblemDetail}s written as response bodies by controllers and exception handlers.
+     */
+    @ConditionalOnBooleanProperty(
+        name = "problem4j.webmvc.response-body-advice.enabled",
+        matchIfMissing = true)
+    @ConditionalOnMissingBean(ProblemResponseBodyAdvice.class)
+    @Bean
+    ProblemResponseBodyAdvice problemResponseBodyAdvice(ProblemOperations problemOperations) {
+      return new ProblemResponseBodyAdvice(problemOperations);
     }
   }
 }

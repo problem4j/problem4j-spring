@@ -63,6 +63,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   are rendered by `ProblemHandlerExceptionResolver` (WebMVC). `problem4j.exception-handling.unknown-exceptions`
   (default `true`) decides whether exceptions unknown to Problem4J are rendered too. A warning is logged if
   `spring.mvc.problemdetails.enabled` is set in `deferred` mode.
+- In `deferred` mode, post-process `Problem` and `ProblemDetail` returned by controllers and exception handlers of the
+  application (`ProblemResponseBodyAdvice`). A `ProblemDetail` stays a `ProblemDetail`.
 
 ### Changed
 
