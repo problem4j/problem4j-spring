@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.problem4j.spring.webmvc.autoconfigure.ProblemWebMvcProperties.ErrorController;
 import io.github.problem4j.spring.webmvc.autoconfigure.ProblemWebMvcProperties.ExceptionAdvice;
 import io.github.problem4j.spring.webmvc.autoconfigure.ProblemWebMvcProperties.ExceptionHandler;
+import io.github.problem4j.spring.webmvc.autoconfigure.ProblemWebMvcProperties.HandlerExceptionResolver;
 import io.github.problem4j.spring.webmvc.autoconfigure.ProblemWebMvcProperties.ProblemContextFilter;
 import io.github.problem4j.spring.webmvc.autoconfigure.ProblemWebMvcProperties.ProblemExceptionAdvice;
 import org.junit.jupiter.api.Test;
@@ -160,5 +161,17 @@ class ProblemWebMvcPropertiesTest {
     assertThat(new ProblemContextFilter(false).isEnabled()).isFalse();
     assertThat(new ExceptionHandler(false).isEnabled()).isFalse();
     assertThat(new ErrorController(false).isEnabled()).isFalse();
+  }
+
+  @Test
+  void givenDeferredModeGroups_whenUsed_thenDefaultsAndValuesRoundTrip() {
+    ProblemWebMvcProperties properties = new ProblemWebMvcProperties();
+    assertThat(properties.getHandlerExceptionResolver().isEnabled()).isTrue();
+
+    HandlerExceptionResolver handlerExceptionResolver = new HandlerExceptionResolver();
+    handlerExceptionResolver.setEnabled(false);
+    properties.setHandlerExceptionResolver(handlerExceptionResolver);
+
+    assertThat(properties.getHandlerExceptionResolver().isEnabled()).isFalse();
   }
 }

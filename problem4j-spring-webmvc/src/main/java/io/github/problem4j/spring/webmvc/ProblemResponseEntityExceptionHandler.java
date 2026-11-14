@@ -58,6 +58,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  *   <li>Falls back to {@link HttpStatus#INTERNAL_SERVER_ERROR} if mapping fails.
  * </ul>
  *
+ * <p>Part of the advice path, registered with {@code problem4j.exception-handling.mode=advice}
+ * (default). With {@code problem4j.exception-handling.mode=deferred}, Spring's exceptions are
+ * rendered by {@link ProblemHandlerExceptionResolver} instead.
+ *
  * @see io.github.problem4j.spring.web.resolver.ProblemResolver
  * @since 3.1.0
  */

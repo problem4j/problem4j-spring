@@ -102,6 +102,9 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    */
   private ErrorRecording observationErrors = ErrorRecording.SERVER;
 
+  /** Configuration of how exceptions of WebMVC and WebFlux applications are handled. */
+  private ExceptionHandling exceptionHandling = new ExceptionHandling();
+
   /**
    * Creates a new instance of {@link ProblemProperties} with default values.
    *
@@ -438,6 +441,154 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    */
   public void setObservationErrors(ErrorRecording observationErrors) {
     this.observationErrors = observationErrors;
+  }
+
+  /**
+   * Returns the configuration of how exceptions are handled.
+   *
+   * @return the exception handling configuration
+   * @since 3.1.0
+   */
+  public ExceptionHandling getExceptionHandling() {
+    return exceptionHandling;
+  }
+
+  /**
+   * Sets the configuration of how exceptions are handled.
+   *
+   * @param exceptionHandling the exception handling configuration
+   * @since 3.1.0
+   */
+  public void setExceptionHandling(ExceptionHandling exceptionHandling) {
+    this.exceptionHandling = exceptionHandling;
+  }
+
+  /**
+   * Configuration of how exceptions of WebMVC and WebFlux applications are handled.
+   *
+   * <p>Controlled by the properties {@code problem4j.exception-handling.mode} and {@code
+   * problem4j.exception-handling.unknown-exceptions}.
+   *
+   * @since 3.1.0
+   */
+  public static class ExceptionHandling {
+
+    /**
+     * Default exception handling mode.
+     *
+     * @since 3.1.0
+     */
+    public static final ExceptionHandlingMode DEFAULT_MODE = ExceptionHandlingMode.ADVICE;
+
+    /**
+     * Default flag of rendering exceptions unknown to Problem4J in {@code deferred} mode.
+     *
+     * @since 3.1.0
+     */
+    public static final boolean DEFAULT_UNKNOWN_EXCEPTIONS = true;
+
+    /**
+     * How Problem4J handles exceptions. {@code advice} registers Problem4J's own controller
+     * advices, which compete with advices of the application. {@code deferred} registers no
+     * controller advices: exceptions are rendered only if no exception handler of the application
+     * handled them, and {@code Problem}s or {@code ProblemDetail}s returned by the application are
+     * post-processed.
+     */
+    private ExceptionHandlingMode mode = DEFAULT_MODE;
+
+    /**
+     * Whether exceptions unknown to Problem4J (no {@code ProblemException}, {@code ProblemMapping},
+     * {@code ProblemResolver}, {@code ErrorResponse} nor {@code ResponseStatus}) are rendered as
+     * {@code 500 Internal Server Error} problems in {@code deferred} mode, instead of being left to
+     * the default error handling of the framework. In WebMVC, such exceptions propagate to the
+     * servlet container and are still rendered as problems by {@code ProblemErrorController},
+     * unless {@code problem4j.webmvc.error-controller.enabled=false}. In {@code advice} mode, use
+     * {@code problem4j.webmvc.exception-advice.enabled} or {@code
+     * problem4j.webflux.exception-advice.enabled} instead.
+     */
+    private boolean unknownExceptions = DEFAULT_UNKNOWN_EXCEPTIONS;
+
+    /**
+     * Creates a new configuration group with default values.
+     *
+     * @since 3.1.0
+     */
+    public ExceptionHandling() {}
+
+    /**
+     * Returns how Problem4J handles exceptions.
+     *
+     * @return the exception handling mode
+     * @since 3.1.0
+     */
+    public ExceptionHandlingMode getMode() {
+      return mode;
+    }
+
+    /**
+     * Sets how Problem4J handles exceptions.
+     *
+     * @param mode the exception handling mode
+     * @since 3.1.0
+     */
+    public void setMode(ExceptionHandlingMode mode) {
+      this.mode = mode;
+    }
+
+    /**
+     * Returns whether exceptions unknown to Problem4J are rendered as {@code 500 Internal Server
+     * Error} problems in {@code deferred} mode.
+     *
+     * @return {@code true} if unknown exceptions are rendered
+     * @since 3.1.0
+     */
+    public boolean isUnknownExceptions() {
+      return unknownExceptions;
+    }
+
+    /**
+     * Sets whether exceptions unknown to Problem4J are rendered as {@code 500 Internal Server
+     * Error} problems in {@code deferred} mode.
+     *
+     * @param unknownExceptions whether unknown exceptions are rendered
+     * @since 3.1.0
+     */
+    public void setUnknownExceptions(boolean unknownExceptions) {
+      this.unknownExceptions = unknownExceptions;
+    }
+  }
+
+  /**
+   * How Problem4J handles exceptions of WebMVC and WebFlux applications.
+   *
+   * @see ExceptionHandling#getMode()
+   * @since 3.1.0
+   */
+  public enum ExceptionHandlingMode {
+
+    /**
+     * Problem4J registers its own controller advices, resolving all exceptions, including those
+     * also handled by advices of the application, depending on their order. Default in 3.x.
+     *
+     * @since 3.1.0
+     */
+    ADVICE,
+
+    /**
+     * Problem4J registers no controller advices. Exceptions are rendered only if no exception
+     * handler of the application handled them, and {@code Problem}s or {@code ProblemDetail}s
+     * returned by controllers and exception handlers of the application are post-processed.
+     *
+     * <p>Spring's own problem details ({@code spring.mvc.problemdetails.enabled} or {@code
+     * spring.webflux.problemdetails.enabled}) should stay disabled in this mode. Otherwise Spring
+     * Boot registers its {@code ProblemDetailsExceptionHandler}, which renders standard Spring
+     * exceptions without Problem4J resolvers and inspectors, and takes precedence over exception
+     * handlers of the application with default order. Only post-processing is applied to its
+     * responses.
+     *
+     * @since 3.1.0
+     */
+    DEFERRED
   }
 
   /**
