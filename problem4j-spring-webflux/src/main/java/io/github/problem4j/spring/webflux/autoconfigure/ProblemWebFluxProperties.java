@@ -50,6 +50,9 @@ public class ProblemWebFluxProperties {
   /** Configuration for {@code ProblemWebExceptionHandler}. */
   private WebExceptionHandler webExceptionHandler = new WebExceptionHandler();
 
+  /** Configuration for {@code ProblemHandlerResultHandler}. */
+  private ResultHandler resultHandler = new ResultHandler();
+
   /**
    * Creates a new instance of {@link ProblemWebFluxProperties} with default values.
    *
@@ -261,6 +264,28 @@ public class ProblemWebFluxProperties {
    */
   public void setWebExceptionHandler(WebExceptionHandler webExceptionHandler) {
     this.webExceptionHandler = webExceptionHandler;
+  }
+
+  /**
+   * Returns configuration for {@code ProblemHandlerResultHandler}, which post-processes {@code
+   * Problem}s and {@code ProblemDetail}s returned by handlers. Applies only to {@code
+   * problem4j.exception-handling.mode=deferred}.
+   *
+   * @return the configuration for {@code ProblemHandlerResultHandler}
+   * @since 3.1.0
+   */
+  public ResultHandler getResultHandler() {
+    return resultHandler;
+  }
+
+  /**
+   * Sets configuration for {@code ProblemHandlerResultHandler}.
+   *
+   * @param resultHandler configuration for {@code ProblemHandlerResultHandler}
+   * @since 3.1.0
+   */
+  public void setResultHandler(ResultHandler resultHandler) {
+    this.resultHandler = resultHandler;
   }
 
   /**
@@ -687,6 +712,54 @@ public class ProblemWebFluxProperties {
      * Sets whether {@code ProblemWebExceptionHandler} should be registered.
      *
      * @param enabled whether {@code ProblemWebExceptionHandler} should be registered
+     * @since 3.1.0
+     */
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
+    }
+  }
+
+  /**
+   * Configuration group for {@code ProblemHandlerResultHandler}. Applies only to {@code
+   * problem4j.exception-handling.mode=deferred}.
+   *
+   * <p>Controlled by the property {@code problem4j.webflux.result-handler.enabled}.
+   *
+   * @since 3.1.0
+   */
+  public static class ResultHandler {
+
+    /**
+     * Default enabled flag for {@code ProblemHandlerResultHandler}.
+     *
+     * @since 3.1.0
+     */
+    public static final boolean DEFAULT_ENABLED = true;
+
+    /** Whether the {@code ProblemHandlerResultHandler} should be registered. */
+    private boolean enabled = DEFAULT_ENABLED;
+
+    /**
+     * Creates a new configuration group with default values.
+     *
+     * @since 3.1.0
+     */
+    public ResultHandler() {}
+
+    /**
+     * Returns whether {@code ProblemHandlerResultHandler} should be registered.
+     *
+     * @return {@code true} if enabled, otherwise {@code false}
+     * @since 3.1.0
+     */
+    public boolean isEnabled() {
+      return enabled;
+    }
+
+    /**
+     * Sets whether {@code ProblemHandlerResultHandler} should be registered.
+     *
+     * @param enabled whether {@code ProblemHandlerResultHandler} should be registered
      * @since 3.1.0
      */
     public void setEnabled(boolean enabled) {

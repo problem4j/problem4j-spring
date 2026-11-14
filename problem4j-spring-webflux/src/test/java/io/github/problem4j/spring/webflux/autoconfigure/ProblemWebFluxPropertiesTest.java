@@ -23,6 +23,7 @@ import io.github.problem4j.spring.webflux.autoconfigure.ProblemWebFluxProperties
 import io.github.problem4j.spring.webflux.autoconfigure.ProblemWebFluxProperties.ExceptionHandler;
 import io.github.problem4j.spring.webflux.autoconfigure.ProblemWebFluxProperties.ProblemContextFilter;
 import io.github.problem4j.spring.webflux.autoconfigure.ProblemWebFluxProperties.ProblemExceptionAdvice;
+import io.github.problem4j.spring.webflux.autoconfigure.ProblemWebFluxProperties.ResultHandler;
 import io.github.problem4j.spring.webflux.autoconfigure.ProblemWebFluxProperties.WebExceptionHandler;
 import org.junit.jupiter.api.Test;
 
@@ -167,11 +168,16 @@ class ProblemWebFluxPropertiesTest {
   void givenDeferredModeGroups_whenUsed_thenDefaultsAndValuesRoundTrip() {
     ProblemWebFluxProperties properties = new ProblemWebFluxProperties();
     assertThat(properties.getWebExceptionHandler().isEnabled()).isTrue();
+    assertThat(properties.getResultHandler().isEnabled()).isTrue();
 
     WebExceptionHandler webExceptionHandler = new WebExceptionHandler();
+    ResultHandler resultHandler = new ResultHandler();
     webExceptionHandler.setEnabled(false);
+    resultHandler.setEnabled(false);
     properties.setWebExceptionHandler(webExceptionHandler);
+    properties.setResultHandler(resultHandler);
 
     assertThat(properties.getWebExceptionHandler().isEnabled()).isFalse();
+    assertThat(properties.getResultHandler().isEnabled()).isFalse();
   }
 }

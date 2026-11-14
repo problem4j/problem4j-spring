@@ -23,6 +23,7 @@ import io.github.problem4j.spring.webflux.ProblemContextMethodArgumentResolver;
 import io.github.problem4j.spring.webflux.ProblemContextWebFilter;
 import io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler;
 import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
+import io.github.problem4j.spring.webflux.ProblemHandlerResultHandler;
 import io.github.problem4j.spring.webflux.ProblemResponseEntityExceptionHandler;
 import io.github.problem4j.spring.webflux.ProblemWebExceptionHandler;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
@@ -206,6 +207,9 @@ class ProblemWebFluxAutoConfigurationTest {
     @Autowired(required = false)
     private ProblemWebExceptionHandler problemWebExceptionHandler;
 
+    @Autowired(required = false)
+    private ProblemHandlerResultHandler problemHandlerResultHandler;
+
     @Test
     void contextLoadsWithoutAdvicesAndWithDeferredHandling() {
       assertThat(exceptionWebFluxAdvice).isNull();
@@ -213,6 +217,7 @@ class ProblemWebFluxAutoConfigurationTest {
       assertThat(exceptionHandler).isNull();
       assertThat(problemErrorWebExceptionHandler).isNull();
       assertThat(problemWebExceptionHandler).isNotNull();
+      assertThat(problemHandlerResultHandler).isNotNull();
     }
   }
 
@@ -220,7 +225,8 @@ class ProblemWebFluxAutoConfigurationTest {
       classes = {WebFluxTestApp.class},
       properties = {
         "problem4j.exception-handling.mode=deferred",
-        "problem4j.webflux.web-exception-handler.enabled=false"
+        "problem4j.webflux.web-exception-handler.enabled=false",
+        "problem4j.webflux.result-handler.enabled=false"
       })
   @Nested
   class WithDeferredModeComponentsDisabled {
@@ -228,9 +234,13 @@ class ProblemWebFluxAutoConfigurationTest {
     @Autowired(required = false)
     private ProblemWebExceptionHandler problemWebExceptionHandler;
 
+    @Autowired(required = false)
+    private ProblemHandlerResultHandler problemHandlerResultHandler;
+
     @Test
     void contextLoadsWithoutDeferredHandling() {
       assertThat(problemWebExceptionHandler).isNull();
+      assertThat(problemHandlerResultHandler).isNull();
     }
   }
 
@@ -246,10 +256,14 @@ class ProblemWebFluxAutoConfigurationTest {
     @Autowired(required = false)
     private ProblemWebExceptionHandler problemWebExceptionHandler;
 
+    @Autowired(required = false)
+    private ProblemHandlerResultHandler problemHandlerResultHandler;
+
     @Test
     void contextLoadsWithoutDeferredHandling() {
       assertThat(problemErrorWebExceptionHandler).isNotNull();
       assertThat(problemWebExceptionHandler).isNull();
+      assertThat(problemHandlerResultHandler).isNull();
     }
   }
 
