@@ -22,6 +22,8 @@ import static org.assertj.core.api.Assertions.entry;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DetailFormat;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DuplicateResolverPolicy;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ErrorRecording;
+import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ExceptionHandling;
+import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ExceptionHandlingMode;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ResolverCaching;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.TracingSource;
 import java.util.LinkedHashMap;
@@ -116,6 +118,50 @@ class ProblemPropertiesTest {
             .get();
 
     assertThat(properties.getDuplicateResolverPolicy()).isEqualTo(expected);
+  }
+
+  @Test
+  void
+      givenNoExceptionHandlingProperties_whenCreated_thenAdviceModeAndUnknownExceptionsByDefault() {
+    ProblemProperties properties = new ProblemProperties();
+
+    assertThat(properties.getExceptionHandling().getMode()).isEqualTo(ExceptionHandlingMode.ADVICE);
+    assertThat(properties.getExceptionHandling().isUnknownExceptions()).isTrue();
+  }
+
+  @ParameterizedTest
+  @CsvSource({"advice, ADVICE, true", "cooperate, COOPERATE, false", "COOPERATE, COOPERATE, true"})
+  void givenExceptionHandlingProperties_whenBound_thenModeAndUnknownExceptionsAreSet(
+      String mode, ExceptionHandlingMode expected, boolean unknownExceptions) {
+    ProblemProperties properties =
+        new Binder(
+                new MapConfigurationPropertySource(
+                    Map.of(
+                        "problem4j.exception-handling.mode",
+                        mode,
+                        "problem4j.exception-handling.unknown-exceptions",
+                        String.valueOf(unknownExceptions))))
+            .bind("problem4j", ProblemProperties.class)
+            .get();
+
+    assertThat(properties.getExceptionHandling().getMode()).isEqualTo(expected);
+    assertThat(properties.getExceptionHandling().isUnknownExceptions())
+        .isEqualTo(unknownExceptions);
+  }
+
+  @Test
+  void givenExceptionHandling_whenSetterInvoked_thenValueRoundTrips() {
+    ProblemProperties properties = new ProblemProperties();
+    ExceptionHandling exceptionHandling = new ExceptionHandling();
+    exceptionHandling.setMode(ExceptionHandlingMode.COOPERATE);
+    exceptionHandling.setUnknownExceptions(false);
+
+    properties.setExceptionHandling(exceptionHandling);
+
+    assertThat(properties.getExceptionHandling()).isSameAs(exceptionHandling);
+    assertThat(properties.getExceptionHandling().getMode())
+        .isEqualTo(ExceptionHandlingMode.COOPERATE);
+    assertThat(properties.getExceptionHandling().isUnknownExceptions()).isFalse();
   }
 
   @Test

@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webflux;
 
+import static io.github.problem4j.spring.web.AttributeSupport.POST_PROCESSED_PROBLEM_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.logAdviceException;
 
@@ -57,6 +58,10 @@ import reactor.core.publisher.Mono;
  * <p>Intended as a <b>generic fallback</b>, it ensures that unexpected exceptions still produce a
  * consistent {@link Problem} response. For more specific exception handling, use {@link
  * ProblemResponseEntityExceptionHandler}, {@link ProblemExceptionWebFluxAdvice}.
+ *
+ * <p>Part of the advice path, registered with {@code problem4j.exception-handling.mode=advice}
+ * (default). With {@code problem4j.exception-handling.mode=cooperate}, exceptions not handled by
+ * the application are rendered by {@link ProblemWebExceptionHandler} instead.
  *
  * @since 1.2.0
  */
@@ -153,6 +158,7 @@ public class ExceptionWebFluxAdvice {
       inspector.inspect(context, problem, ex, headers, status, exchange);
     }
 
+    exchange.getAttributes().put(POST_PROCESSED_PROBLEM_ATTRIBUTE, problem);
     return Mono.just(new ResponseEntity<>(problem, headers, status));
   }
 }

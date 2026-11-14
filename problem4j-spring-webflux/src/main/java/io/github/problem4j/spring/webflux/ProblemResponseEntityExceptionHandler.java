@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webflux;
 
+import static io.github.problem4j.spring.web.AttributeSupport.POST_PROCESSED_PROBLEM_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.logAdviceException;
 
@@ -57,6 +58,10 @@ import reactor.core.publisher.Mono;
  *   <li>Sets content type to {@code application/problem+json}.
  *   <li>Falls back to {@link HttpStatus#INTERNAL_SERVER_ERROR} if mapping fails.
  * </ul>
+ *
+ * <p>Part of the advice path, registered with {@code problem4j.exception-handling.mode=advice}
+ * (default). With {@code problem4j.exception-handling.mode=cooperate}, Spring's exceptions are
+ * rendered by {@link ProblemWebExceptionHandler} instead.
  *
  * @see #handleExceptionInternal
  * @see io.github.problem4j.spring.web.resolver.ProblemResolver
@@ -161,6 +166,7 @@ public class ProblemResponseEntityExceptionHandler extends ResponseEntityExcepti
       inspector.inspect(context, problem, ex, headers, status, exchange);
     }
 
+    exchange.getAttributes().put(POST_PROCESSED_PROBLEM_ATTRIBUTE, problem);
     return super.handleExceptionInternal(ex, problem, headers, status, exchange);
   }
 

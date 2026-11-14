@@ -47,6 +47,12 @@ public class ProblemWebMvcProperties {
   /** Configuration for {@code ProblemErrorController} replacement. */
   private ErrorController errorController = new ErrorController();
 
+  /** Configuration for {@code ProblemHandlerExceptionResolver}. */
+  private HandlerExceptionResolver handlerExceptionResolver = new HandlerExceptionResolver();
+
+  /** Configuration for {@code ProblemResponseBodyAdvice}. */
+  private ResponseBodyAdvice responseBodyAdvice = new ResponseBodyAdvice();
+
   /**
    * Creates a new instance of {@link ProblemWebMvcProperties} with default values.
    *
@@ -238,7 +244,52 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Configuration group for {@code ExceptionWebMvcAdvice}.
+   * Returns configuration for {@code ProblemHandlerExceptionResolver}, which renders exceptions not
+   * handled by the application as {@code Problem} responses. Applies only to {@code
+   * problem4j.exception-handling.mode=cooperate}.
+   *
+   * @return the configuration for {@code ProblemHandlerExceptionResolver}
+   * @since 3.1.0
+   */
+  public HandlerExceptionResolver getHandlerExceptionResolver() {
+    return handlerExceptionResolver;
+  }
+
+  /**
+   * Sets configuration for {@code ProblemHandlerExceptionResolver}.
+   *
+   * @param handlerExceptionResolver configuration for {@code ProblemHandlerExceptionResolver}
+   * @since 3.1.0
+   */
+  public void setHandlerExceptionResolver(HandlerExceptionResolver handlerExceptionResolver) {
+    this.handlerExceptionResolver = handlerExceptionResolver;
+  }
+
+  /**
+   * Returns configuration for {@code ProblemResponseBodyAdvice}, which post-processes {@code
+   * Problem}s and {@code ProblemDetail}s written as response bodies. Applies only to {@code
+   * problem4j.exception-handling.mode=cooperate}.
+   *
+   * @return the configuration for {@code ProblemResponseBodyAdvice}
+   * @since 3.1.0
+   */
+  public ResponseBodyAdvice getResponseBodyAdvice() {
+    return responseBodyAdvice;
+  }
+
+  /**
+   * Sets configuration for {@code ProblemResponseBodyAdvice}.
+   *
+   * @param responseBodyAdvice configuration for {@code ProblemResponseBodyAdvice}
+   * @since 3.1.0
+   */
+  public void setResponseBodyAdvice(ResponseBodyAdvice responseBodyAdvice) {
+    this.responseBodyAdvice = responseBodyAdvice;
+  }
+
+  /**
+   * Configuration group for {@code ExceptionWebMvcAdvice}. Applies only to {@code
+   * problem4j.exception-handling.mode=advice} (default).
    *
    * <p>Controlled by the property {@code problem4j.webmvc.exception-advice.enabled}.
    *
@@ -313,7 +364,8 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Configuration group for {@code ProblemExceptionWebMvcAdvice}.
+   * Configuration group for {@code ProblemExceptionWebMvcAdvice}. Applies only to {@code
+   * problem4j.exception-handling.mode=advice} (default).
    *
    * <p>Controlled by the property {@code problem4j.webmvc.problem-exception-advice.enabled}.
    *
@@ -464,7 +516,8 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Configuration group for {@code ProblemResponseEntityExceptionHandler} override.
+   * Configuration group for {@code ProblemResponseEntityExceptionHandler} override. Applies only to
+   * {@code problem4j.exception-handling.mode=advice} (default).
    *
    * <p>Controlled by the property {@code problem4j.webmvc.exception-handler.enabled}.
    *
@@ -544,9 +597,13 @@ public class ProblemWebMvcProperties {
   }
 
   /**
-   * Configuration group for {@code ProblemErrorController} override.
+   * Configuration group for {@code ProblemErrorController} override, rendering errors that do not
+   * pass through Spring MVC exception resolvers (e.g. {@code response.sendError(...)} or exceptions
+   * of servlet filters) as {@code Problem} responses. With {@code
+   * problem4j.exception-handling.mode=cooperate}, the exception that caused the error is translated
+   * the same way as exceptions of controllers.
    *
-   * <p>Controlled by the property {@code problem4j.webmvc.error-web-exception-handler.enabled}.
+   * <p>Controlled by the property {@code problem4j.webmvc.error-controller.enabled}.
    *
    * @see io.github.problem4j.spring.webmvc.ProblemErrorController
    * @see io.github.problem4j.spring.webmvc.autoconfigure.ProblemErrorMvcConfiguration
@@ -616,6 +673,102 @@ public class ProblemWebMvcProperties {
      *     ProblemErrorController}
      * @see io.github.problem4j.spring.webmvc.ProblemErrorController
      * @see org.springframework.boot.webmvc.error.ErrorController
+     * @since 3.1.0
+     */
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
+    }
+  }
+
+  /**
+   * Configuration group for {@code ProblemHandlerExceptionResolver}. Applies only to {@code
+   * problem4j.exception-handling.mode=cooperate}.
+   *
+   * <p>Controlled by the property {@code problem4j.webmvc.handler-exception-resolver.enabled}.
+   *
+   * @since 3.1.0
+   */
+  public static class HandlerExceptionResolver {
+
+    /**
+     * Default enabled flag for {@code ProblemHandlerExceptionResolver}.
+     *
+     * @since 3.1.0
+     */
+    public static final boolean DEFAULT_ENABLED = true;
+
+    /** Whether the {@code ProblemHandlerExceptionResolver} should be registered. */
+    private boolean enabled = DEFAULT_ENABLED;
+
+    /**
+     * Creates a new configuration group with default values.
+     *
+     * @since 3.1.0
+     */
+    public HandlerExceptionResolver() {}
+
+    /**
+     * Returns whether {@code ProblemHandlerExceptionResolver} should be registered.
+     *
+     * @return {@code true} if enabled, otherwise {@code false}
+     * @since 3.1.0
+     */
+    public boolean isEnabled() {
+      return enabled;
+    }
+
+    /**
+     * Sets whether {@code ProblemHandlerExceptionResolver} should be registered.
+     *
+     * @param enabled whether {@code ProblemHandlerExceptionResolver} should be registered
+     * @since 3.1.0
+     */
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
+    }
+  }
+
+  /**
+   * Configuration group for {@code ProblemResponseBodyAdvice}. Applies only to {@code
+   * problem4j.exception-handling.mode=cooperate}.
+   *
+   * <p>Controlled by the property {@code problem4j.webmvc.response-body-advice.enabled}.
+   *
+   * @since 3.1.0
+   */
+  public static class ResponseBodyAdvice {
+
+    /**
+     * Default enabled flag for {@code ProblemResponseBodyAdvice}.
+     *
+     * @since 3.1.0
+     */
+    public static final boolean DEFAULT_ENABLED = true;
+
+    /** Whether the {@code ProblemResponseBodyAdvice} should be registered. */
+    private boolean enabled = DEFAULT_ENABLED;
+
+    /**
+     * Creates a new configuration group with default values.
+     *
+     * @since 3.1.0
+     */
+    public ResponseBodyAdvice() {}
+
+    /**
+     * Returns whether {@code ProblemResponseBodyAdvice} should be registered.
+     *
+     * @return {@code true} if enabled, otherwise {@code false}
+     * @since 3.1.0
+     */
+    public boolean isEnabled() {
+      return enabled;
+    }
+
+    /**
+     * Sets whether {@code ProblemResponseBodyAdvice} should be registered.
+     *
+     * @param enabled whether {@code ProblemResponseBodyAdvice} should be registered
      * @since 3.1.0
      */
     public void setEnabled(boolean enabled) {

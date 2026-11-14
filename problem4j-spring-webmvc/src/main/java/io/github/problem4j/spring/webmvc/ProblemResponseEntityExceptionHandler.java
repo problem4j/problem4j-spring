@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webmvc;
 
+import static io.github.problem4j.spring.web.AttributeSupport.POST_PROCESSED_PROBLEM_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.logAdviceException;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
@@ -57,6 +58,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  *   <li>Sets content type to {@code application/problem+json}.
  *   <li>Falls back to {@link HttpStatus#INTERNAL_SERVER_ERROR} if mapping fails.
  * </ul>
+ *
+ * <p>Part of the advice path, registered with {@code problem4j.exception-handling.mode=advice}
+ * (default). With {@code problem4j.exception-handling.mode=cooperate}, Spring's exceptions are
+ * rendered by {@link ProblemHandlerExceptionResolver} instead.
  *
  * @see io.github.problem4j.spring.web.resolver.ProblemResolver
  * @since 3.1.0
@@ -162,6 +167,7 @@ public class ProblemResponseEntityExceptionHandler extends ResponseEntityExcepti
       inspector.inspect(context, problem, ex, headers, status, request);
     }
 
+    request.setAttribute(POST_PROCESSED_PROBLEM_ATTRIBUTE, problem, SCOPE_REQUEST);
     return super.handleExceptionInternal(ex, problem, headers, status, request);
   }
 

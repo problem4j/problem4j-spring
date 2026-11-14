@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webflux;
 
+import static io.github.problem4j.spring.web.AttributeSupport.POST_PROCESSED_PROBLEM_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.logAdviceException;
 
@@ -48,6 +49,10 @@ import reactor.core.publisher.Mono;
  * content type {@code application/problem+json}.
  *
  * <p>This is intended for application-level exceptions already represented as {@link Problem}.
+ *
+ * <p>Part of the advice path, registered with {@code problem4j.exception-handling.mode=advice}
+ * (default). With {@code problem4j.exception-handling.mode=cooperate}, {@code ProblemException}s
+ * are rendered by {@link ProblemWebExceptionHandler} instead.
  *
  * @since 1.2.0
  */
@@ -134,6 +139,7 @@ public class ProblemExceptionWebFluxAdvice {
       inspector.inspect(context, problem, ex, headers, status, exchange);
     }
 
+    exchange.getAttributes().put(POST_PROCESSED_PROBLEM_ATTRIBUTE, problem);
     return Mono.just(new ResponseEntity<>(problem, headers, status));
   }
 }

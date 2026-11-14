@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webmvc;
 
+import static io.github.problem4j.spring.web.AttributeSupport.POST_PROCESSED_PROBLEM_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.logAdviceException;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
@@ -48,6 +49,10 @@ import org.springframework.web.context.request.WebRequest;
  * content type {@code application/problem+json}.
  *
  * <p>This is intended for application-level exceptions already represented as {@link Problem}.
+ *
+ * <p>Part of the advice path, registered with {@code problem4j.exception-handling.mode=advice}
+ * (default). With {@code problem4j.exception-handling.mode=cooperate}, {@code ProblemException}s
+ * are rendered by {@link ProblemHandlerExceptionResolver} instead.
  *
  * @since 1.2.0
  */
@@ -137,6 +142,7 @@ public class ProblemExceptionWebMvcAdvice {
       inspector.inspect(context, problem, ex, headers, status, request);
     }
 
+    request.setAttribute(POST_PROCESSED_PROBLEM_ATTRIBUTE, problem, SCOPE_REQUEST);
     return new ResponseEntity<>(problem, headers, status);
   }
 }

@@ -18,9 +18,9 @@ package io.github.problem4j.spring.webflux.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.github.problem4j.core.ProblemException;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
 import io.github.problem4j.spring.webflux.app.problem.ResolvableException;
-import io.github.problem4j.spring.webflux.app.problem.UnresolvableException;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
 import java.util.concurrent.BlockingQueue;
@@ -39,7 +39,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 class ObservationErrorWebFluxTest {
 
-  private static final String SERVER_ERROR_PATH = "/problem-advice/unresolvable";
+  private static final String SERVER_ERROR_PATH = "/exception-hook/problem-server-error";
   private static final String CLIENT_ERROR_PATH = "/problem-advice/resolvable";
 
   @SpringBootTest(
@@ -62,9 +62,9 @@ class ObservationErrorWebFluxTest {
       webTestClient.get().uri(SERVER_ERROR_PATH).exchange().expectStatus().isEqualTo(500);
 
       ServerRequestObservationContext context = capture.await(SERVER_ERROR_PATH);
-      assertThat(context.getError()).isInstanceOf(UnresolvableException.class);
+      assertThat(context.getError()).isInstanceOf(ProblemException.class);
       assertThat(context.getLowCardinalityKeyValue("exception").getValue())
-          .isEqualTo(UnresolvableException.class.getSimpleName());
+          .isEqualTo(ProblemException.class.getSimpleName());
     }
 
     @Test

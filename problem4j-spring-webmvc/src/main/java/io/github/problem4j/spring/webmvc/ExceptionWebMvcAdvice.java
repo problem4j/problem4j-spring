@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webmvc;
 
+import static io.github.problem4j.spring.web.AttributeSupport.POST_PROCESSED_PROBLEM_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.logAdviceException;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
@@ -57,6 +58,10 @@ import org.springframework.web.context.request.WebRequest;
  * <p>Intended as a <b>generic fallback</b>, it ensures that unexpected exceptions still produce a
  * consistent {@link Problem} response. For more specific exception handling, use {@link
  * ProblemResponseEntityExceptionHandler}, {@link ProblemExceptionWebMvcAdvice}.
+ *
+ * <p>Part of the advice path, registered with {@code problem4j.exception-handling.mode=advice}
+ * (default). With {@code problem4j.exception-handling.mode=cooperate}, exceptions not handled by
+ * the application are rendered by {@link ProblemHandlerExceptionResolver} instead.
  *
  * @since 1.2.0
  */
@@ -155,6 +160,7 @@ public class ExceptionWebMvcAdvice {
       inspector.inspect(context, problem, ex, headers, status, request);
     }
 
+    request.setAttribute(POST_PROCESSED_PROBLEM_ATTRIBUTE, problem, SCOPE_REQUEST);
     return new ResponseEntity<>(problem, headers, status);
   }
 }

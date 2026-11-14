@@ -22,8 +22,12 @@ import io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice;
 import io.github.problem4j.spring.webmvc.ProblemContextFilter;
 import io.github.problem4j.spring.webmvc.ProblemContextMethodArgumentResolver;
 import io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice;
+import io.github.problem4j.spring.webmvc.ProblemHandlerExceptionResolver;
+import io.github.problem4j.spring.webmvc.ProblemResponseBodyAdvice;
 import io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +35,18 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.handler.HandlerExceptionResolverComposite;
+import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 
 class ProblemWebMvcAutoConfigurationTest {
 
-  @SpringBootTest(classes = {WebMvcTestApp.class})
+  @SpringBootTest(
+      classes = {WebMvcTestApp.class},
+      properties = {"problem4j.exception-handling.mode=advice"})
   @Nested
   class WithEnabled {
 
@@ -117,7 +127,9 @@ class ProblemWebMvcAutoConfigurationTest {
     }
   }
 
-  @SpringBootTest(classes = {WebMvcTestApp.class})
+  @SpringBootTest(
+      classes = {WebMvcTestApp.class},
+      properties = {"problem4j.exception-handling.mode=advice"})
   @Nested
   class WithExceptionAdviceEnabled {
 
@@ -135,7 +147,10 @@ class ProblemWebMvcAutoConfigurationTest {
 
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
-      properties = {"problem4j.webmvc.exception-advice.enabled=false"})
+      properties = {
+        "problem4j.exception-handling.mode=advice",
+        "problem4j.webmvc.exception-advice.enabled=false"
+      })
   @Nested
   class WithExceptionAdviceDisabled {
 
@@ -151,7 +166,9 @@ class ProblemWebMvcAutoConfigurationTest {
     }
   }
 
-  @SpringBootTest(classes = {WebMvcTestApp.class})
+  @SpringBootTest(
+      classes = {WebMvcTestApp.class},
+      properties = {"problem4j.exception-handling.mode=advice"})
   @Nested
   class WithProblemExceptionAdviceEnabled {
 
@@ -169,7 +186,10 @@ class ProblemWebMvcAutoConfigurationTest {
 
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
-      properties = {"problem4j.webmvc.problem-exception-advice.enabled=false"})
+      properties = {
+        "problem4j.exception-handling.mode=advice",
+        "problem4j.webmvc.problem-exception-advice.enabled=false"
+      })
   @Nested
   class WithProblemExceptionAdviceDisabled {
 
@@ -185,7 +205,131 @@ class ProblemWebMvcAutoConfigurationTest {
     }
   }
 
-  @SpringBootTest(classes = {WebMvcTestApp.class})
+  @SpringBootTest(
+      classes = {WebMvcTestApp.class},
+      properties = {"problem4j.exception-handling.mode=cooperate"})
+  @Nested
+  class WithCooperateMode {
+
+    @Autowired(required = false)
+    private ExceptionWebMvcAdvice exceptionWebMvcAdvice;
+
+    @Autowired(required = false)
+    private ProblemExceptionWebMvcAdvice problemExceptionWebMvcAdvice;
+
+    @Autowired(required = false)
+    private ResponseEntityExceptionHandler exceptionHandler;
+
+    @Autowired(required = false)
+    private ProblemResponseBodyAdvice problemResponseBodyAdvice;
+
+    @Autowired
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver handlerExceptionResolver;
+
+    @Test
+    void contextLoadsWithoutAdvicesAndWithCooperateHandling() {
+      assertThat(exceptionWebMvcAdvice).isNull();
+      assertThat(problemExceptionWebMvcAdvice).isNull();
+      assertThat(exceptionHandler).isNull();
+      assertThat(problemResponseBodyAdvice).isNotNull();
+      assertThat(
+              ((HandlerExceptionResolverComposite) handlerExceptionResolver)
+                  .getExceptionResolvers())
+          .hasAtLeastOneElementOfType(ProblemHandlerExceptionResolver.class);
+    }
+  }
+
+  @SpringBootTest(
+      classes = {WebMvcTestApp.class},
+      properties = {"problem4j.exception-handling.mode=cooperate"})
+  @Nested
+  class WithCooperateModeResolverConfigurer {
+
+    @Autowired
+    @Qualifier("problemExceptionResolverConfigurer")
+    private WebMvcConfigurer configurer;
+
+    @Test
+    void givenExceptionHandlerExceptionResolver_whenExtending_thenResolverIsInsertedAfterIt() {
+      List<HandlerExceptionResolver> resolvers = new ArrayList<>();
+      resolvers.add(new ExceptionHandlerExceptionResolver());
+      resolvers.add(new DefaultHandlerExceptionResolver());
+
+      configurer.extendHandlerExceptionResolvers(resolvers);
+
+      assertThat(resolvers).hasSize(3);
+      assertThat(resolvers.get(1)).isInstanceOf(ProblemHandlerExceptionResolver.class);
+    }
+
+    @Test
+    void givenNoExceptionHandlerExceptionResolver_whenExtending_thenResolverIsAppended() {
+      List<HandlerExceptionResolver> resolvers = new ArrayList<>();
+      resolvers.add(new DefaultHandlerExceptionResolver());
+
+      configurer.extendHandlerExceptionResolvers(resolvers);
+
+      assertThat(resolvers).hasSize(2);
+      assertThat(resolvers.get(1))
+          .isInstanceOfSatisfying(
+              ProblemHandlerExceptionResolver.class,
+              resolver -> assertThat(resolver.isUnknownExceptions()).isTrue());
+    }
+  }
+
+  @SpringBootTest(
+      classes = {WebMvcTestApp.class},
+      properties = {
+        "problem4j.exception-handling.mode=cooperate",
+        "problem4j.webmvc.handler-exception-resolver.enabled=false",
+        "problem4j.webmvc.response-body-advice.enabled=false"
+      })
+  @Nested
+  class WithCooperateModeComponentsDisabled {
+
+    @Autowired(required = false)
+    private ProblemResponseBodyAdvice problemResponseBodyAdvice;
+
+    @Autowired
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver handlerExceptionResolver;
+
+    @Test
+    void contextLoadsWithoutCooperateHandling() {
+      assertThat(problemResponseBodyAdvice).isNull();
+      assertThat(
+              ((HandlerExceptionResolverComposite) handlerExceptionResolver)
+                  .getExceptionResolvers())
+          .doesNotHaveAnyElementsOfTypes(ProblemHandlerExceptionResolver.class);
+    }
+  }
+
+  @SpringBootTest(
+      classes = {WebMvcTestApp.class},
+      properties = {"problem4j.exception-handling.mode=advice"})
+  @Nested
+  class WithAdviceMode {
+
+    @Autowired(required = false)
+    private ProblemResponseBodyAdvice problemResponseBodyAdvice;
+
+    @Autowired
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver handlerExceptionResolver;
+
+    @Test
+    void contextLoadsWithoutCooperateHandling() {
+      assertThat(problemResponseBodyAdvice).isNull();
+      assertThat(
+              ((HandlerExceptionResolverComposite) handlerExceptionResolver)
+                  .getExceptionResolvers())
+          .doesNotHaveAnyElementsOfTypes(ProblemHandlerExceptionResolver.class);
+    }
+  }
+
+  @SpringBootTest(
+      classes = {WebMvcTestApp.class},
+      properties = {"problem4j.exception-handling.mode=advice"})
   @Nested
   @SuppressWarnings("removal")
   class WithFormerResponseEntityExceptionHandlerType {
@@ -236,7 +380,9 @@ class ProblemWebMvcAutoConfigurationTest {
     }
   }
 
-  @SpringBootTest(classes = {WebMvcTestApp.class})
+  @SpringBootTest(
+      classes = {WebMvcTestApp.class},
+      properties = {"problem4j.exception-handling.mode=advice"})
   @Nested
   class WithExceptionHandlerEnabled {
 
@@ -254,7 +400,10 @@ class ProblemWebMvcAutoConfigurationTest {
 
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
-      properties = {"problem4j.webmvc.exception-handler.enabled=false"})
+      properties = {
+        "problem4j.exception-handling.mode=advice",
+        "problem4j.webmvc.exception-handler.enabled=false"
+      })
   @Nested
   class WithExceptionHandlerDisabled {
 
