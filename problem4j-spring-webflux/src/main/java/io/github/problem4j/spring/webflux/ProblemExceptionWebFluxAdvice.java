@@ -49,6 +49,10 @@ import reactor.core.publisher.Mono;
  *
  * <p>This is intended for application-level exceptions already represented as {@link Problem}.
  *
+ * <p>Part of the advice path, registered with {@code problem4j.exception-handling.mode=advice}
+ * (default). With {@code problem4j.exception-handling.mode=deferred}, {@code ProblemException}s are
+ * rendered by {@link ProblemWebExceptionHandler} instead.
+ *
  * @since 1.2.0
  */
 @Order(ProblemExceptionWebFluxAdvice.PRECEDENCE)

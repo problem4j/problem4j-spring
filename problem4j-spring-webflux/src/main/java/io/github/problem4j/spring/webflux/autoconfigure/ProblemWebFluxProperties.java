@@ -47,6 +47,9 @@ public class ProblemWebFluxProperties {
   /** Configuration for {@code ProblemErrorWebExceptionHandler} replacement. */
   private ErrorWebExceptionHandler errorWebExceptionHandler = new ErrorWebExceptionHandler();
 
+  /** Configuration for {@code ProblemWebExceptionHandler}. */
+  private WebExceptionHandler webExceptionHandler = new WebExceptionHandler();
+
   /**
    * Creates a new instance of {@link ProblemWebFluxProperties} with default values.
    *
@@ -239,7 +242,30 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Configuration group for {@code ExceptionWebFluxAdvice}.
+   * Returns configuration for {@code ProblemWebExceptionHandler}, which renders exceptions not
+   * handled by the application as {@code Problem} responses. Applies only to {@code
+   * problem4j.exception-handling.mode=deferred}.
+   *
+   * @return the configuration for {@code ProblemWebExceptionHandler}
+   * @since 3.1.0
+   */
+  public WebExceptionHandler getWebExceptionHandler() {
+    return webExceptionHandler;
+  }
+
+  /**
+   * Sets configuration for {@code ProblemWebExceptionHandler}.
+   *
+   * @param webExceptionHandler configuration for {@code ProblemWebExceptionHandler}
+   * @since 3.1.0
+   */
+  public void setWebExceptionHandler(WebExceptionHandler webExceptionHandler) {
+    this.webExceptionHandler = webExceptionHandler;
+  }
+
+  /**
+   * Configuration group for {@code ExceptionWebFluxAdvice}. Applies only to {@code
+   * problem4j.exception-handling.mode=advice} (default).
    *
    * <p>Controlled by the property {@code problem4j.webflux.exception-advice.enabled}.
    *
@@ -314,7 +340,8 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Configuration group for {@code ProblemExceptionWebFluxAdvice}.
+   * Configuration group for {@code ProblemExceptionWebFluxAdvice}. Applies only to {@code
+   * problem4j.exception-handling.mode=advice} (default).
    *
    * <p>Controlled by the property {@code problem4j.webflux.problem-exception-advice.enabled}.
    *
@@ -464,7 +491,8 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Configuration group for {@code ProblemResponseEntityExceptionHandler} override.
+   * Configuration group for {@code ProblemResponseEntityExceptionHandler} override. Applies only to
+   * {@code problem4j.exception-handling.mode=advice} (default).
    *
    * <p>Controlled by the property {@code problem4j.webflux.exception-handler.enabled}.
    *
@@ -543,7 +571,8 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Configuration group for {@code ProblemErrorWebExceptionHandler} override.
+   * Configuration group for {@code ProblemErrorWebExceptionHandler} override. Applies only to
+   * {@code problem4j.exception-handling.mode=advice} (default).
    *
    * <p>Controlled by the property {@code problem4j.webflux.error-web-exception-handler.enabled}.
    *
@@ -610,6 +639,54 @@ public class ProblemWebFluxProperties {
      *     ProblemErrorWebExceptionHandler}
      * @see io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler
      * @see org.springframework.boot.webflux.error.ErrorWebExceptionHandler
+     * @since 3.1.0
+     */
+    public void setEnabled(boolean enabled) {
+      this.enabled = enabled;
+    }
+  }
+
+  /**
+   * Configuration group for {@code ProblemWebExceptionHandler}. Applies only to {@code
+   * problem4j.exception-handling.mode=deferred}.
+   *
+   * <p>Controlled by the property {@code problem4j.webflux.web-exception-handler.enabled}.
+   *
+   * @since 3.1.0
+   */
+  public static class WebExceptionHandler {
+
+    /**
+     * Default enabled flag for {@code ProblemWebExceptionHandler}.
+     *
+     * @since 3.1.0
+     */
+    public static final boolean DEFAULT_ENABLED = true;
+
+    /** Whether the {@code ProblemWebExceptionHandler} should be registered. */
+    private boolean enabled = DEFAULT_ENABLED;
+
+    /**
+     * Creates a new configuration group with default values.
+     *
+     * @since 3.1.0
+     */
+    public WebExceptionHandler() {}
+
+    /**
+     * Returns whether {@code ProblemWebExceptionHandler} should be registered.
+     *
+     * @return {@code true} if enabled, otherwise {@code false}
+     * @since 3.1.0
+     */
+    public boolean isEnabled() {
+      return enabled;
+    }
+
+    /**
+     * Sets whether {@code ProblemWebExceptionHandler} should be registered.
+     *
+     * @param enabled whether {@code ProblemWebExceptionHandler} should be registered
      * @since 3.1.0
      */
     public void setEnabled(boolean enabled) {

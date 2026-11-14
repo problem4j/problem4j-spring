@@ -21,8 +21,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.ProblemContextMethodArgumentResolver;
 import io.github.problem4j.spring.webflux.ProblemContextWebFilter;
+import io.github.problem4j.spring.webflux.ProblemErrorWebExceptionHandler;
 import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.ProblemResponseEntityExceptionHandler;
+import io.github.problem4j.spring.webflux.ProblemWebExceptionHandler;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,7 +36,9 @@ import org.springframework.web.reactive.result.method.annotation.ResponseEntityE
 
 class ProblemWebFluxAutoConfigurationTest {
 
-  @SpringBootTest(classes = {WebFluxTestApp.class})
+  @SpringBootTest(
+      classes = {WebFluxTestApp.class},
+      properties = {"problem4j.exception-handling.mode=advice"})
   @Nested
   class WithEnabled {
 
@@ -103,7 +107,9 @@ class ProblemWebFluxAutoConfigurationTest {
     }
   }
 
-  @SpringBootTest(classes = {WebFluxTestApp.class})
+  @SpringBootTest(
+      classes = {WebFluxTestApp.class},
+      properties = {"problem4j.exception-handling.mode=advice"})
   @Nested
   class WithExceptionAdviceEnabled {
 
@@ -121,7 +127,10 @@ class ProblemWebFluxAutoConfigurationTest {
 
   @SpringBootTest(
       classes = {WebFluxTestApp.class},
-      properties = {"problem4j.webflux.exception-advice.enabled=false"})
+      properties = {
+        "problem4j.exception-handling.mode=advice",
+        "problem4j.webflux.exception-advice.enabled=false"
+      })
   @Nested
   class WithExceptionAdviceDisabled {
 
@@ -137,7 +146,9 @@ class ProblemWebFluxAutoConfigurationTest {
     }
   }
 
-  @SpringBootTest(classes = {WebFluxTestApp.class})
+  @SpringBootTest(
+      classes = {WebFluxTestApp.class},
+      properties = {"problem4j.exception-handling.mode=advice"})
   @Nested
   class WithProblemExceptionAdviceEnabled {
 
@@ -155,7 +166,10 @@ class ProblemWebFluxAutoConfigurationTest {
 
   @SpringBootTest(
       classes = {WebFluxTestApp.class},
-      properties = {"problem4j.webflux.problem-exception-advice.enabled=false"})
+      properties = {
+        "problem4j.exception-handling.mode=advice",
+        "problem4j.webflux.problem-exception-advice.enabled=false"
+      })
   @Nested
   class WithProblemExceptionAdviceDisabled {
 
@@ -171,7 +185,77 @@ class ProblemWebFluxAutoConfigurationTest {
     }
   }
 
-  @SpringBootTest(classes = {WebFluxTestApp.class})
+  @SpringBootTest(
+      classes = {WebFluxTestApp.class},
+      properties = {"problem4j.exception-handling.mode=deferred"})
+  @Nested
+  class WithDeferredMode {
+
+    @Autowired(required = false)
+    private ExceptionWebFluxAdvice exceptionWebFluxAdvice;
+
+    @Autowired(required = false)
+    private ProblemExceptionWebFluxAdvice problemExceptionWebFluxAdvice;
+
+    @Autowired(required = false)
+    private ResponseEntityExceptionHandler exceptionHandler;
+
+    @Autowired(required = false)
+    private ProblemErrorWebExceptionHandler problemErrorWebExceptionHandler;
+
+    @Autowired(required = false)
+    private ProblemWebExceptionHandler problemWebExceptionHandler;
+
+    @Test
+    void contextLoadsWithoutAdvicesAndWithDeferredHandling() {
+      assertThat(exceptionWebFluxAdvice).isNull();
+      assertThat(problemExceptionWebFluxAdvice).isNull();
+      assertThat(exceptionHandler).isNull();
+      assertThat(problemErrorWebExceptionHandler).isNull();
+      assertThat(problemWebExceptionHandler).isNotNull();
+    }
+  }
+
+  @SpringBootTest(
+      classes = {WebFluxTestApp.class},
+      properties = {
+        "problem4j.exception-handling.mode=deferred",
+        "problem4j.webflux.web-exception-handler.enabled=false"
+      })
+  @Nested
+  class WithDeferredModeComponentsDisabled {
+
+    @Autowired(required = false)
+    private ProblemWebExceptionHandler problemWebExceptionHandler;
+
+    @Test
+    void contextLoadsWithoutDeferredHandling() {
+      assertThat(problemWebExceptionHandler).isNull();
+    }
+  }
+
+  @SpringBootTest(
+      classes = {WebFluxTestApp.class},
+      properties = {"problem4j.exception-handling.mode=advice"})
+  @Nested
+  class WithAdviceMode {
+
+    @Autowired(required = false)
+    private ProblemErrorWebExceptionHandler problemErrorWebExceptionHandler;
+
+    @Autowired(required = false)
+    private ProblemWebExceptionHandler problemWebExceptionHandler;
+
+    @Test
+    void contextLoadsWithoutDeferredHandling() {
+      assertThat(problemErrorWebExceptionHandler).isNotNull();
+      assertThat(problemWebExceptionHandler).isNull();
+    }
+  }
+
+  @SpringBootTest(
+      classes = {WebFluxTestApp.class},
+      properties = {"problem4j.exception-handling.mode=advice"})
   @Nested
   @SuppressWarnings("removal")
   class WithFormerResponseEntityExceptionHandlerType {
@@ -221,7 +305,9 @@ class ProblemWebFluxAutoConfigurationTest {
     }
   }
 
-  @SpringBootTest(classes = {WebFluxTestApp.class})
+  @SpringBootTest(
+      classes = {WebFluxTestApp.class},
+      properties = {"problem4j.exception-handling.mode=advice"})
   @Nested
   class WithExceptionHandlerEnabled {
 
@@ -239,7 +325,10 @@ class ProblemWebFluxAutoConfigurationTest {
 
   @SpringBootTest(
       classes = {WebFluxTestApp.class},
-      properties = {"problem4j.webflux.exception-handler.enabled=false"})
+      properties = {
+        "problem4j.exception-handling.mode=advice",
+        "problem4j.webflux.exception-handler.enabled=false"
+      })
   @Nested
   class WithExceptionHandlerDisabled {
 

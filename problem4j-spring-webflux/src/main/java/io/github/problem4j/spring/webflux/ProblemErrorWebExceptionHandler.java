@@ -44,6 +44,10 @@ import reactor.core.publisher.Mono;
  * <p>It replaces the response body with a {@link Problem} object while preserving the original HTTP
  * status and content type {@code application/problem+json}.
  *
+ * <p>Part of the advice path, registered with {@code problem4j.exception-handling.mode=advice}
+ * (default). With {@code problem4j.exception-handling.mode=deferred}, errors are rendered by {@link
+ * ProblemWebExceptionHandler} instead.
+ *
  * @since 1.2.0
  */
 @Order(ProblemErrorWebExceptionHandler.PRECEDENCE)

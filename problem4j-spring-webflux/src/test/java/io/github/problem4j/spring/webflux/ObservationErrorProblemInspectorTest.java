@@ -29,6 +29,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.server.reactive.observation.ServerRequestObservationContext;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
+import org.springframework.web.server.handler.ExceptionHandlingWebHandler;
 
 class ObservationErrorProblemInspectorTest {
 
@@ -53,6 +54,30 @@ class ObservationErrorProblemInspectorTest {
     inspect(new ObservationErrorProblemInspector(), new IllegalStateException(), status, exchange);
 
     assertThat(observationContext.getError()).isNull();
+  }
+
+  @Test
+  void givenStatusNotMatching_whenInspecting_thenHandledWebExceptionIsCleared() {
+    MockServerWebExchange exchange = exchange();
+    Exception ex = new IllegalStateException();
+    exchange.getAttributes().put(ExceptionHandlingWebHandler.HANDLED_WEB_EXCEPTION, ex);
+
+    inspect(new ObservationErrorProblemInspector(), ex, 422, exchange);
+
+    assertThat(exchange.getAttributes())
+        .doesNotContainKey(ExceptionHandlingWebHandler.HANDLED_WEB_EXCEPTION);
+  }
+
+  @Test
+  void givenStatusMatching_whenInspecting_thenHandledWebExceptionIsKept() {
+    MockServerWebExchange exchange = exchange();
+    Exception ex = new IllegalStateException();
+    exchange.getAttributes().put(ExceptionHandlingWebHandler.HANDLED_WEB_EXCEPTION, ex);
+
+    inspect(new ObservationErrorProblemInspector(), ex, 500, exchange);
+
+    assertThat(exchange.getAttributes())
+        .containsEntry(ExceptionHandlingWebHandler.HANDLED_WEB_EXCEPTION, ex);
   }
 
   @Test

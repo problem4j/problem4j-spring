@@ -23,6 +23,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.server.reactive.observation.ServerRequestObservationContext;
 import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.handler.ExceptionHandlingWebHandler;
 
 /**
  * {@link ProblemInspector} recording exceptions handled by Problem4J as errors of the current HTTP
@@ -34,6 +35,11 @@ import org.springframework.web.server.ServerWebExchange;
  * the {@link ServerRequestObservationContext} stored in exchange attributes, as recommended by
  * Spring Framework for handled exceptions. An error already recorded in the observation context is
  * never replaced.
+ *
+ * <p>Spring records every error reaching a {@code WebExceptionHandler} (such as {@code
+ * ProblemWebExceptionHandler}) as an observation error, using {@link
+ * ExceptionHandlingWebHandler#HANDLED_WEB_EXCEPTION} exchange attribute. For responses with status
+ * not matching the configured predicate, that attribute is removed, so the error is not recorded.
  *
  * <p>Registered automatically with {@code problem4j.observation-errors} property deciding which
  * response statuses are recorded ({@code server} by default).
@@ -86,6 +92,7 @@ public class ObservationErrorProblemInspector implements ProblemInspector {
       HttpStatusCode status,
       ServerWebExchange exchange) {
     if (!statusFilter.test(status)) {
+      exchange.getAttributes().remove(ExceptionHandlingWebHandler.HANDLED_WEB_EXCEPTION);
       return;
     }
     ServerRequestObservationContext.findCurrent(exchange.getAttributes())
