@@ -181,7 +181,9 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
       problem = problemOperations.translate(context, exception, headers);
     } catch (Exception e) {
       logAdviceException(log, exception, exchange, e);
-      problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
+      problem =
+          problemOperations.postProcess(
+              context, Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value()));
     }
 
     HttpStatus status =

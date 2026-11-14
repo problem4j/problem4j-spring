@@ -163,7 +163,9 @@ public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionRes
       problem = problemOperations.translate(context, ex, headers);
     } catch (Exception e) {
       logAdviceException(log, ex, webRequest, e);
-      problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
+      problem =
+          problemOperations.postProcess(
+              context, Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value()));
     }
 
     HttpStatus status =
