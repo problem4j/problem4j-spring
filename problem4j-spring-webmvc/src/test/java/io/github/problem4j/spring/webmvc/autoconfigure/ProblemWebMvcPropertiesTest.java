@@ -165,7 +165,7 @@ class ProblemWebMvcPropertiesTest {
   }
 
   @Test
-  void givenDeferredModeGroups_whenUsed_thenDefaultsAndValuesRoundTrip() {
+  void givenCooperateModeGroups_whenUsed_thenDefaultsAndValuesRoundTrip() {
     ProblemWebMvcProperties properties = new ProblemWebMvcProperties();
     assertThat(properties.getHandlerExceptionResolver().isEnabled()).isTrue();
     assertThat(properties.getResponseBodyAdvice().isEnabled()).isTrue();

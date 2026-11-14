@@ -59,16 +59,16 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Add `ProblemOperations` facade, resolving exceptions into `Problem`s, post-processing `Problem`s and `ProblemDetail`s,
   or both at once. A `ProblemDetail` is post-processed in place, keeping its type.
 - Add `problem4j.exception-handling.mode` property. `advice` (default) keeps registering Problem4J controller advices.
-  `deferred` registers none, so exception handlers of the application always win, and exceptions they leave unhandled
+  `cooperate` registers none, so exception handlers of the application always win, and exceptions they leave unhandled
   are rendered by `ProblemHandlerExceptionResolver` (WebMVC) or `ProblemWebExceptionHandler` (WebFlux, including
   exceptions of web filters). `problem4j.exception-handling.unknown-exceptions` (default `true`) decides whether
   exceptions unknown to Problem4J are rendered too. A warning is logged if `spring.mvc.problemdetails.enabled` or
-  `spring.webflux.problemdetails.enabled` is set in `deferred` mode.
-- In `deferred` mode, post-process `Problem` and `ProblemDetail` returned by controllers and exception handlers of the
+  `spring.webflux.problemdetails.enabled` is set in `cooperate` mode.
+- In `cooperate` mode, post-process `Problem` and `ProblemDetail` returned by controllers and exception handlers of the
   application (`ProblemResponseBodyAdvice`, `ProblemHandlerResultHandler`). A `ProblemDetail` stays a `ProblemDetail`.
-- In `deferred` mode, `ProblemErrorController` renders exceptions of servlet filters the same way as exceptions of
+- In `cooperate` mode, `ProblemErrorController` renders exceptions of servlet filters the same way as exceptions of
   controllers.
-- In `deferred` mode, problems rendered by Problem4J advices (including subclasses registered by the application) and
+- In `cooperate` mode, problems rendered by Problem4J advices (including subclasses registered by the application) and
   by `ProblemErrorController` are not post-processed again.
 
 ### Changed

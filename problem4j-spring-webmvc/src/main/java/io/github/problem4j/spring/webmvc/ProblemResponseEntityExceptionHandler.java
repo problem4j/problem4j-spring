@@ -60,7 +60,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  * </ul>
  *
  * <p>Part of the advice path, registered with {@code problem4j.exception-handling.mode=advice}
- * (default). With {@code problem4j.exception-handling.mode=deferred}, Spring's exceptions are
+ * (default). With {@code problem4j.exception-handling.mode=cooperate}, Spring's exceptions are
  * rendered by {@link ProblemHandlerExceptionResolver} instead.
  *
  * @see io.github.problem4j.spring.web.resolver.ProblemResolver

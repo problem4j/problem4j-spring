@@ -60,8 +60,9 @@ import org.springframework.web.util.DisconnectedClientHelper;
  * {@code @RestControllerAdvice}s of the application always take precedence, regardless of their
  * order. Exceptions are not resolved if the response is already committed.
  *
- * <p>Part of the deferred path, registered with {@code problem4j.exception-handling.mode=deferred}.
- * With {@code problem4j.exception-handling.mode=advice} (default), exceptions are handled by {@link
+ * <p>Part of the cooperate path, registered with {@code
+ * problem4j.exception-handling.mode=cooperate}. With {@code
+ * problem4j.exception-handling.mode=advice} (default), exceptions are handled by {@link
  * ExceptionWebMvcAdvice}, {@link ProblemExceptionWebMvcAdvice} and {@link
  * ProblemResponseEntityExceptionHandler} instead.
  *

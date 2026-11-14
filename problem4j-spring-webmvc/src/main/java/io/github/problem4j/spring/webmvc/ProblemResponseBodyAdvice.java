@@ -57,9 +57,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * as {@code application/json} or {@code application/xml} is written as {@code
  * application/problem+json} or {@code application/problem+xml}, similarly to {@link ProblemDetail}.
  *
- * <p>Part of the deferred path, registered with {@code problem4j.exception-handling.mode=deferred}.
- * With {@code problem4j.exception-handling.mode=advice} (default), {@code Problem}s and {@code
- * ProblemDetail}s returned by the application are written without post-processing.
+ * <p>Part of the cooperate path, registered with {@code
+ * problem4j.exception-handling.mode=cooperate}. With {@code
+ * problem4j.exception-handling.mode=advice} (default), {@code Problem}s and {@code ProblemDetail}s
+ * returned by the application are written without post-processing.
  *
  * @since 3.1.0
  */

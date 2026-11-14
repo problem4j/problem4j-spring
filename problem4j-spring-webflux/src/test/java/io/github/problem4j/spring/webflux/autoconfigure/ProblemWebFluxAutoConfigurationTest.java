@@ -188,9 +188,9 @@ class ProblemWebFluxAutoConfigurationTest {
 
   @SpringBootTest(
       classes = {WebFluxTestApp.class},
-      properties = {"problem4j.exception-handling.mode=deferred"})
+      properties = {"problem4j.exception-handling.mode=cooperate"})
   @Nested
-  class WithDeferredMode {
+  class WithCooperateMode {
 
     @Autowired(required = false)
     private ExceptionWebFluxAdvice exceptionWebFluxAdvice;
@@ -211,7 +211,7 @@ class ProblemWebFluxAutoConfigurationTest {
     private ProblemHandlerResultHandler problemHandlerResultHandler;
 
     @Test
-    void contextLoadsWithoutAdvicesAndWithDeferredHandling() {
+    void contextLoadsWithoutAdvicesAndWithCooperateHandling() {
       assertThat(exceptionWebFluxAdvice).isNull();
       assertThat(problemExceptionWebFluxAdvice).isNull();
       assertThat(exceptionHandler).isNull();
@@ -224,12 +224,12 @@ class ProblemWebFluxAutoConfigurationTest {
   @SpringBootTest(
       classes = {WebFluxTestApp.class},
       properties = {
-        "problem4j.exception-handling.mode=deferred",
+        "problem4j.exception-handling.mode=cooperate",
         "problem4j.webflux.web-exception-handler.enabled=false",
         "problem4j.webflux.result-handler.enabled=false"
       })
   @Nested
-  class WithDeferredModeComponentsDisabled {
+  class WithCooperateModeComponentsDisabled {
 
     @Autowired(required = false)
     private ProblemWebExceptionHandler problemWebExceptionHandler;
@@ -238,7 +238,7 @@ class ProblemWebFluxAutoConfigurationTest {
     private ProblemHandlerResultHandler problemHandlerResultHandler;
 
     @Test
-    void contextLoadsWithoutDeferredHandling() {
+    void contextLoadsWithoutCooperateHandling() {
       assertThat(problemWebExceptionHandler).isNull();
       assertThat(problemHandlerResultHandler).isNull();
     }
@@ -260,7 +260,7 @@ class ProblemWebFluxAutoConfigurationTest {
     private ProblemHandlerResultHandler problemHandlerResultHandler;
 
     @Test
-    void contextLoadsWithoutDeferredHandling() {
+    void contextLoadsWithoutCooperateHandling() {
       assertThat(problemErrorWebExceptionHandler).isNotNull();
       assertThat(problemWebExceptionHandler).isNull();
       assertThat(problemHandlerResultHandler).isNull();

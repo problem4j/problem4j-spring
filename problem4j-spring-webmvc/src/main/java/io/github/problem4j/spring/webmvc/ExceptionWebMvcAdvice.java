@@ -60,8 +60,8 @@ import org.springframework.web.context.request.WebRequest;
  * ProblemResponseEntityExceptionHandler}, {@link ProblemExceptionWebMvcAdvice}.
  *
  * <p>Part of the advice path, registered with {@code problem4j.exception-handling.mode=advice}
- * (default). With {@code problem4j.exception-handling.mode=deferred}, exceptions not handled by the
- * application are rendered by {@link ProblemHandlerExceptionResolver} instead.
+ * (default). With {@code problem4j.exception-handling.mode=cooperate}, exceptions not handled by
+ * the application are rendered by {@link ProblemHandlerExceptionResolver} instead.
  *
  * @since 1.2.0
  */

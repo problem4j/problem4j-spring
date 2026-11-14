@@ -295,17 +295,17 @@ public class ProblemWebFluxAutoConfiguration {
   }
 
   /**
-   * Nested configuration of {@code problem4j.exception-handling.mode=deferred}, which registers no
+   * Nested configuration of {@code problem4j.exception-handling.mode=cooperate}, which registers no
    * controller advices handling exceptions. Exceptions not handled by the application are rendered
    * by {@link ProblemWebExceptionHandler}, and {@code Problem}s or {@code ProblemDetail}s returned
    * by the application are post-processed by {@link ProblemHandlerResultHandler}.
    */
-  @ConditionalOnProperty(name = "problem4j.exception-handling.mode", havingValue = "deferred")
+  @ConditionalOnProperty(name = "problem4j.exception-handling.mode", havingValue = "cooperate")
   @Configuration(proxyBeanMethods = false)
-  static class DeferredModeConfiguration {
+  static class CooperateModeConfiguration {
 
     /** Creates a new instance of this configuration. */
-    DeferredModeConfiguration() {}
+    CooperateModeConfiguration() {}
 
     /**
      * Nested configuration that warns at startup when Spring's own problem details are enabled with
@@ -324,7 +324,7 @@ public class ProblemWebFluxAutoConfiguration {
       SpringProblemDetailsWarningConfiguration() {
         log.warn(
             "Spring's problem details (spring.webflux.problemdetails.enabled=true) override"
-                + " Problem4J for standard Spring WebFlux exceptions in deferred mode. Set"
+                + " Problem4J for standard Spring WebFlux exceptions in cooperate mode. Set"
                 + " spring.webflux.problemdetails.enabled=false to let Problem4J handle them.");
       }
     }

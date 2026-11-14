@@ -32,7 +32,7 @@ import tools.jackson.databind.json.JsonMapper;
     classes = {WebFluxTestApp.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
-      "problem4j.exception-handling.mode=deferred",
+      "problem4j.exception-handling.mode=cooperate",
       "problem4j.tracing-source=simple",
       "problem4j.tracing-header-name=X-Trace-Id",
       "problem4j.extension-overrides.traceId={context.traceId}"

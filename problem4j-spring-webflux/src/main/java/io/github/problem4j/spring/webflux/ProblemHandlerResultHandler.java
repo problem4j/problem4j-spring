@@ -70,9 +70,10 @@ import reactor.core.publisher.Mono;
  * {@code ResponseBodyResultHandler}) supporting the original result, so content negotiation and
  * message encoding stay unchanged. Results of other types are not supported by this handler.
  *
- * <p>Part of the deferred path, registered with {@code problem4j.exception-handling.mode=deferred}.
- * With {@code problem4j.exception-handling.mode=advice} (default), {@code Problem}s and {@code
- * ProblemDetail}s returned by the application are written without post-processing.
+ * <p>Part of the cooperate path, registered with {@code
+ * problem4j.exception-handling.mode=cooperate}. With {@code
+ * problem4j.exception-handling.mode=advice} (default), {@code Problem}s and {@code ProblemDetail}s
+ * returned by the application are written without post-processing.
  *
  * @since 3.1.0
  */

@@ -40,7 +40,7 @@ import org.springframework.context.annotation.Configuration;
  * with {@link ProblemErrorController}, which renders {@code Problem} objects instead of HTML or
  * plain JSON errors. It covers errors that do not pass through Spring MVC exception resolvers (e.g.
  * {@code response.sendError(...)} or exceptions of servlet filters). With {@code
- * problem4j.exception-handling.mode=deferred}, the exception that caused the error is translated
+ * problem4j.exception-handling.mode=cooperate}, the exception that caused the error is translated
  * with {@code ProblemOperations}; otherwise only the status of the error is used.
  *
  * @see io.github.problem4j.core.Problem
@@ -75,8 +75,8 @@ class ProblemErrorMvcConfiguration {
    * <p>Replaces the default error controller when no other implementation is present.
    *
    * @param problemPostProcessor the post-processor used in {@code advice} mode
-   * @param problemOperations the operations translating exceptions in {@code deferred} mode
-   * @param problemInspectors the inspectors invoked for translated exceptions in {@code deferred}
+   * @param problemOperations the operations translating exceptions in {@code cooperate} mode
+   * @param problemInspectors the inspectors invoked for translated exceptions in {@code cooperate}
    *     mode
    * @param errorAttributes provides error information for requests
    * @param properties the Problem4J properties deciding the exception handling mode
@@ -91,7 +91,7 @@ class ProblemErrorMvcConfiguration {
       List<? extends ProblemInspector> problemInspectors,
       ErrorAttributes errorAttributes,
       ProblemProperties properties) {
-    return properties.getExceptionHandling().getMode() == ExceptionHandlingMode.DEFERRED
+    return properties.getExceptionHandling().getMode() == ExceptionHandlingMode.COOPERATE
         ? new ProblemErrorController(problemOperations, errorAttributes, problemInspectors)
         : new ProblemErrorController(problemPostProcessor, errorAttributes);
   }

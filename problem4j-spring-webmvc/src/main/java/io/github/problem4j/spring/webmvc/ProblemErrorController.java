@@ -53,14 +53,14 @@ import org.springframework.web.context.request.ServletWebRequest;
  * thrown by servlet filters.
  *
  * <p>If created with {@link ProblemOperations} (with {@code
- * problem4j.exception-handling.mode=deferred}), the exception that caused the error is translated
+ * problem4j.exception-handling.mode=cooperate}), the exception that caused the error is translated
  * the same way as by {@link ProblemHandlerExceptionResolver}, and {@link ProblemInspector}s are
  * invoked. Otherwise, only the status of the error is used.
  *
  * <p>Part of both paths, registered regardless of {@code problem4j.exception-handling.mode} (unless
  * {@code problem4j.webmvc.error-controller.enabled=false}). With {@code
  * problem4j.exception-handling.mode=advice} (default), only the status of the error is used; with
- * {@code problem4j.exception-handling.mode=deferred}, the exception that caused the error is
+ * {@code problem4j.exception-handling.mode=cooperate}, the exception that caused the error is
  * translated the same way as by {@link ProblemHandlerExceptionResolver}.
  *
  * @since 1.2.0

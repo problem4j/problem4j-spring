@@ -43,7 +43,7 @@ class PostProcessingWebFluxTest {
       classes = {WebFluxTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=deferred",
+        "problem4j.exception-handling.mode=cooperate",
         "problem4j.instance-override=https://example.org/trace/{context.traceId}",
         "problem4j.extension-overrides.traceId={context.traceId}",
         "problem4j.tracing-source=simple",
@@ -116,7 +116,7 @@ class PostProcessingWebFluxTest {
       classes = {WebFluxTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=deferred",
+        "problem4j.exception-handling.mode=cooperate",
         "problem4j.instance-override=https://example.org/trace/{context.traceId}",
         "problem4j.extension-overrides.traceId={context.traceId}",
         "problem4j.tracing-source=simple",

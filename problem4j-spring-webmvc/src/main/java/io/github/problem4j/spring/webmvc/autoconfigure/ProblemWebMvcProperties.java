@@ -246,7 +246,7 @@ public class ProblemWebMvcProperties {
   /**
    * Returns configuration for {@code ProblemHandlerExceptionResolver}, which renders exceptions not
    * handled by the application as {@code Problem} responses. Applies only to {@code
-   * problem4j.exception-handling.mode=deferred}.
+   * problem4j.exception-handling.mode=cooperate}.
    *
    * @return the configuration for {@code ProblemHandlerExceptionResolver}
    * @since 3.1.0
@@ -268,7 +268,7 @@ public class ProblemWebMvcProperties {
   /**
    * Returns configuration for {@code ProblemResponseBodyAdvice}, which post-processes {@code
    * Problem}s and {@code ProblemDetail}s written as response bodies. Applies only to {@code
-   * problem4j.exception-handling.mode=deferred}.
+   * problem4j.exception-handling.mode=cooperate}.
    *
    * @return the configuration for {@code ProblemResponseBodyAdvice}
    * @since 3.1.0
@@ -600,7 +600,7 @@ public class ProblemWebMvcProperties {
    * Configuration group for {@code ProblemErrorController} override, rendering errors that do not
    * pass through Spring MVC exception resolvers (e.g. {@code response.sendError(...)} or exceptions
    * of servlet filters) as {@code Problem} responses. With {@code
-   * problem4j.exception-handling.mode=deferred}, the exception that caused the error is translated
+   * problem4j.exception-handling.mode=cooperate}, the exception that caused the error is translated
    * the same way as exceptions of controllers.
    *
    * <p>Controlled by the property {@code problem4j.webmvc.error-controller.enabled}.
@@ -682,7 +682,7 @@ public class ProblemWebMvcProperties {
 
   /**
    * Configuration group for {@code ProblemHandlerExceptionResolver}. Applies only to {@code
-   * problem4j.exception-handling.mode=deferred}.
+   * problem4j.exception-handling.mode=cooperate}.
    *
    * <p>Controlled by the property {@code problem4j.webmvc.handler-exception-resolver.enabled}.
    *
@@ -730,7 +730,7 @@ public class ProblemWebMvcProperties {
 
   /**
    * Configuration group for {@code ProblemResponseBodyAdvice}. Applies only to {@code
-   * problem4j.exception-handling.mode=deferred}.
+   * problem4j.exception-handling.mode=cooperate}.
    *
    * <p>Controlled by the property {@code problem4j.webmvc.response-body-advice.enabled}.
    *

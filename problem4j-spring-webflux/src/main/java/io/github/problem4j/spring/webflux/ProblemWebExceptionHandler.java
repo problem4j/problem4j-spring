@@ -59,8 +59,9 @@ import reactor.core.publisher.Mono;
  * precedence, regardless of their order. Exceptions of {@code WebFilter}s are handled too. Errors
  * are propagated as they are if the response is already committed.
  *
- * <p>Part of the deferred path, registered with {@code problem4j.exception-handling.mode=deferred}.
- * With {@code problem4j.exception-handling.mode=advice} (default), exceptions are handled by {@link
+ * <p>Part of the cooperate path, registered with {@code
+ * problem4j.exception-handling.mode=cooperate}. With {@code
+ * problem4j.exception-handling.mode=advice} (default), exceptions are handled by {@link
  * ExceptionWebFluxAdvice}, {@link ProblemExceptionWebFluxAdvice} and {@link
  * ProblemResponseEntityExceptionHandler} instead.
  *

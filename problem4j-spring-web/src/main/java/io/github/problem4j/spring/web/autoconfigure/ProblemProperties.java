@@ -481,7 +481,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
     public static final ExceptionHandlingMode DEFAULT_MODE = ExceptionHandlingMode.ADVICE;
 
     /**
-     * Default flag of rendering exceptions unknown to Problem4J in {@code deferred} mode.
+     * Default flag of rendering exceptions unknown to Problem4J in {@code cooperate} mode.
      *
      * @since 3.1.0
      */
@@ -489,7 +489,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
 
     /**
      * How Problem4J handles exceptions. {@code advice} registers Problem4J's own controller
-     * advices, which compete with advices of the application. {@code deferred} registers no
+     * advices, which compete with advices of the application. {@code cooperate} registers no
      * controller advices: exceptions are rendered only if no exception handler of the application
      * handled them, and {@code Problem}s or {@code ProblemDetail}s returned by the application are
      * post-processed.
@@ -499,8 +499,8 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
     /**
      * Whether exceptions unknown to Problem4J (no {@code ProblemException}, {@code ProblemMapping},
      * {@code ProblemResolver}, {@code ErrorResponse} nor {@code ResponseStatus}) are rendered as
-     * {@code 500 Internal Server Error} problems in {@code deferred} mode, instead of being left to
-     * the default error handling of the framework. In WebMVC, such exceptions propagate to the
+     * {@code 500 Internal Server Error} problems in {@code cooperate} mode, instead of being left
+     * to the default error handling of the framework. In WebMVC, such exceptions propagate to the
      * servlet container and are still rendered as problems by {@code ProblemErrorController},
      * unless {@code problem4j.webmvc.error-controller.enabled=false}. In {@code advice} mode, use
      * {@code problem4j.webmvc.exception-advice.enabled} or {@code
@@ -537,7 +537,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
 
     /**
      * Returns whether exceptions unknown to Problem4J are rendered as {@code 500 Internal Server
-     * Error} problems in {@code deferred} mode.
+     * Error} problems in {@code cooperate} mode.
      *
      * @return {@code true} if unknown exceptions are rendered
      * @since 3.1.0
@@ -548,7 +548,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
 
     /**
      * Sets whether exceptions unknown to Problem4J are rendered as {@code 500 Internal Server
-     * Error} problems in {@code deferred} mode.
+     * Error} problems in {@code cooperate} mode.
      *
      * @param unknownExceptions whether unknown exceptions are rendered
      * @since 3.1.0
@@ -588,7 +588,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
      *
      * @since 3.1.0
      */
-    DEFERRED
+    COOPERATE
   }
 
   /**

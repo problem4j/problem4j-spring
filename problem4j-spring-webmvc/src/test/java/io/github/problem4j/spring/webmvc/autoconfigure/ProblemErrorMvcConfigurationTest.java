@@ -72,9 +72,9 @@ class ProblemErrorMvcConfigurationTest {
 
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
-      properties = {"problem4j.exception-handling.mode=deferred"})
+      properties = {"problem4j.exception-handling.mode=cooperate"})
   @Nested
-  class WithDeferredMode {
+  class WithCooperateMode {
 
     @Autowired(required = false)
     private ProblemErrorMvcConfiguration problemErrorMvcConfiguration;
@@ -91,11 +91,11 @@ class ProblemErrorMvcConfigurationTest {
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
       properties = {
-        "problem4j.exception-handling.mode=deferred",
+        "problem4j.exception-handling.mode=cooperate",
         "problem4j.webmvc.error-controller.enabled=false"
       })
   @Nested
-  class WithDeferredModeAndDisabled {
+  class WithCooperateModeAndDisabled {
 
     @Autowired(required = false)
     private ProblemErrorMvcConfiguration problemErrorMvcConfiguration;

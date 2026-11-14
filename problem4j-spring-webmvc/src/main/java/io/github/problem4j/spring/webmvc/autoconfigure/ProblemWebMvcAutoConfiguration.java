@@ -313,17 +313,17 @@ public class ProblemWebMvcAutoConfiguration {
   }
 
   /**
-   * Nested configuration of {@code problem4j.exception-handling.mode=deferred}, which registers no
+   * Nested configuration of {@code problem4j.exception-handling.mode=cooperate}, which registers no
    * controller advices handling exceptions. Exceptions not handled by the application are rendered
    * by {@link ProblemHandlerExceptionResolver}, and {@code Problem}s or {@code ProblemDetail}s
    * returned by the application are post-processed by {@link ProblemResponseBodyAdvice}.
    */
-  @ConditionalOnProperty(name = "problem4j.exception-handling.mode", havingValue = "deferred")
+  @ConditionalOnProperty(name = "problem4j.exception-handling.mode", havingValue = "cooperate")
   @Configuration(proxyBeanMethods = false)
-  static class DeferredModeConfiguration {
+  static class CooperateModeConfiguration {
 
     /** Creates a new instance of this configuration. */
-    DeferredModeConfiguration() {}
+    CooperateModeConfiguration() {}
 
     /**
      * Nested configuration that warns at startup when Spring's own problem details are enabled with
@@ -342,7 +342,7 @@ public class ProblemWebMvcAutoConfiguration {
       SpringProblemDetailsWarningConfiguration() {
         log.warn(
             "Spring's problem details (spring.mvc.problemdetails.enabled=true) override Problem4J"
-                + " for standard Spring MVC exceptions in deferred mode. Set"
+                + " for standard Spring MVC exceptions in cooperate mode. Set"
                 + " spring.mvc.problemdetails.enabled=false to let Problem4J handle them.");
       }
     }

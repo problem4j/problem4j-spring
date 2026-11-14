@@ -45,8 +45,8 @@ import reactor.core.publisher.Mono;
  * status and content type {@code application/problem+json}.
  *
  * <p>Part of the advice path, registered with {@code problem4j.exception-handling.mode=advice}
- * (default). With {@code problem4j.exception-handling.mode=deferred}, errors are rendered by {@link
- * ProblemWebExceptionHandler} instead.
+ * (default). With {@code problem4j.exception-handling.mode=cooperate}, errors are rendered by
+ * {@link ProblemWebExceptionHandler} instead.
  *
  * @since 1.2.0
  */
