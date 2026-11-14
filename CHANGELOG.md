@@ -57,6 +57,12 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   that is not available on the classpath fails with `UnavailableTracingSourceException`. Both extend
   `IllegalStateException` and keep their previous messages.
 
+- Add `ProblemOperations` facade (in `io.github.problem4j.spring.web.operations`), resolving exceptions into `Problem`s
+  (`supports`, `resolve`), post-processing `Problem`s and `ProblemDetail`s (`postProcess`), or both at once
+  (`translate`). Its default implementation, `ProblemTemplate`, is created with a builder and registered as a bean,
+  using the container's `ProblemMapper`, `ProblemResolverStore` and `ProblemPostProcessor`. A `ProblemDetail` is
+  post-processed in place, keeping its type.
+
 ### Changed
 
 - With `io.micrometer:micrometer-tracing` on the classpath, `traceId` of `ProblemContext` comes from the current tracing

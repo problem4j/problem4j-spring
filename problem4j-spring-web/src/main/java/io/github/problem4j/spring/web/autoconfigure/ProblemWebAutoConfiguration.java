@@ -18,11 +18,15 @@ package io.github.problem4j.spring.web.autoconfigure;
 
 import static io.github.problem4j.spring.web.HierarchyTraversalMode.SUPERCLASS;
 
+import io.github.problem4j.core.ProblemMapper;
 import io.github.problem4j.spring.web.CachingProblemResolverStore;
 import io.github.problem4j.spring.web.DefaultProblemResolverStore;
 import io.github.problem4j.spring.web.GraphClassDistanceEvaluation;
+import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DuplicateResolverPolicy;
+import io.github.problem4j.spring.web.operations.ProblemOperations;
+import io.github.problem4j.spring.web.operations.ProblemTemplate;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
 import io.github.problem4j.spring.web.parameter.DefaultBindingResultSupport;
 import io.github.problem4j.spring.web.parameter.DefaultMethodParameterSupport;
@@ -107,6 +111,29 @@ public class ProblemWebAutoConfiguration {
     }
 
     return problemResolverStore;
+  }
+
+  /**
+   * Provides the default {@link ProblemOperations}, resolving exceptions into {@code Problem}s and
+   * post-processing {@code Problem}s and {@code ProblemDetail}s with the container's {@link
+   * ProblemMapper}, {@link ProblemResolverStore} and {@link ProblemPostProcessor}.
+   *
+   * @param problemMapper the mapper of {@code @ProblemMapping} annotated exceptions
+   * @param problemResolverStore the store of registered resolvers
+   * @param problemPostProcessor the post-processor applied to every resulting {@code Problem}
+   * @return a new {@link ProblemOperations}
+   */
+  @ConditionalOnMissingBean(ProblemOperations.class)
+  @Bean
+  ProblemOperations problemOperations(
+      ProblemMapper problemMapper,
+      ProblemResolverStore problemResolverStore,
+      ProblemPostProcessor problemPostProcessor) {
+    return ProblemTemplate.builder()
+        .problemMapper(problemMapper)
+        .problemResolverStore(problemResolverStore)
+        .problemPostProcessor(problemPostProcessor)
+        .build();
   }
 
   /**
