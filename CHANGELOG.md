@@ -56,18 +56,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   class fail with `DuplicateProblemResolverException`, listing the conflicting beans, and `problem4j.tracing-source`
   that is not available on the classpath fails with `UnavailableTracingSourceException`. Both extend
   `IllegalStateException` and keep their previous messages.
-
-- Add `ProblemOperations` facade (in `io.github.problem4j.spring.web.operations`), resolving exceptions into `Problem`s
-  (`supports`, `resolve`), post-processing `Problem`s and `ProblemDetail`s (`postProcess`), or both at once
-  (`translate`). Its default implementation, `ProblemTemplate`, is created with a builder and registered as a bean,
-  using the container's `ProblemMapper`, `ProblemResolverStore` and `ProblemPostProcessor`. A `ProblemDetail` is
-  post-processed in place, keeping its type.
-- Add constructors of `ExceptionWebMvcAdvice` / `ExceptionWebFluxAdvice`, `ProblemExceptionWebMvcAdvice` /
-  `ProblemExceptionWebFluxAdvice` and `ProblemResponseEntityExceptionHandler` taking `ProblemOperations`. They are used
-  by the auto-configurations, so a custom `ProblemOperations` bean applies to these advices as well. Former
-  constructors are kept and create a `ProblemTemplate` from given arguments. `ProblemResponseEntityExceptionHandler`
-  resolves exceptions with `ProblemOperations.resolve(context, ex, headers, status)`, with the status chosen by
-  Spring, and uses `fallbackProblem(status)` for exceptions `ProblemOperations` does not support.
+- Add `ProblemOperations` facade, resolving exceptions into `Problem`s, post-processing `Problem`s and `ProblemDetail`s,
+  or both at once. A `ProblemDetail` is post-processed in place, keeping its type.
 
 ### Changed
 
