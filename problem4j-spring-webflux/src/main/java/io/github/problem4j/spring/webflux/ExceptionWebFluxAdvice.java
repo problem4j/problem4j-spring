@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webflux;
 
+import static io.github.problem4j.spring.web.AttributeSupport.POST_PROCESSED_PROBLEM_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.logAdviceException;
 
@@ -157,6 +158,7 @@ public class ExceptionWebFluxAdvice {
       inspector.inspect(context, problem, ex, headers, status, exchange);
     }
 
+    exchange.getAttributes().put(POST_PROCESSED_PROBLEM_ATTRIBUTE, problem);
     return Mono.just(new ResponseEntity<>(problem, headers, status));
   }
 }

@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webmvc;
 
+import static io.github.problem4j.spring.web.AttributeSupport.POST_PROCESSED_PROBLEM_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE;
 
@@ -136,14 +137,14 @@ public class ProblemErrorController extends AbstractErrorController {
 
     if (problemOperations == null) {
       Problem problem = problemPostProcessor.process(context, Problem.of(status.value()));
-      return new ResponseEntity<>(problem, headers, status);
+      return postProcessed(request, problem, headers, status);
     }
 
     ServletWebRequest webRequest = new ServletWebRequest(request);
     Exception ex = findException(webRequest);
     if (ex == null) {
       Problem problem = problemOperations.postProcess(context, Problem.of(status.value()));
-      return new ResponseEntity<>(problem, headers, status);
+      return postProcessed(request, problem, headers, status);
     }
 
     if (!problemOperations.supports(ex)) {
@@ -174,7 +175,13 @@ public class ProblemErrorController extends AbstractErrorController {
       inspector.inspect(context, problem, ex, headers, responseStatus, webRequest);
     }
 
-    return new ResponseEntity<>(problem, headers, responseStatus);
+    return postProcessed(request, problem, headers, responseStatus);
+  }
+
+  private static ResponseEntity<Problem> postProcessed(
+      HttpServletRequest request, Problem problem, HttpHeaders headers, HttpStatus status) {
+    request.setAttribute(POST_PROCESSED_PROBLEM_ATTRIBUTE, problem);
+    return new ResponseEntity<>(problem, headers, status);
   }
 
   private @Nullable Exception findException(ServletWebRequest webRequest) {

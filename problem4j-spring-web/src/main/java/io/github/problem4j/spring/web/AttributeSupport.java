@@ -43,5 +43,17 @@ public final class AttributeSupport {
    */
   public static final String PROBLEM_CONTEXT_ATTRIBUTE = "io.github.problem4j.core.ProblemContext";
 
+  /**
+   * Request attribute key used to store the {@code Problem} rendered by a controller advice or the
+   * error controller of Problem4J, which already post-processed and inspected it. When the same
+   * {@code Problem} instance is written as a response, {@code
+   * problem4j.exception-handling.mode=deferred} writes it as it is, so that it is not
+   * post-processed again.
+   *
+   * @since 3.1.0
+   */
+  public static final String POST_PROCESSED_PROBLEM_ATTRIBUTE =
+      "io.github.problem4j.spring.web.postProcessedProblem";
+
   private AttributeSupport() {}
 }

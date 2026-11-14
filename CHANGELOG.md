@@ -68,6 +68,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   application (`ProblemResponseBodyAdvice`, `ProblemHandlerResultHandler`). A `ProblemDetail` stays a `ProblemDetail`.
 - In `deferred` mode, `ProblemErrorController` renders exceptions of servlet filters the same way as exceptions of
   controllers.
+- In `deferred` mode, problems rendered by Problem4J advices (including subclasses registered by the application) and
+  by `ProblemErrorController` are not post-processed again.
 
 ### Changed
 

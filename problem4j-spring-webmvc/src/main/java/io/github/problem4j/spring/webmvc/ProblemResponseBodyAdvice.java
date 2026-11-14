@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webmvc;
 
+import static io.github.problem4j.spring.web.AttributeSupport.POST_PROCESSED_PROBLEM_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 
 import io.github.problem4j.core.Problem;
@@ -120,6 +121,9 @@ public class ProblemResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     if (!(body instanceof Problem) && !(body instanceof ProblemDetail)) {
       return body;
     }
+    if (isPostProcessed(body, request)) {
+      return body;
+    }
     try {
       ProblemContext context = findProblemContext(request);
       if (body instanceof ProblemDetail detail) {
@@ -135,6 +139,18 @@ public class ProblemResponseBodyAdvice implements ResponseBodyAdvice<Object> {
       log.warn("Unable to post-process {} response body", body.getClass().getName(), e);
       return body;
     }
+  }
+
+  // Identity of the rendered problem tells it apart from any other problem written as response.
+  @SuppressWarnings("ReferenceEquality")
+  private static boolean isPostProcessed(Object body, ServerHttpRequest request) {
+    if (request instanceof ServletServerHttpRequest servletRequest
+        && servletRequest.getServletRequest().getAttribute(POST_PROCESSED_PROBLEM_ATTRIBUTE)
+            == body) {
+      servletRequest.getServletRequest().removeAttribute(POST_PROCESSED_PROBLEM_ATTRIBUTE);
+      return true;
+    }
+    return false;
   }
 
   private static boolean isEntity(MethodParameter returnType) {
