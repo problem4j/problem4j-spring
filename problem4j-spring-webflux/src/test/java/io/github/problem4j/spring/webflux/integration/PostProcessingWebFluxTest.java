@@ -63,7 +63,15 @@ class PostProcessingWebFluxTest {
       "/post-processing/problem-mono, 409, returned problem",
       "/post-processing/problem-detail-mono, 409, returned problem detail",
       "/post-processing/problem-suspend, 409, returned problem",
+      "/post-processing/problem-entity, 409, returned problem",
+      "/post-processing/problem-detail-entity, 409, returned problem detail",
+      "/post-processing/problem-object-entity, 409, returned problem",
+      "/post-processing/error-response, 409, returned error response",
+      "/post-processing/problem-entity-mono, 409, returned problem",
+      "/post-processing/problem-mono-entity, 409, returned problem",
+      "/post-processing/problem-detail-mono-entity, 409, returned problem detail",
       "/post-processing/local-handler, 400, local handler",
+      "/post-processing/local-entity-handler, 400, local handler",
       "/post-processing/advice-handler, 422, advice handler"
     })
     void givenReturnedProblemOrProblemDetail_whenRequesting_thenPostProcessed(

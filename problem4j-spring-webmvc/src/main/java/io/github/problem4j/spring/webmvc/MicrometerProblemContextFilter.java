@@ -57,7 +57,7 @@ public class MicrometerProblemContextFilter extends ProblemContextFilter {
    * Creates a new {@code MicrometerProblemContextFilter}.
    *
    * @param settings the context settings to use
-   * @since 3.1.0
+   * @since 3.1.0POST_PROCESSED_PROBLEM_ATTRIBUTE
    */
   public MicrometerProblemContextFilter(ProblemContextSettings settings) {
     super(settings);
