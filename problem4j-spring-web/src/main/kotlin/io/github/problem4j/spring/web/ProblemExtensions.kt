@@ -42,28 +42,6 @@ public fun Problem.copy(block: ProblemBuilderSpec.() -> Unit): Problem =
     toBuilder().applySpec(block)
 
 /**
- * Checks whether an extension with the given name is present.
- *
- * Example:
- * ```
- * import io.github.problem4j.spring.web.contains
- * import io.github.problem4j.spring.web.buildProblem
- *
- * val problem = buildProblem {
- *     status(400)
- *     extension("field", "email")
- * }
- * val hasField = "field" in problem
- * // hasField == true
- * ```
- *
- * @param name the extension key
- * @return `true` when an extension with this name is present, `false` otherwise
- * @since 3.1.0
- */
-public operator fun Problem.contains(name: String): Boolean = extensions.containsKey(name)
-
-/**
  * Enables destructuring of [Problem.Extension] into its name component.
  *
  * Example:

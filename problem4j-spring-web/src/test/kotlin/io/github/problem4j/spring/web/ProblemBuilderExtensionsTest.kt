@@ -29,24 +29,4 @@ class ProblemBuilderExtensionsTest {
 
     assertThat(result.status).isEqualTo(409)
   }
-
-  @Test
-  fun givenVarargPairs_whenAddingExtensionsToBuilder_thenAllExtensionsArePresent() {
-    val result =
-        Problem.builder().status(400).extensions("field" to "email", "reason" to "blank").build()
-
-    assertThat(result.extensions).containsEntry("field", "email").containsEntry("reason", "blank")
-  }
-
-  @Test
-  fun givenVarargPairWithNullValue_whenAddingExtensionsToBuilder_thenExistingExtensionIsRemoved() {
-    val result =
-        Problem.builder()
-            .status(400)
-            .extension("field", "email")
-            .extensions("field" to null, "reason" to "blank")
-            .build()
-
-    assertThat(result.extensions).doesNotContainKey("field").containsEntry("reason", "blank")
-  }
 }

@@ -19,26 +19,6 @@ package io.github.problem4j.spring.web
 import io.github.problem4j.core.ProblemContext
 
 /**
- * Associates multiple custom context entries from varargs of [Pair].
- *
- * Example:
- * ```
- * import io.github.problem4j.core.ProblemContext
- * import io.github.problem4j.spring.web.putAll
- *
- * val context =
- *     ProblemContext.create()
- *         .putAll("userId" to "12345", "traceId" to "abcde")
- * ```
- *
- * @param entries key-value pairs to add
- * @return this context instance for chaining
- * @since 3.1.0
- */
-public fun ProblemContext.putAll(vararg entries: Pair<String, String?>): ProblemContext =
-    putAll(mapOf(*entries))
-
-/**
  * Associates the given value with the given key, or unsets it when [value] is `null`.
  *
  * Example:

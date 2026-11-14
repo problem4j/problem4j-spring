@@ -213,7 +213,7 @@ internal class ProblemBuilderSpecImpl(private var builder: ProblemBuilder) : Pro
   }
 
   override fun extensions(vararg extensions: Pair<String, *>) {
-    builder = builder.extensions(*extensions)
+    builder = builder.extensions(mapOf(*extensions))
   }
 
   fun build(): Problem = builder.build()
