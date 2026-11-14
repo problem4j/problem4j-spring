@@ -70,7 +70,7 @@ class ProblemExceptionWebMvcAdviceTest {
   void givenProblemException_whenHandleProblemException_thenReturnsProblemsStatus() {
     ResponseEntity<Problem> response =
         advice.handleProblemException(
-            new ProblemException(Problem.of(HttpStatus.UNPROCESSABLE_ENTITY.value())), request());
+            new ProblemException(Problem.of(HttpStatus.UNPROCESSABLE_CONTENT.value())), request());
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT);
     assertThat(requireNonNull(response.getBody()).getStatus())

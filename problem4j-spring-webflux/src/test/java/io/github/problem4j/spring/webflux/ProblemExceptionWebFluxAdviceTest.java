@@ -71,7 +71,7 @@ class ProblemExceptionWebFluxAdviceTest {
         requireNonNull(
             advice
                 .handleProblemException(
-                    new ProblemException(Problem.of(HttpStatus.UNPROCESSABLE_ENTITY.value())),
+                    new ProblemException(Problem.of(HttpStatus.UNPROCESSABLE_CONTENT.value())),
                     exchange())
                 .block());
 
