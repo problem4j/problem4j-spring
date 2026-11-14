@@ -49,7 +49,7 @@ public interface ProblemPostProcessor {
    * @since 3.0.0
    */
   static ProblemPostProcessor identity() {
-    return IdentityProblemPostProcessor.INSTANCE;
+    return (context, problem) -> problem;
   }
 
   /**
