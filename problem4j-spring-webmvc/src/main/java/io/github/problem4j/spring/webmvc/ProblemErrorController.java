@@ -18,13 +18,11 @@ package io.github.problem4j.spring.webmvc;
 
 import static io.github.problem4j.spring.web.AttributeSupport.POST_PROCESSED_PROBLEM_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
-import static io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.operations.ProblemOperations;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -144,15 +142,6 @@ public class ProblemErrorController extends AbstractErrorController {
     if (ex == null) {
       Problem problem = problemOperations.postProcess(context, Problem.of(status.value()));
       return postProcessed(request, problem, headers, status);
-    }
-
-    if (!problemOperations.supports(ex)) {
-      log.error(
-          "Unhandled exception (method={}, endpoint={}, traceId={})",
-          request.getMethod(),
-          request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI),
-          request.getAttribute(TRACE_ID_ATTRIBUTE),
-          ex);
     }
 
     Problem problem;

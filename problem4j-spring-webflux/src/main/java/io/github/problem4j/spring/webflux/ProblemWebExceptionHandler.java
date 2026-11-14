@@ -17,7 +17,6 @@
 package io.github.problem4j.spring.webflux;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
-import static io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE;
 import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.logAdviceException;
 
 import io.github.problem4j.core.Problem;
@@ -50,8 +49,8 @@ import reactor.core.publisher.Mono;
  * ProblemException}s, {@code @ProblemMapping} annotated exceptions, exceptions with a registered
  * {@code ProblemResolver}, Spring's {@code ErrorResponse} exceptions and {@code @ResponseStatus}
  * annotated exceptions. With {@linkplain #setUnknownExceptions(boolean) unknown exceptions}
- * enabled, other exceptions are handled as {@code 500 Internal Server Error} problems and logged,
- * otherwise they are passed on to the next web exception handler, typically the {@code
+ * enabled, other exceptions are handled as {@code 500 Internal Server Error} problems, otherwise
+ * they are passed on to the next web exception handler, typically the {@code
  * ErrorWebExceptionHandler} of Spring Boot. Errors caused by disconnected clients are never
  * handled.
  *
@@ -160,14 +159,6 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
     boolean known = problemOperations.supports(exception);
     if (!known && !unknownExceptions) {
       return Mono.error(ex);
-    }
-    if (!known) {
-      log.error(
-          "Unhandled exception (method={}, path={}, traceId={})",
-          exchange.getRequest().getMethod(),
-          exchange.getRequest().getPath(),
-          exchange.getAttribute(TRACE_ID_ATTRIBUTE),
-          ex);
     }
 
     ProblemContext context =

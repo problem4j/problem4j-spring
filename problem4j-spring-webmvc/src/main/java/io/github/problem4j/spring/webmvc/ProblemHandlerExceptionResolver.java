@@ -17,7 +17,6 @@
 package io.github.problem4j.spring.webmvc;
 
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
-import static io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE;
 import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.logAdviceException;
 
 import io.github.problem4j.core.Problem;
@@ -53,8 +52,8 @@ import org.springframework.web.util.DisconnectedClientHelper;
  * registered {@code ProblemResolver}, Spring's {@code ErrorResponse} exceptions and
  * {@code @ResponseStatus} annotated exceptions. With {@linkplain #setUnknownExceptions(boolean)
  * unknown exceptions} enabled, other exceptions are resolved as {@code 500 Internal Server Error}
- * problems and logged, otherwise they are left to the default error handling of Spring and Spring
- * Boot. Exceptions caused by disconnected clients are never resolved.
+ * problems, otherwise they are left to the default error handling of Spring and Spring Boot.
+ * Exceptions caused by disconnected clients are never resolved.
  *
  * <p>Registered by autoconfiguration right after Spring's {@code
  * ExceptionHandlerExceptionResolver}, so that {@code @ControllerAdvice}s and
@@ -141,14 +140,6 @@ public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionRes
     boolean known = problemOperations.supports(ex);
     if (!known && !unknownExceptions) {
       return null;
-    }
-    if (!known) {
-      log.error(
-          "Unhandled exception (method={}, endpoint={}, traceId={})",
-          request.getMethod(),
-          request.getRequestURI(),
-          request.getAttribute(TRACE_ID_ATTRIBUTE),
-          ex);
     }
 
     ProblemContext context =
