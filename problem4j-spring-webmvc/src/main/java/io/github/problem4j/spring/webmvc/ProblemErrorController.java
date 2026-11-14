@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @since 1.2.0
  */
 @Controller
-@RequestMapping("${server.error.path:${error.path:/error}}")
+@RequestMapping("${spring.web.error.path:${error.path:/error}}")
 public class ProblemErrorController extends AbstractErrorController {
 
   private final ProblemPostProcessor problemPostProcessor;
