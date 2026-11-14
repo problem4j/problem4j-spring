@@ -16,39 +16,67 @@
 
 package io.github.problem4j.spring.webmvc.integration;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.problem4j.core.Problem;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import tools.jackson.databind.json.JsonMapper;
 
-@SpringBootTest(
-    classes = {WebMvcTestApp.class},
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = {"spring.web.error.path=/oops"})
-@AutoConfigureTestRestTemplate
 class ErrorPathWebMvcTest {
 
-  @Autowired private TestRestTemplate restTemplate;
-  @Autowired private JsonMapper jsonMapper;
+  private static void assertProblem(ResponseEntity<String> response, int status) {
+    assertThat(response.getStatusCode().value()).isEqualTo(status);
+    assertThat(response.getHeaders().getContentType()).hasToString("application/problem+json");
+    assertThat(response.getBody()).contains("\"processed\":\"yes\"");
+  }
 
-  @Test
-  void givenCustomErrorPath_whenSendError_thenReturnsProblem() {
-    ResponseEntity<String> response =
-        restTemplate.getForEntity("/send-error/internal-server-error", String.class);
+  @SpringBootTest(
+      classes = {WebMvcTestApp.class},
+      webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+      properties = {
+        "problem4j.exception-handling.mode=cooperate",
+        "problem4j.extension-overrides.processed=yes",
+        "spring.web.error.path=/oops"
+      })
+  @AutoConfigureTestRestTemplate
+  @Nested
+  class WithCustomErrorPathInCooperateMode {
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-    assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
+    @Autowired private TestRestTemplate restTemplate;
 
-    Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
+    @ParameterizedTest
+    @CsvSource({"/filter-error/problem, 409", "/send-error/internal-server-error, 500"})
+    void givenErrorDispatchedToCustomPath_whenRequesting_thenRenderedAsProblem(
+        String path, int status) {
+      assertProblem(restTemplate.getForEntity(path, String.class), status);
+    }
+  }
 
-    assertThat(problem).isEqualTo(Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+  @SpringBootTest(
+      classes = {WebMvcTestApp.class},
+      webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+      properties = {
+        "problem4j.exception-handling.mode=advice",
+        "problem4j.extension-overrides.processed=yes",
+        "spring.web.error.path=/oops"
+      })
+  @AutoConfigureTestRestTemplate
+  @Nested
+  class WithCustomErrorPathInAdviceMode {
+
+    @Autowired private TestRestTemplate restTemplate;
+
+    @ParameterizedTest
+    @CsvSource({"/filter-error/problem, 500", "/send-error/internal-server-error, 500"})
+    void givenErrorDispatchedToCustomPath_whenRequesting_thenRenderedAsProblem(
+        String path, int status) {
+      assertProblem(restTemplate.getForEntity(path, String.class), status);
+    }
   }
 }
