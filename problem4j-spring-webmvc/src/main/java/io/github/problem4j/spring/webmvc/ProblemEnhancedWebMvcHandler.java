@@ -25,6 +25,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 /**
  * Former name of {@link ProblemResponseEntityExceptionHandler}, kept for backwards compatibility.
  *
+ * <p>Part of the advice path, registered with {@code problem4j.exception-handling.mode=advice}
+ * (default) under this former name.
+ *
  * @since 1.2.0
  * @deprecated since 3.1.0 in favor of {@link ProblemResponseEntityExceptionHandler}, which this
  *     class extends

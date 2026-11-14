@@ -58,6 +58,11 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   `IllegalStateException` and keep their previous messages.
 - Add `ProblemOperations` facade, resolving exceptions into `Problem`s, post-processing `Problem`s and `ProblemDetail`s,
   or both at once. A `ProblemDetail` is post-processed in place, keeping its type.
+- Add `problem4j.exception-handling.mode` property. `advice` (default) keeps registering Problem4J controller advices.
+  `deferred` registers none, so exception handlers of the application always win, and exceptions they leave unhandled
+  are rendered by `ProblemHandlerExceptionResolver` (WebMVC). `problem4j.exception-handling.unknown-exceptions`
+  (default `true`) decides whether exceptions unknown to Problem4J are rendered too. A warning is logged if
+  `spring.mvc.problemdetails.enabled` is set in `deferred` mode.
 
 ### Changed
 

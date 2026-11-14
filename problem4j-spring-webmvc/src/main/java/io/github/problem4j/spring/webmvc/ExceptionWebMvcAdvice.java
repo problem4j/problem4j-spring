@@ -58,6 +58,10 @@ import org.springframework.web.context.request.WebRequest;
  * consistent {@link Problem} response. For more specific exception handling, use {@link
  * ProblemResponseEntityExceptionHandler}, {@link ProblemExceptionWebMvcAdvice}.
  *
+ * <p>Part of the advice path, registered with {@code problem4j.exception-handling.mode=advice}
+ * (default). With {@code problem4j.exception-handling.mode=deferred}, exceptions not handled by the
+ * application are rendered by {@link ProblemHandlerExceptionResolver} instead.
+ *
  * @since 1.2.0
  */
 @Order(ExceptionWebMvcAdvice.PRECEDENCE)
