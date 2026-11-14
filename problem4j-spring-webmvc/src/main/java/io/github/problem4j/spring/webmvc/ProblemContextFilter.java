@@ -45,19 +45,19 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class ProblemContextFilter extends OncePerRequestFilter implements Ordered {
 
   /**
-   * Default order of this filter, {@code Ordered.HIGHEST_PRECEDENCE + 10}. It runs before filters
-   * of the application, including the ones registered with default order, so that exceptions thrown
-   * by them are rendered with the trace identifier, and after Spring Boot's {@code
-   * ServerHttpObservationFilter} ({@code HIGHEST_PRECEDENCE + 1}), so that the current span is
-   * available.
+   * Precedence of this filter, {@code Ordered.HIGHEST_PRECEDENCE + 10}, used unless changed with
+   * {@link #setOrder(int)}. It runs before filters of the application, including the ones
+   * registered with default order, so that exceptions thrown by them are rendered with the trace
+   * identifier, and after Spring Boot's {@code ServerHttpObservationFilter} ({@code
+   * HIGHEST_PRECEDENCE + 1}), so that the current span is available.
    *
    * @since 3.1.0
    */
-  public static final int DEFAULT_ORDER = Ordered.HIGHEST_PRECEDENCE + 10;
+  public static final int PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 10;
 
   private final ProblemContextSettings settings;
 
-  private int order = DEFAULT_ORDER;
+  private int order = PRECEDENCE;
 
   /**
    * Creates a new {@code ProblemContextFilter}.
@@ -217,7 +217,7 @@ public class ProblemContextFilter extends OncePerRequestFilter implements Ordere
   }
 
   /**
-   * Returns the order of this filter, {@link #DEFAULT_ORDER} by default.
+   * Returns the order of this filter, {@link #PRECEDENCE} by default.
    *
    * @return the order of this filter
    * @since 3.1.0

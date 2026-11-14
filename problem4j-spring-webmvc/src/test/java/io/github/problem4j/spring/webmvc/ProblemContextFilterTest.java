@@ -79,8 +79,8 @@ class ProblemContextFilterTest {
     ProblemContextSettings settings = new ProblemContextSettings() {};
     ProblemContextFilter filter = new ProblemContextFilter(settings);
 
-    assertThat(filter.getOrder()).isEqualTo(ProblemContextFilter.DEFAULT_ORDER);
-    assertThat(ProblemContextFilter.DEFAULT_ORDER).isEqualTo(Ordered.HIGHEST_PRECEDENCE + 10);
+    assertThat(filter.getOrder()).isEqualTo(ProblemContextFilter.PRECEDENCE);
+    assertThat(ProblemContextFilter.PRECEDENCE).isEqualTo(Ordered.HIGHEST_PRECEDENCE + 10);
     assertThat(filter.getSettings()).isSameAs(settings);
     filter.setOrder(42);
     assertThat(filter.getOrder()).isEqualTo(42);

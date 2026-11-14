@@ -44,17 +44,17 @@ import reactor.util.context.Context;
 public class ProblemContextWebFilter implements WebFilter, Ordered {
 
   /**
-   * Default order of this filter, {@code Ordered.HIGHEST_PRECEDENCE + 10}. It runs before web
-   * filters of the application, including the ones registered with default order, so that errors of
-   * them are rendered with the trace identifier.
+   * Precedence of this filter, {@code Ordered.HIGHEST_PRECEDENCE + 10}, used unless changed with
+   * {@link #setOrder(int)}. It runs before web filters of the application, including the ones
+   * registered with default order, so that errors of them are rendered with the trace identifier.
    *
    * @since 3.1.0
    */
-  public static final int DEFAULT_ORDER = Ordered.HIGHEST_PRECEDENCE + 10;
+  public static final int PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 10;
 
   private final ProblemContextSettings settings;
 
-  private int order = DEFAULT_ORDER;
+  private int order = PRECEDENCE;
 
   /**
    * Constructs a new {@link ProblemContextWebFilter}.
@@ -219,7 +219,7 @@ public class ProblemContextWebFilter implements WebFilter, Ordered {
   }
 
   /**
-   * Returns the order of this filter, {@link #DEFAULT_ORDER} by default.
+   * Returns the order of this filter, {@link #PRECEDENCE} by default.
    *
    * @return the order of this filter
    * @since 3.1.0

@@ -78,8 +78,8 @@ class ProblemContextWebFilterTest {
     ProblemContextSettings settings = new ProblemContextSettings() {};
     ProblemContextWebFilter filter = new ProblemContextWebFilter(settings);
 
-    assertThat(filter.getOrder()).isEqualTo(ProblemContextWebFilter.DEFAULT_ORDER);
-    assertThat(ProblemContextWebFilter.DEFAULT_ORDER).isEqualTo(Ordered.HIGHEST_PRECEDENCE + 10);
+    assertThat(filter.getOrder()).isEqualTo(ProblemContextWebFilter.PRECEDENCE);
+    assertThat(ProblemContextWebFilter.PRECEDENCE).isEqualTo(Ordered.HIGHEST_PRECEDENCE + 10);
     assertThat(filter.getSettings()).isSameAs(settings);
     filter.setOrder(42);
     assertThat(filter.getOrder()).isEqualTo(42);
