@@ -23,6 +23,7 @@ import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemContextSettings;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.core.Ordered;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -40,9 +41,20 @@ import reactor.util.context.Context;
  *
  * @since 3.1.0
  */
-public class ProblemContextWebFilter implements WebFilter {
+public class ProblemContextWebFilter implements WebFilter, Ordered {
+
+  /**
+   * Precedence of this filter, {@code Ordered.HIGHEST_PRECEDENCE + 10}, used unless changed with
+   * {@link #setOrder(int)}. It runs before web filters of the application, including the ones
+   * registered with default order, so that errors of them are rendered with the trace identifier.
+   *
+   * @since 3.1.0
+   */
+  public static final int PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 10;
 
   private final ProblemContextSettings settings;
+
+  private int order = PRECEDENCE;
 
   /**
    * Constructs a new {@link ProblemContextWebFilter}.
@@ -204,5 +216,26 @@ public class ProblemContextWebFilter implements WebFilter {
    */
   protected final ProblemContextSettings getSettings() {
     return settings;
+  }
+
+  /**
+   * Returns the order of this filter, {@link #PRECEDENCE} by default.
+   *
+   * @return the order of this filter
+   * @since 3.1.0
+   */
+  @Override
+  public int getOrder() {
+    return order;
+  }
+
+  /**
+   * Sets the order of this filter.
+   *
+   * @param order the order of this filter
+   * @since 3.1.0
+   */
+  public void setOrder(int order) {
+    this.order = order;
   }
 }
