@@ -41,6 +41,7 @@ public class ProblemEnhancedWebMvcHandler extends ProblemResponseEntityException
    * @param problemInspectors the inspectors
    * @since 1.2.0
    */
+  @SuppressWarnings("removal")
   public ProblemEnhancedWebMvcHandler(
       ProblemResolverStore problemResolverStore,
       ProblemPostProcessor problemPostProcessor,
@@ -49,18 +50,15 @@ public class ProblemEnhancedWebMvcHandler extends ProblemResponseEntityException
   }
 
   /**
-   * Creates a new {@link ProblemEnhancedWebMvcHandler}, post-processing problems with {@link
-   * ProblemOperations}.
+   * Creates a new {@link ProblemEnhancedWebMvcHandler}, resolving and post-processing exceptions
+   * with {@link ProblemOperations}.
    *
-   * @param problemResolverStore the resolver store
-   * @param problemOperations the operations post-processing problems
+   * @param problemOperations the operations resolving and post-processing problems
    * @param problemInspectors the inspectors
    * @since 3.1.0
    */
   public ProblemEnhancedWebMvcHandler(
-      ProblemResolverStore problemResolverStore,
-      ProblemOperations problemOperations,
-      List<? extends ProblemInspector> problemInspectors) {
-    super(problemResolverStore, problemOperations, problemInspectors);
+      ProblemOperations problemOperations, List<? extends ProblemInspector> problemInspectors) {
+    super(problemOperations, problemInspectors);
   }
 }

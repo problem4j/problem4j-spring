@@ -21,6 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemException;
+import io.github.problem4j.spring.web.DefaultProblemResolverStore;
+import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.server.ResponseStatusException;
@@ -133,6 +136,64 @@ class ProblemTemplateTest {
         operations.resolve(ProblemContext.create(), new IllegalStateException(), new HttpHeaders());
 
     assertThat(result.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+  }
+
+  @Test
+  void givenUnknownExceptionAndStatus_whenResolving_thenProblemOfGivenStatus() {
+    Problem result =
+        operations.resolve(
+            ProblemContext.create(),
+            new IllegalStateException(),
+            new HttpHeaders(),
+            HttpStatus.BAD_REQUEST);
+
+    assertThat(result.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    assertThat(result.getExtensions()).doesNotContainKey("processed");
+  }
+
+  @Test
+  void givenResolverAndStatus_whenResolving_thenResolverReceivesGivenStatus() {
+    ProblemResolver resolver =
+        new ProblemResolver() {
+          @Override
+          public Class<? extends Exception> getExceptionClass() {
+            return IllegalArgumentException.class;
+          }
+
+          @Override
+          public Problem resolve(
+              ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+            return Problem.of(status.value());
+          }
+        };
+    ProblemOperations withResolver =
+        ProblemTemplate.builder()
+            .problemResolverStore(new DefaultProblemResolverStore(List.of(resolver)))
+            .build();
+
+    Problem result =
+        withResolver.resolve(
+            ProblemContext.create(),
+            new IllegalArgumentException(),
+            new HttpHeaders(),
+            HttpStatus.BAD_REQUEST);
+
+    assertThat(result.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+  }
+
+  @Test
+  void givenErrorResponseExceptionAndStatus_whenResolving_thenGivenStatusIsUsedAndHeadersKept() {
+    HttpHeaders headers = new HttpHeaders();
+
+    Problem result =
+        operations.resolve(
+            ProblemContext.create(),
+            new MethodNotAllowedException(HttpMethod.POST, List.of(HttpMethod.GET)),
+            headers,
+            HttpStatus.BAD_REQUEST);
+
+    assertThat(result.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    assertThat(headers.getAllow()).isEmpty();
   }
 
   @Test

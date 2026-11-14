@@ -75,7 +75,9 @@ public class ExceptionWebFluxAdvice {
    * @param problemPostProcessor the post-processor for problems
    * @param problemInspectors the inspectors to apply to advice
    * @since 1.2.0
+   * @deprecated use {@link #ExceptionWebFluxAdvice(ProblemOperations, List)} instead
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public ExceptionWebFluxAdvice(
       ProblemMapper problemMapper,
       ProblemResolverStore problemResolverStore,

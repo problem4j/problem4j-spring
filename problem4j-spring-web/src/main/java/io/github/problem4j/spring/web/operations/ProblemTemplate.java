@@ -126,6 +126,42 @@ public class ProblemTemplate implements ProblemOperations {
   }
 
   /**
+   * Resolves an exception into a {@link Problem} with the given status, without post-processing it.
+   * The status is passed to resolvers, and used if nothing else resolves the exception.
+   *
+   * @param context the context of the current request
+   * @param ex the exception to resolve
+   * @param headers the response headers, modifiable
+   * @param status the status of the response, chosen by the caller
+   * @return the resolved {@link Problem}
+   * @since 3.1.0
+   */
+  @Override
+  public Problem resolve(
+      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
+    if (ex instanceof ProblemException problemException) {
+      return problemException.getProblem();
+    }
+    if (problemMapper.isMappingCandidate(ex)) {
+      return problemMapper.toProblemBuilder(ex, context).build();
+    }
+    Optional<ProblemResolver> resolver = problemResolverStore.findResolver(ex.getClass());
+    if (resolver.isPresent()) {
+      return resolver.get().resolve(context, ex, headers, status);
+    }
+    ResponseStatus responseStatus =
+        AnnotatedElementUtils.findMergedAnnotation(ex.getClass(), ResponseStatus.class);
+    if (responseStatus != null) {
+      ProblemBuilder builder = Problem.builder().status(responseStatus.code().value());
+      if (StringUtils.hasLength(responseStatus.reason())) {
+        builder = builder.detail(responseStatus.reason());
+      }
+      return builder.build();
+    }
+    return Problem.of(status.value());
+  }
+
+  /**
    * Applies post-processing to a {@link Problem}, with the configured {@link ProblemPostProcessor}.
    *
    * @param context the context of the current request, if available
@@ -154,41 +190,6 @@ public class ProblemTemplate implements ProblemOperations {
     Problem problem = postProcess(context, fromProblemDetail(detail));
     applyTo(problem, detail);
     return detail;
-  }
-
-  /**
-   * Resolves an exception into a {@link Problem} of the given fallback status, without
-   * post-processing it.
-   *
-   * @param context the context of the current request
-   * @param ex the exception to resolve
-   * @param headers the response headers, modifiable
-   * @param status the status implied by the exception, used if nothing else resolves it
-   * @return the resolved {@link Problem}
-   * @since 3.1.0
-   */
-  protected Problem resolve(
-      ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status) {
-    if (ex instanceof ProblemException problemException) {
-      return problemException.getProblem();
-    }
-    if (problemMapper.isMappingCandidate(ex)) {
-      return problemMapper.toProblemBuilder(ex, context).build();
-    }
-    Optional<ProblemResolver> resolver = problemResolverStore.findResolver(ex.getClass());
-    if (resolver.isPresent()) {
-      return resolver.get().resolve(context, ex, headers, status);
-    }
-    ResponseStatus responseStatus =
-        AnnotatedElementUtils.findMergedAnnotation(ex.getClass(), ResponseStatus.class);
-    if (responseStatus != null) {
-      ProblemBuilder builder = Problem.builder().status(responseStatus.code().value());
-      if (StringUtils.hasLength(responseStatus.reason())) {
-        builder = builder.detail(responseStatus.reason());
-      }
-      return builder.build();
-    }
-    return Problem.of(status.value());
   }
 
   /**

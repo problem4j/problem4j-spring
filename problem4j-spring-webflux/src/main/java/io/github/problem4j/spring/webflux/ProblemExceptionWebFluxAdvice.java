@@ -55,7 +55,6 @@ public class ProblemExceptionWebFluxAdvice {
   private static final Logger log = LoggerFactory.getLogger(ProblemExceptionWebFluxAdvice.class);
 
   private final ProblemOperations problemOperations;
-
   private final List<ProblemInspector> problemInspectors;
 
   /**
@@ -64,7 +63,9 @@ public class ProblemExceptionWebFluxAdvice {
    * @param problemPostProcessor the post-processor for problems
    * @param problemInspectors the inspectors to apply to advice
    * @since 1.2.0
+   * @deprecated use {@link #ProblemExceptionWebFluxAdvice(ProblemOperations, List)} instead
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public ProblemExceptionWebFluxAdvice(
       ProblemPostProcessor problemPostProcessor,
       List<? extends ProblemInspector> problemInspectors) {

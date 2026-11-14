@@ -267,11 +267,8 @@ public class ProblemWebFluxAutoConfiguration {
     @SuppressWarnings("removal")
     @Bean
     ResponseEntityExceptionHandler problemEnhancedWebFluxHandler(
-        ProblemResolverStore problemResolverStore,
-        ProblemOperations problemOperations,
-        List<? extends ProblemInspector> problemInspectors) {
-      return new ProblemEnhancedWebFluxHandler(
-          problemResolverStore, problemOperations, problemInspectors);
+        ProblemOperations problemOperations, List<? extends ProblemInspector> problemInspectors) {
+      return new ProblemEnhancedWebFluxHandler(problemOperations, problemInspectors);
     }
   }
 }

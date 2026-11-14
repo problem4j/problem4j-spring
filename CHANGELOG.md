@@ -65,7 +65,9 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Add constructors of `ExceptionWebMvcAdvice` / `ExceptionWebFluxAdvice`, `ProblemExceptionWebMvcAdvice` /
   `ProblemExceptionWebFluxAdvice` and `ProblemResponseEntityExceptionHandler` taking `ProblemOperations`. They are used
   by the auto-configurations, so a custom `ProblemOperations` bean applies to these advices as well. Former
-  constructors are kept and create a `ProblemTemplate` from given arguments.
+  constructors are kept and create a `ProblemTemplate` from given arguments. `ProblemResponseEntityExceptionHandler`
+  resolves exceptions with `ProblemOperations.resolve(context, ex, headers, status)`, with the status chosen by
+  Spring, and uses `fallbackProblem(status)` for exceptions `ProblemOperations` does not support.
 
 ### Changed
 
@@ -108,6 +110,9 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   `ProblemContextWebFilter`, which they now extend.
 - Deprecate `ProblemEnhancedWebMvcHandler` and `ProblemEnhancedWebFluxHandler` in favor of
   `ProblemResponseEntityExceptionHandler`, which they now extend.
+- Deprecate constructors of `ExceptionWebMvcAdvice` / `ExceptionWebFluxAdvice`, `ProblemExceptionWebMvcAdvice` /
+  `ProblemExceptionWebFluxAdvice` and `ProblemResponseEntityExceptionHandler` taking `ProblemPostProcessor` (and
+  `ProblemMapper`, `ProblemResolverStore`), in favor of the ones taking `ProblemOperations`.
 
 ### Fixed
 

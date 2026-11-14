@@ -35,6 +35,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.ServletWebRequest;
 
+// Former constructors are covered until they are removed.
+@SuppressWarnings("removal")
 class ProblemExceptionWebMvcAdviceTest {
 
   private static final ProblemOperations OPERATIONS =

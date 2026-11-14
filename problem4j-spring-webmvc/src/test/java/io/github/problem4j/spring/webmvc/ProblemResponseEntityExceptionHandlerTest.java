@@ -40,6 +40,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
+// Former constructors are covered until they are removed.
+@SuppressWarnings("removal")
 class ProblemResponseEntityExceptionHandlerTest {
 
   private static final ProblemOperations OPERATIONS =
@@ -179,8 +181,7 @@ class ProblemResponseEntityExceptionHandlerTest {
   @Test
   void givenProblemOperations_whenHandleExceptionInternal_thenPostProcessedWithThem() {
     ProblemResponseEntityExceptionHandler operationsAdvice =
-        new ProblemResponseEntityExceptionHandler(
-            new DefaultProblemResolverStore(List.of()), OPERATIONS, List.of());
+        new ProblemResponseEntityExceptionHandler(OPERATIONS, List.of());
 
     ResponseEntity<Object> response =
         requireNonNull(

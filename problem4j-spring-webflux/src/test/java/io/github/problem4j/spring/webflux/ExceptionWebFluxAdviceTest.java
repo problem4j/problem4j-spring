@@ -37,6 +37,8 @@ import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+// Former constructors are covered until they are removed.
+@SuppressWarnings("removal")
 class ExceptionWebFluxAdviceTest {
 
   private static final ProblemOperations OPERATIONS =

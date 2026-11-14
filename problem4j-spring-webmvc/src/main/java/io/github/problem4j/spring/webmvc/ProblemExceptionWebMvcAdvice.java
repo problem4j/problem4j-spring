@@ -55,7 +55,6 @@ public class ProblemExceptionWebMvcAdvice {
   private static final Logger log = LoggerFactory.getLogger(ProblemExceptionWebMvcAdvice.class);
 
   private final ProblemOperations problemOperations;
-
   private final List<ProblemInspector> problemInspectors;
 
   /**
@@ -64,7 +63,9 @@ public class ProblemExceptionWebMvcAdvice {
    * @param problemPostProcessor the post-processor
    * @param problemInspectors the list of inspectors
    * @since 1.2.0
+   * @deprecated use {@link #ProblemExceptionWebMvcAdvice(ProblemOperations, List)} instead
    */
+  @Deprecated(since = "3.1.0", forRemoval = true)
   public ProblemExceptionWebMvcAdvice(
       ProblemPostProcessor problemPostProcessor,
       List<? extends ProblemInspector> problemInspectors) {

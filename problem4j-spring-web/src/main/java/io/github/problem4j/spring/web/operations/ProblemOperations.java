@@ -20,6 +20,7 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 
 /**
@@ -55,6 +56,21 @@ public interface ProblemOperations {
    * @since 3.1.0
    */
   Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers);
+
+  /**
+   * Resolves an exception into a {@link Problem} with the given status, without post-processing it.
+   * The status is passed to resolvers, and used if nothing else resolves the exception. Unlike
+   * {@link #resolve(ProblemContext, Exception, HttpHeaders)}, the status and headers of Spring's
+   * {@code ErrorResponse} are not taken from the exception, as they are expected to be given.
+   *
+   * @param context the context of the current request
+   * @param ex the exception to resolve
+   * @param headers the response headers, modifiable
+   * @param status the status of the response, chosen by the caller
+   * @return the resolved {@link Problem}
+   * @since 3.1.0
+   */
+  Problem resolve(ProblemContext context, Exception ex, HttpHeaders headers, HttpStatusCode status);
 
   /**
    * Applies post-processing to a {@link Problem}.

@@ -285,11 +285,8 @@ public class ProblemWebMvcAutoConfiguration {
     @SuppressWarnings("removal")
     @Bean
     ResponseEntityExceptionHandler problemEnhancedWebMvcHandler(
-        ProblemResolverStore problemResolverStore,
-        ProblemOperations problemOperations,
-        List<? extends ProblemInspector> problemInspectors) {
-      return new ProblemEnhancedWebMvcHandler(
-          problemResolverStore, problemOperations, problemInspectors);
+        ProblemOperations problemOperations, List<? extends ProblemInspector> problemInspectors) {
+      return new ProblemEnhancedWebMvcHandler(problemOperations, problemInspectors);
     }
   }
 }
