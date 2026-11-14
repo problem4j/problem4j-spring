@@ -42,7 +42,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 @SuppressWarnings("removal")
 class ExceptionWebMvcAdviceTest {
 
-  private static final ProblemOperations OPERATIONS =
+  private final ProblemOperations operations =
       ProblemTemplate.builder()
           .problemPostProcessor(
               (context, problem) -> problem.toBuilder().detail("via operations").build())
@@ -139,7 +139,7 @@ class ExceptionWebMvcAdviceTest {
 
   @Test
   void givenProblemOperations_whenHandlingProblemException_thenTranslatedWithThem() {
-    ExceptionWebMvcAdvice operationsAdvice = new ExceptionWebMvcAdvice(OPERATIONS, List.of());
+    ExceptionWebMvcAdvice operationsAdvice = new ExceptionWebMvcAdvice(operations, List.of());
 
     ResponseEntity<Object> response =
         operationsAdvice.handleException(new ProblemException(Problem.of(409)), request());

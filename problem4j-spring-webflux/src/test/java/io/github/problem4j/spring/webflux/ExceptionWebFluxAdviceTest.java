@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @SuppressWarnings("removal")
 class ExceptionWebFluxAdviceTest {
 
-  private static final ProblemOperations OPERATIONS =
+  private final ProblemOperations operations =
       ProblemTemplate.builder()
           .problemPostProcessor(
               (context, problem) -> problem.toBuilder().detail("via operations").build())
@@ -141,7 +141,7 @@ class ExceptionWebFluxAdviceTest {
 
   @Test
   void givenProblemOperations_whenHandlingProblemException_thenTranslatedWithThem() {
-    ExceptionWebFluxAdvice operationsAdvice = new ExceptionWebFluxAdvice(OPERATIONS, List.of());
+    ExceptionWebFluxAdvice operationsAdvice = new ExceptionWebFluxAdvice(operations, List.of());
 
     ResponseEntity<Problem> response =
         requireNonNull(

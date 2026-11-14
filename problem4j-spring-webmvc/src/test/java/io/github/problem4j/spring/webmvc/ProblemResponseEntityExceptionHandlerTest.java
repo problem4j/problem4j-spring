@@ -44,7 +44,7 @@ import org.springframework.web.server.ResponseStatusException;
 @SuppressWarnings("removal")
 class ProblemResponseEntityExceptionHandlerTest {
 
-  private static final ProblemOperations OPERATIONS =
+  private final ProblemOperations operations =
       ProblemTemplate.builder()
           .problemPostProcessor(
               (context, problem) -> problem.toBuilder().detail("via operations").build())
@@ -181,7 +181,7 @@ class ProblemResponseEntityExceptionHandlerTest {
   @Test
   void givenProblemOperations_whenHandleExceptionInternal_thenPostProcessedWithThem() {
     ProblemResponseEntityExceptionHandler operationsAdvice =
-        new ProblemResponseEntityExceptionHandler(OPERATIONS, List.of());
+        new ProblemResponseEntityExceptionHandler(operations, List.of());
 
     ResponseEntity<Object> response =
         requireNonNull(

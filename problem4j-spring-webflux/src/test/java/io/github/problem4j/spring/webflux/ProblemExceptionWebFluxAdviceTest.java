@@ -38,7 +38,7 @@ import org.springframework.mock.web.server.MockServerWebExchange;
 @SuppressWarnings("removal")
 class ProblemExceptionWebFluxAdviceTest {
 
-  private static final ProblemOperations OPERATIONS =
+  private final ProblemOperations operations =
       ProblemTemplate.builder()
           .problemPostProcessor(
               (context, problem) -> problem.toBuilder().detail("via operations").build())
@@ -132,7 +132,7 @@ class ProblemExceptionWebFluxAdviceTest {
   @Test
   void givenProblemOperations_whenHandlingProblemException_thenPostProcessedWithThem() {
     ProblemExceptionWebFluxAdvice operationsAdvice =
-        new ProblemExceptionWebFluxAdvice(OPERATIONS, List.of());
+        new ProblemExceptionWebFluxAdvice(operations, List.of());
 
     ResponseEntity<Problem> response =
         requireNonNull(
