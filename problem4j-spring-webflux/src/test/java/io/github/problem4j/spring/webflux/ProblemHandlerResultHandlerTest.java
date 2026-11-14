@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webflux;
 
+import static io.github.problem4j.spring.web.AttributeSupport.POST_PROCESSED_PROBLEM_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -182,6 +183,51 @@ class ProblemHandlerResultHandlerTest {
         .isInstanceOfSatisfying(
             Problem.class,
             problem -> assertThat(problem.getExtensions()).containsEntry("traceId", "abc"));
+  }
+
+  @Test
+  void givenPostProcessedProblem_whenHandling_thenItIsKeptAsItIs() {
+    MockServerWebExchange exchange = exchange();
+    Problem postProcessed = conflict();
+    exchange.getAttributes().put(POST_PROCESSED_PROBLEM_ATTRIBUTE, postProcessed);
+
+    handler(bodyHandler).handleResult(exchange, result("problem", postProcessed)).block();
+
+    assertThat(bodyHandler.value()).isSameAs(postProcessed);
+    assertThat(exchange.getResponse().getStatusCode()).isNull();
+    assertThat(exchange.getAttributes()).doesNotContainKey(POST_PROCESSED_PROBLEM_ATTRIBUTE);
+  }
+
+  @Test
+  void givenPostProcessedProblemInResponseEntity_whenHandling_thenItIsKeptAsItIs() {
+    MockServerWebExchange exchange = exchange();
+    Problem postProcessed = conflict();
+    ResponseEntity<Problem> entity = ResponseEntity.status(HttpStatus.CONFLICT).body(postProcessed);
+    exchange.getAttributes().put(POST_PROCESSED_PROBLEM_ATTRIBUTE, postProcessed);
+
+    handler(entityHandler).handleResult(exchange, result("responseEntity", entity)).block();
+
+    assertThat(entityHandler.value()).isSameAs(entity);
+    assertThat(exchange.getAttributes()).doesNotContainKey(POST_PROCESSED_PROBLEM_ATTRIBUTE);
+  }
+
+  @Test
+  void givenOtherProblemThanPostProcessed_whenHandling_thenPostProcessed() {
+    MockServerWebExchange exchange = exchange();
+    Problem postProcessed = conflict();
+    exchange.getAttributes().put(POST_PROCESSED_PROBLEM_ATTRIBUTE, postProcessed);
+    exchange
+        .getAttributes()
+        .put(PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create().put("traceId", "abc"));
+
+    handler(bodyHandler).handleResult(exchange, result("problem", conflict())).block();
+
+    assertThat(bodyHandler.value())
+        .isInstanceOfSatisfying(
+            Problem.class,
+            problem -> assertThat(problem.getExtensions()).containsEntry("traceId", "abc"));
+    assertThat(exchange.getAttributes())
+        .containsEntry(POST_PROCESSED_PROBLEM_ATTRIBUTE, postProcessed);
   }
 
   @Test

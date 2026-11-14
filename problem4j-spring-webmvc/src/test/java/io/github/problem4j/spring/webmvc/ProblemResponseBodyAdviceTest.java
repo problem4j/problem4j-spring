@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webmvc;
 
+import static io.github.problem4j.spring.web.AttributeSupport.POST_PROCESSED_PROBLEM_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -128,6 +129,38 @@ class ProblemResponseBodyAdviceTest {
     assertThat(servletResponse.getStatus()).isEqualTo(409);
     assertThat(response.getHeaders().getContentType())
         .isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
+  }
+
+  @Test
+  void givenPostProcessedProblem_whenWriting_thenItIsWrittenAsItIs() {
+    Problem postProcessed = conflict();
+    servletRequest.setAttribute(POST_PROCESSED_PROBLEM_ATTRIBUTE, postProcessed);
+    servletRequest.setAttribute(
+        PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create().put("traceId", "abc"));
+
+    Object body = write(postProcessed, "problem", MediaType.APPLICATION_JSON);
+
+    assertThat(body).isSameAs(postProcessed);
+    assertThat(servletResponse.getStatus()).isEqualTo(200);
+    assertThat(response.getHeaders().getContentType()).isNull();
+    assertThat(servletRequest.getAttribute(POST_PROCESSED_PROBLEM_ATTRIBUTE)).isNull();
+  }
+
+  @Test
+  void givenOtherProblemThanPostProcessed_whenWriting_thenPostProcessed() {
+    Problem postProcessed = conflict();
+    servletRequest.setAttribute(POST_PROCESSED_PROBLEM_ATTRIBUTE, postProcessed);
+    servletRequest.setAttribute(
+        PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create().put("traceId", "abc"));
+
+    Object body = write(conflict(), "problem", MediaType.APPLICATION_JSON);
+
+    assertThat(body)
+        .isInstanceOfSatisfying(
+            Problem.class,
+            problem -> assertThat(problem.getExtensions()).containsEntry("traceId", "abc"));
+    assertThat(servletRequest.getAttribute(POST_PROCESSED_PROBLEM_ATTRIBUTE))
+        .isSameAs(postProcessed);
   }
 
   @Test

@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webmvc;
 
+import static io.github.problem4j.spring.web.AttributeSupport.POST_PROCESSED_PROBLEM_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.webmvc.WebMvcAdviceSupport.logAdviceException;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
@@ -166,6 +167,7 @@ public class ProblemResponseEntityExceptionHandler extends ResponseEntityExcepti
       inspector.inspect(context, problem, ex, headers, status, request);
     }
 
+    request.setAttribute(POST_PROCESSED_PROBLEM_ATTRIBUTE, problem, SCOPE_REQUEST);
     return super.handleExceptionInternal(ex, problem, headers, status, request);
   }
 

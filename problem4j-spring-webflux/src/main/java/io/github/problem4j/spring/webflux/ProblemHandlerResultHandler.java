@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webflux;
 
+import static io.github.problem4j.spring.web.AttributeSupport.POST_PROCESSED_PROBLEM_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 
 import io.github.problem4j.core.Problem;
@@ -241,6 +242,9 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
    * @since 3.1.0
    */
   protected Object transform(Object value, boolean entity, ServerWebExchange exchange) {
+    if (isPostProcessed(value, exchange)) {
+      return value;
+    }
     ProblemContext context = findProblemContext(exchange);
     if (value instanceof Problem problem) {
       Problem processed = problemOperations.postProcess(context, problem);
@@ -275,6 +279,18 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
       }
     }
     return value;
+  }
+
+  // Identity of the rendered problem tells it apart from any other problem written as response.
+  @SuppressWarnings("ReferenceEquality")
+  private static boolean isPostProcessed(Object value, ServerWebExchange exchange) {
+    Object body = value instanceof HttpEntity<?> httpEntity ? httpEntity.getBody() : value;
+    Object postProcessed = exchange.getAttribute(POST_PROCESSED_PROBLEM_ATTRIBUTE);
+    if (body instanceof Problem && body == postProcessed) {
+      exchange.getAttributes().remove(POST_PROCESSED_PROBLEM_ATTRIBUTE);
+      return true;
+    }
+    return false;
   }
 
   private HttpHeaders withProblemContentType(HttpHeaders headers, ServerWebExchange exchange) {
