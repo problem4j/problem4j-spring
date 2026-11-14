@@ -251,13 +251,16 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
       Problem processed = problemOperations.postProcess(context, problem);
       HttpHeaders headers = withProblemContentType(HttpHeaders.EMPTY, exchange);
       HttpStatusCode status = exchange.getResponse().getStatusCode();
-      if (status == null || status.value() == HttpStatus.OK.value()) {
+      if ((status == null || status.value() == HttpStatus.OK.value())
+          && isValidStatus(processed.getStatus())) {
         status = HttpStatusCode.valueOf(processed.getStatus());
       }
       if (entity) {
-        return new ResponseEntity<>(processed, headers, status);
+        return new ResponseEntity<>(processed, headers, status != null ? status : HttpStatus.OK);
       }
-      exchange.getResponse().setStatusCode(status);
+      if (status != null) {
+        exchange.getResponse().setStatusCode(status);
+      }
       exchange.getResponse().getHeaders().putAll(headers);
       return processed;
     }
@@ -280,6 +283,11 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
       }
     }
     return value;
+  }
+
+  // A problem may carry no status (0) or one outside the 100-999 range of HttpStatusCode.
+  private static boolean isValidStatus(int status) {
+    return status >= 100 && status <= 999;
   }
 
   // Identity of the rendered problem tells it apart from any other problem written as response.
