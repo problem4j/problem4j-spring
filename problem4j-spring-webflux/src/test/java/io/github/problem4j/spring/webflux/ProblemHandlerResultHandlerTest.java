@@ -61,8 +61,9 @@ import reactor.core.publisher.Mono;
 
 class ProblemHandlerResultHandlerTest {
 
-  private static final List<HttpMessageWriter<?>> WRITERS =
-      ServerCodecConfigurer.create().getWriters();
+  private static List<HttpMessageWriter<?>> codecWriters() {
+    return ServerCodecConfigurer.create().getWriters();
+  }
 
   private final ProblemOperations operations =
       ProblemTemplate.builder()
@@ -82,7 +83,7 @@ class ProblemHandlerResultHandlerTest {
   }
 
   private ProblemHandlerResultHandler handler(HandlerResultHandler... delegates) {
-    return handler(WRITERS, delegates);
+    return handler(codecWriters(), delegates);
   }
 
   private ProblemHandlerResultHandler handler(
@@ -420,7 +421,7 @@ class ProblemHandlerResultHandlerTest {
                 .build(),
             ReactiveAdapterRegistry.getSharedInstance(),
             () -> List.of(bodyHandler),
-            WRITERS);
+            codecWriters());
 
     handler.handleResult(exchange(), result("problem", problem)).block();
 
@@ -465,8 +466,8 @@ class ProblemHandlerResultHandlerTest {
       givenWriterNotWritingProblemAndDuplicateWriters_whenHandlingProblem_thenOnlyMatchingTypeIsUsed() {
     List<HttpMessageWriter<?>> writers = new ArrayList<>();
     writers.add(new DetailOnlyWriter());
-    writers.addAll(WRITERS);
-    writers.addAll(WRITERS);
+    writers.addAll(codecWriters());
+    writers.addAll(codecWriters());
     MockServerWebExchange exchange = exchange();
 
     handler(writers, bodyHandler).handleResult(exchange, result("problem", conflict())).block();
@@ -582,7 +583,7 @@ class ProblemHandlerResultHandlerTest {
     @Nullable HandlerResult result;
 
     RecordingEntityHandler() {
-      super(new ArrayList<>(WRITERS), new RequestedContentTypeResolverBuilder().build());
+      super(codecWriters(), new RequestedContentTypeResolverBuilder().build());
     }
 
     @Override
