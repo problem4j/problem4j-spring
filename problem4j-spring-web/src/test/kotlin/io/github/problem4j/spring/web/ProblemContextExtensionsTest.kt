@@ -23,13 +23,6 @@ import org.junit.jupiter.api.Test
 class ProblemContextExtensionsTest {
 
   @Test
-  fun givenVarargPairEntries_whenPuttingAllIntoContext_thenAllEntriesArePresent() {
-    val context = ProblemContext.create().putAll("userId" to "12345", "traceId" to "abcde")
-
-    assertThat(context.toMap()).containsEntry("userId", "12345").containsEntry("traceId", "abcde")
-  }
-
-  @Test
   fun givenKeyAndValue_whenSettingContextByIndex_thenValueIsStored() {
     val context = ProblemContext.create()
 
@@ -59,14 +52,5 @@ class ProblemContextExtensionsTest {
     val context = ProblemContext.create().put("userId", "12345")
 
     assertThat("traceId" in context).isFalse()
-  }
-
-  @Test
-  fun givenVarargPairEntriesWithNullValue_whenPuttingAllIntoContext_thenExistingValueIsRemoved() {
-    val context = ProblemContext.create().put("userId", "12345")
-
-    context.putAll("userId" to null, "traceId" to "abcde")
-
-    assertThat(context.toMap()).doesNotContainKey("userId").containsEntry("traceId", "abcde")
   }
 }

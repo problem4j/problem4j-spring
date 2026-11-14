@@ -138,4 +138,15 @@ class ProblemDslTest {
         .containsEntry("c", 3)
         .containsEntry("d", 4)
   }
+
+  @Test
+  fun givenVarargExtensionWithNullValue_whenBuildingProblem_thenExistingExtensionIsRemoved() {
+    val result = buildProblem {
+      status(400)
+      extension("field", "email")
+      extensions("field" to null, "reason" to "blank")
+    }
+
+    assertThat(result.extensions).doesNotContainKey("field").containsEntry("reason", "blank")
+  }
 }

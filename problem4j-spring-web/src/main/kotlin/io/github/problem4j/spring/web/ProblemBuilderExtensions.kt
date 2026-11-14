@@ -41,27 +41,6 @@ import org.springframework.http.HttpStatusCode
  */
 public fun ProblemBuilder.status(status: HttpStatusCode): ProblemBuilder = status(status.value())
 
-/**
- * Adds multiple custom extensions from varargs of [Pair].
- *
- * Example:
- * ```
- * import io.github.problem4j.core.Problem
- * import io.github.problem4j.spring.web.extensions
- *
- * val problem =
- *     Problem.builder()
- *         .extensions("field" to "email", "reason" to "blank")
- *         .build()
- * ```
- *
- * @param extensions extension key-value pairs to add
- * @return this builder instance for chaining
- * @since 3.1.0
- */
-public fun ProblemBuilder.extensions(vararg extensions: Pair<String, *>): ProblemBuilder =
-    extensions(mapOf(*extensions))
-
 @PublishedApi
 internal fun ProblemBuilder.applySpec(block: ProblemBuilderSpec.() -> Unit): Problem =
     ProblemBuilderSpecImpl(this).apply(block).build()

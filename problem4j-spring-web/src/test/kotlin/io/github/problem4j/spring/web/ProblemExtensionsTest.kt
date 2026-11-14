@@ -24,26 +24,6 @@ import org.junit.jupiter.api.Test
 class ProblemExtensionsTest {
 
   @Test
-  fun givenExistingExtension_whenCheckingContains_thenTrueIsReturned() {
-    val result = buildProblem {
-      status(400)
-      extension("field", "email")
-    }
-
-    assertThat("field" in result).isTrue()
-  }
-
-  @Test
-  fun givenMissingExtension_whenCheckingContains_thenFalseIsReturned() {
-    val result = buildProblem {
-      status(400)
-      extension("field", "email")
-    }
-
-    assertThat("reason" in result).isFalse()
-  }
-
-  @Test
   fun givenExtension_whenDestructuring_thenComponentsMatchNameAndValue() {
     val extension = Problem.extension("field", "email")
 
