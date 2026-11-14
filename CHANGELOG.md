@@ -65,6 +65,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   `spring.mvc.problemdetails.enabled` is set in `deferred` mode.
 - In `deferred` mode, post-process `Problem` and `ProblemDetail` returned by controllers and exception handlers of the
   application (`ProblemResponseBodyAdvice`). A `ProblemDetail` stays a `ProblemDetail`.
+- In `deferred` mode, `ProblemErrorController` renders exceptions of servlet filters the same way as exceptions of
+  controllers.
 
 ### Changed
 
