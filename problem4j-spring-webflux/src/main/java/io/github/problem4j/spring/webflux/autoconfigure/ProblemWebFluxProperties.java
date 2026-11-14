@@ -247,7 +247,7 @@ public class ProblemWebFluxProperties {
   /**
    * Returns configuration for {@code ProblemWebExceptionHandler}, which renders exceptions not
    * handled by the application as {@code Problem} responses. Applies only to {@code
-   * problem4j.exception-handling.mode=deferred}.
+   * problem4j.exception-handling.mode=cooperate}.
    *
    * @return the configuration for {@code ProblemWebExceptionHandler}
    * @since 3.1.0
@@ -269,7 +269,7 @@ public class ProblemWebFluxProperties {
   /**
    * Returns configuration for {@code ProblemHandlerResultHandler}, which post-processes {@code
    * Problem}s and {@code ProblemDetail}s returned by handlers. Applies only to {@code
-   * problem4j.exception-handling.mode=deferred}.
+   * problem4j.exception-handling.mode=cooperate}.
    *
    * @return the configuration for {@code ProblemHandlerResultHandler}
    * @since 3.1.0
@@ -673,7 +673,7 @@ public class ProblemWebFluxProperties {
 
   /**
    * Configuration group for {@code ProblemWebExceptionHandler}. Applies only to {@code
-   * problem4j.exception-handling.mode=deferred}.
+   * problem4j.exception-handling.mode=cooperate}.
    *
    * <p>Controlled by the property {@code problem4j.webflux.web-exception-handler.enabled}.
    *
@@ -721,7 +721,7 @@ public class ProblemWebFluxProperties {
 
   /**
    * Configuration group for {@code ProblemHandlerResultHandler}. Applies only to {@code
-   * problem4j.exception-handling.mode=deferred}.
+   * problem4j.exception-handling.mode=cooperate}.
    *
    * <p>Controlled by the property {@code problem4j.webflux.result-handler.enabled}.
    *

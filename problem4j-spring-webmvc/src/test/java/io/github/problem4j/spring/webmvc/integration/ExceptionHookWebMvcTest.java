@@ -45,7 +45,7 @@ class ExceptionHookWebMvcTest {
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-      properties = {"problem4j.exception-handling.mode=deferred"})
+      properties = {"problem4j.exception-handling.mode=cooperate"})
   @AutoConfigureTestRestTemplate
   @Nested
   class WithExceptionResolverEnabled {
@@ -100,7 +100,7 @@ class ExceptionHookWebMvcTest {
       classes = {WebMvcTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=deferred",
+        "problem4j.exception-handling.mode=cooperate",
         "problem4j.exception-handling.unknown-exceptions=false",
         "problem4j.webmvc.error-controller.enabled=false"
       })
@@ -131,7 +131,7 @@ class ExceptionHookWebMvcTest {
       classes = {WebMvcTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=deferred",
+        "problem4j.exception-handling.mode=cooperate",
         "problem4j.exception-handling.unknown-exceptions=false"
       })
   @AutoConfigureTestRestTemplate
@@ -154,7 +154,7 @@ class ExceptionHookWebMvcTest {
       classes = {WebMvcTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=deferred",
+        "problem4j.exception-handling.mode=cooperate",
         "problem4j.webmvc.handler-exception-resolver.enabled=false",
         "problem4j.webmvc.error-controller.enabled=false"
       })

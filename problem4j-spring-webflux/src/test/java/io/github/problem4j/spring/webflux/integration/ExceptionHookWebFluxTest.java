@@ -50,7 +50,7 @@ class ExceptionHookWebFluxTest {
   @SpringBootTest(
       classes = {WebFluxTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-      properties = {"problem4j.exception-handling.mode=deferred"})
+      properties = {"problem4j.exception-handling.mode=cooperate"})
   @AutoConfigureWebTestClient
   @Nested
   class WithWebExceptionHandlerEnabled {
@@ -104,7 +104,7 @@ class ExceptionHookWebFluxTest {
       classes = {WebFluxTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=deferred",
+        "problem4j.exception-handling.mode=cooperate",
         "problem4j.exception-handling.unknown-exceptions=false"
       })
   @AutoConfigureWebTestClient
@@ -135,7 +135,7 @@ class ExceptionHookWebFluxTest {
       classes = {WebFluxTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=deferred",
+        "problem4j.exception-handling.mode=cooperate",
         "problem4j.webflux.web-exception-handler.enabled=false"
       })
   @AutoConfigureWebTestClient

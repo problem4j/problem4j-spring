@@ -207,9 +207,9 @@ class ProblemWebMvcAutoConfigurationTest {
 
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
-      properties = {"problem4j.exception-handling.mode=deferred"})
+      properties = {"problem4j.exception-handling.mode=cooperate"})
   @Nested
-  class WithDeferredMode {
+  class WithCooperateMode {
 
     @Autowired(required = false)
     private ExceptionWebMvcAdvice exceptionWebMvcAdvice;
@@ -228,7 +228,7 @@ class ProblemWebMvcAutoConfigurationTest {
     private HandlerExceptionResolver handlerExceptionResolver;
 
     @Test
-    void contextLoadsWithoutAdvicesAndWithDeferredHandling() {
+    void contextLoadsWithoutAdvicesAndWithCooperateHandling() {
       assertThat(exceptionWebMvcAdvice).isNull();
       assertThat(problemExceptionWebMvcAdvice).isNull();
       assertThat(exceptionHandler).isNull();
@@ -242,9 +242,9 @@ class ProblemWebMvcAutoConfigurationTest {
 
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
-      properties = {"problem4j.exception-handling.mode=deferred"})
+      properties = {"problem4j.exception-handling.mode=cooperate"})
   @Nested
-  class WithDeferredModeResolverConfigurer {
+  class WithCooperateModeResolverConfigurer {
 
     @Autowired
     @Qualifier("problemExceptionResolverConfigurer")
@@ -280,12 +280,12 @@ class ProblemWebMvcAutoConfigurationTest {
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
       properties = {
-        "problem4j.exception-handling.mode=deferred",
+        "problem4j.exception-handling.mode=cooperate",
         "problem4j.webmvc.handler-exception-resolver.enabled=false",
         "problem4j.webmvc.response-body-advice.enabled=false"
       })
   @Nested
-  class WithDeferredModeComponentsDisabled {
+  class WithCooperateModeComponentsDisabled {
 
     @Autowired(required = false)
     private ProblemResponseBodyAdvice problemResponseBodyAdvice;
@@ -295,7 +295,7 @@ class ProblemWebMvcAutoConfigurationTest {
     private HandlerExceptionResolver handlerExceptionResolver;
 
     @Test
-    void contextLoadsWithoutDeferredHandling() {
+    void contextLoadsWithoutCooperateHandling() {
       assertThat(problemResponseBodyAdvice).isNull();
       assertThat(
               ((HandlerExceptionResolverComposite) handlerExceptionResolver)
@@ -318,7 +318,7 @@ class ProblemWebMvcAutoConfigurationTest {
     private HandlerExceptionResolver handlerExceptionResolver;
 
     @Test
-    void contextLoadsWithoutDeferredHandling() {
+    void contextLoadsWithoutCooperateHandling() {
       assertThat(problemResponseBodyAdvice).isNull();
       assertThat(
               ((HandlerExceptionResolverComposite) handlerExceptionResolver)

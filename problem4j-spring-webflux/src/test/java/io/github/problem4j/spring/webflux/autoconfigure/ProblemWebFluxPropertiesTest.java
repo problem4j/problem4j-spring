@@ -165,7 +165,7 @@ class ProblemWebFluxPropertiesTest {
   }
 
   @Test
-  void givenDeferredModeGroups_whenUsed_thenDefaultsAndValuesRoundTrip() {
+  void givenCooperateModeGroups_whenUsed_thenDefaultsAndValuesRoundTrip() {
     ProblemWebFluxProperties properties = new ProblemWebFluxProperties();
     assertThat(properties.getWebExceptionHandler().isEnabled()).isTrue();
     assertThat(properties.getResultHandler().isEnabled()).isTrue();
