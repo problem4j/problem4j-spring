@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Make `Automatic-Module-Name` stable, by adding it to `META-INF/MANIFEST.MF`.
 - Generate `META-INF/spring-autoconfigure-metadata.properties` file with `spring-boot-autoconfigure-processor`.
 - Make `HttpStatusTitleResolver` implement `Serializable` as it is used in a field of `ProblemBuilder`.
+- Map `ProblemErrorController` to `spring.web.error.path` of Spring Boot 4, instead of former `server.error.path`, so
+  that a custom error path is not answered with `404`.
 
 ## [3.0.0] - 2026-05-08
 
