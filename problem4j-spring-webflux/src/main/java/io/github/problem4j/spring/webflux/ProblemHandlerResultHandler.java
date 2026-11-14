@@ -86,6 +86,8 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
   private final Supplier<? extends List<? extends HandlerResultHandler>> delegates;
   private final List<HttpMessageWriter<?>> messageWriters;
 
+  private @Nullable List<? extends HandlerResultHandler> resolvedDelegates;
+
   private int order = -100;
 
   /**
@@ -93,7 +95,8 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
    *
    * @param problemOperations the operations applying post-processing
    * @param adapterRegistry the registry of reactive type adapters
-   * @param delegates supplies result handlers writing transformed results, in order of precedence
+   * @param delegates supplies result handlers writing transformed results, in order of precedence,
+   *     resolved once on first use
    * @param messageWriters the writers used to determine content type of {@link Problem}s
    * @since 3.1.0
    */
@@ -168,12 +171,22 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
   }
 
   private @Nullable HandlerResultHandler findDelegate(HandlerResult result) {
-    for (HandlerResultHandler delegate : delegates.get()) {
+    for (HandlerResultHandler delegate : resolveDelegates()) {
       if (delegate.supports(result)) {
         return delegate;
       }
     }
     return null;
+  }
+
+  // Benign race: concurrent first calls resolve the same singleton beans.
+  private List<? extends HandlerResultHandler> resolveDelegates() {
+    List<? extends HandlerResultHandler> handlers = resolvedDelegates;
+    if (handlers == null) {
+      handlers = delegates.get();
+      resolvedDelegates = handlers;
+    }
+    return handlers;
   }
 
   /**
