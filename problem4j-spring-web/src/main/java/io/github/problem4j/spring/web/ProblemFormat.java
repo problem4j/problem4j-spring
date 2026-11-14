@@ -38,7 +38,7 @@ public interface ProblemFormat {
    * @since 3.0.0
    */
   static ProblemFormat identity() {
-    return IdentityProblemFormat.INSTANCE;
+    return detail -> detail;
   }
 
   /**
