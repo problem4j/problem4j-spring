@@ -65,7 +65,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   exceptions unknown to Problem4J are rendered too. A warning is logged if `spring.mvc.problemdetails.enabled` or
   `spring.webflux.problemdetails.enabled` is set in `deferred` mode.
 - In `deferred` mode, post-process `Problem` and `ProblemDetail` returned by controllers and exception handlers of the
-  application (`ProblemResponseBodyAdvice`). A `ProblemDetail` stays a `ProblemDetail`.
+  application (`ProblemResponseBodyAdvice`, `ProblemHandlerResultHandler`). A `ProblemDetail` stays a `ProblemDetail`.
 - In `deferred` mode, `ProblemErrorController` renders exceptions of servlet filters the same way as exceptions of
   controllers.
 

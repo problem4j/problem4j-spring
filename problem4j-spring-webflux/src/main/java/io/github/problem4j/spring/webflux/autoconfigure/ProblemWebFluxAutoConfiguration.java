@@ -32,10 +32,12 @@ import io.github.problem4j.spring.webflux.ProblemContextWebFilter;
 import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
 import io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler;
 import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
+import io.github.problem4j.spring.webflux.ProblemHandlerResultHandler;
 import io.github.problem4j.spring.webflux.ProblemInspector;
 import io.github.problem4j.spring.webflux.ProblemResponseEntityExceptionHandler;
 import io.github.problem4j.spring.webflux.ProblemWebExceptionHandler;
 import java.util.List;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -53,9 +55,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.http.server.reactive.observation.ServerRequestObservationContext;
+import org.springframework.web.reactive.HandlerResultHandler;
+import org.springframework.web.reactive.result.method.annotation.ResponseBodyResultHandler;
 import org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.reactive.result.method.annotation.ResponseEntityResultHandler;
 import org.springframework.web.server.WebFilter;
 
 /**
@@ -291,7 +297,8 @@ public class ProblemWebFluxAutoConfiguration {
   /**
    * Nested configuration of {@code problem4j.exception-handling.mode=deferred}, which registers no
    * controller advices handling exceptions. Exceptions not handled by the application are rendered
-   * by {@link ProblemWebExceptionHandler}.
+   * by {@link ProblemWebExceptionHandler}, and {@code Problem}s or {@code ProblemDetail}s returned
+   * by the application are post-processed by {@link ProblemHandlerResultHandler}.
    */
   @ConditionalOnProperty(name = "problem4j.exception-handling.mode", havingValue = "deferred")
   @Configuration(proxyBeanMethods = false)
@@ -343,6 +350,33 @@ public class ProblemWebFluxAutoConfiguration {
               problemInspectors);
       handler.setUnknownExceptions(properties.getExceptionHandling().isUnknownExceptions());
       return handler;
+    }
+
+    /**
+     * Registers {@link ProblemHandlerResultHandler}, applying post-processing to {@code Problem}s
+     * and {@code ProblemDetail}s returned by controllers and exception handlers, before delegating
+     * to Spring's {@link ResponseEntityResultHandler} or {@link ResponseBodyResultHandler}.
+     */
+    @ConditionalOnBooleanProperty(
+        name = "problem4j.webflux.result-handler.enabled",
+        matchIfMissing = true)
+    @ConditionalOnMissingBean(ProblemHandlerResultHandler.class)
+    @Bean
+    ProblemHandlerResultHandler problemHandlerResultHandler(
+        ProblemOperations problemOperations,
+        ObjectProvider<ReactiveAdapterRegistry> adapterRegistry,
+        ObjectProvider<ResponseEntityResultHandler> responseEntityResultHandler,
+        ObjectProvider<ResponseBodyResultHandler> responseBodyResultHandler,
+        ObjectProvider<ServerCodecConfigurer> serverCodecConfigurer) {
+      return new ProblemHandlerResultHandler(
+          problemOperations,
+          adapterRegistry.getIfAvailable(ReactiveAdapterRegistry::getSharedInstance),
+          () ->
+              Stream.<HandlerResultHandler>concat(
+                      responseEntityResultHandler.orderedStream(),
+                      responseBodyResultHandler.orderedStream())
+                  .toList(),
+          serverCodecConfigurer.getIfAvailable(ServerCodecConfigurer::create).getWriters());
     }
   }
 }
