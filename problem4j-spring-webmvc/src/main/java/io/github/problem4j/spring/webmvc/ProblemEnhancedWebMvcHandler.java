@@ -18,6 +18,7 @@ package io.github.problem4j.spring.webmvc;
 
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
+import io.github.problem4j.spring.web.operations.ProblemOperations;
 import java.util.List;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -45,5 +46,21 @@ public class ProblemEnhancedWebMvcHandler extends ProblemResponseEntityException
       ProblemPostProcessor problemPostProcessor,
       List<? extends ProblemInspector> problemInspectors) {
     super(problemResolverStore, problemPostProcessor, problemInspectors);
+  }
+
+  /**
+   * Creates a new {@link ProblemEnhancedWebMvcHandler}, post-processing problems with {@link
+   * ProblemOperations}.
+   *
+   * @param problemResolverStore the resolver store
+   * @param problemOperations the operations post-processing problems
+   * @param problemInspectors the inspectors
+   * @since 3.1.0
+   */
+  public ProblemEnhancedWebMvcHandler(
+      ProblemResolverStore problemResolverStore,
+      ProblemOperations problemOperations,
+      List<? extends ProblemInspector> problemInspectors) {
+    super(problemResolverStore, problemOperations, problemInspectors);
   }
 }

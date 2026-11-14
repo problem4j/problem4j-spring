@@ -62,6 +62,10 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   (`translate`). Its default implementation, `ProblemTemplate`, is created with a builder and registered as a bean,
   using the container's `ProblemMapper`, `ProblemResolverStore` and `ProblemPostProcessor`. A `ProblemDetail` is
   post-processed in place, keeping its type.
+- Add constructors of `ExceptionWebMvcAdvice` / `ExceptionWebFluxAdvice`, `ProblemExceptionWebMvcAdvice` /
+  `ProblemExceptionWebFluxAdvice` and `ProblemResponseEntityExceptionHandler` taking `ProblemOperations`. They are used
+  by the auto-configurations, so a custom `ProblemOperations` bean applies to these advices as well. Former
+  constructors are kept and create a `ProblemTemplate` from given arguments.
 
 ### Changed
 
@@ -89,6 +93,9 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   `instance`, empty map for extensions), so custom implementations only need to override the settings they use.
 - `ProblemContextSettings.getTracingHeaderName()` now has a default implementation returning `null`. As the interface no
   longer has an abstract method, it can't be implemented with a lambda anymore - use an anonymous class instead.
+- `ExceptionWebMvcAdvice` / `ExceptionWebFluxAdvice` resolve exceptions with `ProblemOperations`, so they also use the
+  `Problem` of `ProblemException` and the status and headers of `ErrorResponse` exceptions, which are otherwise handled
+  by `ProblemExceptionWebMvcAdvice` / `ProblemExceptionWebFluxAdvice` and `ProblemResponseEntityExceptionHandler` first.
 
 ### Deprecated
 

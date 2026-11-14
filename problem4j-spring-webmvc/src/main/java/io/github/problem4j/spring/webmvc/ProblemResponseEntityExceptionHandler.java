@@ -24,6 +24,8 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
+import io.github.problem4j.spring.web.operations.ProblemOperations;
+import io.github.problem4j.spring.web.operations.ProblemTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -63,7 +65,7 @@ public class ProblemResponseEntityExceptionHandler extends ResponseEntityExcepti
       LoggerFactory.getLogger(ProblemResponseEntityExceptionHandler.class);
 
   private final ProblemResolverStore problemResolverStore;
-  private final ProblemPostProcessor problemPostProcessor;
+  private final ProblemOperations problemOperations;
 
   private final List<ProblemInspector> problemInspectors;
 
@@ -79,8 +81,31 @@ public class ProblemResponseEntityExceptionHandler extends ResponseEntityExcepti
       ProblemResolverStore problemResolverStore,
       ProblemPostProcessor problemPostProcessor,
       List<? extends ProblemInspector> problemInspectors) {
+    this(
+        problemResolverStore,
+        ProblemTemplate.builder()
+            .problemResolverStore(problemResolverStore)
+            .problemPostProcessor(problemPostProcessor)
+            .build(),
+        problemInspectors);
+  }
+
+  /**
+   * Creates a new {@link ProblemResponseEntityExceptionHandler}, post-processing problems with
+   * {@link ProblemOperations}. Exceptions are resolved with {@code problemResolverStore}, with the
+   * status chosen by Spring.
+   *
+   * @param problemResolverStore the resolver store
+   * @param problemOperations the operations post-processing problems
+   * @param problemInspectors the inspectors
+   * @since 3.1.0
+   */
+  public ProblemResponseEntityExceptionHandler(
+      ProblemResolverStore problemResolverStore,
+      ProblemOperations problemOperations,
+      List<? extends ProblemInspector> problemInspectors) {
     this.problemResolverStore = problemResolverStore;
-    this.problemPostProcessor = problemPostProcessor;
+    this.problemOperations = problemOperations;
     this.problemInspectors = new ArrayList<>(problemInspectors);
   }
 
@@ -116,7 +141,7 @@ public class ProblemResponseEntityExceptionHandler extends ResponseEntityExcepti
     Problem problem;
     try {
       problem = getProblemForOverridingBody(context, ex, headers, status);
-      problem = problemPostProcessor.process(context, problem);
+      problem = problemOperations.postProcess(context, problem);
     } catch (Exception e) {
       logAdviceException(log, ex, request, e);
       problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());

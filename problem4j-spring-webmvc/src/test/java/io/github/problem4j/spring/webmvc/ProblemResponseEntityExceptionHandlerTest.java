@@ -23,6 +23,8 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.DefaultProblemResolverStore;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
+import io.github.problem4j.spring.web.operations.ProblemOperations;
+import io.github.problem4j.spring.web.operations.ProblemTemplate;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,6 +41,12 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.server.ResponseStatusException;
 
 class ProblemResponseEntityExceptionHandlerTest {
+
+  private static final ProblemOperations OPERATIONS =
+      ProblemTemplate.builder()
+          .problemPostProcessor(
+              (context, problem) -> problem.toBuilder().detail("via operations").build())
+          .build();
 
   private ProblemResponseEntityExceptionHandler advice;
 
@@ -166,6 +174,26 @@ class ProblemResponseEntityExceptionHandlerTest {
                 request()));
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @Test
+  void givenProblemOperations_whenHandleExceptionInternal_thenPostProcessedWithThem() {
+    ProblemResponseEntityExceptionHandler operationsAdvice =
+        new ProblemResponseEntityExceptionHandler(
+            new DefaultProblemResolverStore(List.of()), OPERATIONS, List.of());
+
+    ResponseEntity<Object> response =
+        requireNonNull(
+            operationsAdvice.handleExceptionInternal(
+                new RuntimeException(),
+                null,
+                new HttpHeaders(),
+                HttpStatus.BAD_REQUEST,
+                request()));
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(requireNonNull((Problem) response.getBody()).getDetail())
+        .isEqualTo("via operations");
   }
 
   private static ServletWebRequest request() {

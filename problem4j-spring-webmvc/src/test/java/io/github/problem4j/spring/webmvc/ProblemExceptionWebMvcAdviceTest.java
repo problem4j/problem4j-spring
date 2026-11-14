@@ -22,6 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemException;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
+import io.github.problem4j.spring.web.operations.ProblemOperations;
+import io.github.problem4j.spring.web.operations.ProblemTemplate;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +36,12 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.ServletWebRequest;
 
 class ProblemExceptionWebMvcAdviceTest {
+
+  private static final ProblemOperations OPERATIONS =
+      ProblemTemplate.builder()
+          .problemPostProcessor(
+              (context, problem) -> problem.toBuilder().detail("via operations").build())
+          .build();
 
   private ProblemExceptionWebMvcAdvice advice;
 
@@ -105,6 +113,18 @@ class ProblemExceptionWebMvcAdviceTest {
             new ProblemException(Problem.of(HttpStatus.BAD_REQUEST.value())), request());
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @Test
+  void givenProblemOperations_whenHandlingProblemException_thenPostProcessedWithThem() {
+    ProblemExceptionWebMvcAdvice operationsAdvice =
+        new ProblemExceptionWebMvcAdvice(OPERATIONS, List.of());
+
+    ResponseEntity<Problem> response =
+        operationsAdvice.handleProblemException(new ProblemException(Problem.of(409)), request());
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    assertThat(requireNonNull(response.getBody()).getDetail()).isEqualTo("via operations");
   }
 
   private static ServletWebRequest request() {

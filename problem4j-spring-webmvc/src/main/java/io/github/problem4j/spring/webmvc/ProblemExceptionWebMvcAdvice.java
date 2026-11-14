@@ -24,6 +24,8 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemException;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
+import io.github.problem4j.spring.web.operations.ProblemOperations;
+import io.github.problem4j.spring.web.operations.ProblemTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -52,7 +54,7 @@ public class ProblemExceptionWebMvcAdvice {
 
   private static final Logger log = LoggerFactory.getLogger(ProblemExceptionWebMvcAdvice.class);
 
-  private final ProblemPostProcessor problemPostProcessor;
+  private final ProblemOperations problemOperations;
 
   private final List<ProblemInspector> problemInspectors;
 
@@ -66,7 +68,22 @@ public class ProblemExceptionWebMvcAdvice {
   public ProblemExceptionWebMvcAdvice(
       ProblemPostProcessor problemPostProcessor,
       List<? extends ProblemInspector> problemInspectors) {
-    this.problemPostProcessor = problemPostProcessor;
+    this(
+        ProblemTemplate.builder().problemPostProcessor(problemPostProcessor).build(),
+        problemInspectors);
+  }
+
+  /**
+   * Creates a new {@link ProblemExceptionWebMvcAdvice}, post-processing problems with {@link
+   * ProblemOperations}.
+   *
+   * @param problemOperations the operations post-processing problems
+   * @param problemInspectors the inspectors to invoke after handling
+   * @since 3.1.0
+   */
+  public ProblemExceptionWebMvcAdvice(
+      ProblemOperations problemOperations, List<? extends ProblemInspector> problemInspectors) {
+    this.problemOperations = problemOperations;
     this.problemInspectors = new ArrayList<>(problemInspectors);
   }
 
@@ -93,8 +110,7 @@ public class ProblemExceptionWebMvcAdvice {
 
     Problem problem;
     try {
-      problem = ex.getProblem();
-      problem = problemPostProcessor.process(context, problem);
+      problem = problemOperations.translate(context, ex, headers);
     } catch (Exception e) {
       logAdviceException(log, ex, request, e);
       problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());

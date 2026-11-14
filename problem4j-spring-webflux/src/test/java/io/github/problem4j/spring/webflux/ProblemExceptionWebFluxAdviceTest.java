@@ -22,6 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemException;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
+import io.github.problem4j.spring.web.operations.ProblemOperations;
+import io.github.problem4j.spring.web.operations.ProblemTemplate;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +35,12 @@ import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 
 class ProblemExceptionWebFluxAdviceTest {
+
+  private static final ProblemOperations OPERATIONS =
+      ProblemTemplate.builder()
+          .problemPostProcessor(
+              (context, problem) -> problem.toBuilder().detail("via operations").build())
+          .build();
 
   private ProblemExceptionWebFluxAdvice advice;
 
@@ -117,6 +125,21 @@ class ProblemExceptionWebFluxAdviceTest {
                 .block());
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @Test
+  void givenProblemOperations_whenHandlingProblemException_thenPostProcessedWithThem() {
+    ProblemExceptionWebFluxAdvice operationsAdvice =
+        new ProblemExceptionWebFluxAdvice(OPERATIONS, List.of());
+
+    ResponseEntity<Problem> response =
+        requireNonNull(
+            operationsAdvice
+                .handleProblemException(new ProblemException(Problem.of(409)), exchange())
+                .block());
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    assertThat(requireNonNull(response.getBody()).getDetail()).isEqualTo("via operations");
   }
 
   private static MockServerWebExchange exchange() {

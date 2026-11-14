@@ -16,8 +16,6 @@
 
 package io.github.problem4j.spring.webmvc.autoconfigure;
 
-import io.github.problem4j.core.ProblemMapper;
-import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ErrorRecording;
@@ -25,6 +23,7 @@ import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnMi
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnSimpleSource;
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnUnavailableSource;
 import io.github.problem4j.spring.web.autoconfigure.UnavailableTracingSourceException;
+import io.github.problem4j.spring.web.operations.ProblemOperations;
 import io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice;
 import io.github.problem4j.spring.webmvc.MicrometerProblemContextFilter;
 import io.github.problem4j.spring.webmvc.ObservationErrorProblemInspector;
@@ -102,12 +101,8 @@ public class ProblemWebMvcAutoConfiguration {
   @ConditionalOnMissingBean(ExceptionWebMvcAdvice.class)
   @Bean
   ExceptionWebMvcAdvice exceptionWebMvcAdvice(
-      ProblemMapper problemMapper,
-      ProblemResolverStore problemResolverStore,
-      ProblemPostProcessor problemPostProcessor,
-      List<? extends ProblemInspector> problemInspectors) {
-    return new ExceptionWebMvcAdvice(
-        problemMapper, problemResolverStore, problemPostProcessor, problemInspectors);
+      ProblemOperations problemOperations, List<? extends ProblemInspector> problemInspectors) {
+    return new ExceptionWebMvcAdvice(problemOperations, problemInspectors);
   }
 
   /**
@@ -124,9 +119,8 @@ public class ProblemWebMvcAutoConfiguration {
   @ConditionalOnMissingBean(ProblemExceptionWebMvcAdvice.class)
   @Bean
   ProblemExceptionWebMvcAdvice problemExceptionWebMvcAdvice(
-      ProblemPostProcessor problemPostProcessor,
-      List<? extends ProblemInspector> problemInspectors) {
-    return new ProblemExceptionWebMvcAdvice(problemPostProcessor, problemInspectors);
+      ProblemOperations problemOperations, List<? extends ProblemInspector> problemInspectors) {
+    return new ProblemExceptionWebMvcAdvice(problemOperations, problemInspectors);
   }
 
   /**
@@ -292,10 +286,10 @@ public class ProblemWebMvcAutoConfiguration {
     @Bean
     ResponseEntityExceptionHandler problemEnhancedWebMvcHandler(
         ProblemResolverStore problemResolverStore,
-        ProblemPostProcessor problemPostProcessor,
+        ProblemOperations problemOperations,
         List<? extends ProblemInspector> problemInspectors) {
       return new ProblemEnhancedWebMvcHandler(
-          problemResolverStore, problemPostProcessor, problemInspectors);
+          problemResolverStore, problemOperations, problemInspectors);
     }
   }
 }

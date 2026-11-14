@@ -20,25 +20,22 @@ import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_AT
 import static io.github.problem4j.spring.webflux.WebFluxAdviceSupport.logAdviceException;
 
 import io.github.problem4j.core.Problem;
-import io.github.problem4j.core.ProblemBuilder;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.core.ProblemMapper;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
-import io.github.problem4j.spring.web.resolver.ProblemResolver;
+import io.github.problem4j.spring.web.operations.ProblemOperations;
+import io.github.problem4j.spring.web.operations.ProblemTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -66,9 +63,7 @@ public class ExceptionWebFluxAdvice {
 
   private static final Logger log = LoggerFactory.getLogger(ExceptionWebFluxAdvice.class);
 
-  private final ProblemMapper problemMapper;
-  private final ProblemResolverStore problemResolverStore;
-  private final ProblemPostProcessor problemPostProcessor;
+  private final ProblemOperations problemOperations;
 
   private final List<ProblemInspector> problemInspectors;
 
@@ -86,16 +81,34 @@ public class ExceptionWebFluxAdvice {
       ProblemResolverStore problemResolverStore,
       ProblemPostProcessor problemPostProcessor,
       List<? extends ProblemInspector> problemInspectors) {
-    this.problemMapper = problemMapper;
-    this.problemResolverStore = problemResolverStore;
-    this.problemPostProcessor = problemPostProcessor;
+    this(
+        ProblemTemplate.builder()
+            .problemMapper(problemMapper)
+            .problemResolverStore(problemResolverStore)
+            .problemPostProcessor(problemPostProcessor)
+            .build(),
+        problemInspectors);
+  }
+
+  /**
+   * Creates a new {@link ExceptionWebFluxAdvice}, resolving and post-processing exceptions with
+   * {@link ProblemOperations}.
+   *
+   * @param problemOperations the operations resolving and post-processing problems
+   * @param problemInspectors the inspectors to invoke after handling
+   * @since 3.1.0
+   */
+  public ExceptionWebFluxAdvice(
+      ProblemOperations problemOperations, List<? extends ProblemInspector> problemInspectors) {
+    this.problemOperations = problemOperations;
     this.problemInspectors = new ArrayList<>(problemInspectors);
   }
 
   /**
    * Generic fallback handler converting any uncaught exception into a {@link Problem} response.
-   * Chooses a resolver, {@code @ProblemMapping}, {@code @ResponseStatus}, or defaults to {@code
-   * INTERNAL_SERVER_ERROR}.
+   * Translated with {@link ProblemOperations#translate}, which uses the {@code Problem} of {@code
+   * ProblemException}, {@code @ProblemMapping}, a resolver, {@code @ResponseStatus}, the status of
+   * {@code ErrorResponse}, or defaults to {@code INTERNAL_SERVER_ERROR}.
    *
    * @param ex the exception to handle
    * @param exchange the current server web exchange
@@ -112,8 +125,7 @@ public class ExceptionWebFluxAdvice {
 
     Problem problem;
     try {
-      problem = getProblem(ex, context, headers);
-      problem = problemPostProcessor.process(context, problem);
+      problem = problemOperations.translate(context, ex, headers);
     } catch (Exception e) {
       logAdviceException(log, ex, exchange, e);
       problem = Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -128,25 +140,5 @@ public class ExceptionWebFluxAdvice {
     }
 
     return Mono.just(new ResponseEntity<>(problem, headers, status));
-  }
-
-  private Problem getProblem(Exception ex, ProblemContext context, HttpHeaders headers) {
-    if (problemMapper.isMappingCandidate(ex)) {
-      return problemMapper.toProblemBuilder(ex, context).build();
-    }
-    Optional<ProblemResolver> optionalResolver = problemResolverStore.findResolver(ex.getClass());
-    if (optionalResolver.isPresent()) {
-      return optionalResolver.get().resolve(context, ex, headers, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    ResponseStatus responseStatus =
-        AnnotatedElementUtils.findMergedAnnotation(ex.getClass(), ResponseStatus.class);
-    if (responseStatus != null) {
-      ProblemBuilder builder = Problem.builder().status(responseStatus.code().value());
-      if (StringUtils.hasLength(responseStatus.reason())) {
-        builder = builder.detail(responseStatus.reason());
-      }
-      return builder.build();
-    }
-    return Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value());
   }
 }
