@@ -27,8 +27,14 @@ import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupportAware;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupportAware;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
@@ -64,7 +70,9 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
  *
  * @since 3.1.0
  */
-public interface ProblemBeanPostProcessor extends BeanPostProcessor {
+public class ProblemBeanPostProcessor implements BeanPostProcessor {
+
+  private static final Logger log = LoggerFactory.getLogger(ProblemBeanPostProcessor.class);
 
   /**
    * Creates a new {@link Builder} for {@link ProblemBeanPostProcessor}. Every collaborator supplier
@@ -74,8 +82,29 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
    * @return a new {@link Builder}
    * @since 3.1.0
    */
-  static Builder builder() {
-    return new DefaultProblemBeanPostProcessor.DefaultBuilder();
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  private final Supplier<@Nullable ProblemFormat> problemFormat;
+  private final Supplier<@Nullable TypeNameMapper> typeNameMapper;
+  private final Supplier<@Nullable BindingResultSupport> bindingResultSupport;
+  private final Supplier<@Nullable MethodValidationResultSupport> methodValidationResultSupport;
+  private final Supplier<@Nullable MethodParameterSupport> methodParameterSupport;
+
+  /**
+   * Creates a new {@link ProblemBeanPostProcessor} from the suppliers configured in the given
+   * {@link Builder}. Intended for subclasses; otherwise use {@link #builder()}.
+   *
+   * @param builder builder holding the collaborator suppliers
+   * @since 3.1.0
+   */
+  protected ProblemBeanPostProcessor(Builder builder) {
+    this.problemFormat = builder.problemFormat;
+    this.typeNameMapper = builder.typeNameMapper;
+    this.bindingResultSupport = builder.bindingResultSupport;
+    this.methodValidationResultSupport = builder.methodValidationResultSupport;
+    this.methodParameterSupport = builder.methodParameterSupport;
   }
 
   /**
@@ -87,7 +116,92 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
    * @since 3.1.0
    */
   @Override
-  Object postProcessBeforeInitialization(Object bean, String beanName);
+  public Object postProcessBeforeInitialization(Object bean, String beanName) {
+    if (!(bean instanceof ProblemUtilityAware)) {
+      return bean;
+    }
+
+    List<String> auditLog = new ArrayList<>(5);
+    maybeAddProblemFormatAware(bean, auditLog);
+    maybeAddTypeNameMapper(bean, auditLog);
+    maybeAddBindingResultSupport(bean, auditLog);
+    maybeAddMethodValidationResultSupport(bean, auditLog);
+    maybeAddMethodParameterSupport(bean, auditLog);
+
+    if (log.isDebugEnabled() && !auditLog.isEmpty()) {
+      log.debug(
+          "Enhanced '{}' [{}] bean with {}",
+          beanName,
+          AopUtils.getTargetClass(bean).getName(),
+          asLogLine(auditLog));
+    }
+    return bean;
+  }
+
+  private void maybeAddProblemFormatAware(Object bean, List<String> auditLog) {
+    if (bean instanceof ProblemFormatAware aware) {
+      Optional.ofNullable(problemFormat.get())
+          .ifPresent(object -> {
+            saveAuditLog(auditLog, object);
+            aware.setProblemFormat(object);
+          });
+    }
+  }
+
+  private void maybeAddTypeNameMapper(Object bean, List<String> auditLog) {
+    if (bean instanceof TypeNameMapperAware aware) {
+      Optional.ofNullable(typeNameMapper.get())
+          .ifPresent(object -> {
+            saveAuditLog(auditLog, object);
+            aware.setTypeNameMapper(object);
+          });
+    }
+  }
+
+  private void maybeAddBindingResultSupport(Object bean, List<String> auditLog) {
+    if (bean instanceof BindingResultSupportAware aware) {
+      Optional.ofNullable(bindingResultSupport.get())
+          .ifPresent(object -> {
+            saveAuditLog(auditLog, object);
+            aware.setBindingResultSupport(object);
+          });
+    }
+  }
+
+  private void maybeAddMethodValidationResultSupport(Object bean, List<String> auditLog) {
+    if (bean instanceof MethodValidationResultSupportAware aware) {
+      Optional.ofNullable(methodValidationResultSupport.get())
+          .ifPresent(object -> {
+            saveAuditLog(auditLog, object);
+            aware.setMethodValidationResultSupport(object);
+          });
+    }
+  }
+
+  private void maybeAddMethodParameterSupport(Object bean, List<String> auditLog) {
+    if (bean instanceof MethodParameterSupportAware aware) {
+      Optional.ofNullable(methodParameterSupport.get())
+          .ifPresent(object -> {
+            saveAuditLog(auditLog, object);
+            aware.setMethodParameterSupport(object);
+          });
+    }
+  }
+
+  private void saveAuditLog(List<String> auditLog, Object bean) {
+    auditLog.add(AopUtils.getTargetClass(bean).getSimpleName());
+  }
+
+  private String asLogLine(List<String> auditLog) {
+    return switch (auditLog.size()) {
+      case 1 -> auditLog.get(0);
+      case 2 -> String.join(" and ", auditLog);
+      default ->
+          String.join(", ", auditLog.subList(0, auditLog.size() - 1))
+              + " and "
+              + auditLog.get(auditLog.size() - 1);
+    };
+  }
 
   /**
    * Builder for {@link ProblemBeanPostProcessor}. Every collaborator supplier not set explicitly
@@ -95,7 +209,16 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
    *
    * @since 3.1.0
    */
-  interface Builder {
+  public static final class Builder {
+
+    private Supplier<@Nullable ProblemFormat> problemFormat = () -> null;
+    private Supplier<@Nullable TypeNameMapper> typeNameMapper = () -> null;
+    private Supplier<@Nullable BindingResultSupport> bindingResultSupport = () -> null;
+    private Supplier<@Nullable MethodValidationResultSupport> methodValidationResultSupport =
+        () -> null;
+    private Supplier<@Nullable MethodParameterSupport> methodParameterSupport = () -> null;
+
+    private Builder() {}
 
     /**
      * Sets the supplier of the {@link ProblemFormat} bean.
@@ -104,7 +227,10 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
      * @return this builder
      * @since 3.1.0
      */
-    Builder problemFormat(Supplier<@Nullable ProblemFormat> problemFormat);
+    public Builder problemFormat(Supplier<@Nullable ProblemFormat> problemFormat) {
+      this.problemFormat = problemFormat;
+      return this;
+    }
 
     /**
      * Sets the supplier of the {@link TypeNameMapper} bean.
@@ -113,7 +239,10 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
      * @return this builder
      * @since 3.1.0
      */
-    Builder typeNameMapper(Supplier<@Nullable TypeNameMapper> typeNameMapper);
+    public Builder typeNameMapper(Supplier<@Nullable TypeNameMapper> typeNameMapper) {
+      this.typeNameMapper = typeNameMapper;
+      return this;
+    }
 
     /**
      * Sets the supplier of the {@link BindingResultSupport} bean.
@@ -122,7 +251,11 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
      * @return this builder
      * @since 3.1.0
      */
-    Builder bindingResultSupport(Supplier<@Nullable BindingResultSupport> bindingResultSupport);
+    public Builder bindingResultSupport(
+        Supplier<@Nullable BindingResultSupport> bindingResultSupport) {
+      this.bindingResultSupport = bindingResultSupport;
+      return this;
+    }
 
     /**
      * Sets the supplier of the {@link MethodValidationResultSupport} bean.
@@ -132,8 +265,11 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
      * @return this builder
      * @since 3.1.0
      */
-    Builder methodValidationResultSupport(
-        Supplier<@Nullable MethodValidationResultSupport> methodValidationResultSupport);
+    public Builder methodValidationResultSupport(
+        Supplier<@Nullable MethodValidationResultSupport> methodValidationResultSupport) {
+      this.methodValidationResultSupport = methodValidationResultSupport;
+      return this;
+    }
 
     /**
      * Sets the supplier of the {@link MethodParameterSupport} bean.
@@ -142,8 +278,11 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
      * @return this builder
      * @since 3.1.0
      */
-    Builder methodParameterSupport(
-        Supplier<@Nullable MethodParameterSupport> methodParameterSupport);
+    public Builder methodParameterSupport(
+        Supplier<@Nullable MethodParameterSupport> methodParameterSupport) {
+      this.methodParameterSupport = methodParameterSupport;
+      return this;
+    }
 
     /**
      * Builds a new {@link ProblemBeanPostProcessor} from the configured suppliers.
@@ -151,6 +290,8 @@ public interface ProblemBeanPostProcessor extends BeanPostProcessor {
      * @return a new {@link ProblemBeanPostProcessor}
      * @since 3.1.0
      */
-    ProblemBeanPostProcessor build();
+    public ProblemBeanPostProcessor build() {
+      return new ProblemBeanPostProcessor(this);
+    }
   }
 }

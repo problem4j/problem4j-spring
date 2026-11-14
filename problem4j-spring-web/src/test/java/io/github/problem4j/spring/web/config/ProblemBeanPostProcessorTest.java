@@ -220,8 +220,7 @@ class ProblemBeanPostProcessorTest {
   @Nested
   class DebugLogging {
 
-    private final Logger logger =
-        (Logger) LoggerFactory.getLogger(DefaultProblemBeanPostProcessor.class);
+    private final Logger logger = (Logger) LoggerFactory.getLogger(ProblemBeanPostProcessor.class);
     private final ListAppender<ILoggingEvent> appender = new ListAppender<>();
 
     private final ProblemBeanPostProcessor debugProcessor =
