@@ -14,63 +14,65 @@
  * limitations under the License.
  */
 
-package io.github.problem4j.spring.webmvc.integration;
+package io.github.problem4j.spring.webflux.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.operations.ProblemOperations;
-import io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice;
-import io.github.problem4j.spring.webmvc.ProblemInspector;
-import io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler;
-import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
-import io.github.problem4j.spring.webmvc.app.problem.UnresolvableException;
+import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
+import io.github.problem4j.spring.webflux.ProblemInspector;
+import io.github.problem4j.spring.webflux.ProblemResponseEntityExceptionHandler;
+import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
+import io.github.problem4j.spring.webflux.app.problem.UnresolvableException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.resttestclient.TestRestTemplate;
-import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpEntity;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ServerWebExchange;
 import tools.jackson.databind.json.JsonMapper;
 
-class CooperateAdvicePostProcessingWebMvcTest {
+class FallbackAdvicePostProcessingWebFluxTest {
 
-  private static final String TRACE_ID = "cooperate-trace";
+  private static final String TRACE_ID = "fallback-trace";
 
-  private static Problem get(TestRestTemplate restTemplate, JsonMapper jsonMapper, String path) {
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("X-Trace-Id", TRACE_ID);
-    ResponseEntity<String> response =
-        restTemplate.exchange(path, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-    return jsonMapper.readValue(response.getBody(), Problem.class);
+  private static Problem get(WebTestClient webTestClient, JsonMapper jsonMapper, String path) {
+    String body =
+        webTestClient
+            .get()
+            .uri(path)
+            .header("X-Trace-Id", TRACE_ID)
+            .exchange()
+            .expectBody(String.class)
+            .returnResult()
+            .getResponseBody();
+    return jsonMapper.readValue(body, Problem.class);
   }
 
   @SpringBootTest(
-      classes = {WebMvcTestApp.class, InheritedExceptionAdvice.class, RecordingInspector.class},
+      classes = {WebFluxTestApp.class, InheritedExceptionAdvice.class, RecordingInspector.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=cooperate",
+        "problem4j.exception-handling.mode=fallback",
         "problem4j.tracing-source=simple",
         "problem4j.tracing-header-name=X-Trace-Id",
         "problem4j.title-override={problem.title} ({context.traceId})"
       })
-  @AutoConfigureTestRestTemplate
+  @AutoConfigureWebTestClient
   @Nested
-  class WithInheritedAdviceInCooperateMode {
+  class WithInheritedAdviceInFallbackMode {
 
-    @Autowired private TestRestTemplate restTemplate;
+    @Autowired private WebTestClient webTestClient;
     @Autowired private JsonMapper jsonMapper;
     @Autowired private RecordingInspector recordingInspector;
 
@@ -84,7 +86,7 @@ class CooperateAdvicePostProcessingWebMvcTest {
 
     @Test
     void givenProblemOfInheritedAdvice_whenRequesting_thenTitleIsOverriddenOnce() {
-      Problem problem = get(restTemplate, jsonMapper, "/problem-advice/resolvable");
+      Problem problem = get(webTestClient, jsonMapper, "/problem-advice/resolvable");
 
       assertThat(problem.getStatus()).isEqualTo(422);
       assertThat(problem.getTitle()).isEqualTo("ResolvableException (" + TRACE_ID + ")");
@@ -94,20 +96,20 @@ class CooperateAdvicePostProcessingWebMvcTest {
   }
 
   @SpringBootTest(
-      classes = {WebMvcTestApp.class, InheritedExceptionAdvice.class, RecordingInspector.class},
+      classes = {WebFluxTestApp.class, InheritedExceptionAdvice.class, RecordingInspector.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=cooperate",
-        "problem4j.webmvc.response-body-advice.enabled=false",
+        "problem4j.exception-handling.mode=fallback",
+        "problem4j.webflux.result-handler.enabled=false",
         "problem4j.tracing-source=simple",
         "problem4j.tracing-header-name=X-Trace-Id",
         "problem4j.title-override={problem.title} ({context.traceId})"
       })
-  @AutoConfigureTestRestTemplate
+  @AutoConfigureWebTestClient
   @Nested
   class WithoutPostProcessingOfReturnedProblems {
 
-    @Autowired private TestRestTemplate restTemplate;
+    @Autowired private WebTestClient webTestClient;
     @Autowired private JsonMapper jsonMapper;
     @Autowired private RecordingInspector recordingInspector;
 
@@ -121,7 +123,7 @@ class CooperateAdvicePostProcessingWebMvcTest {
 
     @Test
     void givenDisabledResponsePostProcessing_whenRequesting_thenInheritedAdvicePostProcessesOnce() {
-      Problem problem = get(restTemplate, jsonMapper, "/problem-advice/resolvable");
+      Problem problem = get(webTestClient, jsonMapper, "/problem-advice/resolvable");
 
       assertThat(problem.getStatus()).isEqualTo(422);
       assertThat(problem.getTitle()).isEqualTo("ResolvableException (" + TRACE_ID + ")");
@@ -132,22 +134,22 @@ class CooperateAdvicePostProcessingWebMvcTest {
 
   @SpringBootTest(
       classes = {
-        WebMvcTestApp.class,
+        WebFluxTestApp.class,
         InheritedResponseEntityExceptionHandler.class,
         RecordingInspector.class
       },
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=cooperate",
+        "problem4j.exception-handling.mode=fallback",
         "problem4j.tracing-source=simple",
         "problem4j.tracing-header-name=X-Trace-Id",
         "problem4j.title-override={problem.title} ({context.traceId})"
       })
-  @AutoConfigureTestRestTemplate
+  @AutoConfigureWebTestClient
   @Nested
-  class WithResponseEntityExceptionHandlerInCooperateMode {
+  class WithResponseEntityExceptionHandlerInFallbackMode {
 
-    @Autowired private TestRestTemplate restTemplate;
+    @Autowired private WebTestClient webTestClient;
     @Autowired private JsonMapper jsonMapper;
     @Autowired private RecordingInspector recordingInspector;
 
@@ -161,18 +163,17 @@ class CooperateAdvicePostProcessingWebMvcTest {
 
     @Test
     void givenSpringException_whenRequesting_thenRenderedPostProcessedAndInspectedOnce() {
-      Problem problem = get(restTemplate, jsonMapper, "/missing-parameter/request-param");
+      Problem problem = get(webTestClient, jsonMapper, "/missing-parameter/request-param");
 
       assertThat(problem.getStatus()).isEqualTo(400);
       assertThat(problem.getTitle()).isEqualTo("Bad Request (" + TRACE_ID + ")");
       assertThat(inspected)
-          .containsExactly(
-              "400 Bad Request (" + TRACE_ID + ") MissingServletRequestParameterException");
+          .containsExactly("400 Bad Request (" + TRACE_ID + ") MissingRequestValueException");
     }
 
     @Test
     void givenOwnHandlerOfInheritedClass_whenRequesting_thenPostProcessedOnceAndNotInspected() {
-      Problem problem = get(restTemplate, jsonMapper, "/problem-advice/unresolvable");
+      Problem problem = get(webTestClient, jsonMapper, "/problem-advice/unresolvable");
 
       assertThat(problem.getStatus()).isEqualTo(418);
       assertThat(problem.getTitle()).isEqualTo("Unresolvable (" + TRACE_ID + ")");
@@ -182,7 +183,7 @@ class CooperateAdvicePostProcessingWebMvcTest {
 
   /** Controller advice of the application, inheriting from Problem4J. */
   @RestControllerAdvice
-  static class InheritedExceptionAdvice extends ExceptionWebMvcAdvice {
+  static class InheritedExceptionAdvice extends ExceptionWebFluxAdvice {
 
     InheritedExceptionAdvice(
         ProblemOperations problemOperations, List<? extends ProblemInspector> problemInspectors) {
@@ -223,7 +224,7 @@ class CooperateAdvicePostProcessingWebMvcTest {
         Exception ex,
         HttpHeaders headers,
         HttpStatusCode status,
-        WebRequest request) {
+        ServerWebExchange exchange) {
       inspected.add(
           status.value() + " " + problem.getTitle() + " " + ex.getClass().getSimpleName());
     }

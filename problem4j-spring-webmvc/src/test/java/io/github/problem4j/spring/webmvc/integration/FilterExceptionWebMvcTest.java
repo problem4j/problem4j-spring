@@ -82,7 +82,7 @@ class FilterExceptionWebMvcTest {
       classes = {WebMvcTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=cooperate",
+        "problem4j.exception-handling.mode=fallback",
         "problem4j.tracing-source=simple",
         "problem4j.tracing-header-name=X-Trace-Id",
         "problem4j.extension-overrides.traceId={context.traceId}",
@@ -90,7 +90,7 @@ class FilterExceptionWebMvcTest {
       })
   @AutoConfigureTestRestTemplate
   @Nested
-  class WithCooperateMode {
+  class WithFallbackMode {
 
     @Autowired private TestRestTemplate restTemplate;
     @Autowired private JsonMapper jsonMapper;

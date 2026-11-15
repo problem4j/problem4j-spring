@@ -302,12 +302,12 @@ public class ProblemWebFluxAutoConfiguration {
    * Nested configuration registering {@link ProblemWebExceptionHandler} and {@link
    * ProblemHandlerResultHandler} instead of controller advices.
    */
-  @ConditionalOnProperty(name = "problem4j.exception-handling.mode", havingValue = "cooperate")
+  @ConditionalOnProperty(name = "problem4j.exception-handling.mode", havingValue = "fallback")
   @Configuration(proxyBeanMethods = false)
-  static class CooperateModeConfiguration {
+  static class FallbackModeConfiguration {
 
     /** Creates a new instance of this configuration. */
-    CooperateModeConfiguration() {}
+    FallbackModeConfiguration() {}
 
     /** Nested configuration warning that {@code spring.webflux.problemdetails.enabled} is set. */
     @ConditionalOnBooleanProperty("spring.webflux.problemdetails.enabled")
@@ -321,7 +321,7 @@ public class ProblemWebFluxAutoConfiguration {
       SpringProblemDetailsWarningConfiguration() {
         log.warn(
             "Spring's problem details (spring.webflux.problemdetails.enabled=true) override"
-                + " Problem4J for standard Spring WebFlux exceptions in cooperate mode. Set"
+                + " Problem4J for standard Spring WebFlux exceptions in fallback mode. Set"
                 + " spring.webflux.problemdetails.enabled=false to let Problem4J handle them.");
       }
     }

@@ -72,9 +72,9 @@ class ProblemErrorMvcConfigurationTest {
 
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
-      properties = {"problem4j.exception-handling.mode=cooperate"})
+      properties = {"problem4j.exception-handling.mode=fallback"})
   @Nested
-  class WithCooperateMode {
+  class WithFallbackMode {
 
     @Autowired(required = false)
     private ProblemErrorMvcConfiguration problemErrorMvcConfiguration;
@@ -91,11 +91,11 @@ class ProblemErrorMvcConfigurationTest {
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
       properties = {
-        "problem4j.exception-handling.mode=cooperate",
+        "problem4j.exception-handling.mode=fallback",
         "problem4j.webmvc.error-controller.enabled=false"
       })
   @Nested
-  class WithCooperateModeAndDisabled {
+  class WithFallbackModeAndDisabled {
 
     @Autowired(required = false)
     private ProblemErrorMvcConfiguration problemErrorMvcConfiguration;

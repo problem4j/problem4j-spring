@@ -44,7 +44,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
     },
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
-      "problem4j.exception-handling.mode=cooperate",
+      "problem4j.exception-handling.mode=fallback",
       "problem4j.extension-overrides.processed=yes"
     })
 @AutoConfigureTestRestTemplate

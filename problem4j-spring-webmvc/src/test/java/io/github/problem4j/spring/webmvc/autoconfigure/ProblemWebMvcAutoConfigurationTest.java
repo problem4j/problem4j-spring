@@ -207,9 +207,9 @@ class ProblemWebMvcAutoConfigurationTest {
 
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
-      properties = {"problem4j.exception-handling.mode=cooperate"})
+      properties = {"problem4j.exception-handling.mode=fallback"})
   @Nested
-  class WithCooperateMode {
+  class WithFallbackMode {
 
     @Autowired(required = false)
     private ExceptionWebMvcAdvice exceptionWebMvcAdvice;
@@ -228,7 +228,7 @@ class ProblemWebMvcAutoConfigurationTest {
     private HandlerExceptionResolver handlerExceptionResolver;
 
     @Test
-    void contextLoadsWithoutAdvicesAndWithCooperateHandling() {
+    void contextLoadsWithoutAdvicesAndWithFallbackHandling() {
       assertThat(exceptionWebMvcAdvice).isNull();
       assertThat(problemExceptionWebMvcAdvice).isNull();
       assertThat(exceptionHandler).isNull();
@@ -242,9 +242,9 @@ class ProblemWebMvcAutoConfigurationTest {
 
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
-      properties = {"problem4j.exception-handling.mode=cooperate"})
+      properties = {"problem4j.exception-handling.mode=fallback"})
   @Nested
-  class WithCooperateModeResolverConfigurer {
+  class WithFallbackModeResolverConfigurer {
 
     @Autowired
     @Qualifier("problemExceptionResolverConfigurer")
@@ -280,12 +280,12 @@ class ProblemWebMvcAutoConfigurationTest {
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
       properties = {
-        "problem4j.exception-handling.mode=cooperate",
+        "problem4j.exception-handling.mode=fallback",
         "problem4j.webmvc.handler-exception-resolver.enabled=false",
         "problem4j.webmvc.response-body-advice.enabled=false"
       })
   @Nested
-  class WithCooperateModeComponentsDisabled {
+  class WithFallbackModeComponentsDisabled {
 
     @Autowired(required = false)
     private ProblemResponseBodyAdvice problemResponseBodyAdvice;
@@ -295,7 +295,7 @@ class ProblemWebMvcAutoConfigurationTest {
     private HandlerExceptionResolver handlerExceptionResolver;
 
     @Test
-    void contextLoadsWithoutCooperateHandling() {
+    void contextLoadsWithoutFallbackHandling() {
       assertThat(problemResponseBodyAdvice).isNull();
       assertThat(
               ((HandlerExceptionResolverComposite) handlerExceptionResolver)
@@ -318,7 +318,7 @@ class ProblemWebMvcAutoConfigurationTest {
     private HandlerExceptionResolver handlerExceptionResolver;
 
     @Test
-    void contextLoadsWithoutCooperateHandling() {
+    void contextLoadsWithoutFallbackHandling() {
       assertThat(problemResponseBodyAdvice).isNull();
       assertThat(
               ((HandlerExceptionResolverComposite) handlerExceptionResolver)

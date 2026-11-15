@@ -37,7 +37,7 @@ import org.springframework.web.context.request.async.DeferredResult;
     classes = {WebMvcTestApp.class, AsyncExceptionWebMvcTest.AsyncController.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
-      "problem4j.exception-handling.mode=cooperate",
+      "problem4j.exception-handling.mode=fallback",
       "problem4j.extension-overrides.processed=yes",
       "spring.mvc.async.request-timeout=50ms"
     })

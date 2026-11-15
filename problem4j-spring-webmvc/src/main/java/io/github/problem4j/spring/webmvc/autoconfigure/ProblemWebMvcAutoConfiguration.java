@@ -316,12 +316,12 @@ public class ProblemWebMvcAutoConfiguration {
    * Nested configuration registering {@link ProblemHandlerExceptionResolver} and {@link
    * ProblemResponseBodyAdvice} instead of controller advices.
    */
-  @ConditionalOnProperty(name = "problem4j.exception-handling.mode", havingValue = "cooperate")
+  @ConditionalOnProperty(name = "problem4j.exception-handling.mode", havingValue = "fallback")
   @Configuration(proxyBeanMethods = false)
-  static class CooperateModeConfiguration {
+  static class FallbackModeConfiguration {
 
     /** Creates a new instance of this configuration. */
-    CooperateModeConfiguration() {}
+    FallbackModeConfiguration() {}
 
     /** Nested configuration warning that {@code spring.mvc.problemdetails.enabled} is set. */
     @ConditionalOnBooleanProperty("spring.mvc.problemdetails.enabled")
@@ -335,7 +335,7 @@ public class ProblemWebMvcAutoConfiguration {
       SpringProblemDetailsWarningConfiguration() {
         log.warn(
             "Spring's problem details (spring.mvc.problemdetails.enabled=true) override Problem4J"
-                + " for standard Spring MVC exceptions in cooperate mode. Set"
+                + " for standard Spring MVC exceptions in fallback mode. Set"
                 + " spring.mvc.problemdetails.enabled=false to let Problem4J handle them.");
       }
     }

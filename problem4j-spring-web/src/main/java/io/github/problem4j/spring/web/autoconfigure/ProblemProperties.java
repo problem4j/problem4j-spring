@@ -486,13 +486,13 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
 
     /**
      * How Problem4J handles exceptions: with its own controller advices ({@code advice}), or after
-     * exception handlers of the application ({@code cooperate}).
+     * exception handlers of the application ({@code fallback}).
      */
     private ExceptionHandlingMode mode = DEFAULT_MODE;
 
     /**
      * Whether exceptions unknown to Problem4J are rendered as {@code 500} problems in {@code
-     * cooperate} mode, instead of being left to the default error handling.
+     * fallback} mode, instead of being left to the default error handling.
      */
     private boolean unknownExceptions = DEFAULT_UNKNOWN_EXCEPTIONS;
 
@@ -568,7 +568,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
      *
      * @since 3.1.0
      */
-    COOPERATE
+    FALLBACK
   }
 
   /**

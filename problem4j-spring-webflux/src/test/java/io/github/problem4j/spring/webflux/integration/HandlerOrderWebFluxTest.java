@@ -38,7 +38,7 @@ import org.springframework.web.server.WebExceptionHandler;
  */
 @SpringBootTest(
     classes = {WebFluxTestApp.class},
-    properties = {"problem4j.exception-handling.mode=cooperate"})
+    properties = {"problem4j.exception-handling.mode=fallback"})
 class HandlerOrderWebFluxTest {
 
   @Autowired private ApplicationContext context;

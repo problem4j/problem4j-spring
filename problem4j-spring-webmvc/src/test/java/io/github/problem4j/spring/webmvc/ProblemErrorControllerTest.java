@@ -65,7 +65,7 @@ class ProblemErrorControllerTest {
     inspected = new ArrayList<>();
   }
 
-  private ProblemErrorController cooperate(ProblemOperations operations) {
+  private ProblemErrorController fallback(ProblemOperations operations) {
     return new ProblemErrorController(
         operations,
         new DefaultErrorAttributes(),
@@ -105,7 +105,7 @@ class ProblemErrorControllerTest {
   void givenNoContentStatus_whenHandlingError_thenEmptyResponse() {
     request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, 204);
 
-    ResponseEntity<Problem> response = cooperate(operations).error(request);
+    ResponseEntity<Problem> response = fallback(operations).error(request);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     assertThat(response.getBody()).isNull();
@@ -116,7 +116,7 @@ class ProblemErrorControllerTest {
     request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, 403);
     request.setAttribute(PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create().put("traceId", "abc"));
 
-    ResponseEntity<Problem> response = cooperate(operations).error(request);
+    ResponseEntity<Problem> response = fallback(operations).error(request);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     assertThat(body(response).getExtensions()).containsEntry("traceId", "abc");
@@ -129,7 +129,7 @@ class ProblemErrorControllerTest {
     ProblemException ex = new ProblemException(Problem.of(409, "conflict"));
     request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, ex);
 
-    ResponseEntity<Problem> response = cooperate(operations).error(request);
+    ResponseEntity<Problem> response = fallback(operations).error(request);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
     assertThat(response.getHeaders().getContentType())
@@ -146,7 +146,7 @@ class ProblemErrorControllerTest {
         RequestDispatcher.ERROR_EXCEPTION,
         new ServletException("wrapper", new ServletException("nested", cause)));
 
-    assertThat(body(cooperate(operations).error(request)).getStatus()).isEqualTo(409);
+    assertThat(body(fallback(operations).error(request)).getStatus()).isEqualTo(409);
     assertThat(inspected).containsExactly(cause);
   }
 
@@ -155,7 +155,7 @@ class ProblemErrorControllerTest {
     ServletException ex = new ServletException("no cause");
     request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, ex);
 
-    assertThat(body(cooperate(operations).error(request)).getStatus()).isEqualTo(500);
+    assertThat(body(fallback(operations).error(request)).getStatus()).isEqualTo(500);
     assertThat(inspected).containsExactly(ex);
   }
 
@@ -163,7 +163,7 @@ class ProblemErrorControllerTest {
   void givenErrorThrowable_whenHandlingError_thenProblemOfStatus() {
     request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, new AssertionError("not an exception"));
 
-    assertThat(body(cooperate(operations).error(request)).getStatus()).isEqualTo(500);
+    assertThat(body(fallback(operations).error(request)).getStatus()).isEqualTo(500);
     assertThat(inspected).isEmpty();
   }
 
@@ -171,7 +171,7 @@ class ProblemErrorControllerTest {
   void givenUnknownException_whenHandlingError_thenInternalServerErrorProblem() {
     request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, new IllegalStateException("unknown"));
 
-    ResponseEntity<Problem> response = cooperate(operations).error(request);
+    ResponseEntity<Problem> response = fallback(operations).error(request);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     assertThat(inspected).hasSize(1);
@@ -181,7 +181,7 @@ class ProblemErrorControllerTest {
   void givenProblemWithUnknownStatus_whenHandlingError_thenInternalServerErrorStatus() {
     request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, new ProblemException(Problem.of(599)));
 
-    assertThat(cooperate(operations).error(request).getStatusCode())
+    assertThat(fallback(operations).error(request).getStatusCode())
         .isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
@@ -189,7 +189,7 @@ class ProblemErrorControllerTest {
   void givenFailingTranslation_whenHandlingError_thenPostProcessedInternalServerError() {
     request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, new IllegalStateException());
 
-    ResponseEntity<Problem> response = cooperate(new FailingOperations()).error(request);
+    ResponseEntity<Problem> response = fallback(new FailingOperations()).error(request);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     assertThat(body(response).getExtensions()).containsEntry("processed", true);
@@ -200,7 +200,7 @@ class ProblemErrorControllerTest {
     CustomServletException ex = new CustomServletException(new ProblemException(Problem.of(409)));
     request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, ex);
 
-    assertThat(body(cooperate(operations).error(request)).getStatus()).isEqualTo(500);
+    assertThat(body(fallback(operations).error(request)).getStatus()).isEqualTo(500);
     assertThat(inspected).containsExactly(ex);
   }
 

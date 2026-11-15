@@ -34,11 +34,11 @@ import org.springframework.http.ResponseEntity;
     classes = {WebMvcTestApp.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
-      "problem4j.exception-handling.mode=cooperate",
+      "problem4j.exception-handling.mode=fallback",
       "problem4j.extension-overrides.processed=yes"
     })
 @AutoConfigureTestRestTemplate
-class CooperateContentNegotiationWebMvcTest {
+class FallbackContentNegotiationWebMvcTest {
 
   @Autowired private TestRestTemplate restTemplate;
 

@@ -130,7 +130,7 @@ class ProblemPropertiesTest {
   }
 
   @ParameterizedTest
-  @CsvSource({"advice, ADVICE, true", "cooperate, COOPERATE, false", "COOPERATE, COOPERATE, true"})
+  @CsvSource({"advice, ADVICE, true", "fallback, FALLBACK, false", "FALLBACK, FALLBACK, true"})
   void givenExceptionHandlingProperties_whenBound_thenModeAndUnknownExceptionsAreSet(
       String mode, ExceptionHandlingMode expected, boolean unknownExceptions) {
     ProblemProperties properties =
@@ -153,14 +153,14 @@ class ProblemPropertiesTest {
   void givenExceptionHandling_whenSetterInvoked_thenValueRoundTrips() {
     ProblemProperties properties = new ProblemProperties();
     ExceptionHandling exceptionHandling = new ExceptionHandling();
-    exceptionHandling.setMode(ExceptionHandlingMode.COOPERATE);
+    exceptionHandling.setMode(ExceptionHandlingMode.FALLBACK);
     exceptionHandling.setUnknownExceptions(false);
 
     properties.setExceptionHandling(exceptionHandling);
 
     assertThat(properties.getExceptionHandling()).isSameAs(exceptionHandling);
     assertThat(properties.getExceptionHandling().getMode())
-        .isEqualTo(ExceptionHandlingMode.COOPERATE);
+        .isEqualTo(ExceptionHandlingMode.FALLBACK);
     assertThat(properties.getExceptionHandling().isUnknownExceptions()).isFalse();
   }
 

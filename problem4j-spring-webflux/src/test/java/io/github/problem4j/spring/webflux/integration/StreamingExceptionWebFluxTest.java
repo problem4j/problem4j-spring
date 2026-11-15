@@ -41,7 +41,7 @@ import reactor.test.StepVerifier;
     classes = {WebFluxTestApp.class, StreamingExceptionWebFluxTest.StreamingController.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
-      "problem4j.exception-handling.mode=cooperate",
+      "problem4j.exception-handling.mode=fallback",
       "problem4j.extension-overrides.processed=yes"
     })
 @AutoConfigureWebTestClient

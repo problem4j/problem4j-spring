@@ -32,11 +32,11 @@ import org.springframework.test.web.reactive.server.WebTestClient;
     classes = {WebFluxTestApp.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
-      "problem4j.exception-handling.mode=cooperate",
+      "problem4j.exception-handling.mode=fallback",
       "problem4j.extension-overrides.processed=yes"
     })
 @AutoConfigureWebTestClient
-class CooperateContentNegotiationWebFluxTest {
+class FallbackContentNegotiationWebFluxTest {
 
   @Autowired private WebTestClient webTestClient;
 

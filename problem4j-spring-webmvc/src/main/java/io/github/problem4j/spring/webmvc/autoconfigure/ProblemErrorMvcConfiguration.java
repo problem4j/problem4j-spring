@@ -87,7 +87,7 @@ class ProblemErrorMvcConfiguration {
       List<? extends ProblemInspector> problemInspectors,
       ErrorAttributes errorAttributes,
       ProblemProperties properties) {
-    return properties.getExceptionHandling().getMode() == ExceptionHandlingMode.COOPERATE
+    return properties.getExceptionHandling().getMode() == ExceptionHandlingMode.FALLBACK
         ? new ProblemErrorController(problemOperations, errorAttributes, problemInspectors)
         : new ProblemErrorController(problemPostProcessor, errorAttributes);
   }

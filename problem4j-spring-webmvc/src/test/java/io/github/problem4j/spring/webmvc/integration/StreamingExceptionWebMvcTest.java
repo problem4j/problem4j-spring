@@ -39,7 +39,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
     classes = {WebMvcTestApp.class, StreamingExceptionWebMvcTest.StreamingController.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
-      "problem4j.exception-handling.mode=cooperate",
+      "problem4j.exception-handling.mode=fallback",
       "problem4j.extension-overrides.processed=yes"
     })
 @AutoConfigureTestRestTemplate

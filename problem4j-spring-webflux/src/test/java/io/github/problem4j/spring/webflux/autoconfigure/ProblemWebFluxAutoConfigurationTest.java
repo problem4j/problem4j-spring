@@ -188,9 +188,9 @@ class ProblemWebFluxAutoConfigurationTest {
 
   @SpringBootTest(
       classes = {WebFluxTestApp.class},
-      properties = {"problem4j.exception-handling.mode=cooperate"})
+      properties = {"problem4j.exception-handling.mode=fallback"})
   @Nested
-  class WithCooperateMode {
+  class WithFallbackMode {
 
     @Autowired(required = false)
     private ExceptionWebFluxAdvice exceptionWebFluxAdvice;
@@ -211,7 +211,7 @@ class ProblemWebFluxAutoConfigurationTest {
     private ProblemHandlerResultHandler problemHandlerResultHandler;
 
     @Test
-    void contextLoadsWithoutAdvicesAndWithCooperateHandling() {
+    void contextLoadsWithoutAdvicesAndWithFallbackHandling() {
       assertThat(exceptionWebFluxAdvice).isNull();
       assertThat(problemExceptionWebFluxAdvice).isNull();
       assertThat(exceptionHandler).isNull();
@@ -224,12 +224,12 @@ class ProblemWebFluxAutoConfigurationTest {
   @SpringBootTest(
       classes = {WebFluxTestApp.class},
       properties = {
-        "problem4j.exception-handling.mode=cooperate",
+        "problem4j.exception-handling.mode=fallback",
         "problem4j.webflux.web-exception-handler.enabled=false",
         "problem4j.webflux.result-handler.enabled=false"
       })
   @Nested
-  class WithCooperateModeComponentsDisabled {
+  class WithFallbackModeComponentsDisabled {
 
     @Autowired(required = false)
     private ProblemWebExceptionHandler problemWebExceptionHandler;
@@ -238,7 +238,7 @@ class ProblemWebFluxAutoConfigurationTest {
     private ProblemHandlerResultHandler problemHandlerResultHandler;
 
     @Test
-    void contextLoadsWithoutCooperateHandling() {
+    void contextLoadsWithoutFallbackHandling() {
       assertThat(problemWebExceptionHandler).isNull();
       assertThat(problemHandlerResultHandler).isNull();
     }
@@ -260,7 +260,7 @@ class ProblemWebFluxAutoConfigurationTest {
     private ProblemHandlerResultHandler problemHandlerResultHandler;
 
     @Test
-    void contextLoadsWithoutCooperateHandling() {
+    void contextLoadsWithoutFallbackHandling() {
       assertThat(problemErrorWebExceptionHandler).isNotNull();
       assertThat(problemWebExceptionHandler).isNull();
       assertThat(problemHandlerResultHandler).isNull();

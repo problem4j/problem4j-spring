@@ -40,13 +40,13 @@ class ErrorPathWebMvcTest {
       classes = {WebMvcTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=cooperate",
+        "problem4j.exception-handling.mode=fallback",
         "problem4j.extension-overrides.processed=yes",
         "spring.web.error.path=/oops"
       })
   @AutoConfigureTestRestTemplate
   @Nested
-  class WithCustomErrorPathInCooperateMode {
+  class WithCustomErrorPathInFallbackMode {
 
     @Autowired private TestRestTemplate restTemplate;
 

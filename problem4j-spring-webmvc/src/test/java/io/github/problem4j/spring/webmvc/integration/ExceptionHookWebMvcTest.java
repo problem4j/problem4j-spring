@@ -45,7 +45,7 @@ class ExceptionHookWebMvcTest {
   @SpringBootTest(
       classes = {WebMvcTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-      properties = {"problem4j.exception-handling.mode=cooperate"})
+      properties = {"problem4j.exception-handling.mode=fallback"})
   @AutoConfigureTestRestTemplate
   @Nested
   class WithExceptionResolverEnabled {
@@ -91,13 +91,13 @@ class ExceptionHookWebMvcTest {
       classes = {WebMvcTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=cooperate",
+        "problem4j.exception-handling.mode=fallback",
         "problem4j.exception-handling.unknown-exceptions=false",
         "problem4j.webmvc.error-controller.enabled=false"
       })
   @AutoConfigureTestRestTemplate
   @Nested
-  class WithFallbackDisabled {
+  class WithUnknownExceptionsDisabled {
 
     @Autowired private TestRestTemplate restTemplate;
     @Autowired private JsonMapper jsonMapper;
@@ -122,12 +122,12 @@ class ExceptionHookWebMvcTest {
       classes = {WebMvcTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=cooperate",
+        "problem4j.exception-handling.mode=fallback",
         "problem4j.exception-handling.unknown-exceptions=false"
       })
   @AutoConfigureTestRestTemplate
   @Nested
-  class WithFallbackDisabledAndErrorController {
+  class WithUnknownExceptionsDisabledAndErrorController {
 
     @Autowired private TestRestTemplate restTemplate;
 
@@ -145,7 +145,7 @@ class ExceptionHookWebMvcTest {
       classes = {WebMvcTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=cooperate",
+        "problem4j.exception-handling.mode=fallback",
         "problem4j.webmvc.handler-exception-resolver.enabled=false",
         "problem4j.webmvc.error-controller.enabled=false"
       })

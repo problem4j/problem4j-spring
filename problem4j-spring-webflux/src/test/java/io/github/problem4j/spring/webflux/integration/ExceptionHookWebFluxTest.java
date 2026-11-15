@@ -50,7 +50,7 @@ class ExceptionHookWebFluxTest {
   @SpringBootTest(
       classes = {WebFluxTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-      properties = {"problem4j.exception-handling.mode=cooperate"})
+      properties = {"problem4j.exception-handling.mode=fallback"})
   @AutoConfigureWebTestClient
   @Nested
   class WithWebExceptionHandlerEnabled {
@@ -104,12 +104,12 @@ class ExceptionHookWebFluxTest {
       classes = {WebFluxTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=cooperate",
+        "problem4j.exception-handling.mode=fallback",
         "problem4j.exception-handling.unknown-exceptions=false"
       })
   @AutoConfigureWebTestClient
   @Nested
-  class WithFallbackDisabled {
+  class WithUnknownExceptionsDisabled {
 
     @Autowired private WebTestClient webTestClient;
 
@@ -135,7 +135,7 @@ class ExceptionHookWebFluxTest {
       classes = {WebFluxTestApp.class},
       webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
       properties = {
-        "problem4j.exception-handling.mode=cooperate",
+        "problem4j.exception-handling.mode=fallback",
         "problem4j.webflux.web-exception-handler.enabled=false"
       })
   @AutoConfigureWebTestClient
