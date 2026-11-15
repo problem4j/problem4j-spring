@@ -72,12 +72,12 @@ class ProblemWebExceptionHandlerTest {
   void givenDefaults_whenChangingOrderAndUnknownExceptions_thenValuesAreChanged() {
     ProblemWebExceptionHandler handler = handler();
 
-    assertThat(handler.getOrder()).isEqualTo(-3);
-    assertThat(handler.isUnknownExceptions()).isFalse();
-    handler.setOrder(7);
-    handler.setUnknownExceptions(true);
-    assertThat(handler.getOrder()).isEqualTo(7);
+    assertThat(handler.getOrder()).isEqualTo(ProblemWebExceptionHandler.PRECEDENCE);
     assertThat(handler.isUnknownExceptions()).isTrue();
+    handler.setOrder(7);
+    handler.setUnknownExceptions(false);
+    assertThat(handler.getOrder()).isEqualTo(7);
+    assertThat(handler.isUnknownExceptions()).isFalse();
   }
 
   @Test
@@ -142,17 +142,16 @@ class ProblemWebExceptionHandlerTest {
   @Test
   void givenUnknownExceptionAndUnknownExceptionsDisabled_whenHandling_thenErrorIsPropagated() {
     IllegalStateException ex = new IllegalStateException("unknown");
+    ProblemWebExceptionHandler handler = handler();
+    handler.setUnknownExceptions(false);
 
-    StepVerifier.create(handler().handle(exchange, ex)).verifyErrorMatches(e -> e == ex);
+    StepVerifier.create(handler.handle(exchange, ex)).verifyErrorMatches(e -> e == ex);
     assertThat(inspectedContexts).isEmpty();
   }
 
   @Test
   void givenUnknownExceptionAndUnknownExceptionsEnabled_whenHandling_thenInternalServerError() {
-    ProblemWebExceptionHandler handler = handler();
-    handler.setUnknownExceptions(true);
-
-    StepVerifier.create(handler.handle(exchange, new IllegalStateException("unknown")))
+    StepVerifier.create(handler().handle(exchange, new IllegalStateException("unknown")))
         .verifyComplete();
 
     assertThat(exchange.getResponse().getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);

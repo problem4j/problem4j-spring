@@ -80,9 +80,9 @@ class ProblemHandlerExceptionResolverTest {
   void givenDefaults_whenTogglingUnknownExceptions_thenValueIsChanged() {
     ProblemHandlerExceptionResolver resolver = resolver();
 
-    assertThat(resolver.isUnknownExceptions()).isFalse();
-    resolver.setUnknownExceptions(true);
     assertThat(resolver.isUnknownExceptions()).isTrue();
+    resolver.setUnknownExceptions(false);
+    assertThat(resolver.isUnknownExceptions()).isFalse();
   }
 
   @Test
@@ -140,16 +140,16 @@ class ProblemHandlerExceptionResolverTest {
 
   @Test
   void givenUnknownExceptionAndUnknownExceptionsDisabled_whenResolving_thenNotResolved() {
-    assertThat(resolve(resolver(), new IllegalStateException("unknown"))).isNull();
+    ProblemHandlerExceptionResolver resolver = resolver();
+    resolver.setUnknownExceptions(false);
+
+    assertThat(resolve(resolver, new IllegalStateException("unknown"))).isNull();
     assertThat(inspectedContexts).isEmpty();
   }
 
   @Test
   void givenUnknownExceptionAndUnknownExceptionsEnabled_whenResolving_thenInternalServerError() {
-    ProblemHandlerExceptionResolver resolver = resolver();
-    resolver.setUnknownExceptions(true);
-
-    assertThat(resolve(resolver, new IllegalStateException("unknown"))).isNotNull();
+    assertThat(resolve(resolver(), new IllegalStateException("unknown"))).isNotNull();
     assertThat(response.getStatus()).isEqualTo(500);
     assertThat(inspectedContexts).hasSize(1);
   }

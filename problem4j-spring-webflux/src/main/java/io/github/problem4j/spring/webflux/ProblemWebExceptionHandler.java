@@ -69,13 +69,24 @@ import reactor.core.publisher.Mono;
  */
 public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered {
 
+  /**
+   * Precedence of this handler, {@code -3}, used unless changed with {@link #setOrder(int)}. It is
+   * applied before {@code ErrorWebExceptionHandler} of Spring Boot, declared with {@code -1} in
+   * {@code ErrorWebFluxAutoConfiguration}, and before Spring's {@code
+   * WebFluxResponseStatusExceptionHandler}, declared with {@code 0} in {@code
+   * WebFluxConfigurationSupport}. Neither of them exposes its order as a constant.
+   *
+   * @since 3.1.0
+   */
+  public static final int PRECEDENCE = -3;
+
   private static final Logger log = LoggerFactory.getLogger(ProblemWebExceptionHandler.class);
 
   private final ProblemOperations problemOperations;
   private final List<HttpMessageWriter<?>> messageWriters;
   private final List<ProblemInspector> inspectors;
 
-  private int order = -3;
+  private int order = PRECEDENCE;
 
   private boolean unknownExceptions = true;
 
@@ -97,7 +108,7 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
   }
 
   /**
-   * Returns the order of this handler, {@code -3} by default, which precedes {@code
+   * Returns the order of this handler, {@link #PRECEDENCE} by default, which precedes {@code
    * ErrorWebExceptionHandler} of Spring Boot ({@code -1}).
    *
    * @return the order of this handler

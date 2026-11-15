@@ -79,6 +79,17 @@ import reactor.core.publisher.Mono;
  */
 public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordered {
 
+  /**
+   * Precedence of this handler, {@code -100}, used unless changed with {@link #setOrder(int)}. It
+   * precedes Spring's own result handlers, {@code ResponseEntityResultHandler} and {@code
+   * ServerResponseResultHandler} ({@code 0}), {@code ResponseBodyResultHandler} ({@code 100}) and
+   * {@code ViewResolutionResultHandler} ({@code Ordered.LOWEST_PRECEDENCE} by default), which do
+   * not expose their orders as constants.
+   *
+   * @since 3.1.0
+   */
+  public static final int PRECEDENCE = -100;
+
   private static final Logger log = LoggerFactory.getLogger(ProblemHandlerResultHandler.class);
 
   private final ProblemOperations problemOperations;
@@ -88,7 +99,7 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
 
   private @Nullable List<? extends HandlerResultHandler> resolvedDelegates;
 
-  private int order = -100;
+  private int order = PRECEDENCE;
 
   /**
    * Creates a new {@code ProblemHandlerResultHandler}.
@@ -112,8 +123,8 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
   }
 
   /**
-   * Returns the order of this handler, {@code -100} by default, which precedes Spring's own result
-   * handlers.
+   * Returns the order of this handler, {@link #PRECEDENCE} by default, which precedes Spring's own
+   * result handlers.
    *
    * @return the order of this handler
    * @since 3.1.0
