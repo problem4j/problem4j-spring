@@ -23,6 +23,7 @@ import io.micrometer.tracing.TraceContext;
 import io.micrometer.tracing.handler.TracingObservationHandler.TracingContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.web.filter.ServerHttpObservationFilter;
 
@@ -61,6 +62,18 @@ public class MicrometerProblemContextFilter extends ProblemContextFilter {
    */
   public MicrometerProblemContextFilter(ProblemContextSettings settings) {
     super(settings);
+  }
+
+  /**
+   * Creates a new {@code MicrometerProblemContextFilter}.
+   *
+   * @param settings the context settings to use
+   * @param customizers customizers invoked, in the given order, once the context has been built
+   * @since 3.1.0
+   */
+  public MicrometerProblemContextFilter(
+      ProblemContextSettings settings, List<? extends ProblemContextCustomizer> customizers) {
+    super(settings, customizers);
   }
 
   /**

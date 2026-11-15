@@ -27,6 +27,7 @@ import io.github.problem4j.spring.web.operations.ProblemOperations;
 import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.MicrometerProblemContextWebFilter;
 import io.github.problem4j.spring.webflux.ObservationErrorProblemInspector;
+import io.github.problem4j.spring.webflux.ProblemContextCustomizer;
 import io.github.problem4j.spring.webflux.ProblemContextMethodArgumentResolver;
 import io.github.problem4j.spring.webflux.ProblemContextWebFilter;
 import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
@@ -35,6 +36,7 @@ import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.ProblemInspector;
 import io.github.problem4j.spring.webflux.ProblemResponseEntityExceptionHandler;
 import java.util.List;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
@@ -101,7 +103,7 @@ public class ProblemWebFluxAutoConfiguration {
    * Problem4J-specific exception types in WebFlux pipelines.
    *
    * <p>This advice focuses on translating {@code Problem}-domain exceptions into standardized
-   * problem responses, using the configured post processor and inspectors.
+   * problem responses, using the configured post processor and customizers.
    */
   @ConditionalOnBooleanProperty(
       name = "problem4j.webflux.problem-exception-advice.enabled",
@@ -187,8 +189,9 @@ public class ProblemWebFluxAutoConfiguration {
       @ConditionalOnMissingBean(ProblemContextWebFilter.class)
       @Bean
       @SuppressWarnings("removal")
-      ProblemContextWebFluxFilter problemContextWebFluxFilter(ProblemProperties properties) {
-        return new ProblemContextWebFluxFilter(properties);
+      ProblemContextWebFluxFilter problemContextWebFluxFilter(
+          ProblemProperties properties, ObjectProvider<ProblemContextCustomizer> customizers) {
+        return new ProblemContextWebFluxFilter(properties, customizers.orderedStream().toList());
       }
     }
 
@@ -210,8 +213,10 @@ public class ProblemWebFluxAutoConfiguration {
        */
       @ConditionalOnMissingBean(ProblemContextWebFilter.class)
       @Bean
-      ProblemContextWebFilter problemContextWebFluxFilter(ProblemProperties properties) {
-        return new MicrometerProblemContextWebFilter(properties);
+      ProblemContextWebFilter problemContextWebFluxFilter(
+          ProblemProperties properties, ObjectProvider<ProblemContextCustomizer> customizers) {
+        return new MicrometerProblemContextWebFilter(
+            properties, customizers.orderedStream().toList());
       }
     }
 

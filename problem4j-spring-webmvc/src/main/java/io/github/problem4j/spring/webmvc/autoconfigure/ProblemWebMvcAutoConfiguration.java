@@ -27,6 +27,7 @@ import io.github.problem4j.spring.web.operations.ProblemOperations;
 import io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice;
 import io.github.problem4j.spring.webmvc.MicrometerProblemContextFilter;
 import io.github.problem4j.spring.webmvc.ObservationErrorProblemInspector;
+import io.github.problem4j.spring.webmvc.ProblemContextCustomizer;
 import io.github.problem4j.spring.webmvc.ProblemContextFilter;
 import io.github.problem4j.spring.webmvc.ProblemContextMethodArgumentResolver;
 import io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter;
@@ -35,6 +36,7 @@ import io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice;
 import io.github.problem4j.spring.webmvc.ProblemInspector;
 import io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler;
 import java.util.List;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
@@ -107,7 +109,7 @@ public class ProblemWebMvcAutoConfiguration {
    * Problem4J-specific exception types in WebMVC pipelines.
    *
    * <p>This advice focuses on translating {@code Problem}-domain exceptions into standardized
-   * problem responses, using the configured post processor and inspectors.
+   * problem responses, using the configured post processor and customizers.
    */
   @ConditionalOnBooleanProperty(
       name = "problem4j.webmvc.problem-exception-advice.enabled",
@@ -205,8 +207,9 @@ public class ProblemWebMvcAutoConfiguration {
       @ConditionalOnMissingBean(ProblemContextFilter.class)
       @Bean
       @SuppressWarnings("removal")
-      ProblemContextWebMvcFilter problemContextWebMvcFilter(ProblemProperties properties) {
-        return new ProblemContextWebMvcFilter(properties);
+      ProblemContextWebMvcFilter problemContextWebMvcFilter(
+          ProblemProperties properties, ObjectProvider<ProblemContextCustomizer> customizers) {
+        return new ProblemContextWebMvcFilter(properties, customizers.orderedStream().toList());
       }
     }
 
@@ -228,8 +231,9 @@ public class ProblemWebMvcAutoConfiguration {
        */
       @ConditionalOnMissingBean(ProblemContextFilter.class)
       @Bean
-      ProblemContextFilter problemContextWebMvcFilter(ProblemProperties properties) {
-        return new MicrometerProblemContextFilter(properties);
+      ProblemContextFilter problemContextWebMvcFilter(
+          ProblemProperties properties, ObjectProvider<ProblemContextCustomizer> customizers) {
+        return new MicrometerProblemContextFilter(properties, customizers.orderedStream().toList());
       }
     }
 

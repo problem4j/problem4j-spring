@@ -16,13 +16,17 @@
 
 package io.github.problem4j.spring.webmvc.autoconfigure;
 
+import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.UNAVAILABLE_SOURCE_MESSAGE;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemContextSettings;
 import io.github.problem4j.spring.web.autoconfigure.ProblemAutoConfiguration;
 import io.github.problem4j.spring.web.autoconfigure.UnavailableTracingSourceException;
 import io.github.problem4j.spring.webmvc.MicrometerProblemContextFilter;
+import io.github.problem4j.spring.webmvc.ProblemContextCustomizer;
 import io.github.problem4j.spring.webmvc.ProblemContextFilter;
 import io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter;
 import io.micrometer.tracing.handler.TracingObservationHandler;
@@ -32,6 +36,9 @@ import org.springframework.boot.test.context.FilteredClassLoader;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 @SuppressWarnings("removal")
 class ProblemContextWebMvcFilterConfigurationTest {
@@ -177,6 +184,50 @@ class ProblemContextWebMvcFilterConfigurationTest {
                 .hasSingleBean(ProblemContextFilter.class)
                 .getBean(ProblemContextFilter.class)
                 .isSameAs(context.getBean(CustomNewTypeFilterConfiguration.class).filter));
+  }
+
+  @Test
+  void givenCustomizerBeansAndSimpleTracingSource_whenFilter_thenCustomizersAreInvokedInOrder() {
+    contextRunner
+        .withPropertyValues("problem4j.tracing-source=simple")
+        .withUserConfiguration(CustomizerConfiguration.class)
+        .run(context -> assertCustomizersApplied(context.getBean(ProblemContextFilter.class)));
+  }
+
+  @Test
+  void
+      givenCustomizerBeansAndMicrometerTracingSource_whenFilter_thenCustomizersAreInvokedInOrder() {
+    contextRunner
+        .withPropertyValues("problem4j.tracing-source=micrometer")
+        .withUserConfiguration(CustomizerConfiguration.class)
+        .run(context -> assertCustomizersApplied(context.getBean(ProblemContextFilter.class)));
+  }
+
+  private static void assertCustomizersApplied(ProblemContextFilter filter) throws Exception {
+    MockHttpServletRequest request = new MockHttpServletRequest();
+
+    filter.doFilter(request, new MockHttpServletResponse(), (req, res) -> {});
+
+    ProblemContext problemContext =
+        requireNonNull((ProblemContext) request.getAttribute(PROBLEM_CONTEXT_ATTRIBUTE));
+    assertThat(problemContext.get("inspected")).isEqualTo("first,second");
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  static class CustomizerConfiguration {
+
+    @Order(2)
+    @Bean
+    ProblemContextCustomizer secondCustomizer() {
+      return (context, request, response) ->
+          context.put("inspected", context.get("inspected") + ",second");
+    }
+
+    @Order(1)
+    @Bean
+    ProblemContextCustomizer firstCustomizer() {
+      return (context, request, response) -> context.put("inspected", "first");
+    }
   }
 
   @Configuration(proxyBeanMethods = false)
