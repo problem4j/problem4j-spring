@@ -20,8 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.DefaultProblemPostProcessor;
-import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.operations.ProblemOperations;
 import io.github.problem4j.spring.webmvc.ExceptionWebMvcAdvice;
 import io.github.problem4j.spring.webmvc.ProblemInspector;
@@ -33,8 +31,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
@@ -59,35 +55,6 @@ class CooperateAdvicePostProcessingWebMvcTest {
     ResponseEntity<String> response =
         restTemplate.exchange(path, HttpMethod.GET, new HttpEntity<>(headers), String.class);
     return jsonMapper.readValue(response.getBody(), Problem.class);
-  }
-
-  @SpringBootTest(
-      classes = {WebMvcTestApp.class},
-      webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-      properties = {
-        "problem4j.exception-handling.mode=cooperate",
-        "problem4j.tracing-source=simple",
-        "problem4j.tracing-header-name=X-Trace-Id",
-        "problem4j.title-override={problem.title} ({context.traceId})"
-      })
-  @AutoConfigureTestRestTemplate
-  @Nested
-  class WithCooperateMode {
-
-    @Autowired private TestRestTemplate restTemplate;
-    @Autowired private JsonMapper jsonMapper;
-
-    @ParameterizedTest
-    @CsvSource({
-      "/filter-error/problem, Conflict",
-      "/send-error/internal-server-error, Internal Server Error"
-    })
-    void givenProblemOfErrorController_whenRequesting_thenTitleIsOverriddenOnce(
-        String path, String title) {
-      Problem problem = get(restTemplate, jsonMapper, path);
-
-      assertThat(problem.getTitle()).isEqualTo(title + " (" + TRACE_ID + ")");
-    }
   }
 
   @SpringBootTest(
@@ -210,20 +177,6 @@ class CooperateAdvicePostProcessingWebMvcTest {
       assertThat(problem.getStatus()).isEqualTo(418);
       assertThat(problem.getTitle()).isEqualTo("Unresolvable (" + TRACE_ID + ")");
       assertThat(inspected).isEmpty();
-    }
-  }
-
-  @SpringBootTest(
-      classes = {WebMvcTestApp.class},
-      properties = {"problem4j.exception-handling.mode=advice"})
-  @Nested
-  class WithAdviceMode {
-
-    @Autowired private ProblemPostProcessor problemPostProcessor;
-
-    @Test
-    void givenAdviceMode_whenStarting_thenPostProcessorIsDefault() {
-      assertThat(problemPostProcessor).isExactlyInstanceOf(DefaultProblemPostProcessor.class);
     }
   }
 

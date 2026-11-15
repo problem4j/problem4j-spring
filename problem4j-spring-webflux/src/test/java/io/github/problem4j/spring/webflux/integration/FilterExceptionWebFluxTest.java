@@ -35,7 +35,8 @@ import tools.jackson.databind.json.JsonMapper;
       "problem4j.exception-handling.mode=cooperate",
       "problem4j.tracing-source=simple",
       "problem4j.tracing-header-name=X-Trace-Id",
-      "problem4j.extension-overrides.traceId={context.traceId}"
+      "problem4j.extension-overrides.traceId={context.traceId}",
+      "problem4j.title-override={problem.title} ({context.traceId})"
     })
 @AutoConfigureWebTestClient
 class FilterExceptionWebFluxTest {
@@ -47,12 +48,12 @@ class FilterExceptionWebFluxTest {
 
   @ParameterizedTest
   @CsvSource({
-    "/filter-error/resolvable, 422",
-    "/filter-error/problem, 409",
-    "/filter-error/unknown, 500"
+    "/filter-error/resolvable, 422, ResolvableException",
+    "/filter-error/problem, 409, Conflict",
+    "/filter-error/unknown, 500, Internal Server Error"
   })
-  void givenExceptionFromWebFilter_whenRequesting_thenTranslatedWithTraceId(
-      String path, int status) {
+  void givenExceptionFromWebFilter_whenRequesting_thenTranslatedAndPostProcessedOnce(
+      String path, int status, String title) {
     String body =
         webTestClient
             .get()
@@ -72,5 +73,6 @@ class FilterExceptionWebFluxTest {
     Problem problem = jsonMapper.readValue(body, Problem.class);
     assertThat(problem.getStatus()).isEqualTo(status);
     assertThat(problem.getExtensions()).containsEntry("traceId", TRACE_ID);
+    assertThat(problem.getTitle()).isEqualTo(title + " (" + TRACE_ID + ")");
   }
 }

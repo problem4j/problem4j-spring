@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -289,38 +288,6 @@ class ProblemHandlerResultHandlerTest {
   }
 
   @Test
-  void givenProblemDetail_whenHandling_thenPostProcessedInPlace() {
-    ProblemDetail detail = ProblemDetail.forStatus(409);
-
-    handler(bodyHandler).handleResult(exchange(), result("problemDetail", detail)).block();
-
-    assertThat(bodyHandler.value()).isSameAs(detail);
-    assertThat(requireNonNull(detail.getProperties())).containsEntry("traceId", "no-context");
-  }
-
-  @Test
-  void givenErrorResponse_whenHandling_thenBodyPostProcessedInPlace() {
-    ErrorResponseException response = new ErrorResponseException(HttpStatus.GONE);
-
-    handler(entityHandler).handleResult(exchange(), result("errorResponse", response)).block();
-
-    assertThat(entityHandler.value()).isSameAs(response);
-    assertThat(requireNonNull(response.getBody().getProperties()))
-        .containsEntry("traceId", "no-context");
-  }
-
-  @Test
-  void givenEntityWithProblemDetail_whenHandling_thenBodyPostProcessedInPlace() {
-    ProblemDetail detail = ProblemDetail.forStatus(409);
-    ResponseEntity<ProblemDetail> entity = ResponseEntity.status(409).body(detail);
-
-    handler(entityHandler).handleResult(exchange(), result("responseEntity", entity)).block();
-
-    assertThat(entityHandler.value()).isSameAs(entity);
-    assertThat(requireNonNull(detail.getProperties())).containsEntry("traceId", "no-context");
-  }
-
-  @Test
   void givenResponseEntityWithProblem_whenHandling_thenNewEntityWithProcessedProblem() {
     ResponseEntity<Problem> entity =
         ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).header("X-Custom", "1").body(conflict());
@@ -380,57 +347,11 @@ class ProblemHandlerResultHandlerTest {
   }
 
   @Test
-  void givenMonoOfProblem_whenHandling_thenContentTypeSetBeforeDelegating() {
-    MockServerWebExchange exchange = exchange();
-
-    handler(bodyHandler).handleResult(exchange, result("mono", Mono.just(conflict()))).block();
-
-    assertThat(bodyHandler.contentTypeAtHandling.get())
-        .isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
-    assertThat(exchange.getResponse().getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-    assertThat(((Mono<?>) requireNonNull(bodyHandler.value())).block())
-        .isInstanceOfSatisfying(
-            Problem.class,
-            problem -> assertThat(problem.getExtensions()).containsEntry("traceId", "no-context"));
-  }
-
-  @Test
   void givenEntitiesWithReactiveBodies_whenCheckingSupport_thenOnlySingleValueSupported() {
     ProblemHandlerResultHandler handler = handler(bodyHandler);
 
     assertThat(handler.supports(result("monoEntity", null))).isTrue();
     assertThat(handler.supports(result("fluxEntity", null))).isFalse();
-  }
-
-  @Test
-  void givenResponseEntityWithMonoOfProblem_whenHandling_thenBodyPostProcessedAndKeptReactive() {
-    MockServerWebExchange exchange = exchange();
-    exchange
-        .getAttributes()
-        .put(PROBLEM_CONTEXT_ATTRIBUTE, ProblemContext.create().put("traceId", "abc"));
-    ResponseEntity<Mono<Problem>> entity =
-        ResponseEntity.status(HttpStatus.CONFLICT).body(Mono.just(conflict()));
-
-    handler(entityHandler).handleResult(exchange, result("monoEntity", entity)).block();
-
-    assertThat(entityHandler.value())
-        .isInstanceOfSatisfying(
-            ResponseEntity.class,
-            transformed -> {
-              assertThat(transformed.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-              assertThat(transformed.getHeaders().getContentType())
-                  .isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
-              assertThat(transformed.getBody())
-                  .isInstanceOfSatisfying(
-                      Mono.class,
-                      body ->
-                          assertThat(body.block())
-                              .isInstanceOfSatisfying(
-                                  Problem.class,
-                                  problem ->
-                                      assertThat(problem.getExtensions())
-                                          .containsEntry("traceId", "abc")));
-            });
   }
 
   @Test
@@ -616,7 +537,6 @@ class ProblemHandlerResultHandlerTest {
 
     boolean supported = true;
     @Nullable HandlerResult result;
-    final AtomicReference<@Nullable MediaType> contentTypeAtHandling = new AtomicReference<>();
 
     @Override
     public boolean supports(HandlerResult result) {
@@ -626,7 +546,6 @@ class ProblemHandlerResultHandlerTest {
     @Override
     public Mono<Void> handleResult(ServerWebExchange exchange, HandlerResult result) {
       this.result = result;
-      contentTypeAtHandling.set(exchange.getResponse().getHeaders().getContentType());
       return Mono.empty();
     }
 

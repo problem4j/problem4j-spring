@@ -92,18 +92,11 @@ class PostProcessingWebMvcTest {
     }
 
     @Test
-    void givenProblemDetailWithoutType_whenRequesting_thenTypeOmitted() {
+    void givenProblemDetailFromAdvice_whenRequesting_thenOwnPropertiesRetainedAndTypeOmitted() {
       ResponseEntity<String> response = get(restTemplate, "/post-processing/advice-handler");
 
       assertThat(jsonMapper.readTree(response.getBody()).has("type")).isFalse();
-    }
-
-    @Test
-    void givenProblemDetailFromAdvice_whenRequesting_thenOwnPropertiesRetained() {
-      ResponseEntity<String> response = get(restTemplate, "/post-processing/advice-handler");
-
-      Problem problem = jsonMapper.readValue(response.getBody(), Problem.class);
-      assertThat(problem.getExtensions())
+      assertThat(jsonMapper.readValue(response.getBody(), Problem.class).getExtensions())
           .containsEntry("origin", "advice")
           .containsEntry("traceId", TRACE_ID);
     }

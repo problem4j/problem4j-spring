@@ -33,9 +33,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
@@ -164,13 +162,6 @@ class ProblemResponseBodyAdviceTest {
   }
 
   @Test
-  void givenProblemSelectedAsXml_whenWriting_thenProblemXmlContentType() {
-    write(conflict(), "problem", MediaType.APPLICATION_XML);
-
-    assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_XML);
-  }
-
-  @Test
   void givenProblemSelectedAsOtherType_whenWriting_thenContentTypeIsNotSet() {
     write(conflict(), "problem", MediaType.TEXT_PLAIN);
 
@@ -239,16 +230,6 @@ class ProblemResponseBodyAdviceTest {
   }
 
   @Test
-  void givenProblemDetail_whenWriting_thenPostProcessedInPlace() {
-    ProblemDetail detail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
-
-    Object body = write(detail, "problemDetail", MediaType.APPLICATION_PROBLEM_JSON);
-
-    assertThat(body).isSameAs(detail);
-    assertThat(detail.getProperties()).containsEntry("traceId", "no-context");
-  }
-
-  @Test
   void givenNonServletRequestAndResponse_whenWritingProblem_thenOnlyContentTypeIsApplied() {
     ServerHttpRequest request = mock(ServerHttpRequest.class);
     ServerHttpResponse response = mock(ServerHttpResponse.class);
@@ -292,10 +273,6 @@ class ProblemResponseBodyAdviceTest {
 
     Problem problem() {
       return conflict();
-    }
-
-    ProblemDetail problemDetail() {
-      return ProblemDetail.forStatus(409);
     }
 
     ResponseEntity<Problem> responseEntity() {

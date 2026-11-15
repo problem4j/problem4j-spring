@@ -85,7 +85,8 @@ class FilterExceptionWebMvcTest {
         "problem4j.exception-handling.mode=cooperate",
         "problem4j.tracing-source=simple",
         "problem4j.tracing-header-name=X-Trace-Id",
-        "problem4j.extension-overrides.traceId={context.traceId}"
+        "problem4j.extension-overrides.traceId={context.traceId}",
+        "problem4j.title-override={problem.title} ({context.traceId})"
       })
   @AutoConfigureTestRestTemplate
   @Nested
@@ -96,13 +97,17 @@ class FilterExceptionWebMvcTest {
 
     @ParameterizedTest
     @CsvSource({
-      "/filter-error/resolvable, 422",
-      "/filter-error/problem, 409",
-      "/filter-error/unknown, 500"
+      "/filter-error/resolvable, 422, ResolvableException",
+      "/filter-error/problem, 409, Conflict",
+      "/filter-error/unknown, 500, Internal Server Error"
     })
-    void givenExceptionFromFilter_whenRequesting_thenTranslatedWithTraceId(
-        String path, int status) {
-      assertProblem(get(restTemplate, path), jsonMapper, status);
+    void givenExceptionFromFilter_whenRequesting_thenTranslatedAndPostProcessedOnce(
+        String path, int status, String title) {
+      ResponseEntity<String> response = get(restTemplate, path);
+
+      assertProblem(response, jsonMapper, status);
+      assertThat(jsonMapper.readValue(response.getBody(), Problem.class).getTitle())
+          .isEqualTo(title + " (" + TRACE_ID + ")");
     }
   }
 }

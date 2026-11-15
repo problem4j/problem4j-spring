@@ -95,7 +95,7 @@ class PostProcessingWebFluxTest {
     }
 
     @Test
-    void givenProblemDetailWithoutType_whenRequesting_thenTypeOmitted() {
+    void givenProblemDetailFromAdvice_whenRequesting_thenOwnPropertiesRetainedAndTypeOmitted() {
       String body =
           get(webTestClient, "/post-processing/advice-handler")
               .expectBody(String.class)
@@ -103,18 +103,7 @@ class PostProcessingWebFluxTest {
               .getResponseBody();
 
       assertThat(jsonMapper.readTree(body).has("type")).isFalse();
-    }
-
-    @Test
-    void givenProblemDetailFromAdvice_whenRequesting_thenOwnPropertiesRetained() {
-      String body =
-          get(webTestClient, "/post-processing/advice-handler")
-              .expectBody(String.class)
-              .returnResult()
-              .getResponseBody();
-
-      Problem problem = jsonMapper.readValue(body, Problem.class);
-      assertThat(problem.getExtensions())
+      assertThat(jsonMapper.readValue(body, Problem.class).getExtensions())
           .containsEntry("origin", "advice")
           .containsEntry("traceId", TRACE_ID);
     }

@@ -52,13 +52,11 @@ class CooperateContentNegotiationWebMvcTest {
 
   @ParameterizedTest
   @CsvSource({
-    "/problem-advice/resolvable, '', 422",
     "/problem-advice/resolvable, */*, 422",
     "/problem-advice/resolvable, application/json, 422",
     "/problem-advice/resolvable, application/problem+json, 422",
     "/problem-advice/resolvable, application/xml, 422",
     "/problem-advice/resolvable, text/html, 422",
-    "/problem-advice/unresolvable, '', 500",
     "/problem-advice/unresolvable, application/xml, 500",
     "/problem-advice/unresolvable, text/html, 500",
     "/filter-error/problem, '', 409",

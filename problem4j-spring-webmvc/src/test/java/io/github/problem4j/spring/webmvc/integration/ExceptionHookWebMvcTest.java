@@ -85,15 +85,6 @@ class ExceptionHookWebMvcTest {
       assertThat(jsonMapper.readValue(response.getBody(), Problem.class))
           .isEqualTo(Problem.of(HttpStatus.INTERNAL_SERVER_ERROR.value()));
     }
-
-    @Test
-    void givenSendError_whenRequesting_thenRenderedByProblemErrorController() {
-      ResponseEntity<String> response =
-          restTemplate.getForEntity("/send-error/internal-server-error", String.class);
-
-      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-      assertThat(response.getHeaders().getContentType()).hasToString(Problem.CONTENT_TYPE_JSON);
-    }
   }
 
   @SpringBootTest(

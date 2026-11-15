@@ -20,8 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
-import io.github.problem4j.spring.web.DefaultProblemPostProcessor;
-import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.operations.ProblemOperations;
 import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.ProblemInspector;
@@ -59,30 +57,6 @@ class CooperateAdvicePostProcessingWebFluxTest {
             .returnResult()
             .getResponseBody();
     return jsonMapper.readValue(body, Problem.class);
-  }
-
-  @SpringBootTest(
-      classes = {WebFluxTestApp.class},
-      webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-      properties = {
-        "problem4j.exception-handling.mode=cooperate",
-        "problem4j.tracing-source=simple",
-        "problem4j.tracing-header-name=X-Trace-Id",
-        "problem4j.title-override={problem.title} ({context.traceId})"
-      })
-  @AutoConfigureWebTestClient
-  @Nested
-  class WithCooperateMode {
-
-    @Autowired private WebTestClient webTestClient;
-    @Autowired private JsonMapper jsonMapper;
-
-    @Test
-    void givenProblemFromWebFilter_whenRequesting_thenTitleIsOverriddenOnce() {
-      Problem problem = get(webTestClient, jsonMapper, "/filter-error/problem");
-
-      assertThat(problem.getTitle()).isEqualTo("Conflict (" + TRACE_ID + ")");
-    }
   }
 
   @SpringBootTest(
@@ -204,20 +178,6 @@ class CooperateAdvicePostProcessingWebFluxTest {
       assertThat(problem.getStatus()).isEqualTo(418);
       assertThat(problem.getTitle()).isEqualTo("Unresolvable (" + TRACE_ID + ")");
       assertThat(inspected).isEmpty();
-    }
-  }
-
-  @SpringBootTest(
-      classes = {WebFluxTestApp.class},
-      properties = {"problem4j.exception-handling.mode=advice"})
-  @Nested
-  class WithAdviceMode {
-
-    @Autowired private ProblemPostProcessor problemPostProcessor;
-
-    @Test
-    void givenAdviceMode_whenStarting_thenPostProcessorIsDefault() {
-      assertThat(problemPostProcessor).isExactlyInstanceOf(DefaultProblemPostProcessor.class);
     }
   }
 

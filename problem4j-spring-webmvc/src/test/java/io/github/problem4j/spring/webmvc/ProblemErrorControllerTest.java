@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webmvc;
 
+import static io.github.problem4j.spring.web.AttributeSupport.POST_PROCESSED_PROBLEM_ATTRIBUTE;
 import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -119,6 +120,7 @@ class ProblemErrorControllerTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     assertThat(body(response).getExtensions()).containsEntry("traceId", "abc");
+    assertThat(request.getAttribute(POST_PROCESSED_PROBLEM_ATTRIBUTE)).isSameAs(body(response));
     assertThat(inspected).isEmpty();
   }
 
@@ -133,6 +135,7 @@ class ProblemErrorControllerTest {
     assertThat(response.getHeaders().getContentType())
         .isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
     assertThat(body(response).getDetail()).isEqualTo("conflict");
+    assertThat(request.getAttribute(POST_PROCESSED_PROBLEM_ATTRIBUTE)).isSameAs(body(response));
     assertThat(inspected).containsExactly(ex);
   }
 
