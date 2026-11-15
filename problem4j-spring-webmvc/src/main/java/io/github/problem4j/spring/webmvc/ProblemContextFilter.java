@@ -26,6 +26,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.core.Ordered;
@@ -56,6 +58,7 @@ public class ProblemContextFilter extends OncePerRequestFilter implements Ordere
   public static final int PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 10;
 
   private final ProblemContextSettings settings;
+  private final List<ProblemContextCustomizer> customizers;
 
   private int order = PRECEDENCE;
 
@@ -66,7 +69,20 @@ public class ProblemContextFilter extends OncePerRequestFilter implements Ordere
    * @since 3.1.0
    */
   public ProblemContextFilter(ProblemContextSettings settings) {
+    this(settings, Collections.emptyList());
+  }
+
+  /**
+   * Creates a new {@code ProblemContextFilter}.
+   *
+   * @param settings the context settings to use
+   * @param customizers customizers invoked, in the given order, once the context has been built
+   * @since 3.1.0
+   */
+  public ProblemContextFilter(
+      ProblemContextSettings settings, List<? extends ProblemContextCustomizer> customizers) {
     this.settings = settings;
+    this.customizers = List.copyOf(customizers);
   }
 
   /**
@@ -86,12 +102,32 @@ public class ProblemContextFilter extends OncePerRequestFilter implements Ordere
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
+    boolean contextPresent =
+        request.getAttribute(PROBLEM_CONTEXT_ATTRIBUTE) instanceof ProblemContext;
     ProblemContext context = buildProblemContext(request, response);
+    if (!contextPresent) {
+      customizeProblemContext(request, response, context);
+    }
 
     assignContextAttributes(request, response, context);
     modifyServletExchange(request, response, context);
 
     filterChain.doFilter(request, response);
+  }
+
+  /**
+   * Invokes all {@link ProblemContextCustomizer}s on the built context.
+   *
+   * @param request the current server request
+   * @param response the current server response
+   * @param context the {@link ProblemContext} built for the request
+   * @since 3.1.0
+   */
+  protected void customizeProblemContext(
+      HttpServletRequest request, HttpServletResponse response, ProblemContext context) {
+    for (ProblemContextCustomizer customizer : customizers) {
+      customizer.customize(context, request, response);
+    }
   }
 
   /**

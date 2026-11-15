@@ -17,6 +17,7 @@
 package io.github.problem4j.spring.webmvc;
 
 import io.github.problem4j.spring.web.ProblemContextSettings;
+import java.util.List;
 
 /**
  * Former name of {@link ProblemContextFilter}, kept for backwards compatibility.
@@ -35,5 +36,17 @@ public class ProblemContextWebMvcFilter extends ProblemContextFilter {
    */
   public ProblemContextWebMvcFilter(ProblemContextSettings settings) {
     super(settings);
+  }
+
+  /**
+   * Creates a new instance of the filter.
+   *
+   * @param settings configuration properties for problem context and tracing
+   * @param customizers customizers invoked, in the given order, once the context has been built
+   * @since 3.1.0
+   */
+  public ProblemContextWebMvcFilter(
+      ProblemContextSettings settings, List<? extends ProblemContextCustomizer> customizers) {
+    super(settings, customizers);
   }
 }

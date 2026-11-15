@@ -21,6 +21,8 @@ import static io.github.problem4j.spring.web.AttributeSupport.TRACE_ID_ATTRIBUTE
 
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemContextSettings;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.core.Ordered;
@@ -28,6 +30,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.context.Context;
 
@@ -53,6 +56,7 @@ public class ProblemContextWebFilter implements WebFilter, Ordered {
   public static final int PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 10;
 
   private final ProblemContextSettings settings;
+  private final List<ProblemContextCustomizer> customizers;
 
   private int order = PRECEDENCE;
 
@@ -63,7 +67,20 @@ public class ProblemContextWebFilter implements WebFilter, Ordered {
    * @since 3.1.0
    */
   public ProblemContextWebFilter(ProblemContextSettings settings) {
+    this(settings, Collections.emptyList());
+  }
+
+  /**
+   * Constructs a new {@link ProblemContextWebFilter}.
+   *
+   * @param settings the context settings to use
+   * @param customizers customizers invoked, in the given order, once the context has been built
+   * @since 3.1.0
+   */
+  public ProblemContextWebFilter(
+      ProblemContextSettings settings, List<? extends ProblemContextCustomizer> customizers) {
     this.settings = settings;
+    this.customizers = List.copyOf(customizers);
   }
 
   /**
@@ -80,12 +97,33 @@ public class ProblemContextWebFilter implements WebFilter, Ordered {
    */
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+    boolean contextPresent =
+        exchange.getAttribute(PROBLEM_CONTEXT_ATTRIBUTE) instanceof ProblemContext;
     ProblemContext context = buildProblemContext(exchange);
+    Mono<Void> customized =
+        contextPresent ? Mono.empty() : customizeProblemContext(exchange, context);
 
-    assignContextAttributes(exchange, context);
-    modifyServerExchange(exchange, context);
+    return customized.then(
+        Mono.defer(() -> {
+          assignContextAttributes(exchange, context);
+          modifyServerExchange(exchange, context);
 
-    return chain.filter(exchange).contextWrite(ctx -> contextWrite(ctx, exchange, context));
+          return chain.filter(exchange).contextWrite(ctx -> contextWrite(ctx, exchange, context));
+        }));
+  }
+
+  /**
+   * Invokes all {@link ProblemContextCustomizer}s on the built context, one after another.
+   *
+   * @param exchange the current server exchange
+   * @param context the {@link ProblemContext} built for the exchange
+   * @return a {@link Mono} that completes when all customizers have completed
+   * @since 3.1.0
+   */
+  protected Mono<Void> customizeProblemContext(ServerWebExchange exchange, ProblemContext context) {
+    return Flux.fromIterable(customizers)
+        .concatMap(customizer -> customizer.customize(context, exchange))
+        .then();
   }
 
   /**

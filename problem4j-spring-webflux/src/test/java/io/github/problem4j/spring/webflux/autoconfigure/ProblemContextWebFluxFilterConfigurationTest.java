@@ -16,13 +16,17 @@
 
 package io.github.problem4j.spring.webflux.autoconfigure;
 
+import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE;
 import static io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.UNAVAILABLE_SOURCE_MESSAGE;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemContextSettings;
 import io.github.problem4j.spring.web.autoconfigure.ProblemAutoConfiguration;
 import io.github.problem4j.spring.web.autoconfigure.UnavailableTracingSourceException;
 import io.github.problem4j.spring.webflux.MicrometerProblemContextWebFilter;
+import io.github.problem4j.spring.webflux.ProblemContextCustomizer;
 import io.github.problem4j.spring.webflux.ProblemContextWebFilter;
 import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
 import io.micrometer.tracing.handler.TracingObservationHandler;
@@ -32,6 +36,10 @@ import org.springframework.boot.test.context.FilteredClassLoader;
 import org.springframework.boot.test.context.runner.ReactiveWebApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
+import org.springframework.mock.web.server.MockServerWebExchange;
+import reactor.core.publisher.Mono;
 
 @SuppressWarnings("removal")
 class ProblemContextWebFluxFilterConfigurationTest {
@@ -177,6 +185,52 @@ class ProblemContextWebFluxFilterConfigurationTest {
                 .hasSingleBean(ProblemContextWebFilter.class)
                 .getBean(ProblemContextWebFilter.class)
                 .isSameAs(context.getBean(CustomNewTypeFilterConfiguration.class).filter));
+  }
+
+  @Test
+  void givenCustomizerBeansAndSimpleTracingSource_whenFilter_thenCustomizersAreInvokedInOrder() {
+    contextRunner
+        .withPropertyValues("problem4j.tracing-source=simple")
+        .withUserConfiguration(CustomizerConfiguration.class)
+        .run(context -> assertCustomizersApplied(context.getBean(ProblemContextWebFilter.class)));
+  }
+
+  @Test
+  void
+      givenCustomizerBeansAndMicrometerTracingSource_whenFilter_thenCustomizersAreInvokedInOrder() {
+    contextRunner
+        .withPropertyValues("problem4j.tracing-source=micrometer")
+        .withUserConfiguration(CustomizerConfiguration.class)
+        .run(context -> assertCustomizersApplied(context.getBean(ProblemContextWebFilter.class)));
+  }
+
+  private static void assertCustomizersApplied(ProblemContextWebFilter filter) {
+    MockServerWebExchange exchange =
+        MockServerWebExchange.from(MockServerHttpRequest.get("/test").build());
+
+    filter.filter(exchange, ex -> Mono.empty()).block();
+
+    ProblemContext problemContext =
+        requireNonNull(exchange.getAttribute(PROBLEM_CONTEXT_ATTRIBUTE));
+    assertThat(problemContext.get("inspected")).isEqualTo("first,second");
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  static class CustomizerConfiguration {
+
+    @Order(2)
+    @Bean
+    ProblemContextCustomizer secondCustomizer() {
+      return ProblemContextCustomizer.sync(
+          (context, exchange) -> context.put("inspected", context.get("inspected") + ",second"));
+    }
+
+    @Order(1)
+    @Bean
+    ProblemContextCustomizer firstCustomizer() {
+      return ProblemContextCustomizer.sync(
+          (context, exchange) -> context.put("inspected", "first"));
+    }
   }
 
   @Configuration(proxyBeanMethods = false)

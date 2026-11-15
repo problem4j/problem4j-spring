@@ -21,6 +21,7 @@ import io.github.problem4j.spring.web.ProblemContextSettings;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.TraceContext;
 import io.micrometer.tracing.handler.TracingObservationHandler.TracingContext;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.http.server.reactive.observation.ServerRequestObservationContext;
 import org.springframework.web.server.ServerWebExchange;
@@ -62,6 +63,18 @@ public class MicrometerProblemContextWebFilter extends ProblemContextWebFilter {
    */
   public MicrometerProblemContextWebFilter(ProblemContextSettings settings) {
     super(settings);
+  }
+
+  /**
+   * Creates a new {@code MicrometerProblemContextWebFilter}.
+   *
+   * @param settings the context settings to use
+   * @param customizers customizers invoked, in the given order, once the context has been built
+   * @since 3.1.0
+   */
+  public MicrometerProblemContextWebFilter(
+      ProblemContextSettings settings, List<? extends ProblemContextCustomizer> customizers) {
+    super(settings, customizers);
   }
 
   /**

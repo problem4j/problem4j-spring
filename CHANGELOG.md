@@ -21,6 +21,11 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Add Kotlin extensions and DSL functions for common Problem4J classes and utilities.
 - Add `ProblemContextFilter` (WebMVC) and `ProblemContextWebFilter` (WebFlux), replacing `ProblemContextWebMvcFilter` /
   `ProblemContextWebFluxFilter`.
+- Add `ProblemContextCustomizer` interfaces (for both WebMVC and WebFlux) to modify `ProblemContext` without subclassing
+  `ProblemContextFilter` / `ProblemContextWebFilter`, e.g. to add a custom request identifier. All
+  `ProblemContextCustomizer` beans are invoked in their order, as the last step of building a new context, so they may
+  also overwrite `traceId` set by the framework. In WebFlux a customizer returns `Mono<Void>`;
+  `ProblemContextCustomizer.sync(...)` creates one from a synchronous function.
 - Add `ProblemResponseEntityExceptionHandler` (for both WebMVC and WebFlux), replacing `ProblemEnhancedWebMvcHandler` /
   `ProblemEnhancedWebFluxHandler`. The former classes extend the new one and are still registered by default.
 - Add `ProblemInspector` interfaces to peek on `Problem` objects before returning a response. All `ProblemInspector`
