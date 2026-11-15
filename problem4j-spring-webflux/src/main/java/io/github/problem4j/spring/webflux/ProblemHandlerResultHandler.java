@@ -53,38 +53,19 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link HandlerResultHandler} applying {@code ProblemPostProcessor} to {@link Problem}s and
- * Spring's {@link ProblemDetail}s (also carried by {@link ErrorResponse}) returned by controllers
- * and application {@code @ExceptionHandler}s.
+ * {@link HandlerResultHandler} post-processing {@link Problem}s and {@link ProblemDetail}s returned
+ * by the application, before delegating to Spring's result handlers.
  *
- * <p>A {@link ProblemDetail} stays a {@link ProblemDetail} (it is post-processed in place), so
- * content negotiation, status and headers selected by Spring remain unchanged. A {@link Problem}
- * returned as a plain value (not within {@link HttpEntity}) gets its status applied to the
- * response, unless a status other than {@code 200 OK} was already set (e.g. with
- * {@code @ResponseStatus}). If no content type was requested explicitly, a {@link Problem} is
- * written with a content type Spring would use for {@link ProblemDetail} (e.g. {@code
- * application/problem+json}).
- *
- * <p>Ordered before Spring's own result handlers. After transforming the return value, it delegates
- * to the first of the given result handlers (typically {@code ResponseEntityResultHandler} and
- * {@code ResponseBodyResultHandler}) supporting the original result, so content negotiation and
- * message encoding stay unchanged. Results of other types are not supported by this handler.
- *
- * <p>Part of the cooperate path, registered with {@code
- * problem4j.exception-handling.mode=cooperate}. With {@code
- * problem4j.exception-handling.mode=advice} (default), {@code Problem}s and {@code ProblemDetail}s
- * returned by the application are written without post-processing.
+ * <p>A {@link ProblemDetail} is post-processed in place. A {@link Problem} returned without {@link
+ * HttpEntity} gets its status applied, unless another one was already set, and the content type
+ * Spring would use for {@link ProblemDetail}, unless one was requested.
  *
  * @since 3.1.0
  */
 public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordered {
 
   /**
-   * Precedence of this handler, {@code -100}, used unless changed with {@link #setOrder(int)}. It
-   * precedes Spring's own result handlers, {@code ResponseEntityResultHandler} and {@code
-   * ServerResponseResultHandler} ({@code 0}), {@code ResponseBodyResultHandler} ({@code 100}) and
-   * {@code ViewResolutionResultHandler} ({@code Ordered.LOWEST_PRECEDENCE} by default), which do
-   * not expose their orders as constants.
+   * Default order, before Spring's result handlers ({@code 0} and above).
    *
    * @since 3.1.0
    */
@@ -123,8 +104,7 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
   }
 
   /**
-   * Returns the order of this handler, {@link #PRECEDENCE} by default, which precedes Spring's own
-   * result handlers.
+   * Returns the order of this handler, {@link #PRECEDENCE} by default.
    *
    * @return the order of this handler
    * @since 3.1.0
@@ -145,9 +125,7 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
   }
 
   /**
-   * Checks whether the result may carry a {@link Problem}, {@link ProblemDetail} or {@link
-   * ErrorResponse}, directly, as {@link HttpEntity} body, or wrapped in a single-value reactive
-   * type (also as {@link HttpEntity} body), and whether any delegate supports it.
+   * Checks whether the result may carry a problem, and a delegate supports it.
    *
    * @param result the result of handler invocation
    * @return {@code true} if the result may need transformation
@@ -293,8 +271,7 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
 
   /**
    * Post-processes {@link Problem}s and {@link ProblemDetail}s, keeping other values as they are. A
-   * {@link Problem} rendered by a controller advice of Problem4J, which already post-processed it,
-   * is kept as it is.
+   * problem already post-processed by Problem4J is kept as it is.
    *
    * @param value the value returned from the handler method
    * @param entity whether the delegate expects {@link HttpEntity} for values carrying a status
@@ -375,11 +352,7 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
     return result;
   }
 
-  /**
-   * Selects the content type Spring would use for {@link ProblemDetail}, which is not selected
-   * automatically for {@link Problem} body, if the return type is not declared as {@link
-   * ProblemDetail}.
-   */
+  /** Selects the content type Spring would use for a {@link ProblemDetail} body. */
   private @Nullable MediaType selectProblemDetailMediaType(ServerWebExchange exchange) {
     Object producible = exchange.getAttribute(HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE);
     if (producible instanceof Collection<?> types && !types.isEmpty()) {

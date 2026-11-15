@@ -46,20 +46,10 @@ import org.springframework.web.context.request.ServletWebRequest;
  * returns HTTP problems (RFC 7807) instead of HTML error pages.
  *
  * <p>It converts generic servlet errors into {@link Problem} responses with the appropriate HTTP
- * status and content type {@code application/problem+json}. It handles errors that do not pass
- * through Spring MVC exception resolvers, such as {@code response.sendError(...)} or exceptions
- * thrown by servlet filters.
+ * status and content type {@code application/problem+json}.
  *
- * <p>If created with {@link ProblemOperations} (with {@code
- * problem4j.exception-handling.mode=cooperate}), the exception that caused the error is translated
- * the same way as by {@link ProblemHandlerExceptionResolver}, and {@link ProblemInspector}s are
- * invoked. Otherwise, only the status of the error is used.
- *
- * <p>Part of both paths, registered regardless of {@code problem4j.exception-handling.mode} (unless
- * {@code problem4j.webmvc.error-controller.enabled=false}). With {@code
- * problem4j.exception-handling.mode=advice} (default), only the status of the error is used; with
- * {@code problem4j.exception-handling.mode=cooperate}, the exception that caused the error is
- * translated the same way as by {@link ProblemHandlerExceptionResolver}.
+ * <p>If created with {@link ProblemOperations}, the exception that caused the error is translated
+ * and inspected. Otherwise, only the status of the error is used.
  *
  * @since 1.2.0
  */
@@ -91,10 +81,9 @@ public class ProblemErrorController extends AbstractErrorController {
   }
 
   /**
-   * Creates a new {@link ProblemErrorController}, which translates the exception that caused the
-   * error with {@link ProblemOperations}.
+   * Creates a new {@link ProblemErrorController}, which translates the exception of the error.
    *
-   * @param problemOperations the operations translating exceptions and post-processing problems
+   * @param problemOperations the operations translating exceptions
    * @param errorAttributes the error attributes used to obtain error information
    * @param problemInspectors the inspectors invoked for translated exceptions
    * @since 3.1.0

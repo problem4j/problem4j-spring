@@ -36,10 +36,9 @@ import org.springframework.web.server.handler.ExceptionHandlingWebHandler;
  * Spring Framework for handled exceptions. An error already recorded in the observation context is
  * never replaced.
  *
- * <p>Spring records every error reaching a {@code WebExceptionHandler} (such as {@code
- * ProblemWebExceptionHandler}) as an observation error, using {@link
- * ExceptionHandlingWebHandler#HANDLED_WEB_EXCEPTION} exchange attribute. For responses with status
- * not matching the configured predicate, that attribute is removed, so the error is not recorded.
+ * <p>For statuses not matching the predicate, {@link
+ * ExceptionHandlingWebHandler#HANDLED_WEB_EXCEPTION} is removed, so that Spring does not record
+ * errors of {@code WebExceptionHandler}s either.
  *
  * <p>Registered automatically with {@code problem4j.observation-errors} property deciding which
  * response statuses are recorded ({@code server} by default).

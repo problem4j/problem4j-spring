@@ -245,9 +245,7 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemWebExceptionHandler}, which renders exceptions not
-   * handled by the application as {@code Problem} responses. Applies only to {@code
-   * problem4j.exception-handling.mode=cooperate}.
+   * Returns configuration for {@code ProblemWebExceptionHandler}.
    *
    * @return the configuration for {@code ProblemWebExceptionHandler}
    * @since 3.1.0
@@ -267,9 +265,7 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Returns configuration for {@code ProblemHandlerResultHandler}, which post-processes {@code
-   * Problem}s and {@code ProblemDetail}s returned by handlers. Applies only to {@code
-   * problem4j.exception-handling.mode=cooperate}.
+   * Returns configuration for {@code ProblemHandlerResultHandler}.
    *
    * @return the configuration for {@code ProblemHandlerResultHandler}
    * @since 3.1.0
@@ -289,8 +285,7 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Configuration group for {@code ExceptionWebFluxAdvice}. Applies only to {@code
-   * problem4j.exception-handling.mode=advice} (default).
+   * Configuration group for {@code ExceptionWebFluxAdvice}.
    *
    * <p>Controlled by the property {@code problem4j.webflux.exception-advice.enabled}.
    *
@@ -365,8 +360,7 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Configuration group for {@code ProblemExceptionWebFluxAdvice}. Applies only to {@code
-   * problem4j.exception-handling.mode=advice} (default).
+   * Configuration group for {@code ProblemExceptionWebFluxAdvice}.
    *
    * <p>Controlled by the property {@code problem4j.webflux.problem-exception-advice.enabled}.
    *
@@ -516,8 +510,7 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Configuration group for {@code ProblemResponseEntityExceptionHandler} override. Applies only to
-   * {@code problem4j.exception-handling.mode=advice} (default).
+   * Configuration group for {@code ProblemResponseEntityExceptionHandler} override.
    *
    * <p>Controlled by the property {@code problem4j.webflux.exception-handler.enabled}.
    *
@@ -596,8 +589,7 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Configuration group for {@code ProblemErrorWebExceptionHandler} override. Applies only to
-   * {@code problem4j.exception-handling.mode=advice} (default).
+   * Configuration group for {@code ProblemErrorWebExceptionHandler} override.
    *
    * <p>Controlled by the property {@code problem4j.webflux.error-web-exception-handler.enabled}.
    *
@@ -672,8 +664,7 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Configuration group for {@code ProblemWebExceptionHandler}. Applies only to {@code
-   * problem4j.exception-handling.mode=cooperate}.
+   * Configuration group for {@code ProblemWebExceptionHandler}.
    *
    * <p>Controlled by the property {@code problem4j.webflux.web-exception-handler.enabled}.
    *
@@ -720,8 +711,7 @@ public class ProblemWebFluxProperties {
   }
 
   /**
-   * Configuration group for {@code ProblemHandlerResultHandler}. Applies only to {@code
-   * problem4j.exception-handling.mode=cooperate}.
+   * Configuration group for {@code ProblemHandlerResultHandler}.
    *
    * <p>Controlled by the property {@code problem4j.webflux.result-handler.enabled}.
    *

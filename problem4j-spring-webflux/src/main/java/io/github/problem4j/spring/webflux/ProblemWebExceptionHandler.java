@@ -41,40 +41,19 @@ import org.springframework.web.util.DisconnectedClientHelper;
 import reactor.core.publisher.Mono;
 
 /**
- * {@link WebExceptionHandler} rendering exceptions known to Problem4J as {@code
- * application/problem+json} responses, if they were not handled by any application exception
- * handler.
+ * {@link WebExceptionHandler} rendering exceptions not handled by the application as {@link
+ * Problem}s, including exceptions of web filters.
  *
- * <p>Exceptions supported by {@link ProblemOperations#supports(Exception)} are handled, i.e. {@code
- * ProblemException}s, {@code @ProblemMapping} annotated exceptions, exceptions with a registered
- * {@code ProblemResolver}, Spring's {@code ErrorResponse} exceptions and {@code @ResponseStatus}
- * annotated exceptions. With {@linkplain #setUnknownExceptions(boolean) unknown exceptions}
- * enabled, other exceptions are handled as {@code 500 Internal Server Error} problems, otherwise
- * they are passed on to the next web exception handler, typically the {@code
- * ErrorWebExceptionHandler} of Spring Boot. Errors caused by disconnected clients are never
- * handled.
- *
- * <p>Exceptions handled by application {@code @ControllerAdvice}s and
- * {@code @RestControllerAdvice}s never reach web exception handlers, so they always take
- * precedence, regardless of their order. Exceptions of {@code WebFilter}s are handled too. Errors
- * are propagated as they are if the response is already committed.
- *
- * <p>Part of the cooperate path, registered with {@code
- * problem4j.exception-handling.mode=cooperate}. With {@code
- * problem4j.exception-handling.mode=advice} (default), exceptions are handled by {@link
- * ExceptionWebFluxAdvice}, {@link ProblemExceptionWebFluxAdvice} and {@link
- * ProblemResponseEntityExceptionHandler} instead.
+ * <p>Exceptions not supported by {@link ProblemOperations} are rendered only with {@linkplain
+ * #setUnknownExceptions(boolean) unknown exceptions} enabled. Committed responses and exceptions of
+ * disconnected clients are skipped.
  *
  * @since 3.1.0
  */
 public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered {
 
   /**
-   * Precedence of this handler, {@code -3}, used unless changed with {@link #setOrder(int)}. It is
-   * applied before {@code ErrorWebExceptionHandler} of Spring Boot, declared with {@code -1} in
-   * {@code ErrorWebFluxAutoConfiguration}, and before Spring's {@code
-   * WebFluxResponseStatusExceptionHandler}, declared with {@code 0} in {@code
-   * WebFluxConfigurationSupport}. Neither of them exposes its order as a constant.
+   * Default order, before {@code ErrorWebExceptionHandler} of Spring Boot ({@code -1}).
    *
    * @since 3.1.0
    */
@@ -108,8 +87,7 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
   }
 
   /**
-   * Returns the order of this handler, {@link #PRECEDENCE} by default, which precedes {@code
-   * ErrorWebExceptionHandler} of Spring Boot ({@code -1}).
+   * Returns the order of this handler, {@link #PRECEDENCE} by default.
    *
    * @return the order of this handler
    * @since 3.1.0
@@ -130,8 +108,7 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
   }
 
   /**
-   * Returns whether exceptions not known to Problem4J are handled as {@code 500 Internal Server
-   * Error} problems.
+   * Returns whether exceptions not supported by {@link ProblemOperations} are rendered.
    *
    * @return {@code true} if unknown exceptions are rendered
    * @since 3.1.0
@@ -141,8 +118,8 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
   }
 
   /**
-   * Sets whether exceptions not known to Problem4J are handled as {@code 500 Internal Server Error}
-   * problems, {@code false} by default.
+   * Sets whether exceptions not supported by {@link ProblemOperations} are rendered, {@code true}
+   * by default.
    *
    * @param unknownExceptions whether unknown exceptions are rendered
    * @since 3.1.0
@@ -152,8 +129,7 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
   }
 
   /**
-   * Translates an unhandled exception into a {@link Problem}, invokes inspectors and writes it to
-   * the response.
+   * Renders the exception as {@link Problem}.
    *
    * @param exchange the current server exchange
    * @param ex the unhandled error
@@ -200,8 +176,7 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
   }
 
   /**
-   * Writes a {@link Problem} response as {@code application/problem+json}, keeping headers already
-   * assigned to the response (e.g. tracing header).
+   * Writes the problem, keeping headers already set on the response.
    *
    * @param exchange the current server exchange
    * @param problem the problem to write

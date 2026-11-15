@@ -43,28 +43,12 @@ import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.util.DisconnectedClientHelper;
 
 /**
- * {@link org.springframework.web.servlet.HandlerExceptionResolver} rendering exceptions known to
- * Problem4J as {@code application/problem+json} responses, if they were not handled by any
- * application {@code @ExceptionHandler}.
+ * {@code HandlerExceptionResolver} rendering exceptions not handled by the application as {@link
+ * Problem}s.
  *
- * <p>Exceptions supported by {@link ProblemOperations#supports(Exception)} are resolved, i.e.
- * {@code ProblemException}s, {@code @ProblemMapping} annotated exceptions, exceptions with a
- * registered {@code ProblemResolver}, Spring's {@code ErrorResponse} exceptions and
- * {@code @ResponseStatus} annotated exceptions. With {@linkplain #setUnknownExceptions(boolean)
- * unknown exceptions} enabled, other exceptions are resolved as {@code 500 Internal Server Error}
- * problems, otherwise they are left to the default error handling of Spring and Spring Boot.
- * Exceptions caused by disconnected clients are never resolved.
- *
- * <p>Registered by autoconfiguration right after Spring's {@code
- * ExceptionHandlerExceptionResolver}, so that {@code @ControllerAdvice}s and
- * {@code @RestControllerAdvice}s of the application always take precedence, regardless of their
- * order. Exceptions are not resolved if the response is already committed.
- *
- * <p>Part of the cooperate path, registered with {@code
- * problem4j.exception-handling.mode=cooperate}. With {@code
- * problem4j.exception-handling.mode=advice} (default), exceptions are handled by {@link
- * ExceptionWebMvcAdvice}, {@link ProblemExceptionWebMvcAdvice} and {@link
- * ProblemResponseEntityExceptionHandler} instead.
+ * <p>Exceptions not supported by {@link ProblemOperations} are rendered only with {@linkplain
+ * #setUnknownExceptions(boolean) unknown exceptions} enabled. Committed responses and exceptions of
+ * disconnected clients are skipped.
  *
  * @since 3.1.0
  */
@@ -96,8 +80,7 @@ public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionRes
   }
 
   /**
-   * Returns whether exceptions not known to Problem4J are resolved as {@code 500 Internal Server
-   * Error} problems.
+   * Returns whether exceptions not supported by {@link ProblemOperations} are rendered.
    *
    * @return {@code true} if unknown exceptions are rendered
    * @since 3.1.0
@@ -107,8 +90,8 @@ public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionRes
   }
 
   /**
-   * Sets whether exceptions not known to Problem4J are resolved as {@code 500 Internal Server
-   * Error} problems, {@code false} by default.
+   * Sets whether exceptions not supported by {@link ProblemOperations} are rendered, {@code true}
+   * by default.
    *
    * @param unknownExceptions whether unknown exceptions are rendered
    * @since 3.1.0
@@ -118,14 +101,13 @@ public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionRes
   }
 
   /**
-   * Translates the exception into a {@link Problem}, invokes inspectors and writes it to the
-   * response.
+   * Renders the exception as {@link Problem}.
    *
    * @param request the current request
    * @param response the current response
-   * @param handler the executed handler, or {@code null} if none was chosen
-   * @param ex the exception thrown during handler execution
-   * @return an empty {@link ModelAndView} if the exception was resolved, {@code null} otherwise
+   * @param handler the executed handler, if any
+   * @param ex the exception to render
+   * @return an empty {@link ModelAndView} if the exception was rendered, {@code null} otherwise
    * @since 3.1.0
    */
   @Override
@@ -182,14 +164,13 @@ public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionRes
   }
 
   /**
-   * Writes a {@link Problem} response as {@code application/problem+json}, keeping headers already
-   * assigned to the response (e.g. tracing header).
+   * Writes the problem, keeping headers already set on the response.
    *
    * @param response the current response
    * @param problem the problem to write
    * @param headers additional response headers
    * @param status the response status
-   * @throws IOException if writing the response fails
+   * @throws IOException if writing fails
    * @since 3.1.0
    */
   @SuppressWarnings("unchecked")

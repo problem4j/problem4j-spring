@@ -38,10 +38,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * <p>This setup replaces Spring Boot's default error controller {@code ErrorMvcAutoConfiguration}
  * with {@link ProblemErrorController}, which renders {@code Problem} objects instead of HTML or
- * plain JSON errors. It covers errors that do not pass through Spring MVC exception resolvers (e.g.
- * {@code response.sendError(...)} or exceptions of servlet filters). With {@code
- * problem4j.exception-handling.mode=cooperate}, the exception that caused the error is translated
- * with {@code ProblemOperations}; otherwise only the status of the error is used.
+ * plain JSON errors.
  *
  * @see io.github.problem4j.core.Problem
  * @see org.springframework.boot.webmvc.autoconfigure.error.ErrorMvcAutoConfiguration
@@ -74,12 +71,11 @@ class ProblemErrorMvcConfiguration {
    *
    * <p>Replaces the default error controller when no other implementation is present.
    *
-   * @param problemPostProcessor the post-processor used in {@code advice} mode
-   * @param problemOperations the operations translating exceptions in {@code cooperate} mode
-   * @param problemInspectors the inspectors invoked for translated exceptions in {@code cooperate}
-   *     mode
+   * @param problemPostProcessor the post-processor of problems
+   * @param problemOperations the operations translating exceptions
+   * @param problemInspectors the inspectors of translated exceptions
    * @param errorAttributes provides error information for requests
-   * @param properties the Problem4J properties deciding the exception handling mode
+   * @param properties the Problem4J properties
    * @return a new {@link ProblemErrorController} instance
    * @see org.springframework.boot.webmvc.autoconfigure.error.ErrorMvcAutoConfiguration
    */

@@ -235,10 +235,7 @@ public class ProblemWebMvcAutoConfiguration {
     }
   }
 
-  /**
-   * Nested configuration of {@code problem4j.exception-handling.mode=advice} (default), which
-   * registers Problem4J's own controller advices.
-   */
+  /** Nested configuration registering Problem4J's controller advices. */
   @SuppressWarnings("removal")
   @ConditionalOnProperty(
       name = "problem4j.exception-handling.mode",
@@ -316,10 +313,8 @@ public class ProblemWebMvcAutoConfiguration {
   }
 
   /**
-   * Nested configuration of {@code problem4j.exception-handling.mode=cooperate}, which registers no
-   * controller advices handling exceptions. Exceptions not handled by the application are rendered
-   * by {@link ProblemHandlerExceptionResolver}, and {@code Problem}s or {@code ProblemDetail}s
-   * returned by the application are post-processed by {@link ProblemResponseBodyAdvice}.
+   * Nested configuration registering {@link ProblemHandlerExceptionResolver} and {@link
+   * ProblemResponseBodyAdvice} instead of controller advices.
    */
   @ConditionalOnProperty(name = "problem4j.exception-handling.mode", havingValue = "cooperate")
   @Configuration(proxyBeanMethods = false)
@@ -328,12 +323,7 @@ public class ProblemWebMvcAutoConfiguration {
     /** Creates a new instance of this configuration. */
     CooperateModeConfiguration() {}
 
-    /**
-     * Nested configuration that warns at startup when Spring's own problem details are enabled with
-     * {@code spring.mvc.problemdetails.enabled}. Spring Boot then registers its {@link
-     * ResponseEntityExceptionHandler}, which renders standard Spring MVC exceptions before {@link
-     * ProblemHandlerExceptionResolver}, as there is no Problem4J one in this mode.
-     */
+    /** Nested configuration warning that {@code spring.mvc.problemdetails.enabled} is set. */
     @ConditionalOnBooleanProperty("spring.mvc.problemdetails.enabled")
     @Configuration(proxyBeanMethods = false)
     static class SpringProblemDetailsWarningConfiguration {
@@ -350,11 +340,7 @@ public class ProblemWebMvcAutoConfiguration {
       }
     }
 
-    /**
-     * Nested configuration that registers {@link ProblemHandlerExceptionResolver} right after
-     * Spring's {@link ExceptionHandlerExceptionResolver}, rendering exceptions known to Problem4J
-     * and not handled by application {@code @ExceptionHandler}s as {@code Problem} responses.
-     */
+    /** Nested configuration registering {@link ProblemHandlerExceptionResolver}. */
     @ConditionalOnBooleanProperty(
         name = "problem4j.webmvc.handler-exception-resolver.enabled",
         matchIfMissing = true)
@@ -366,9 +352,7 @@ public class ProblemWebMvcAutoConfiguration {
 
       /**
        * Inserts {@link ProblemHandlerExceptionResolver} after {@link
-       * ExceptionHandlerExceptionResolver}, or at the end if the latter is not registered. Message
-       * converters are taken from {@link ExceptionHandlerExceptionResolver}, or from {@link
-       * RequestMappingHandlerAdapter} otherwise.
+       * ExceptionHandlerExceptionResolver}, or at the end if the latter is not registered.
        */
       @Bean
       WebMvcConfigurer problemExceptionResolverConfigurer(
@@ -401,10 +385,7 @@ public class ProblemWebMvcAutoConfiguration {
       }
     }
 
-    /**
-     * Registers {@link ProblemResponseBodyAdvice}, applying post-processing to {@code Problem}s and
-     * {@code ProblemDetail}s written as response bodies by controllers and exception handlers.
-     */
+    /** Registers the default {@link ProblemResponseBodyAdvice}. */
     @ConditionalOnBooleanProperty(
         name = "problem4j.webmvc.response-body-advice.enabled",
         matchIfMissing = true)

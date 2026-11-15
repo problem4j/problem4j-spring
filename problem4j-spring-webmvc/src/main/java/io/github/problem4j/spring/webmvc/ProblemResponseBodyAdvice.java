@@ -43,24 +43,12 @@ import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 /**
- * {@link ResponseBodyAdvice} applying {@code ProblemPostProcessor} to {@link Problem}s and Spring's
- * {@link ProblemDetail}s written as response bodies by controllers and application
- * {@code @ExceptionHandler}s.
+ * {@link ResponseBodyAdvice} post-processing {@link Problem}s and {@link ProblemDetail}s returned
+ * by the application.
  *
- * <p>It does not handle any exception, so it does not interfere with exception handling model of
- * the application. A {@link ProblemDetail} stays a {@link ProblemDetail} (it is post-processed in
- * place), so content negotiation, status and headers selected by Spring remain unchanged.
- *
- * <p>A {@link Problem} returned as a plain body (not within {@link HttpEntity}) gets its status
- * applied to the response, unless a different status was already set (e.g. with
- * {@code @ResponseStatus}). If no content type was requested explicitly, a {@link Problem} written
- * as {@code application/json} or {@code application/xml} is written as {@code
- * application/problem+json} or {@code application/problem+xml}, similarly to {@link ProblemDetail}.
- *
- * <p>Part of the cooperate path, registered with {@code
- * problem4j.exception-handling.mode=cooperate}. With {@code
- * problem4j.exception-handling.mode=advice} (default), {@code Problem}s and {@code ProblemDetail}s
- * returned by the application are written without post-processing.
+ * <p>A {@link ProblemDetail} is post-processed in place. A {@link Problem} returned without {@link
+ * HttpEntity} gets its status applied, unless another one was already set, and {@code
+ * application/problem+json} (or {@code +xml}) content type, unless one was requested.
  *
  * @since 3.1.0
  */
@@ -82,8 +70,7 @@ public class ProblemResponseBodyAdvice implements ResponseBodyAdvice<Object> {
   }
 
   /**
-   * Returns {@code true}, as declared return type does not tell whether the body is a {@link
-   * Problem} or {@link ProblemDetail} (e.g. {@code ResponseEntity<?>}).
+   * Returns {@code true}, as the return type does not tell whether the body is a problem.
    *
    * @param returnType the return type
    * @param converterType the selected converter type
@@ -97,15 +84,13 @@ public class ProblemResponseBodyAdvice implements ResponseBodyAdvice<Object> {
   }
 
   /**
-   * Post-processes {@link Problem} and {@link ProblemDetail} bodies, keeping other bodies as they
-   * are. If post-processing fails, the original body is written. A {@link Problem} rendered by a
-   * controller advice or {@link ProblemErrorController} of Problem4J, which already post-processed
-   * it, is written as it is.
+   * Post-processes {@link Problem} and {@link ProblemDetail} bodies. A problem already
+   * post-processed by Problem4J is written as it is.
    *
    * @param body the body to be written
    * @param returnType the return type of the handler method
-   * @param selectedContentType the content type selected through content negotiation
-   * @param selectedConverterType the converter type selected to write to the response
+   * @param selectedContentType the selected content type
+   * @param selectedConverterType the selected converter type
    * @param request the current request
    * @param response the current response
    * @return the body to write

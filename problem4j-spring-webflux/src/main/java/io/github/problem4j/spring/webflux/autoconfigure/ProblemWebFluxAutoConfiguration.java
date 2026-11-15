@@ -218,8 +218,8 @@ public class ProblemWebFluxAutoConfiguration {
   }
 
   /**
-   * Nested configuration of {@code problem4j.exception-handling.mode=advice} (default), which
-   * registers Problem4J's own controller advices and {@code ErrorWebExceptionHandler}.
+   * Nested configuration registering Problem4J's controller advices and {@code
+   * ErrorWebExceptionHandler}.
    */
   @SuppressWarnings("removal")
   @ConditionalOnProperty(
@@ -299,10 +299,8 @@ public class ProblemWebFluxAutoConfiguration {
   }
 
   /**
-   * Nested configuration of {@code problem4j.exception-handling.mode=cooperate}, which registers no
-   * controller advices handling exceptions. Exceptions not handled by the application are rendered
-   * by {@link ProblemWebExceptionHandler}, and {@code Problem}s or {@code ProblemDetail}s returned
-   * by the application are post-processed by {@link ProblemHandlerResultHandler}.
+   * Nested configuration registering {@link ProblemWebExceptionHandler} and {@link
+   * ProblemHandlerResultHandler} instead of controller advices.
    */
   @ConditionalOnProperty(name = "problem4j.exception-handling.mode", havingValue = "cooperate")
   @Configuration(proxyBeanMethods = false)
@@ -311,12 +309,7 @@ public class ProblemWebFluxAutoConfiguration {
     /** Creates a new instance of this configuration. */
     CooperateModeConfiguration() {}
 
-    /**
-     * Nested configuration that warns at startup when Spring's own problem details are enabled with
-     * {@code spring.webflux.problemdetails.enabled}. Spring Boot then registers its {@link
-     * ResponseEntityExceptionHandler}, which renders standard Spring WebFlux exceptions before
-     * {@link ProblemWebExceptionHandler}, as there is no Problem4J one in this mode.
-     */
+    /** Nested configuration warning that {@code spring.webflux.problemdetails.enabled} is set. */
     @ConditionalOnBooleanProperty("spring.webflux.problemdetails.enabled")
     @Configuration(proxyBeanMethods = false)
     static class SpringProblemDetailsWarningConfiguration {
@@ -333,10 +326,7 @@ public class ProblemWebFluxAutoConfiguration {
       }
     }
 
-    /**
-     * Registers {@link ProblemWebExceptionHandler}, rendering exceptions known to Problem4J and not
-     * handled by application exception handlers as {@code Problem} responses.
-     */
+    /** Registers the default {@link ProblemWebExceptionHandler}. */
     @ConditionalOnBooleanProperty(
         name = "problem4j.webflux.web-exception-handler.enabled",
         matchIfMissing = true)
@@ -356,11 +346,7 @@ public class ProblemWebFluxAutoConfiguration {
       return handler;
     }
 
-    /**
-     * Registers {@link ProblemHandlerResultHandler}, applying post-processing to {@code Problem}s
-     * and {@code ProblemDetail}s returned by controllers and exception handlers, before delegating
-     * to Spring's {@link ResponseEntityResultHandler} or {@link ResponseBodyResultHandler}.
-     */
+    /** Registers the default {@link ProblemHandlerResultHandler}. */
     @ConditionalOnBooleanProperty(
         name = "problem4j.webflux.result-handler.enabled",
         matchIfMissing = true)
