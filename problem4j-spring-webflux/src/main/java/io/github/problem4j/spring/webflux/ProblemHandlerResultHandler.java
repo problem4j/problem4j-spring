@@ -60,14 +60,14 @@ import reactor.core.publisher.Mono;
  * HttpEntity} gets its status applied, unless another one was already set, and the content type
  * Spring would use for {@link ProblemDetail}, unless one was requested.
  *
- * @since 3.1.0
+ * @since 3.2.0
  */
 public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordered {
 
   /**
    * Default order, before Spring's result handlers ({@code 0} and above).
    *
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public static final int PRECEDENCE = -100;
 
@@ -90,7 +90,7 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
    * @param delegates supplies result handlers writing transformed results, in order of precedence,
    *     resolved once on first use
    * @param messageWriters the writers used to determine content type of {@link Problem}s
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public ProblemHandlerResultHandler(
       ProblemOperations problemOperations,
@@ -107,7 +107,7 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
    * Returns the order of this handler, {@link #PRECEDENCE} by default.
    *
    * @return the order of this handler
-   * @since 3.1.0
+   * @since 3.2.0
    */
   @Override
   public int getOrder() {
@@ -118,7 +118,7 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
    * Sets the order of this handler.
    *
    * @param order the order of this handler
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public void setOrder(int order) {
     this.order = order;
@@ -129,7 +129,7 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
    *
    * @param result the result of handler invocation
    * @return {@code true} if the result may need transformation
-   * @since 3.1.0
+   * @since 3.2.0
    */
   @Override
   public boolean supports(HandlerResult result) {
@@ -192,7 +192,7 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
    * @param exchange the current exchange
    * @param result the result of handler invocation
    * @return a {@link Mono} that completes when the result is handled
-   * @since 3.1.0
+   * @since 3.2.0
    */
   @Override
   public Mono<Void> handleResult(ServerWebExchange exchange, HandlerResult result) {
@@ -277,7 +277,7 @@ public class ProblemHandlerResultHandler implements HandlerResultHandler, Ordere
    * @param entity whether the delegate expects {@link HttpEntity} for values carrying a status
    * @param exchange the current exchange
    * @return the transformed value
-   * @since 3.1.0
+   * @since 3.2.0
    */
   protected Object transform(Object value, boolean entity, ServerWebExchange exchange) {
     if (isPostProcessed(value, exchange)) {

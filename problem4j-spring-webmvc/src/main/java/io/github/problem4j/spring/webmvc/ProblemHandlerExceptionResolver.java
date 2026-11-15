@@ -50,7 +50,7 @@ import org.springframework.web.util.DisconnectedClientHelper;
  * #setUnknownExceptions(boolean) unknown exceptions} enabled. Committed responses and exceptions of
  * disconnected clients are skipped.
  *
- * @since 3.1.0
+ * @since 3.2.0
  */
 public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionResolver {
 
@@ -68,7 +68,7 @@ public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionRes
    * @param problemOperations the operations translating unhandled exceptions
    * @param messageConverters supplies converters used to write {@link Problem} responses
    * @param inspectors the inspectors invoked before writing {@link Problem} responses
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public ProblemHandlerExceptionResolver(
       ProblemOperations problemOperations,
@@ -83,7 +83,7 @@ public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionRes
    * Returns whether exceptions not supported by {@link ProblemOperations} are rendered.
    *
    * @return {@code true} if unknown exceptions are rendered
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public boolean isUnknownExceptions() {
     return unknownExceptions;
@@ -94,7 +94,7 @@ public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionRes
    * by default.
    *
    * @param unknownExceptions whether unknown exceptions are rendered
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public void setUnknownExceptions(boolean unknownExceptions) {
     this.unknownExceptions = unknownExceptions;
@@ -108,7 +108,7 @@ public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionRes
    * @param handler the executed handler, if any
    * @param ex the exception to render
    * @return an empty {@link ModelAndView} if the exception was rendered, {@code null} otherwise
-   * @since 3.1.0
+   * @since 3.2.0
    */
   @Override
   protected @Nullable ModelAndView doResolveException(
@@ -171,7 +171,7 @@ public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionRes
    * @param headers additional response headers
    * @param status the response status
    * @throws IOException if writing fails
-   * @since 3.1.0
+   * @since 3.2.0
    */
   @SuppressWarnings("unchecked")
   protected void writeProblem(

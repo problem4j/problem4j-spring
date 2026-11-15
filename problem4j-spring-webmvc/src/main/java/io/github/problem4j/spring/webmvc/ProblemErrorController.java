@@ -86,7 +86,7 @@ public class ProblemErrorController extends AbstractErrorController {
    * @param problemOperations the operations translating exceptions
    * @param errorAttributes the error attributes used to obtain error information
    * @param problemInspectors the inspectors invoked for translated exceptions
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public ProblemErrorController(
       ProblemOperations problemOperations,

@@ -50,7 +50,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * HttpEntity} gets its status applied, unless another one was already set, and {@code
  * application/problem+json} (or {@code +xml}) content type, unless one was requested.
  *
- * @since 3.1.0
+ * @since 3.2.0
  */
 @ControllerAdvice
 public class ProblemResponseBodyAdvice implements ResponseBodyAdvice<Object> {
@@ -63,7 +63,7 @@ public class ProblemResponseBodyAdvice implements ResponseBodyAdvice<Object> {
    * Creates a new {@code ProblemResponseBodyAdvice}.
    *
    * @param problemOperations the operations applying post-processing
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public ProblemResponseBodyAdvice(ProblemOperations problemOperations) {
     this.problemOperations = problemOperations;
@@ -75,7 +75,7 @@ public class ProblemResponseBodyAdvice implements ResponseBodyAdvice<Object> {
    * @param returnType the return type
    * @param converterType the selected converter type
    * @return {@code true}
-   * @since 3.1.0
+   * @since 3.2.0
    */
   @Override
   public boolean supports(
@@ -94,7 +94,7 @@ public class ProblemResponseBodyAdvice implements ResponseBodyAdvice<Object> {
    * @param request the current request
    * @param response the current response
    * @return the body to write
-   * @since 3.1.0
+   * @since 3.2.0
    */
   @Override
   public @Nullable Object beforeBodyWrite(

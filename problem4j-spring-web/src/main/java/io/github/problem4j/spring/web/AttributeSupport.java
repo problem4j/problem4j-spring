@@ -47,7 +47,7 @@ public final class AttributeSupport {
    * Request attribute key used to store the {@code Problem} already post-processed by Problem4J, so
    * that it is not post-processed again.
    *
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public static final String POST_PROCESSED_PROBLEM_ATTRIBUTE =
       "io.github.problem4j.spring.web.postProcessedProblem";

@@ -48,14 +48,14 @@ import reactor.core.publisher.Mono;
  * #setUnknownExceptions(boolean) unknown exceptions} enabled. Committed responses and exceptions of
  * disconnected clients are skipped.
  *
- * @since 3.1.0
+ * @since 3.2.0
  */
 public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered {
 
   /**
    * Default order, before {@code ErrorWebExceptionHandler} of Spring Boot ({@code -1}).
    *
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public static final int PRECEDENCE = -3;
 
@@ -75,7 +75,7 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
    * @param problemOperations the operations translating unhandled exceptions
    * @param messageWriters the writers used to write {@link Problem} responses
    * @param inspectors the inspectors invoked before writing {@link Problem} responses
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public ProblemWebExceptionHandler(
       ProblemOperations problemOperations,
@@ -90,7 +90,7 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
    * Returns the order of this handler, {@link #PRECEDENCE} by default.
    *
    * @return the order of this handler
-   * @since 3.1.0
+   * @since 3.2.0
    */
   @Override
   public int getOrder() {
@@ -101,7 +101,7 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
    * Sets the order of this handler.
    *
    * @param order the order of this handler
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public void setOrder(int order) {
     this.order = order;
@@ -111,7 +111,7 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
    * Returns whether exceptions not supported by {@link ProblemOperations} are rendered.
    *
    * @return {@code true} if unknown exceptions are rendered
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public boolean isUnknownExceptions() {
     return unknownExceptions;
@@ -122,7 +122,7 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
    * by default.
    *
    * @param unknownExceptions whether unknown exceptions are rendered
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public void setUnknownExceptions(boolean unknownExceptions) {
     this.unknownExceptions = unknownExceptions;
@@ -134,7 +134,7 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
    * @param exchange the current server exchange
    * @param ex the unhandled error
    * @return a {@link Mono} that completes when the response is written
-   * @since 3.1.0
+   * @since 3.2.0
    */
   @Override
   public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
@@ -184,7 +184,7 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
    * @param status the response status
    * @param ex the unhandled error, propagated if no writer supports the problem
    * @return a {@link Mono} that completes when the response is written
-   * @since 3.1.0
+   * @since 3.2.0
    */
   @SuppressWarnings("unchecked")
   protected Mono<Void> writeProblem(

@@ -447,7 +447,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    * Returns the exception handling configuration.
    *
    * @return the exception handling configuration
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public ExceptionHandling getExceptionHandling() {
     return exceptionHandling;
@@ -457,7 +457,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    * Sets the exception handling configuration.
    *
    * @param exceptionHandling the exception handling configuration
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public void setExceptionHandling(ExceptionHandling exceptionHandling) {
     this.exceptionHandling = exceptionHandling;
@@ -466,21 +466,21 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
   /**
    * Exception handling configuration.
    *
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public static class ExceptionHandling {
 
     /**
      * Default exception handling mode.
      *
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public static final ExceptionHandlingMode DEFAULT_MODE = ExceptionHandlingMode.ADVICE;
 
     /**
      * Default of rendering exceptions unknown to Problem4J.
      *
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public static final boolean DEFAULT_UNKNOWN_EXCEPTIONS = true;
 
@@ -499,7 +499,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
     /**
      * Creates a new configuration group with default values.
      *
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public ExceptionHandling() {}
 
@@ -507,7 +507,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
      * Returns the exception handling mode.
      *
      * @return the exception handling mode
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public ExceptionHandlingMode getMode() {
       return mode;
@@ -517,7 +517,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
      * Sets the exception handling mode.
      *
      * @param mode the exception handling mode
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public void setMode(ExceptionHandlingMode mode) {
       this.mode = mode;
@@ -527,7 +527,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
      * Returns whether exceptions unknown to Problem4J are rendered.
      *
      * @return {@code true} if unknown exceptions are rendered
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public boolean isUnknownExceptions() {
       return unknownExceptions;
@@ -537,7 +537,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
      * Sets whether exceptions unknown to Problem4J are rendered.
      *
      * @param unknownExceptions whether unknown exceptions are rendered
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public void setUnknownExceptions(boolean unknownExceptions) {
       this.unknownExceptions = unknownExceptions;
@@ -548,14 +548,14 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    * Exception handling mode.
    *
    * @see ExceptionHandling#getMode()
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public enum ExceptionHandlingMode {
 
     /**
      * Problem4J registers its own controller advices, competing with advices of the application.
      *
-     * @since 3.1.0
+     * @since 3.2.0
      */
     ADVICE,
 
@@ -566,7 +566,7 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
      * <p>Spring's own problem details ({@code spring.mvc.problemdetails.enabled}) should stay
      * disabled, otherwise Spring Boot renders standard Spring exceptions before Problem4J.
      *
-     * @since 3.1.0
+     * @since 3.2.0
      */
     FALLBACK
   }

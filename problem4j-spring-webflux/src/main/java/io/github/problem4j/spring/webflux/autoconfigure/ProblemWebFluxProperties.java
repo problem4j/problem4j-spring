@@ -248,7 +248,7 @@ public class ProblemWebFluxProperties {
    * Returns configuration for {@code ProblemWebExceptionHandler}.
    *
    * @return the configuration for {@code ProblemWebExceptionHandler}
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public WebExceptionHandler getWebExceptionHandler() {
     return webExceptionHandler;
@@ -258,7 +258,7 @@ public class ProblemWebFluxProperties {
    * Sets configuration for {@code ProblemWebExceptionHandler}.
    *
    * @param webExceptionHandler configuration for {@code ProblemWebExceptionHandler}
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public void setWebExceptionHandler(WebExceptionHandler webExceptionHandler) {
     this.webExceptionHandler = webExceptionHandler;
@@ -268,7 +268,7 @@ public class ProblemWebFluxProperties {
    * Returns configuration for {@code ProblemHandlerResultHandler}.
    *
    * @return the configuration for {@code ProblemHandlerResultHandler}
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public ResultHandler getResultHandler() {
     return resultHandler;
@@ -278,7 +278,7 @@ public class ProblemWebFluxProperties {
    * Sets configuration for {@code ProblemHandlerResultHandler}.
    *
    * @param resultHandler configuration for {@code ProblemHandlerResultHandler}
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public void setResultHandler(ResultHandler resultHandler) {
     this.resultHandler = resultHandler;
@@ -668,14 +668,14 @@ public class ProblemWebFluxProperties {
    *
    * <p>Controlled by the property {@code problem4j.webflux.web-exception-handler.enabled}.
    *
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public static class WebExceptionHandler {
 
     /**
      * Default enabled flag for {@code ProblemWebExceptionHandler}.
      *
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public static final boolean DEFAULT_ENABLED = true;
 
@@ -685,7 +685,7 @@ public class ProblemWebFluxProperties {
     /**
      * Creates a new configuration group with default values.
      *
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public WebExceptionHandler() {}
 
@@ -693,7 +693,7 @@ public class ProblemWebFluxProperties {
      * Returns whether {@code ProblemWebExceptionHandler} should be registered.
      *
      * @return {@code true} if enabled, otherwise {@code false}
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public boolean isEnabled() {
       return enabled;
@@ -703,7 +703,7 @@ public class ProblemWebFluxProperties {
      * Sets whether {@code ProblemWebExceptionHandler} should be registered.
      *
      * @param enabled whether {@code ProblemWebExceptionHandler} should be registered
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public void setEnabled(boolean enabled) {
       this.enabled = enabled;
@@ -715,14 +715,14 @@ public class ProblemWebFluxProperties {
    *
    * <p>Controlled by the property {@code problem4j.webflux.result-handler.enabled}.
    *
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public static class ResultHandler {
 
     /**
      * Default enabled flag for {@code ProblemHandlerResultHandler}.
      *
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public static final boolean DEFAULT_ENABLED = true;
 
@@ -732,7 +732,7 @@ public class ProblemWebFluxProperties {
     /**
      * Creates a new configuration group with default values.
      *
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public ResultHandler() {}
 
@@ -740,7 +740,7 @@ public class ProblemWebFluxProperties {
      * Returns whether {@code ProblemHandlerResultHandler} should be registered.
      *
      * @return {@code true} if enabled, otherwise {@code false}
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public boolean isEnabled() {
       return enabled;
@@ -750,7 +750,7 @@ public class ProblemWebFluxProperties {
      * Sets whether {@code ProblemHandlerResultHandler} should be registered.
      *
      * @param enabled whether {@code ProblemHandlerResultHandler} should be registered
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public void setEnabled(boolean enabled) {
       this.enabled = enabled;

@@ -247,7 +247,7 @@ public class ProblemWebMvcProperties {
    * Returns configuration for {@code ProblemHandlerExceptionResolver}.
    *
    * @return the configuration for {@code ProblemHandlerExceptionResolver}
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public HandlerExceptionResolver getHandlerExceptionResolver() {
     return handlerExceptionResolver;
@@ -257,7 +257,7 @@ public class ProblemWebMvcProperties {
    * Sets configuration for {@code ProblemHandlerExceptionResolver}.
    *
    * @param handlerExceptionResolver configuration for {@code ProblemHandlerExceptionResolver}
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public void setHandlerExceptionResolver(HandlerExceptionResolver handlerExceptionResolver) {
     this.handlerExceptionResolver = handlerExceptionResolver;
@@ -267,7 +267,7 @@ public class ProblemWebMvcProperties {
    * Returns configuration for {@code ProblemResponseBodyAdvice}.
    *
    * @return the configuration for {@code ProblemResponseBodyAdvice}
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public ResponseBodyAdvice getResponseBodyAdvice() {
     return responseBodyAdvice;
@@ -277,7 +277,7 @@ public class ProblemWebMvcProperties {
    * Sets configuration for {@code ProblemResponseBodyAdvice}.
    *
    * @param responseBodyAdvice configuration for {@code ProblemResponseBodyAdvice}
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public void setResponseBodyAdvice(ResponseBodyAdvice responseBodyAdvice) {
     this.responseBodyAdvice = responseBodyAdvice;
@@ -674,14 +674,14 @@ public class ProblemWebMvcProperties {
    *
    * <p>Controlled by the property {@code problem4j.webmvc.handler-exception-resolver.enabled}.
    *
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public static class HandlerExceptionResolver {
 
     /**
      * Default enabled flag for {@code ProblemHandlerExceptionResolver}.
      *
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public static final boolean DEFAULT_ENABLED = true;
 
@@ -691,7 +691,7 @@ public class ProblemWebMvcProperties {
     /**
      * Creates a new configuration group with default values.
      *
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public HandlerExceptionResolver() {}
 
@@ -699,7 +699,7 @@ public class ProblemWebMvcProperties {
      * Returns whether {@code ProblemHandlerExceptionResolver} should be registered.
      *
      * @return {@code true} if enabled, otherwise {@code false}
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public boolean isEnabled() {
       return enabled;
@@ -709,7 +709,7 @@ public class ProblemWebMvcProperties {
      * Sets whether {@code ProblemHandlerExceptionResolver} should be registered.
      *
      * @param enabled whether {@code ProblemHandlerExceptionResolver} should be registered
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public void setEnabled(boolean enabled) {
       this.enabled = enabled;
@@ -721,14 +721,14 @@ public class ProblemWebMvcProperties {
    *
    * <p>Controlled by the property {@code problem4j.webmvc.response-body-advice.enabled}.
    *
-   * @since 3.1.0
+   * @since 3.2.0
    */
   public static class ResponseBodyAdvice {
 
     /**
      * Default enabled flag for {@code ProblemResponseBodyAdvice}.
      *
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public static final boolean DEFAULT_ENABLED = true;
 
@@ -738,7 +738,7 @@ public class ProblemWebMvcProperties {
     /**
      * Creates a new configuration group with default values.
      *
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public ResponseBodyAdvice() {}
 
@@ -746,7 +746,7 @@ public class ProblemWebMvcProperties {
      * Returns whether {@code ProblemResponseBodyAdvice} should be registered.
      *
      * @return {@code true} if enabled, otherwise {@code false}
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public boolean isEnabled() {
       return enabled;
@@ -756,7 +756,7 @@ public class ProblemWebMvcProperties {
      * Sets whether {@code ProblemResponseBodyAdvice} should be registered.
      *
      * @param enabled whether {@code ProblemResponseBodyAdvice} should be registered
-     * @since 3.1.0
+     * @since 3.2.0
      */
     public void setEnabled(boolean enabled) {
       this.enabled = enabled;
