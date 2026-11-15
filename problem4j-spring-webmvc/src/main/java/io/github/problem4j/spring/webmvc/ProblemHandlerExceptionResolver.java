@@ -76,7 +76,7 @@ public class ProblemHandlerExceptionResolver extends AbstractHandlerExceptionRes
   private final Supplier<? extends @Nullable List<HttpMessageConverter<?>>> messageConverters;
   private final List<ProblemInspector> inspectors;
 
-  private boolean unknownExceptions = false;
+  private boolean unknownExceptions = true;
 
   /**
    * Creates a new {@code ProblemHandlerExceptionResolver}.

@@ -77,7 +77,7 @@ public class ProblemWebExceptionHandler implements WebExceptionHandler, Ordered 
 
   private int order = -3;
 
-  private boolean unknownExceptions = false;
+  private boolean unknownExceptions = true;
 
   /**
    * Creates a new {@code ProblemWebExceptionHandler}.
