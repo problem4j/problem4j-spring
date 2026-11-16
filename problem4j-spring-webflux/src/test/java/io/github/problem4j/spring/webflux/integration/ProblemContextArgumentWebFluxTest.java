@@ -47,6 +47,21 @@ class ProblemContextArgumentWebFluxTest {
     @ParameterizedTest
     @ValueSource(
         strings = {
+          "/problem-context/exception-handler-optional",
+          "/problem-context/exception-handler-mono"
+        })
+    void
+        givenOptionalOrMonoProblemContextParameterInExceptionHandler_whenRequesting_thenProblemContextIsResolved(
+            String path) {
+      EntityExchangeResult<String> result = exchange(webTestClient, path);
+
+      assertThat(result.getStatus()).isEqualTo(HttpStatus.OK);
+      assertThat(result.getResponseBody()).isEqualTo(TRACE_ID);
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+        strings = {
           "/problem-context/argument",
           "/problem-context/optional",
           "/problem-context/mono",
@@ -69,6 +84,16 @@ class ProblemContextArgumentWebFluxTest {
       assertThat(result.getStatus()).isEqualTo(HttpStatus.OK);
       assertThat(result.getResponseBody()).isEqualTo("true");
     }
+
+    @Test
+    void
+        givenProblemContextParameterInExceptionHandler_whenRequesting_thenProblemContextIsResolved() {
+      EntityExchangeResult<String> result =
+          exchange(webTestClient, "/problem-context/exception-handler");
+
+      assertThat(result.getStatus()).isEqualTo(HttpStatus.OK);
+      assertThat(result.getResponseBody()).isEqualTo(TRACE_ID);
+    }
   }
 
   @SpringBootTest(
@@ -88,6 +113,21 @@ class ProblemContextArgumentWebFluxTest {
     @ParameterizedTest
     @ValueSource(
         strings = {
+          "/problem-context/exception-handler-optional",
+          "/problem-context/exception-handler-mono"
+        })
+    void
+        givenOptionalOrMonoProblemContextParameterInExceptionHandler_whenRequesting_thenEmptyIsResolved(
+            String path) {
+      EntityExchangeResult<String> result = exchange(webTestClient, path);
+
+      assertThat(result.getStatus()).isEqualTo(HttpStatus.OK);
+      assertThat(result.getResponseBody()).isEqualTo("no-context");
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+        strings = {
           "/problem-context/argument",
           "/problem-context/optional",
           "/problem-context/mono",
@@ -96,6 +136,16 @@ class ProblemContextArgumentWebFluxTest {
     void givenNotAnnotatedProblemContextParameter_whenRequesting_thenNoContextIsResolved(
         String path) {
       EntityExchangeResult<String> result = exchange(webTestClient, path);
+
+      assertThat(result.getStatus()).isEqualTo(HttpStatus.OK);
+      assertThat(result.getResponseBody()).isEqualTo("no-context");
+    }
+
+    @Test
+    void
+        givenNotAnnotatedProblemContextParameterInExceptionHandler_whenRequesting_thenNoContextIsResolved() {
+      EntityExchangeResult<String> result =
+          exchange(webTestClient, "/problem-context/exception-handler");
 
       assertThat(result.getStatus()).isEqualTo(HttpStatus.OK);
       assertThat(result.getResponseBody()).isEqualTo("no-context");

@@ -22,6 +22,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
 import com.tngtech.archunit.base.DescribedPredicate;
+import com.tngtech.archunit.core.domain.Dependency;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.domain.Source;
@@ -48,7 +49,7 @@ class ArchitectureTest {
 
   @Test
   void givenPackageStructure_whenCheckingSlices_thenNoCyclesExist() {
-    ArchRule rule = slices().matching(BASE_PACKAGE + ".(*)..").should().beFreeOfCycles();
+    ArchRule rule = slices().matching(BASE_PACKAGE + ".(**)").should().beFreeOfCycles();
     rule.check(CLASSES);
   }
 
@@ -66,16 +67,26 @@ class ArchitectureTest {
   }
 
   @Test
-  void givenPackageStructure_whenCheckingRootPackage_thenRootDoesNotDependOnSubpackages() {
+  void givenPackageStructure_whenCheckingParentPackages_thenParentDoesNotDependOnSubpackages() {
     ArchRule rule =
-        noClasses()
-            .that()
-            .resideInAPackage(BASE_PACKAGE)
-            .should()
-            .dependOnClassesThat()
-            .resideInAPackage(BASE_PACKAGE + ".*..")
-            .because("subpackages may depend on the root package, not the other way around");
+        classes()
+            .should(notDependOnSubpackagesOfOwnPackage())
+            .because("subpackages may depend on their parent package, not the other way around");
     rule.check(CLASSES);
+  }
+
+  private static ArchCondition<JavaClass> notDependOnSubpackagesOfOwnPackage() {
+    return new ArchCondition<>("not depend on classes from subpackages of their own package") {
+      @Override
+      public void check(JavaClass item, ConditionEvents events) {
+        String subpackagePrefix = item.getPackageName() + ".";
+        for (Dependency dependency : item.getDirectDependenciesFromSelf()) {
+          if (dependency.getTargetClass().getPackageName().startsWith(subpackagePrefix)) {
+            events.add(SimpleConditionEvent.violated(item, dependency.getDescription()));
+          }
+        }
+      }
+    };
   }
 
   @Test

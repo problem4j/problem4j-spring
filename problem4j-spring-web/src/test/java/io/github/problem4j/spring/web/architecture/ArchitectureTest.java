@@ -18,14 +18,13 @@ package io.github.problem4j.spring.web.architecture;
 
 import static com.tngtech.archunit.base.DescribedPredicate.not;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.belongToAnyOf;
-import static com.tngtech.archunit.core.domain.JavaClass.Predicates.equivalentTo;
-import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAnyPackage;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
 import com.tngtech.archunit.base.DescribedPredicate;
+import com.tngtech.archunit.core.domain.Dependency;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.domain.Source;
@@ -55,7 +54,7 @@ class ArchitectureTest {
 
   @Test
   void givenPackageStructure_whenCheckingSlices_thenNoCyclesExist() {
-    ArchRule rule = slices().matching(BASE_PACKAGE + ".(*)..").should().beFreeOfCycles();
+    ArchRule rule = slices().matching(BASE_PACKAGE + ".(**)").should().beFreeOfCycles();
     rule.check(CLASSES);
   }
 
@@ -75,24 +74,43 @@ class ArchitectureTest {
   /**
    * {@link ProblemResolverStore}, {@link DefaultProblemResolverStore} and {@link
    * CachingProblemResolverStore} (including their nested classes) are exempt because of backwards
-   * compatibility. New root-package classes must still satisfy the rule.
+   * compatibility. New classes must still satisfy the rule.
    */
   @Test
-  void givenPackageStructure_whenCheckingRootPackage_thenRootDoesNotDependOnSubpackages() {
+  void givenPackageStructure_whenCheckingParentPackages_thenParentDoesNotDependOnSubpackages() {
     ArchRule rule =
-        noClasses()
-            .that(resideInAPackage(BASE_PACKAGE).and(not(isBackwardsCompatProblemResolverStore())))
-            .should()
-            .dependOnClassesThat()
-            .resideInAPackage(BASE_PACKAGE + ".*..")
-            .because("subpackages may depend on the root package, not the other way around");
+        classes()
+            .that(not(isBackwardsCompatProblemResolverStore()))
+            .should(notDependOnSubpackagesOfOwnPackage())
+            .because("subpackages may depend on their parent package, not the other way around");
     rule.check(CLASSES);
   }
 
+  /**
+   * Matches {@link ProblemResolverStore}, {@link DefaultProblemResolverStore} and {@link
+   * CachingProblemResolverStore}, including their nested classes. They depend on the {@code
+   * resolver} subpackage, which the architecture rule forbids for parent packages, but they cannot
+   * be moved or reworked without breaking backwards compatibility of the public API.
+   */
   private static DescribedPredicate<JavaClass> isBackwardsCompatProblemResolverStore() {
-    return equivalentTo(ProblemResolverStore.class)
-        .or(belongToAnyOf(DefaultProblemResolverStore.class))
-        .or(equivalentTo(CachingProblemResolverStore.class));
+    return belongToAnyOf(
+        ProblemResolverStore.class,
+        DefaultProblemResolverStore.class,
+        CachingProblemResolverStore.class);
+  }
+
+  private static ArchCondition<JavaClass> notDependOnSubpackagesOfOwnPackage() {
+    return new ArchCondition<>("not depend on classes from subpackages of their own package") {
+      @Override
+      public void check(JavaClass item, ConditionEvents events) {
+        String subpackagePrefix = item.getPackageName() + ".";
+        for (Dependency dependency : item.getDirectDependenciesFromSelf()) {
+          if (dependency.getTargetClass().getPackageName().startsWith(subpackagePrefix)) {
+            events.add(SimpleConditionEvent.violated(item, dependency.getDescription()));
+          }
+        }
+      }
+    };
   }
 
   @Test

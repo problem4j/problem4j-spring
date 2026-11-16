@@ -21,6 +21,7 @@ import static io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_AT
 import io.github.problem4j.core.ProblemContext;
 import java.util.Optional;
 import org.jspecify.annotations.Nullable;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,4 +53,30 @@ public class ProblemContextArgumentController {
       @RequestAttribute(PROBLEM_CONTEXT_ATTRIBUTE) ProblemContext attribute) {
     return String.valueOf(context == attribute);
   }
+
+  @GetMapping(path = "/exception-handler")
+  public String exceptionHandler() {
+    throw new ContextAwareException();
+  }
+
+  @ExceptionHandler(ContextAwareException.class)
+  public String handleContextAwareException(
+      ContextAwareException ex, @Nullable ProblemContext context) {
+    return context != null ? String.valueOf(context.get("traceId")) : "no-context";
+  }
+
+  @GetMapping(path = "/exception-handler-optional")
+  public String exceptionHandlerOptional() {
+    throw new OptionalContextAwareException();
+  }
+
+  @ExceptionHandler(OptionalContextAwareException.class)
+  public String handleOptionalContextAwareException(
+      OptionalContextAwareException ex, Optional<ProblemContext> context) {
+    return context.map(it -> String.valueOf(it.get("traceId"))).orElse("no-context");
+  }
+
+  static class ContextAwareException extends RuntimeException {}
+
+  static class OptionalContextAwareException extends RuntimeException {}
 }
