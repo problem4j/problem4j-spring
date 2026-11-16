@@ -102,6 +102,9 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    */
   private ErrorRecording observationErrors = ErrorRecording.SERVER;
 
+  /** Exception handling configuration. */
+  private ExceptionHandling exceptionHandling = new ExceptionHandling();
+
   /**
    * Creates a new instance of {@link ProblemProperties} with default values.
    *
@@ -438,6 +441,134 @@ public class ProblemProperties implements ProblemContextSettings, PostProcessorS
    */
   public void setObservationErrors(ErrorRecording observationErrors) {
     this.observationErrors = observationErrors;
+  }
+
+  /**
+   * Returns the exception handling configuration.
+   *
+   * @return the exception handling configuration
+   * @since 3.2.0
+   */
+  public ExceptionHandling getExceptionHandling() {
+    return exceptionHandling;
+  }
+
+  /**
+   * Sets the exception handling configuration.
+   *
+   * @param exceptionHandling the exception handling configuration
+   * @since 3.2.0
+   */
+  public void setExceptionHandling(ExceptionHandling exceptionHandling) {
+    this.exceptionHandling = exceptionHandling;
+  }
+
+  /**
+   * Exception handling configuration.
+   *
+   * @since 3.2.0
+   */
+  public static class ExceptionHandling {
+
+    /**
+     * Default exception handling mode.
+     *
+     * @since 3.2.0
+     */
+    public static final ExceptionHandlingMode DEFAULT_MODE = ExceptionHandlingMode.ADVICE;
+
+    /**
+     * Default of rendering exceptions unknown to Problem4J.
+     *
+     * @since 3.2.0
+     */
+    public static final boolean DEFAULT_UNKNOWN_EXCEPTIONS = true;
+
+    /**
+     * How Problem4J handles exceptions: with its own controller advices ({@code advice}), or after
+     * exception handlers of the application ({@code fallback}).
+     */
+    private ExceptionHandlingMode mode = DEFAULT_MODE;
+
+    /**
+     * Whether exceptions unknown to Problem4J are rendered as {@code 500} problems in {@code
+     * fallback} mode, instead of being left to the default error handling.
+     */
+    private boolean unknownExceptions = DEFAULT_UNKNOWN_EXCEPTIONS;
+
+    /**
+     * Creates a new configuration group with default values.
+     *
+     * @since 3.2.0
+     */
+    public ExceptionHandling() {}
+
+    /**
+     * Returns the exception handling mode.
+     *
+     * @return the exception handling mode
+     * @since 3.2.0
+     */
+    public ExceptionHandlingMode getMode() {
+      return mode;
+    }
+
+    /**
+     * Sets the exception handling mode.
+     *
+     * @param mode the exception handling mode
+     * @since 3.2.0
+     */
+    public void setMode(ExceptionHandlingMode mode) {
+      this.mode = mode;
+    }
+
+    /**
+     * Returns whether exceptions unknown to Problem4J are rendered.
+     *
+     * @return {@code true} if unknown exceptions are rendered
+     * @since 3.2.0
+     */
+    public boolean isUnknownExceptions() {
+      return unknownExceptions;
+    }
+
+    /**
+     * Sets whether exceptions unknown to Problem4J are rendered.
+     *
+     * @param unknownExceptions whether unknown exceptions are rendered
+     * @since 3.2.0
+     */
+    public void setUnknownExceptions(boolean unknownExceptions) {
+      this.unknownExceptions = unknownExceptions;
+    }
+  }
+
+  /**
+   * Exception handling mode.
+   *
+   * @see ExceptionHandling#getMode()
+   * @since 3.2.0
+   */
+  public enum ExceptionHandlingMode {
+
+    /**
+     * Problem4J registers its own controller advices, competing with advices of the application.
+     *
+     * @since 3.2.0
+     */
+    ADVICE,
+
+    /**
+     * Problem4J registers no controller advices. It renders exceptions not handled by the
+     * application, and post-processes problems returned by it.
+     *
+     * <p>Spring's own problem details ({@code spring.mvc.problemdetails.enabled}) should stay
+     * disabled, otherwise Spring Boot renders standard Spring exceptions before Problem4J.
+     *
+     * @since 3.2.0
+     */
+    FALLBACK
   }
 
   /**
