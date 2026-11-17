@@ -16,22 +16,24 @@ plugins {
     id("org.jetbrains.kotlinx.kover")
 }
 
-// The project is built using a JDK 25 toolchain, but the main sources are compiled with --release 17.
+// The project is built using a JDK 25 toolchain, but all sources (main and test) are compiled with --release 17.
 //
 // This means:
 // - Gradle can run on any JDK 17+,
 // - javac from JDK 25 is used,
-// - the produced bytecode and available Java API for main sources are restricted to Java 17.
+// - the produced bytecode and available Java API for main and test sources are restricted to Java 17.
 //
 // This setup lets us use a modern JDK for tooling (ErrorProne, NullAway) while keeping Java 17 binary compatibility for
 // library consumers.
 //
-// Tests are NOT compiled with --release XYZ, so they may use newer Java APIs.
+// Tests are run on the JVM that Gradle itself runs on, so CI can verify the library on every supported runtime by
+// simply starting Gradle on a different JDK.
 //
 // The project also includes interop utilities between Java and Kotlin.
 
-val javaToolchainVersion = project.getIntProperty("internal.java.toolchain-version")
-val javaTargetVersion = project.getIntProperty("internal.java.target-version")
+val javaToolchainVersion = getIntProperty("internal.java.toolchain-version")
+val javaTargetVersion = getIntProperty("internal.java.target-version")
+val javaTestVersion = JavaVersion.current().majorVersion.toInt()
 
 java {
     toolchain {
@@ -54,7 +56,7 @@ tasks.withType<JavaCompile>().configureEach {
         option("NullAway:JSpecifyMode", "true")
     }
 }
-tasks.named<JavaCompile>("compileJava").configure {
+tasks.withType<JavaCompile>().configureEach {
     options.release = javaTargetVersion
 }
 
@@ -70,10 +72,6 @@ kotlin {
 tasks.withType<KotlinCompile>().configureEach {
     compilerOptions {
         javaParameters = true
-    }
-}
-tasks.named<KotlinCompile>("compileKotlin").configure {
-    compilerOptions {
         jvmTarget = JvmTarget.fromTarget(javaTargetVersion.toString())
     }
 }
@@ -93,6 +91,10 @@ tasks.withType<Jar>().configureEach {
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(javaTestVersion)
+    }
 
     testLogging {
         events(TestLogEvent.FAILED, TestLogEvent.PASSED, TestLogEvent.SKIPPED)

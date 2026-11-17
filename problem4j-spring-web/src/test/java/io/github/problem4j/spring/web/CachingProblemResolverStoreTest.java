@@ -130,7 +130,8 @@ class CachingProblemResolverStoreTest {
     int threadCount = 20;
 
     List<Future<Optional<ProblemResolver>>> futures;
-    try (ExecutorService executor = Executors.newFixedThreadPool(threadCount)) {
+    ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+    try {
       List<Callable<Optional<ProblemResolver>>> tasks = new ArrayList<>();
 
       for (int i = 0; i < threadCount; i++) {
@@ -138,6 +139,8 @@ class CachingProblemResolverStoreTest {
       }
 
       futures = executor.invokeAll(tasks);
+    } finally {
+      executor.shutdown();
     }
 
     for (Future<Optional<ProblemResolver>> f : futures) {
