@@ -23,6 +23,7 @@ Requires **JDK 17+**. Dependencies managed in `gradle/libs.versions.toml`. Custo
 ./gradlew spotlessApply    # auto-format code
 ./gradlew build            # compile + test + spotlessCheck
 ./gradlew test             # tests only
+./gradlew testDownshift    # tests on older Spring Boot lines (internal.spring-boot.compat-lines)
 ```
 
 Always validate changes with a full build and test run before considering the task complete.
@@ -49,3 +50,6 @@ Always validate changes with a full build and test run before considering the ta
 - Use AssertJ for assertions.
 - Integration tests in `problem4j-spring-webflux` and `problem4j-spring-webmvc` (`...integration` package) should be
   similar - both modules must resolve the same exceptions to the same response bodies.
+- Tests are also run against the latest patch of older Spring Boot lines (`testDownshift`), with sources compiled
+  against the newest one. Tag tests relying on API of a newer line with the first line providing it, e.g.
+  `@Tag("springBoot4.1+")`, so they are excluded on older lines.
