@@ -31,13 +31,14 @@ plugins {
 //
 // The project also includes interop utilities between Java and Kotlin.
 
-val javaToolchainVersion = getIntProperty("internal.java.toolchain-version")
-val javaTargetVersion = getIntProperty("internal.java.target-version")
-val javaTestVersion = JavaVersion.current().majorVersion.toInt()
+val javaToolchain = getIntProperty("internal.java.toolchain")
+val javaTarget = getIntProperty("internal.java.target")
+
+val javaTestRuntime = JavaVersion.current().majorVersion.toInt()
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
+        languageVersion = JavaLanguageVersion.of(javaToolchain)
     }
     withSourcesJar()
     withJavadocJar()
@@ -57,12 +58,12 @@ tasks.withType<JavaCompile>().configureEach {
     }
 }
 tasks.withType<JavaCompile>().configureEach {
-    options.release = javaTargetVersion
+    options.release = javaTarget
 }
 
 kotlin {
     jvmToolchain {
-        languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
+        languageVersion = JavaLanguageVersion.of(javaToolchain)
     }
     compilerOptions {
         apiVersion = KotlinVersion.KOTLIN_2_2
@@ -72,7 +73,7 @@ kotlin {
 tasks.withType<KotlinCompile>().configureEach {
     compilerOptions {
         javaParameters = true
-        jvmTarget = JvmTarget.fromTarget(javaTargetVersion.toString())
+        jvmTarget = JvmTarget.fromTarget(javaTarget.toString())
     }
 }
 
@@ -93,7 +94,7 @@ tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 
     javaLauncher = javaToolchains.launcherFor {
-        languageVersion = JavaLanguageVersion.of(javaTestVersion)
+        languageVersion = JavaLanguageVersion.of(javaTestRuntime)
     }
 
     testLogging {
@@ -117,6 +118,6 @@ tasks.named<Task>("check").configure {
 tasks.withType<Javadoc>().configureEach {
     javadocTool =
         javaToolchains.javadocToolFor {
-            languageVersion = JavaLanguageVersion.of(javaTargetVersion)
+            languageVersion = JavaLanguageVersion.of(javaTarget)
         }
 }
