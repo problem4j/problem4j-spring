@@ -32,13 +32,14 @@ plugins {
 //
 // The project also includes interop utilities between Java and Kotlin.
 
-val javaToolchainVersion = getIntProperty("internal.java.toolchain-version")
-val javaTargetVersion = getIntProperty("internal.java.target-version")
-val javaTestVersion = JavaVersion.current().majorVersion.toInt()
+val javaToolchain = getIntProperty("internal.java.toolchain")
+val javaTarget = getIntProperty("internal.java.target")
+
+val javaTestRuntime = JavaVersion.current().majorVersion.toInt()
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
+        languageVersion = JavaLanguageVersion.of(javaToolchain)
     }
     withSourcesJar()
     withJavadocJar()
@@ -58,7 +59,7 @@ tasks.withType<JavaCompile>().configureEach {
     }
 }
 tasks.withType<JavaCompile>().configureEach {
-    options.release = javaTargetVersion
+    options.release = javaTarget
     // spring-boot-configuration-processor merges META-INF/additional-spring-configuration-metadata.json
     // only if resources are processed before compilation
     inputs.files(tasks.named("processResources"))
@@ -66,7 +67,7 @@ tasks.withType<JavaCompile>().configureEach {
 
 kotlin {
     jvmToolchain {
-        languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
+        languageVersion = JavaLanguageVersion.of(javaToolchain)
     }
     compilerOptions {
         explicitApi()
@@ -78,8 +79,8 @@ kotlin {
 tasks.withType<KotlinCompile>().configureEach {
     compilerOptions {
         javaParameters = true
-        jvmTarget = JvmTarget.fromTarget(javaTargetVersion.toString())
-        freeCompilerArgs.add("-Xjdk-release=$javaTargetVersion")
+        jvmTarget = JvmTarget.fromTarget(javaTarget.toString())
+        freeCompilerArgs.add("-Xjdk-release=$javaTarget")
     }
 }
 
@@ -100,7 +101,7 @@ tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 
     javaLauncher = javaToolchains.launcherFor {
-        languageVersion = JavaLanguageVersion.of(javaTestVersion)
+        languageVersion = JavaLanguageVersion.of(javaTestRuntime)
     }
 
     testLogging {
@@ -125,7 +126,7 @@ tasks.named<Task>("check") {
 tasks.withType<Javadoc>().configureEach {
     javadocTool =
         javaToolchains.javadocToolFor {
-            languageVersion = JavaLanguageVersion.of(javaTargetVersion)
+            languageVersion = JavaLanguageVersion.of(javaTarget)
         }
 }
 
