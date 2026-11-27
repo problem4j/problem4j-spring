@@ -34,6 +34,7 @@ import io.github.problem4j.spring.webmvc.ProblemContextWebMvcFilter;
 import io.github.problem4j.spring.webmvc.ProblemEnhancedWebMvcHandler;
 import io.github.problem4j.spring.webmvc.ProblemExceptionWebMvcAdvice;
 import io.github.problem4j.spring.webmvc.ProblemInspector;
+import io.github.problem4j.spring.webmvc.ProblemOperationsMethodArgumentResolver;
 import io.github.problem4j.spring.webmvc.ProblemResponseEntityExceptionHandler;
 import java.util.List;
 import org.springframework.beans.factory.ObjectProvider;
@@ -137,6 +138,32 @@ public class ProblemWebMvcAutoConfiguration {
   @Bean
   WebMvcConfigurer problemContextMethodArgumentResolverConfigurer(
       ProblemContextMethodArgumentResolver resolver) {
+    return new WebMvcConfigurer() {
+      @Override
+      public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(resolver);
+      }
+    };
+  }
+
+  /**
+   * Registers the default {@link ProblemOperationsMethodArgumentResolver}, resolving controller
+   * method arguments of {@code ProblemOperations} type without any annotation.
+   */
+  @ConditionalOnMissingBean(ProblemOperationsMethodArgumentResolver.class)
+  @Bean
+  ProblemOperationsMethodArgumentResolver problemOperationsMethodArgumentResolver(
+      ProblemOperations problemOperations) {
+    return new ProblemOperationsMethodArgumentResolver(problemOperations);
+  }
+
+  /**
+   * Adds {@link ProblemOperationsMethodArgumentResolver} to the custom argument resolvers of
+   * WebMVC.
+   */
+  @Bean
+  WebMvcConfigurer problemOperationsMethodArgumentResolverConfigurer(
+      ProblemOperationsMethodArgumentResolver resolver) {
     return new WebMvcConfigurer() {
       @Override
       public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
