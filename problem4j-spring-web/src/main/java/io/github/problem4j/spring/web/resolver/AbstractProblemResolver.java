@@ -17,7 +17,7 @@
 package io.github.problem4j.spring.web.resolver;
 
 import io.github.problem4j.spring.web.ProblemFormat;
-import io.github.problem4j.spring.web.ProblemFormatAware;
+import io.github.problem4j.spring.web.aware.ProblemFormatAware;
 import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import org.jspecify.annotations.Nullable;
 

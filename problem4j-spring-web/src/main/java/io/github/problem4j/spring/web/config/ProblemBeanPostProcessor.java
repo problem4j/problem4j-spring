@@ -17,16 +17,16 @@
 package io.github.problem4j.spring.web.config;
 
 import io.github.problem4j.spring.web.ProblemFormat;
-import io.github.problem4j.spring.web.ProblemFormatAware;
-import io.github.problem4j.spring.web.ProblemUtilityAware;
 import io.github.problem4j.spring.web.TypeNameMapper;
-import io.github.problem4j.spring.web.TypeNameMapperAware;
+import io.github.problem4j.spring.web.aware.BindingResultSupportAware;
+import io.github.problem4j.spring.web.aware.MethodParameterSupportAware;
+import io.github.problem4j.spring.web.aware.MethodValidationResultSupportAware;
+import io.github.problem4j.spring.web.aware.ProblemFormatAware;
+import io.github.problem4j.spring.web.aware.ProblemUtilityAware;
+import io.github.problem4j.spring.web.aware.TypeNameMapperAware;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
-import io.github.problem4j.spring.web.parameter.BindingResultSupportAware;
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
-import io.github.problem4j.spring.web.parameter.MethodParameterSupportAware;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
-import io.github.problem4j.spring.web.parameter.MethodValidationResultSupportAware;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
