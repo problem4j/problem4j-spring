@@ -161,6 +161,19 @@ fun Project.getIntProperty(name: String): Int {
 }
 
 /**
+ * Retrieves a comma-separated list property from the project. Entries are trimmed and blank ones
+ * are skipped.
+ *
+ * @param name The name of the property to retrieve.
+ * @return The entries of the property, or an empty list if the property is not set.
+ * @receiver Gradle [Project] from which the property is read.
+ */
+fun Project.getListProperty(name: String): List<String> {
+  return findProperty(name)?.toString()?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() }
+      ?: emptyList()
+}
+
+/**
  * Determines whether this task is a test task. For simplicity, a task is considered a test task if
  * its name contains "test" (case-insensitive).
  *
