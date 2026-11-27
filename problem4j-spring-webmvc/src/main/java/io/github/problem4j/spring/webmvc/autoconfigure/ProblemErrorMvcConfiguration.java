@@ -17,7 +17,12 @@
 package io.github.problem4j.spring.webmvc.autoconfigure;
 
 import io.github.problem4j.spring.web.ProblemPostProcessor;
+import io.github.problem4j.spring.web.autoconfigure.ProblemProperties;
+import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.ExceptionHandlingMode;
+import io.github.problem4j.spring.web.operations.ProblemOperations;
 import io.github.problem4j.spring.webmvc.ProblemErrorController;
+import io.github.problem4j.spring.webmvc.ProblemInspector;
+import java.util.List;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -66,14 +71,24 @@ class ProblemErrorMvcConfiguration {
    *
    * <p>Replaces the default error controller when no other implementation is present.
    *
+   * @param problemPostProcessor the post-processor of problems
+   * @param problemOperations the operations translating exceptions
+   * @param problemInspectors the inspectors of translated exceptions
    * @param errorAttributes provides error information for requests
+   * @param properties the Problem4J properties
    * @return a new {@link ProblemErrorController} instance
    * @see org.springframework.boot.webmvc.autoconfigure.error.ErrorMvcAutoConfiguration
    */
   @ConditionalOnMissingBean(ErrorController.class)
   @Bean
   ErrorController problemErrorController(
-      ProblemPostProcessor problemPostProcessor, ErrorAttributes errorAttributes) {
-    return new ProblemErrorController(problemPostProcessor, errorAttributes);
+      ProblemPostProcessor problemPostProcessor,
+      ProblemOperations problemOperations,
+      List<? extends ProblemInspector> problemInspectors,
+      ErrorAttributes errorAttributes,
+      ProblemProperties properties) {
+    return properties.getExceptionHandling().getMode() == ExceptionHandlingMode.FALLBACK
+        ? new ProblemErrorController(problemOperations, errorAttributes, problemInspectors)
+        : new ProblemErrorController(problemPostProcessor, errorAttributes);
   }
 }
