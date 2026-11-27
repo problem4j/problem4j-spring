@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.problem4j.spring.webmvc.app.WebMvcTestApp;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
@@ -67,5 +68,20 @@ class ProblemOperationsArgumentWebMvcTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("ProblemTemplate,ProblemTemplate,ProblemTemplate");
+  }
+
+  @ParameterizedTest
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "/coroutine/problem-operations/argument|ProblemTemplate,ProblemTemplate",
+        "/coroutine/problem-operations/plain-exception-handler|plain:ProblemTemplate"
+      })
+  void givenProblemOperationsParametersInCoroutineMethods_whenRequesting_thenResolved(
+      String path, String expected) {
+    ResponseEntity<String> response = restTemplate.getForEntity(path, String.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isEqualTo(expected);
   }
 }

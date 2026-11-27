@@ -19,6 +19,7 @@ package io.github.problem4j.spring.webflux.integration;
 import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -72,5 +73,25 @@ class ProblemOperationsArgumentWebFluxTest {
         .isOk()
         .expectBody(String.class)
         .isEqualTo("ProblemTemplate,ProblemTemplate,ProblemTemplate,ProblemTemplate");
+  }
+
+  @ParameterizedTest
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "/coroutine/problem-operations/argument|ProblemTemplate,ProblemTemplate",
+        "/coroutine/problem-operations/suspend-exception-handler|suspend:ProblemTemplate",
+        "/coroutine/problem-operations/plain-exception-handler|plain:ProblemTemplate"
+      })
+  void givenProblemOperationsParametersInCoroutineMethods_whenRequesting_thenResolved(
+      String path, String expected) {
+    webTestClient
+        .get()
+        .uri(path)
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody(String.class)
+        .isEqualTo(expected);
   }
 }
