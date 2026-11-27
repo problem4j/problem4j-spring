@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-11-27
+
 ### Added
 
 - Make `AbstractProblemResolver` and its subclasses take additional arguments via `BeanPostProcessor` for easier
