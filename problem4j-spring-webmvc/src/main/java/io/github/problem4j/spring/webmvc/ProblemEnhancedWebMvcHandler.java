@@ -18,7 +18,7 @@ package io.github.problem4j.spring.webmvc;
 
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
-import io.github.problem4j.spring.web.operations.ProblemOperations;
+import io.github.problem4j.spring.web.support.ProblemOperations;
 import java.util.List;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
