@@ -19,6 +19,6 @@
  * exceptions into {@code Problem}s and post-processing {@code Problem}s and {@code ProblemDetail}s.
  */
 @NullMarked
-package io.github.problem4j.spring.web.operations;
+package io.github.problem4j.spring.web.support;
 
 import org.jspecify.annotations.NullMarked;

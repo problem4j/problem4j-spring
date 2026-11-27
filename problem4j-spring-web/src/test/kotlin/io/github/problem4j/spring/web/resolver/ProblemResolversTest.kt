@@ -18,8 +18,8 @@ package io.github.problem4j.spring.web.resolver
 
 import io.github.problem4j.core.ProblemContext
 import io.github.problem4j.spring.web.DefaultProblemFormat
-import io.github.problem4j.spring.web.ProblemFormatAware
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties
+import io.github.problem4j.spring.web.aware.ProblemFormatAware
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test

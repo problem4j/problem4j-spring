@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.problem4j.spring.web.operations;
+package io.github.problem4j.spring.web.support;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

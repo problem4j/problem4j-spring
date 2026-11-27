@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-11-27
+
 ### Added
 
 - Make `AbstractProblemResolver` and its subclasses take additional arguments via `BeanPostProcessor` for easier
@@ -74,7 +76,6 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
   observation by default (`problem4j.observation-errors=server`), so the `exception` key of
   `http.server.requests` metrics and spans contains the exception class name instead of `none`. Set
   `problem4j.observation-errors=none` to keep the previous behavior.
-- Bump `problem4j-core` to `2.0.1`.
 - `ServerWebInputProblemResolver` no longer delegates type-mismatch handling to the `TypeMismatchProblemResolver` bean.
 - Split `ProblemAutoConfiguration` into several auto-configurations. `ProblemAutoConfiguration` now keeps only generic
   beans (`ProblemMapper`, `ProblemFormat`, `ProblemPostProcessor`, `TypeNameMapper`, `ProblemBeanPostProcessor`) and no
@@ -114,6 +115,12 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 - Deprecate constructors of `ExceptionWebMvcAdvice` / `ExceptionWebFluxAdvice`, `ProblemExceptionWebMvcAdvice` /
   `ProblemExceptionWebFluxAdvice` and `ProblemResponseEntityExceptionHandler` taking `ProblemPostProcessor` (and
   `ProblemMapper`, `ProblemResolverStore`), in favor of the ones taking `ProblemOperations`.
+
+## [3.0.1] - 2026-11-25
+
+### Changed
+
+- Bump `problem4j-core` to `2.0.1`.
 
 ### Fixed
 

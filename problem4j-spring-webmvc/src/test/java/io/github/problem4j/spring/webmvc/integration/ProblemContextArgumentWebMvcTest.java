@@ -47,6 +47,16 @@ class ProblemContextArgumentWebMvcTest {
 
     @Autowired private TestRestTemplate restTemplate;
 
+    @Test
+    void
+        givenOptionalProblemContextParameterInExceptionHandler_whenRequesting_thenProblemContextIsResolved() {
+      ResponseEntity<String> response =
+          exchange(restTemplate, "/problem-context/exception-handler-optional");
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+      assertThat(response.getBody()).isEqualTo(TRACE_ID);
+    }
+
     @ParameterizedTest
     @ValueSource(
         strings = {
@@ -71,6 +81,16 @@ class ProblemContextArgumentWebMvcTest {
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
       assertThat(response.getBody()).isEqualTo("true");
     }
+
+    @Test
+    void
+        givenProblemContextParameterInExceptionHandler_whenRequesting_thenProblemContextIsResolved() {
+      ResponseEntity<String> response =
+          exchange(restTemplate, "/problem-context/exception-handler");
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+      assertThat(response.getBody()).isEqualTo(TRACE_ID);
+    }
   }
 
   @SpringBootTest(
@@ -87,6 +107,16 @@ class ProblemContextArgumentWebMvcTest {
 
     @Autowired private TestRestTemplate restTemplate;
 
+    @Test
+    void
+        givenOptionalProblemContextParameterInExceptionHandler_whenRequesting_thenEmptyOptionalIsResolved() {
+      ResponseEntity<String> response =
+          exchange(restTemplate, "/problem-context/exception-handler-optional");
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+      assertThat(response.getBody()).isEqualTo("no-context");
+    }
+
     @ParameterizedTest
     @ValueSource(
         strings = {
@@ -97,6 +127,16 @@ class ProblemContextArgumentWebMvcTest {
     void givenNotAnnotatedProblemContextParameter_whenRequesting_thenNoContextIsResolved(
         String path) {
       ResponseEntity<String> response = exchange(restTemplate, path);
+
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+      assertThat(response.getBody()).isEqualTo("no-context");
+    }
+
+    @Test
+    void
+        givenNotAnnotatedProblemContextParameterInExceptionHandler_whenRequesting_thenNoContextIsResolved() {
+      ResponseEntity<String> response =
+          exchange(restTemplate, "/problem-context/exception-handler");
 
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
       assertThat(response.getBody()).isEqualTo("no-context");

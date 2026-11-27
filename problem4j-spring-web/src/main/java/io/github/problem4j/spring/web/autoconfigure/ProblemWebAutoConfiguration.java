@@ -25,8 +25,6 @@ import io.github.problem4j.spring.web.GraphClassDistanceEvaluation;
 import io.github.problem4j.spring.web.ProblemPostProcessor;
 import io.github.problem4j.spring.web.ProblemResolverStore;
 import io.github.problem4j.spring.web.autoconfigure.ProblemProperties.DuplicateResolverPolicy;
-import io.github.problem4j.spring.web.operations.ProblemOperations;
-import io.github.problem4j.spring.web.operations.ProblemTemplate;
 import io.github.problem4j.spring.web.parameter.BindingResultSupport;
 import io.github.problem4j.spring.web.parameter.DefaultBindingResultSupport;
 import io.github.problem4j.spring.web.parameter.DefaultMethodParameterSupport;
@@ -34,6 +32,8 @@ import io.github.problem4j.spring.web.parameter.DefaultMethodValidationResultSup
 import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
 import io.github.problem4j.spring.web.resolver.ProblemResolver;
+import io.github.problem4j.spring.web.support.ProblemOperations;
+import io.github.problem4j.spring.web.support.ProblemTemplate;
 import java.util.Comparator;
 import java.util.Map;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;

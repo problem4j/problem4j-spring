@@ -21,7 +21,7 @@ import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
 import io.github.problem4j.spring.web.SimpleTypeNameMapper;
 import io.github.problem4j.spring.web.TypeNameMapper;
-import io.github.problem4j.spring.web.TypeNameMapperAware;
+import io.github.problem4j.spring.web.aware.TypeNameMapperAware;
 import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;

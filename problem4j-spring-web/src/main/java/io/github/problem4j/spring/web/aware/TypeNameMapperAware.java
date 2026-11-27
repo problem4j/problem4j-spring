@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package io.github.problem4j.spring.web;
+package io.github.problem4j.spring.web.aware;
+
+import io.github.problem4j.spring.web.TypeNameMapper;
 
 /**
  * Callback interface for components that want to be configured with a {@link TypeNameMapper} after

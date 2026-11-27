@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.github.problem4j.spring.web.parameter;
+package io.github.problem4j.spring.web.aware;
 
-import io.github.problem4j.spring.web.ProblemUtilityAware;
+import io.github.problem4j.spring.web.parameter.MethodParameterSupport;
 
 /**
  * Callback interface for components that want to be configured with a {@link
