@@ -61,4 +61,16 @@ class ProblemOperationsArgumentWebFluxTest {
         .expectBody(String.class)
         .isEqualTo("418");
   }
+
+  @Test
+  void givenProblemOperationsParametersInExceptionHandler_whenRequesting_thenResolved() {
+    webTestClient
+        .get()
+        .uri("/problem-operations/exception-handler")
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody(String.class)
+        .isEqualTo("ProblemTemplate,ProblemTemplate,ProblemTemplate,ProblemTemplate");
+  }
 }

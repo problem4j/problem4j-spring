@@ -20,6 +20,7 @@ import io.github.problem4j.core.Problem;
 import io.github.problem4j.spring.web.support.ProblemOperations;
 import io.github.problem4j.spring.web.support.ProblemTemplate;
 import java.util.Optional;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,4 +49,24 @@ public class ProblemOperationsArgumentController {
   public String optional(Optional<ProblemOperations> problemOperations) {
     return problemOperations.map(it -> it.getClass().getSimpleName()).orElse("none");
   }
+
+  @GetMapping(path = "/exception-handler")
+  public String exceptionHandler() {
+    throw new OperationsAwareException();
+  }
+
+  @ExceptionHandler(OperationsAwareException.class)
+  public String handleOperationsAwareException(
+      OperationsAwareException ex,
+      ProblemOperations problemOperations,
+      ProblemTemplate problemTemplate,
+      Optional<ProblemOperations> optionalOperations) {
+    return problemOperations.getClass().getSimpleName()
+        + ","
+        + problemTemplate.getClass().getSimpleName()
+        + ","
+        + optionalOperations.map(it -> it.getClass().getSimpleName()).orElse("none");
+  }
+
+  public static class OperationsAwareException extends RuntimeException {}
 }

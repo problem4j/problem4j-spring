@@ -59,4 +59,13 @@ class ProblemOperationsArgumentWebMvcTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo("418");
   }
+
+  @Test
+  void givenProblemOperationsParametersInExceptionHandler_whenRequesting_thenResolved() {
+    ResponseEntity<String> response =
+        restTemplate.getForEntity("/problem-operations/exception-handler", String.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isEqualTo("ProblemTemplate,ProblemTemplate,ProblemTemplate");
+  }
 }
