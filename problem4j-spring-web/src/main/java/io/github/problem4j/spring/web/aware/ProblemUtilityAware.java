@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.problem4j.spring.web;
+package io.github.problem4j.spring.web.aware;
 
 /**
  * Common super-interface of every {@code *Aware} callback that {@link

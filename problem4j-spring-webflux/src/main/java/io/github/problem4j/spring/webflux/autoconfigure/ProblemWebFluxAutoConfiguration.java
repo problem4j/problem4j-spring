@@ -23,7 +23,7 @@ import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnMi
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnSimpleSource;
 import io.github.problem4j.spring.web.autoconfigure.TracingSourceConditions.OnUnavailableSource;
 import io.github.problem4j.spring.web.autoconfigure.UnavailableTracingSourceException;
-import io.github.problem4j.spring.web.operations.ProblemOperations;
+import io.github.problem4j.spring.web.support.ProblemOperations;
 import io.github.problem4j.spring.webflux.ExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.MicrometerProblemContextWebFilter;
 import io.github.problem4j.spring.webflux.ObservationErrorProblemInspector;

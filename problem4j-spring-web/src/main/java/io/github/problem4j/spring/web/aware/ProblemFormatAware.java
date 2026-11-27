@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package io.github.problem4j.spring.web.parameter;
+package io.github.problem4j.spring.web.aware;
 
-import io.github.problem4j.spring.web.ProblemUtilityAware;
+import io.github.problem4j.spring.web.ProblemFormat;
 
 /**
- * Callback interface for components that want to be configured with a {@link BindingResultSupport}
- * after construction, instead of requiring it as a constructor argument.
+ * Callback interface for components that want to be configured with a {@link ProblemFormat} after
+ * construction, instead of requiring it as a constructor argument.
  *
  * <p>When {@code problem4j-spring-web} autoconfiguration is active, any bean implementing this
  * interface is detected by {@link io.github.problem4j.spring.web.config.ProblemBeanPostProcessor
- * ProblemBeanPostProcessor} and configured with the container's {@link BindingResultSupport} bean.
+ * ProblemBeanPostProcessor} and configured with the container's {@link ProblemFormat} bean.
  *
- * @see BindingResultSupport
+ * @see ProblemFormat
  * @since 3.1.0
  */
-public interface BindingResultSupportAware extends ProblemUtilityAware {
+public interface ProblemFormatAware extends ProblemUtilityAware {
 
   /**
-   * Replaces the {@link BindingResultSupport} used by this resolver.
+   * Replaces the {@link ProblemFormat} used by this resolver.
    *
-   * @param bindingResultSupport the binding result support to use
+   * @param problemFormat the problem format to use
    * @since 3.1.0
    */
-  void setBindingResultSupport(BindingResultSupport bindingResultSupport);
+  void setProblemFormat(ProblemFormat problemFormat);
 }

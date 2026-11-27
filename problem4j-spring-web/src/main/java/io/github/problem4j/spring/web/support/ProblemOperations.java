@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.problem4j.spring.web.operations;
+package io.github.problem4j.spring.web.support;
 
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;

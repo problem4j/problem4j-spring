@@ -22,10 +22,10 @@ import static io.github.problem4j.spring.web.parameter.ViolationSupport.VALIDATI
 import io.github.problem4j.core.Problem;
 import io.github.problem4j.core.ProblemContext;
 import io.github.problem4j.spring.web.ProblemFormat;
+import io.github.problem4j.spring.web.aware.MethodValidationResultSupportAware;
 import io.github.problem4j.spring.web.config.ProblemBeanPostProcessor;
 import io.github.problem4j.spring.web.parameter.DefaultMethodValidationResultSupport;
 import io.github.problem4j.spring.web.parameter.MethodValidationResultSupport;
-import io.github.problem4j.spring.web.parameter.MethodValidationResultSupportAware;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;

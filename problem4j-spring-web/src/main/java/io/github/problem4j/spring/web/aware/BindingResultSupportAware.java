@@ -14,31 +14,28 @@
  * limitations under the License.
  */
 
-package io.github.problem4j.spring.web.parameter;
+package io.github.problem4j.spring.web.aware;
 
-import io.github.problem4j.spring.web.ProblemUtilityAware;
+import io.github.problem4j.spring.web.parameter.BindingResultSupport;
 
 /**
- * Callback interface for components that want to be configured with a {@link
- * MethodValidationResultSupport} after construction, instead of requiring it as a constructor
- * argument.
+ * Callback interface for components that want to be configured with a {@link BindingResultSupport}
+ * after construction, instead of requiring it as a constructor argument.
  *
  * <p>When {@code problem4j-spring-web} autoconfiguration is active, any bean implementing this
  * interface is detected by {@link io.github.problem4j.spring.web.config.ProblemBeanPostProcessor
- * ProblemBeanPostProcessor} and configured with the container's {@link
- * MethodValidationResultSupport} bean.
+ * ProblemBeanPostProcessor} and configured with the container's {@link BindingResultSupport} bean.
  *
- * @see MethodValidationResultSupport
+ * @see BindingResultSupport
  * @since 3.1.0
  */
-public interface MethodValidationResultSupportAware extends ProblemUtilityAware {
+public interface BindingResultSupportAware extends ProblemUtilityAware {
 
   /**
-   * Replaces the {@link MethodValidationResultSupport} used by this resolver.
+   * Replaces the {@link BindingResultSupport} used by this resolver.
    *
-   * @param methodValidationResultSupport the method validation result support to use
+   * @param bindingResultSupport the binding result support to use
    * @since 3.1.0
    */
-  void setMethodValidationResultSupport(
-      MethodValidationResultSupport methodValidationResultSupport);
+  void setBindingResultSupport(BindingResultSupport bindingResultSupport);
 }
