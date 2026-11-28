@@ -18,6 +18,8 @@ package io.github.problem4j.spring.webflux;
 
 import io.github.problem4j.spring.web.support.ProblemOperations;
 import java.util.Optional;
+import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.reactive.result.method.SyncHandlerMethodArgumentResolver;
@@ -30,8 +32,12 @@ import reactor.core.publisher.Mono;
  * <p>Resolves to the {@link ProblemOperations} used for handling exceptions, so that a controller
  * can build {@code Problem}s the same way as exception advices do. A parameter declared as a
  * subtype (e.g. {@code ProblemTemplate}) is supported as long as the {@link ProblemOperations} in
- * use is an instance of it. Parameters wrapped in {@link Optional} or {@link Mono} are supported
- * too.
+ * use is an instance of it.
+ *
+ * <p>The {@link ProblemOperations} is looked up lazily. If none is available, resolves to {@code
+ * null}. Parameters declared as {@code Optional<ProblemOperations>} or {@code
+ * Mono<ProblemOperations>} are supported, and resolve to an empty {@link Optional} or an empty
+ * {@link Mono} if none is available.
  *
  * <pre>{@code
  * @GetMapping("/orders/{id}")
@@ -44,15 +50,16 @@ import reactor.core.publisher.Mono;
  */
 public class ProblemOperationsMethodArgumentResolver implements SyncHandlerMethodArgumentResolver {
 
-  private final ProblemOperations problemOperations;
+  private final ObjectProvider<ProblemOperations> problemOperations;
 
   /**
    * Creates a new {@code ProblemOperationsMethodArgumentResolver}.
    *
-   * @param problemOperations the {@link ProblemOperations} to resolve arguments to
+   * @param problemOperations the provider of {@link ProblemOperations} to resolve arguments to
    * @since 3.2.0
    */
-  public ProblemOperationsMethodArgumentResolver(ProblemOperations problemOperations) {
+  public ProblemOperationsMethodArgumentResolver(
+      ObjectProvider<ProblemOperations> problemOperations) {
     this.problemOperations = problemOperations;
   }
 
@@ -70,7 +77,11 @@ public class ProblemOperationsMethodArgumentResolver implements SyncHandlerMetho
     if (Optional.class.equals(type) || Mono.class.equals(type)) {
       type = parameter.nested().getNestedParameterType();
     }
-    return ProblemOperations.class.isAssignableFrom(type) && type.isInstance(problemOperations);
+    if (!ProblemOperations.class.isAssignableFrom(type)) {
+      return false;
+    }
+    ProblemOperations operations = problemOperations.getIfAvailable();
+    return operations == null || type.isInstance(operations);
   }
 
   /**
@@ -79,20 +90,22 @@ public class ProblemOperationsMethodArgumentResolver implements SyncHandlerMetho
    * @param parameter the method parameter to resolve
    * @param bindingContext the binding context to use
    * @param exchange the current exchange
-   * @return the {@link ProblemOperations} in use, wrapped in {@link Optional} or {@link Mono} if
-   *     the parameter is of {@code Optional} or {@code Mono} type
+   * @return the {@link ProblemOperations} in use, or {@code null} if none is available, wrapped in
+   *     {@link Optional} or {@link Mono} if the parameter is of {@code Optional} or {@code Mono}
+   *     type
    * @since 3.2.0
    */
   @Override
-  public Object resolveArgumentValue(
+  public @Nullable Object resolveArgumentValue(
       MethodParameter parameter, BindingContext bindingContext, ServerWebExchange exchange) {
+    ProblemOperations operations = problemOperations.getIfAvailable();
     Class<?> type = parameter.getParameterType();
     if (Optional.class.equals(type)) {
-      return Optional.of(problemOperations);
+      return Optional.ofNullable(operations);
     }
     if (Mono.class.equals(type)) {
-      return Mono.just(problemOperations);
+      return Mono.justOrEmpty(operations);
     }
-    return problemOperations;
+    return operations;
   }
 }

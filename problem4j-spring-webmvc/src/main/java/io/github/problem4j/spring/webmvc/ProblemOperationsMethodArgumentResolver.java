@@ -19,6 +19,7 @@ package io.github.problem4j.spring.webmvc;
 import io.github.problem4j.spring.web.support.ProblemOperations;
 import java.util.Optional;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -31,7 +32,11 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  * <p>Resolves to the {@link ProblemOperations} used for handling exceptions, so that a controller
  * can build {@code Problem}s the same way as exception advices do. A parameter declared as a
  * subtype (e.g. {@code ProblemTemplate}) is supported as long as the {@link ProblemOperations} in
- * use is an instance of it. Parameters wrapped in {@link Optional} are supported too.
+ * use is an instance of it.
+ *
+ * <p>The {@link ProblemOperations} is looked up lazily. If none is available, resolves to {@code
+ * null}. Parameters declared as {@code Optional<ProblemOperations>} are supported, and resolve to
+ * an empty {@link Optional} if none is available.
  *
  * <pre>{@code
  * @GetMapping("/orders/{id}")
@@ -44,15 +49,16 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 public class ProblemOperationsMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
-  private final ProblemOperations problemOperations;
+  private final ObjectProvider<ProblemOperations> problemOperations;
 
   /**
    * Creates a new {@code ProblemOperationsMethodArgumentResolver}.
    *
-   * @param problemOperations the {@link ProblemOperations} to resolve arguments to
+   * @param problemOperations the provider of {@link ProblemOperations} to resolve arguments to
    * @since 3.2.0
    */
-  public ProblemOperationsMethodArgumentResolver(ProblemOperations problemOperations) {
+  public ProblemOperationsMethodArgumentResolver(
+      ObjectProvider<ProblemOperations> problemOperations) {
     this.problemOperations = problemOperations;
   }
 
@@ -67,7 +73,11 @@ public class ProblemOperationsMethodArgumentResolver implements HandlerMethodArg
   @Override
   public boolean supportsParameter(MethodParameter parameter) {
     Class<?> type = parameter.nestedIfOptional().getNestedParameterType();
-    return ProblemOperations.class.isAssignableFrom(type) && type.isInstance(problemOperations);
+    if (!ProblemOperations.class.isAssignableFrom(type)) {
+      return false;
+    }
+    ProblemOperations operations = problemOperations.getIfAvailable();
+    return operations == null || type.isInstance(operations);
   }
 
   /**
@@ -77,18 +87,19 @@ public class ProblemOperationsMethodArgumentResolver implements HandlerMethodArg
    * @param mavContainer the model and view container of the current request
    * @param webRequest the current request
    * @param binderFactory a factory for creating data binder instances
-   * @return the {@link ProblemOperations} in use, wrapped in {@link Optional} if the parameter is
-   *     of {@code Optional} type
+   * @return the {@link ProblemOperations} in use, or {@code null} if none is available, wrapped in
+   *     {@link Optional} if the parameter is of {@code Optional} type
    * @since 3.2.0
    */
   @Override
-  public Object resolveArgument(
+  public @Nullable Object resolveArgument(
       MethodParameter parameter,
       @Nullable ModelAndViewContainer mavContainer,
       NativeWebRequest webRequest,
       @Nullable WebDataBinderFactory binderFactory) {
+    ProblemOperations operations = problemOperations.getIfAvailable();
     return Optional.class.equals(parameter.getParameterType())
-        ? Optional.of(problemOperations)
-        : problemOperations;
+        ? Optional.ofNullable(operations)
+        : operations;
   }
 }

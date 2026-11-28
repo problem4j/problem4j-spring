@@ -23,6 +23,8 @@ import io.github.problem4j.spring.web.support.ProblemOperations;
 import io.github.problem4j.spring.web.support.ProblemTemplate;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -31,7 +33,7 @@ class ProblemOperationsMethodArgumentResolverTest {
 
   private final ProblemTemplate problemTemplate = ProblemTemplate.builder().build();
   private final ProblemOperationsMethodArgumentResolver resolver =
-      new ProblemOperationsMethodArgumentResolver(problemTemplate);
+      new ProblemOperationsMethodArgumentResolver(providerOf(problemTemplate));
 
   @Test
   void givenProblemOperationsParameter_whenCheckingSupport_thenParameterIsSupported()
@@ -49,7 +51,7 @@ class ProblemOperationsMethodArgumentResolverTest {
   void givenProblemTemplateParameterAndOtherOperationsInUse_whenCheckingSupport_thenNotSupported()
       throws Exception {
     ProblemOperationsMethodArgumentResolver other =
-        new ProblemOperationsMethodArgumentResolver(mock(ProblemOperations.class));
+        new ProblemOperationsMethodArgumentResolver(providerOf(mock(ProblemOperations.class)));
 
     assertThat(other.supportsParameter(parameter(0))).isTrue();
     assertThat(other.supportsParameter(parameter(1))).isFalse();
@@ -91,6 +93,36 @@ class ProblemOperationsMethodArgumentResolverTest {
             parameter(4), null, new ServletWebRequest(new MockHttpServletRequest()), null);
 
     assertThat(resolved).isEqualTo(Optional.of(problemTemplate));
+  }
+
+  @Test
+  void givenNoProblemOperations_whenCheckingSupport_thenProblemOperationsParametersAreSupported()
+      throws Exception {
+    ProblemOperationsMethodArgumentResolver empty =
+        new ProblemOperationsMethodArgumentResolver(providerOf());
+
+    assertThat(empty.supportsParameter(parameter(0))).isTrue();
+    assertThat(empty.supportsParameter(parameter(4))).isTrue();
+    assertThat(empty.supportsParameter(parameter(2))).isFalse();
+  }
+
+  @Test
+  void givenNoProblemOperations_whenResolving_thenNullOrEmptyOptionalIsReturned() throws Exception {
+    ProblemOperationsMethodArgumentResolver empty =
+        new ProblemOperationsMethodArgumentResolver(providerOf());
+    ServletWebRequest request = new ServletWebRequest(new MockHttpServletRequest());
+
+    assertThat(empty.resolveArgument(parameter(0), null, request, null)).isNull();
+    assertThat(empty.resolveArgument(parameter(4), null, request, null))
+        .isEqualTo(Optional.empty());
+  }
+
+  private static ObjectProvider<ProblemOperations> providerOf(ProblemOperations... operations) {
+    DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+    for (ProblemOperations bean : operations) {
+      beanFactory.registerSingleton("problemOperations", bean);
+    }
+    return beanFactory.getBeanProvider(ProblemOperations.class);
   }
 
   private static MethodParameter parameter(int index) throws NoSuchMethodException {

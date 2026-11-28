@@ -16,6 +16,7 @@
 
 package io.github.problem4j.spring.webflux;
 
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -23,6 +24,8 @@ import io.github.problem4j.spring.web.support.ProblemOperations;
 import io.github.problem4j.spring.web.support.ProblemTemplate;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
@@ -33,7 +36,7 @@ class ProblemOperationsMethodArgumentResolverTest {
 
   private final ProblemTemplate problemTemplate = ProblemTemplate.builder().build();
   private final ProblemOperationsMethodArgumentResolver resolver =
-      new ProblemOperationsMethodArgumentResolver(problemTemplate);
+      new ProblemOperationsMethodArgumentResolver(providerOf(problemTemplate));
 
   @Test
   void givenProblemOperationsParameter_whenCheckingSupport_thenParameterIsSupported()
@@ -51,7 +54,7 @@ class ProblemOperationsMethodArgumentResolverTest {
   void givenProblemTemplateParameterAndOtherOperationsInUse_whenCheckingSupport_thenNotSupported()
       throws Exception {
     ProblemOperationsMethodArgumentResolver other =
-        new ProblemOperationsMethodArgumentResolver(mock(ProblemOperations.class));
+        new ProblemOperationsMethodArgumentResolver(providerOf(mock(ProblemOperations.class)));
 
     assertThat(other.supportsParameter(parameter(0))).isTrue();
     assertThat(other.supportsParameter(parameter(1))).isFalse();
@@ -111,7 +114,41 @@ class ProblemOperationsMethodArgumentResolverTest {
             MockServerWebExchange.from(MockServerHttpRequest.get("/")));
 
     assertThat(resolved).isInstanceOf(Mono.class);
-    assertThat(((Mono<?>) resolved).block()).isSameAs(problemTemplate);
+    assertThat(((Mono<?>) requireNonNull(resolved)).block()).isSameAs(problemTemplate);
+  }
+
+  @Test
+  void givenNoProblemOperations_whenCheckingSupport_thenProblemOperationsParametersAreSupported()
+      throws Exception {
+    ProblemOperationsMethodArgumentResolver empty =
+        new ProblemOperationsMethodArgumentResolver(providerOf());
+
+    assertThat(empty.supportsParameter(parameter(0))).isTrue();
+    assertThat(empty.supportsParameter(parameter(4))).isTrue();
+    assertThat(empty.supportsParameter(parameter(6))).isTrue();
+    assertThat(empty.supportsParameter(parameter(2))).isFalse();
+  }
+
+  @Test
+  void givenNoProblemOperations_whenResolving_thenNullOrEmptyWrapperIsReturned() throws Exception {
+    ProblemOperationsMethodArgumentResolver empty =
+        new ProblemOperationsMethodArgumentResolver(providerOf());
+    MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"));
+
+    assertThat(empty.resolveArgumentValue(parameter(0), new BindingContext(), exchange)).isNull();
+    assertThat(empty.resolveArgumentValue(parameter(4), new BindingContext(), exchange))
+        .isEqualTo(Optional.empty());
+    Object mono = empty.resolveArgumentValue(parameter(6), new BindingContext(), exchange);
+    assertThat(mono).isInstanceOf(Mono.class);
+    assertThat(((Mono<?>) requireNonNull(mono)).block()).isNull();
+  }
+
+  private static ObjectProvider<ProblemOperations> providerOf(ProblemOperations... operations) {
+    DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+    for (ProblemOperations bean : operations) {
+      beanFactory.registerSingleton("problemOperations", bean);
+    }
+    return beanFactory.getBeanProvider(ProblemOperations.class);
   }
 
   private static MethodParameter parameter(int index) throws NoSuchMethodException {

@@ -136,7 +136,7 @@ public class ProblemWebFluxAutoConfiguration {
   @ConditionalOnMissingBean(ProblemOperationsMethodArgumentResolver.class)
   @Bean
   ProblemOperationsMethodArgumentResolver problemOperationsMethodArgumentResolver(
-      ProblemOperations problemOperations) {
+      ObjectProvider<ProblemOperations> problemOperations) {
     return new ProblemOperationsMethodArgumentResolver(problemOperations);
   }
 
