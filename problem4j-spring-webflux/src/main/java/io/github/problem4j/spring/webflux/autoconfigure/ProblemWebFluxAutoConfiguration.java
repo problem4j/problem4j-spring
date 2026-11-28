@@ -34,6 +34,7 @@ import io.github.problem4j.spring.webflux.ProblemContextWebFluxFilter;
 import io.github.problem4j.spring.webflux.ProblemEnhancedWebFluxHandler;
 import io.github.problem4j.spring.webflux.ProblemExceptionWebFluxAdvice;
 import io.github.problem4j.spring.webflux.ProblemInspector;
+import io.github.problem4j.spring.webflux.ProblemOperationsMethodArgumentResolver;
 import io.github.problem4j.spring.webflux.ProblemResponseEntityExceptionHandler;
 import java.util.List;
 import org.springframework.beans.factory.ObjectProvider;
@@ -125,6 +126,18 @@ public class ProblemWebFluxAutoConfiguration {
   @Bean
   ProblemContextMethodArgumentResolver problemContextMethodArgumentResolver() {
     return new ProblemContextMethodArgumentResolver();
+  }
+
+  /**
+   * Registers the default {@link ProblemOperationsMethodArgumentResolver}, resolving controller
+   * method arguments of {@code ProblemOperations} type without any annotation. Registered in
+   * WebFlux by Spring Boot, the same way as {@link ProblemContextMethodArgumentResolver}.
+   */
+  @ConditionalOnMissingBean(ProblemOperationsMethodArgumentResolver.class)
+  @Bean
+  ProblemOperationsMethodArgumentResolver problemOperationsMethodArgumentResolver(
+      ObjectProvider<ProblemOperations> problemOperations) {
+    return new ProblemOperationsMethodArgumentResolver(problemOperations);
   }
 
   /**

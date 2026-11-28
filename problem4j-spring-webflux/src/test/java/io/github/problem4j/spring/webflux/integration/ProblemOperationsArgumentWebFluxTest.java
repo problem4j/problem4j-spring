@@ -1,0 +1,97 @@
+/*
+ * Copyright 2025-present the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.github.problem4j.spring.webflux.integration;
+
+import io.github.problem4j.spring.webflux.app.WebFluxTestApp;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
+import org.springframework.test.web.reactive.server.WebTestClient;
+
+@SpringBootTest(
+    classes = {WebFluxTestApp.class},
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebTestClient
+class ProblemOperationsArgumentWebFluxTest {
+
+  @Autowired private WebTestClient webTestClient;
+
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        "/problem-operations/argument", "/problem-operations/template",
+        "/problem-operations/optional", "/problem-operations/mono"
+      })
+  void givenProblemOperationsParameter_whenRequesting_thenProblemTemplateIsResolved(String path) {
+    webTestClient
+        .get()
+        .uri(path)
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody(String.class)
+        .isEqualTo("ProblemTemplate");
+  }
+
+  @Test
+  void givenProblemOperationsParameter_whenPostProcessing_thenProblemIsReturned() {
+    webTestClient
+        .get()
+        .uri("/problem-operations/post-process")
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody(String.class)
+        .isEqualTo("418");
+  }
+
+  @Test
+  void givenProblemOperationsParametersInExceptionHandler_whenRequesting_thenResolved() {
+    webTestClient
+        .get()
+        .uri("/problem-operations/exception-handler")
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody(String.class)
+        .isEqualTo("ProblemTemplate,ProblemTemplate,ProblemTemplate,ProblemTemplate");
+  }
+
+  @ParameterizedTest
+  @CsvSource(
+      delimiter = '|',
+      value = {
+        "/coroutine/problem-operations/argument|ProblemTemplate,ProblemTemplate",
+        "/coroutine/problem-operations/suspend-exception-handler|suspend:ProblemTemplate",
+        "/coroutine/problem-operations/plain-exception-handler|plain:ProblemTemplate"
+      })
+  void givenProblemOperationsParametersInCoroutineMethods_whenRequesting_thenResolved(
+      String path, String expected) {
+    webTestClient
+        .get()
+        .uri(path)
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody(String.class)
+        .isEqualTo(expected);
+  }
+}

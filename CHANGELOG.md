@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 ## [Unreleased]
 
+### Added
+
+- Add `ProblemOperationsMethodArgumentResolver` (for both WebMVC and WebFlux), resolving controller method arguments of
+  `ProblemOperations` type (or its subtype in use, e.g. `ProblemTemplate`) without any annotation.
+
 ## [3.1.0] - 2026-11-27
 
 ### Added

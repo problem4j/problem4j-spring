@@ -20,6 +20,8 @@ import io.github.problem4j.core.ProblemContext
 import io.github.problem4j.core.ProblemException
 import io.github.problem4j.spring.web.AttributeSupport.PROBLEM_CONTEXT_ATTRIBUTE
 import io.github.problem4j.spring.web.buildProblem
+import io.github.problem4j.spring.web.support.ProblemOperations
+import io.github.problem4j.spring.web.support.ProblemTemplate
 import io.github.problem4j.spring.webmvc.app.problem.CoroutineException
 import io.github.problem4j.spring.webmvc.app.problem.UnresolvableException
 import java.time.Duration
@@ -28,6 +30,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.time.delay
 import kotlinx.coroutines.withContext
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestAttribute
 import org.springframework.web.bind.annotation.RequestMapping
@@ -78,4 +81,27 @@ class CoroutineController {
     delay(Duration.ofMillis(1))
     return context["traceId"].toString()
   }
+
+  @GetMapping(path = ["/problem-operations/argument"])
+  suspend fun problemOperationsArgument(
+      operations: ProblemOperations,
+      template: ProblemTemplate,
+  ): String {
+    delay(Duration.ofMillis(1))
+    return "${operations::class.simpleName},${template::class.simpleName}"
+  }
+
+  @GetMapping(path = ["/problem-operations/plain-exception-handler"])
+  suspend fun problemOperationsPlainExceptionHandler(): String {
+    delay(Duration.ofMillis(1))
+    throw PlainOperationsException()
+  }
+
+  @ExceptionHandler(PlainOperationsException::class)
+  fun handlePlainOperationsException(
+      ex: PlainOperationsException,
+      operations: ProblemOperations,
+  ): String = "plain:${operations::class.simpleName}"
+
+  class PlainOperationsException : RuntimeException()
 }
