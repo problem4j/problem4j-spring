@@ -6,6 +6,10 @@ idea-ext = "1.4.1"
 jspecify = "1.0.1"
 junit = "6.1.3"
 kotlin = "2.4.21"
+# Pinned below the version managed by Spring Boot: 1.11.0 restores ThreadContextElement scopes out of order
+# in Flow.asFlux(), breaking Micrometer observation propagation (Kotlin/kotlinx.coroutines#4754).
+# TODO: remove this version, the coroutines BOM and its usages once a fixed release is available.
+kotlinx-coroutines = "1.10.2"
 kover = "0.9.11"
 nmcp = "1.6.2"
 nullaway = "0.14.4"
@@ -31,6 +35,7 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 # BOMs
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin" }
+kotlinx-coroutines-bom = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-bom", version.ref = "kotlinx-coroutines" }
 spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
 
 # direct versions

@@ -26,6 +26,7 @@ dependencies {
     testImplementation(platform(libs.junit.bom))
     testImplementation(platform(libs.kotlin.bom))
     testImplementation(platform(libs.spring.boot.dependencies))
+    testImplementation(enforcedPlatform(libs.kotlinx.coroutines.bom))
     testImplementation(libs.spring.boot.starter.webflux.test)
     testImplementation(libs.spring.boot.micrometer.tracing.opentelemetry)
     testImplementation(libs.spring.boot.validation)
